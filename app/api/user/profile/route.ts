@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: {
-        id: session.user.id as string
+        id: session.user.id
       },
       include: {
         accounts: true,
