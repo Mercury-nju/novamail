@@ -1,195 +1,171 @@
-'use client'
+import { Metadata } from 'next'
 
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import { SparklesIcon } from '@heroicons/react/24/outline'
+export const metadata: Metadata = {
+  title: '隐私政策 - NovaMail',
+  description: 'NovaMail 隐私政策和数据保护声明',
+}
 
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-6">
-            <Link href="/" className="flex items-center">
-              <SparklesIcon className="h-8 w-8 text-primary-600" />
-              <span className="ml-2 text-2xl font-bold text-gray-900">NovaMail</span>
-            </Link>
-          </div>
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <h1 className="text-3xl font-bold text-gray-900">隐私政策</h1>
+          <p className="text-gray-600 mt-2">最后更新：2024年12月</p>
         </div>
       </div>
 
+      {/* Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-lg shadow-lg p-8"
-        >
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">隐私政策</h1>
-          
+        <div className="bg-white rounded-lg shadow-sm p-8">
           <div className="prose prose-lg max-w-none">
-            <p className="text-gray-600 mb-6">
-              最后更新日期：2024年9月28日
+            
+            <h2>1. 引言</h2>
+            <p>
+              NovaMail（以下简称"我们"、"我们的"或"服务"）致力于保护您的隐私。本隐私政策说明了我们如何收集、使用、存储和保护您的个人信息。
             </p>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. 引言</h2>
-              <p className="text-gray-700 mb-4">
-                NovaMail（"我们"、"我们的"或"公司"）致力于保护您的隐私。本隐私政策解释了当您使用我们的AI电子邮件营销平台时，我们如何收集、使用、披露和保护您的信息。
-              </p>
-            </section>
+            <h2>2. 信息收集</h2>
+            <h3>2.1 您提供的信息</h3>
+            <p>我们可能收集以下信息：</p>
+            <ul>
+              <li>账户信息（姓名、电子邮件地址、密码）</li>
+              <li>联系信息（电话号码、地址）</li>
+              <li>支付信息（信用卡信息、账单地址）</li>
+              <li>营销活动内容</li>
+              <li>客户联系列表</li>
+            </ul>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. 我们收集的信息</h2>
-              
-              <h3 className="text-xl font-medium text-gray-900 mb-3">2.1 您提供的信息</h3>
-              <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-                <li><strong>账户信息：</strong>姓名、电子邮件地址、公司名称</li>
-                <li><strong>联系信息：</strong>您上传的联系人列表和客户信息</li>
-                <li><strong>内容：</strong>您创建的邮件活动、模板和营销内容</li>
-                <li><strong>支付信息：</strong>账单地址和支付方式（通过安全的第三方处理器）</li>
-              </ul>
+            <h3>2.2 自动收集的信息</h3>
+            <p>我们可能自动收集：</p>
+            <ul>
+              <li>设备信息（IP地址、浏览器类型、操作系统）</li>
+              <li>使用数据（页面访问、点击、时间戳）</li>
+              <li>Cookie和类似技术</li>
+              <li>日志文件</li>
+            </ul>
 
-              <h3 className="text-xl font-medium text-gray-900 mb-3">2.2 自动收集的信息</h3>
-              <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-                <li><strong>使用数据：</strong>您如何使用我们的服务、功能使用情况</li>
-                <li><strong>设备信息：</strong>IP地址、浏览器类型、操作系统</li>
-                <li><strong>分析数据：</strong>邮件打开率、点击率、退订率</li>
-                <li><strong>Cookie和跟踪技术：</strong>用于改善用户体验</li>
-              </ul>
-            </section>
+            <h2>3. 信息使用</h2>
+            <p>我们使用收集的信息用于：</p>
+            <ul>
+              <li>提供和改进我们的服务</li>
+              <li>处理交易和发送通知</li>
+              <li>客户支持和沟通</li>
+              <li>安全监控和欺诈预防</li>
+              <li>法律合规</li>
+              <li>营销和推广（经您同意）</li>
+            </ul>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. 信息使用方式</h2>
-              <p className="text-gray-700 mb-4">我们使用收集的信息用于：</p>
-              <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-                <li>提供、维护和改进我们的服务</li>
-                <li>处理您的邮件活动和发送请求</li>
-                <li>生成AI驱动的邮件内容建议</li>
-                <li>提供客户支持和技术协助</li>
-                <li>发送重要的服务更新和通知</li>
-                <li>分析使用模式以改进产品功能</li>
-                <li>防止欺诈和确保服务安全</li>
-                <li>遵守法律义务</li>
-              </ul>
-            </section>
+            <h2>4. 信息共享</h2>
+            <h3>4.1 第三方服务提供商</h3>
+            <p>
+              我们可能与可信的第三方服务提供商共享信息，以帮助我们运营服务，包括：
+            </p>
+            <ul>
+              <li>支付处理商</li>
+              <li>云存储服务</li>
+              <li>分析服务</li>
+              <li>客户支持工具</li>
+            </ul>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. 信息共享</h2>
-              <p className="text-gray-700 mb-4">我们不会出售、交易或转让您的个人信息，除非：</p>
-              <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-                <li><strong>服务提供商：</strong>与可信的第三方服务提供商共享，以帮助我们运营服务</li>
-                <li><strong>法律要求：</strong>当法律要求或保护我们的权利时</li>
-                <li><strong>业务转让：</strong>在公司合并、收购或资产出售时</li>
-                <li><strong>同意：</strong>在您明确同意的情况下</li>
-              </ul>
-            </section>
+            <h3>4.2 法律要求</h3>
+            <p>
+              在法律要求或保护我们的权利时，我们可能会披露您的信息。
+            </p>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. 数据安全</h2>
-              <p className="text-gray-700 mb-4">
-                我们实施适当的技术和组织措施来保护您的个人信息：
-              </p>
-              <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-                <li>使用SSL/TLS加密传输数据</li>
-                <li>定期安全审计和漏洞评估</li>
-                <li>访问控制和身份验证</li>
-                <li>数据备份和恢复程序</li>
-                <li>员工隐私培训</li>
-              </ul>
-            </section>
+            <h2>5. 数据安全</h2>
+            <p>
+              我们实施适当的技术和组织措施来保护您的个人信息，包括：
+            </p>
+            <ul>
+              <li>数据加密（传输和存储）</li>
+              <li>访问控制和身份验证</li>
+              <li>定期安全审计</li>
+              <li>员工培训和保密协议</li>
+            </ul>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">6. 数据保留</h2>
-              <p className="text-gray-700 mb-4">
-                我们仅在必要期间保留您的个人信息：
-              </p>
-              <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-                <li><strong>账户信息：</strong>在您的账户活跃期间</li>
-                <li><strong>邮件活动数据：</strong>根据您的订阅计划</li>
-                <li><strong>分析数据：</strong>最多24个月</li>
-                <li><strong>法律要求：</strong>根据适用法律要求</li>
-              </ul>
-            </section>
+            <h2>6. 数据保留</h2>
+            <p>
+              我们仅在必要期间保留您的个人信息，或根据法律要求保留。当不再需要时，我们会安全删除或匿名化处理。
+            </p>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. 您的权利</h2>
-              <p className="text-gray-700 mb-4">根据适用法律，您可能有权：</p>
-              <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-                <li>访问您的个人信息</li>
-                <li>更正不准确的信息</li>
-                <li>删除您的个人信息</li>
-                <li>限制处理您的信息</li>
-                <li>数据可移植性</li>
-                <li>反对处理您的信息</li>
-                <li>撤回同意</li>
-              </ul>
-            </section>
+            <h2>7. 您的权利</h2>
+            <p>根据适用法律，您可能有权：</p>
+            <ul>
+              <li>访问您的个人信息</li>
+              <li>更正不准确的信息</li>
+              <li>删除您的个人信息</li>
+              <li>限制处理</li>
+              <li>数据可移植性</li>
+              <li>反对处理</li>
+            </ul>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">8. Cookie政策</h2>
-              <p className="text-gray-700 mb-4">
-                我们使用Cookie和类似技术来：
-              </p>
-              <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-                <li>记住您的偏好设置</li>
-                <li>分析网站使用情况</li>
-                <li>提供个性化体验</li>
-                <li>确保服务安全</li>
-              </ul>
-              <p className="text-gray-700 mb-4">
-                您可以通过浏览器设置控制Cookie，但这可能影响某些功能。
-              </p>
-            </section>
+            <h2>8. Cookie政策</h2>
+            <h3>8.1 我们使用的Cookie类型</h3>
+            <ul>
+              <li><strong>必要Cookie：</strong>网站正常运行所必需</li>
+              <li><strong>功能Cookie：</strong>记住您的偏好设置</li>
+              <li><strong>分析Cookie：</strong>帮助我们了解网站使用情况</li>
+              <li><strong>营销Cookie：</strong>用于个性化广告</li>
+            </ul>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">9. 第三方服务</h2>
-              <p className="text-gray-700 mb-4">
-                我们的服务可能包含指向第三方网站的链接。我们不对这些网站的隐私做法负责。我们建议您查看这些网站的隐私政策。
-              </p>
-            </section>
+            <h3>8.2 Cookie管理</h3>
+            <p>
+              您可以通过浏览器设置管理Cookie偏好。请注意，禁用某些Cookie可能影响网站功能。
+            </p>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">10. 儿童隐私</h2>
-              <p className="text-gray-700 mb-4">
-                我们的服务不面向13岁以下的儿童。我们不会故意收集13岁以下儿童的个人信息。
-              </p>
-            </section>
+            <h2>9. 国际数据传输</h2>
+            <p>
+              您的信息可能会被传输到您所在国家/地区以外的地方进行处理。我们会确保适当的保护措施到位。
+            </p>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">11. 国际数据传输</h2>
-              <p className="text-gray-700 mb-4">
-                您的信息可能被传输到您所在国家/地区以外的地方进行处理。我们确保采取适当的保护措施来保护您的信息。
-              </p>
-            </section>
+            <h2>10. 儿童隐私</h2>
+            <p>
+              我们的服务不面向13岁以下的儿童。我们不会故意收集儿童的个人信息。
+            </p>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">12. 隐私政策更新</h2>
-              <p className="text-gray-700 mb-4">
-                我们可能会不时更新本隐私政策。重大更改将通过电子邮件或网站通知您。我们建议您定期查看本政策。
-              </p>
-            </section>
+            <h2>11. 第三方链接</h2>
+            <p>
+              我们的服务可能包含指向第三方网站的链接。我们不对这些网站的隐私做法负责。
+            </p>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">13. 联系我们</h2>
-              <p className="text-gray-700 mb-4">
-                如果您对本隐私政策有任何疑问或关注，请通过以下方式联系我们：
-              </p>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-gray-700">
-                  邮箱：privacy@novamail.world<br />
-                  网站：<Link href="/contact" className="text-primary-600 hover:text-primary-700 underline">联系我们</Link>
-                </p>
-              </div>
-            </section>
+            <h2>12. 营销通信</h2>
+            <p>
+              我们可能会向您发送营销通信。您可以随时通过以下方式选择退出：
+            </p>
+            <ul>
+              <li>点击电子邮件中的取消订阅链接</li>
+              <li>在账户设置中更新偏好</li>
+              <li>直接联系我们</li>
+            </ul>
 
-            <div className="border-t border-gray-200 pt-8 mt-8">
-              <p className="text-sm text-gray-500">
-                本隐私政策自2024年9月28日起生效。
+            <h2>13. 隐私政策更新</h2>
+            <p>
+              我们可能会不时更新本隐私政策。重大变更将通过电子邮件或网站通知您。
+            </p>
+
+            <h2>14. 数据保护官</h2>
+            <p>
+              如果您对数据处理有任何疑问，请联系我们的数据保护官：
+            </p>
+            <ul>
+              <li>邮箱：privacy@novamail.com</li>
+              <li>地址：[公司注册地址]</li>
+            </ul>
+
+            <h2>15. 监管机构</h2>
+            <p>
+              如果您认为我们违反了数据保护法律，您有权向相关监管机构投诉。
+            </p>
+
+            <div className="mt-12 p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600">
+                本隐私政策自2024年12月起生效。通过使用NovaMail服务，您确认已阅读、理解并同意本隐私政策。
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   )

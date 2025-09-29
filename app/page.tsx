@@ -488,16 +488,65 @@ export default function HomePage() {
         className="bg-gray-900 text-white py-12 relative z-10"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <motion.div 
-              whileHover={{ scale: 1.05 }}
-              className="flex items-center mb-4 md:mb-0"
-            >
-              <SparklesIcon className="h-8 w-8 text-primary-400" />
-              <span className="ml-2 text-xl font-bold">NovaSend</span>
-            </motion.div>
-            <div className="text-gray-400">
-              © 2024 NovaSend. All rights reserved.
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            {/* Company Info */}
+            <div>
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                className="flex items-center mb-4"
+              >
+                <span className="text-2xl font-bold text-primary-400">NovaMail</span>
+              </motion.div>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                专业的电子邮件营销平台，帮助您创建、发送和跟踪营销活动。
+              </p>
+            </div>
+
+            {/* Product */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">产品</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="/pricing" className="hover:text-white transition-colors">定价</Link></li>
+                <li><Link href="/features" className="hover:text-white transition-colors">功能</Link></li>
+                <li><Link href="/templates" className="hover:text-white transition-colors">模板</Link></li>
+                <li><Link href="/integrations" className="hover:text-white transition-colors">集成</Link></li>
+              </ul>
+            </div>
+
+            {/* Support */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">支持</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="/help" className="hover:text-white transition-colors">帮助中心</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">联系我们</Link></li>
+                <li><Link href="/status" className="hover:text-white transition-colors">服务状态</Link></li>
+                <li><Link href="/api" className="hover:text-white transition-colors">API文档</Link></li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">法律</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="/terms" className="hover:text-white transition-colors">服务条款</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">隐私政策</Link></li>
+                <li><Link href="/cookies" className="hover:text-white transition-colors">Cookie政策</Link></li>
+                <li><Link href="/gdpr" className="hover:text-white transition-colors">GDPR合规</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom */}
+          <div className="border-t border-gray-800 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <div className="text-gray-400 text-sm mb-4 md:mb-0">
+                © 2024 NovaMail. All rights reserved.
+              </div>
+              <div className="flex space-x-6 text-sm text-gray-400">
+                <Link href="/terms" className="hover:text-white transition-colors">服务条款</Link>
+                <Link href="/privacy" className="hover:text-white transition-colors">隐私政策</Link>
+                <Link href="/cookies" className="hover:text-white transition-colors">Cookie</Link>
+              </div>
             </div>
           </div>
         </div>
