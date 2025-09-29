@@ -30,7 +30,6 @@ export const authOptions: NextAuthOptions = {
       },
       httpOptions: {
         timeout: 30000,
-        retries: 2,
         headers: {
           'User-Agent': 'NovaMail/1.0'
         }
