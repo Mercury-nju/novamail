@@ -25,7 +25,6 @@ const navigation = [
   { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
   { name: 'Pricing', href: '/pricing', icon: Cog6ToothIcon },
-  { name: 'Admin', href: '/admin', icon: Cog6ToothIcon },
 ]
 
 export default function DashboardLayout({
