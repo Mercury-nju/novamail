@@ -152,35 +152,18 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* FAQ Section */}
-        <div className="mt-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">常见问题</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">如何开始使用NovaMail？</h3>
-              <p className="text-gray-600">
-                注册账户后，您可以立即开始创建和发送邮件营销活动。我们提供详细的入门指南和模板库。
-              </p>
-            </div>
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">支持哪些邮件格式？</h3>
-              <p className="text-gray-600">
-                我们支持HTML邮件、纯文本邮件，以及响应式设计模板，确保在各种设备上都能完美显示。
-              </p>
-            </div>
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">如何导入联系人？</h3>
-              <p className="text-gray-600">
-                支持CSV、Excel文件导入，也可以手动添加联系人。我们提供详细的数据格式说明。
-              </p>
-            </div>
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">数据安全如何保障？</h3>
-              <p className="text-gray-600">
-                我们采用企业级加密技术，严格遵循数据保护法规，确保您的数据安全可靠。
-              </p>
-            </div>
-          </div>
+        {/* FAQ Link */}
+        <div className="mt-16 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">需要更多帮助？</h2>
+          <p className="text-gray-600 mb-6">
+            查看我们的常见问题解答，快速找到您需要的答案
+          </p>
+          <a
+            href="/faq"
+            className="inline-flex items-center bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors"
+          >
+            查看常见问题
+          </a>
         </div>
       </div>
     </div>

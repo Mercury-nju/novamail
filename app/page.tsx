@@ -517,9 +517,9 @@ export default function HomePage() {
             <div>
               <h3 className="text-lg font-semibold mb-4">支持</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/help" className="hover:text-white transition-colors">帮助中心</Link></li>
+                <li><Link href="/faq" className="hover:text-white transition-colors">常见问题</Link></li>
                 <li><Link href="/contact" className="hover:text-white transition-colors">联系我们</Link></li>
-                <li><Link href="/status" className="hover:text-white transition-colors">服务状态</Link></li>
+                <li><Link href="/help" className="hover:text-white transition-colors">帮助中心</Link></li>
                 <li><Link href="/api" className="hover:text-white transition-colors">API文档</Link></li>
               </ul>
             </div>
