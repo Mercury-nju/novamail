@@ -4,9 +4,10 @@ const nextConfig = {
     unoptimized: true,
     domains: ['lh3.googleusercontent.com'],
   },
-  // 禁用构建缓存
+  // 启用服务器端功能 (API routes)
   experimental: {
     webpackBuildWorker: false,
+    serverComponentsExternalPackages: ['nodemailer'],
   },
   // 配置 webpack 禁用缓存
   webpack: (config, { isServer }) => {
