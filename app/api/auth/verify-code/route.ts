@@ -17,11 +17,8 @@ export async function POST(request: NextRequest) {
   try {
     // 应用速率限制
     const rateLimitResult = await authRateLimit(request)
-    if (rateLimitResult && !rateLimitResult.success) {
-      return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
-        { status: 429 }
-      )
+    if (rateLimitResult) {
+      return rateLimitResult
     }
 
     const body = await request.json()
