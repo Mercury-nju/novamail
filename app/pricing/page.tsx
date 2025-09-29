@@ -17,6 +17,7 @@ import {
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
   const [selectedPlan, setSelectedPlan] = useState('pro')
+  const [hoveredPlan, setHoveredPlan] = useState<string | null>(null)
 
   const plans = [
     {
@@ -67,7 +68,7 @@ export default function PricingPage() {
         'Remove NovaMail branding'
       ],
       limitations: [],
-      popular: true,
+      popular: false,
       cta: 'Start Pro Trial',
       ctaLink: '/register?plan=pro'
     },
@@ -143,6 +144,10 @@ export default function PricingPage() {
     const newCycle = billingCycle === 'monthly' ? 'yearly' : 'monthly'
     console.log('New billing cycle:', newCycle)
     setBillingCycle(newCycle)
+  }
+
+  const handlePlanSelect = (planId: string) => {
+    setSelectedPlan(planId)
   }
 
   return (
@@ -232,76 +237,190 @@ export default function PricingPage() {
       {/* Pricing Cards */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {plans.map((plan, index) => (
-            <motion.div
-              key={plan.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className={`relative bg-white rounded-2xl shadow-lg border-2 ${
-                plan.popular ? 'border-primary-500' : 'border-gray-200'
-              } overflow-hidden`}
-            >
-              {plan.popular && (
-                <div className="absolute top-0 left-0 right-0 bg-primary-600 text-white text-center py-2 text-sm font-medium">
-                  Most Popular
-                </div>
-              )}
+          {plans.map((plan, index) => {
+            const isSelected = selectedPlan === plan.id
+            const isHovered = hoveredPlan === plan.id
+            
+            return (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ 
+                  opacity: 1, 
+                  y: 0,
+                  scale: isSelected ? 1.05 : 1,
+                  rotateY: isHovered ? 2 : 0
+                }}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: index * 0.1,
+                  scale: { duration: 0.3 },
+                  rotateY: { duration: 0.2 }
+                }}
+                whileHover={{ 
+                  scale: 1.02,
+                  rotateY: 1,
+                  transition: { duration: 0.2 }
+                }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handlePlanSelect(plan.id)}
+                onMouseEnter={() => setHoveredPlan(plan.id)}
+                onMouseLeave={() => setHoveredPlan(null)}
+                className={`relative bg-white rounded-2xl shadow-lg border-2 cursor-pointer transition-all duration-300 ${
+                  isSelected 
+                    ? 'border-primary-500 shadow-2xl shadow-primary-200' 
+                    : isHovered 
+                      ? 'border-primary-300 shadow-xl' 
+                      : 'border-gray-200'
+                } overflow-hidden`}
+              >
+                {isSelected && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary-600 to-blue-600 text-white text-center py-2 text-sm font-medium"
+                  >
+                    <motion.span
+                      initial={{ scale: 0.8 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 0.2, delay: 0.1 }}
+                    >
+                      ✨ Selected Plan
+                    </motion.span>
+                  </motion.div>
+                )}
               
               <div className="p-8">
                 <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                  <p className="text-gray-600 mb-6">{plan.description}</p>
+                  <motion.h3 
+                    className="text-2xl font-bold text-gray-900 mb-2"
+                    animate={{ color: isSelected ? '#3B82F6' : '#111827' }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {plan.name}
+                  </motion.h3>
+                  <motion.p 
+                    className="text-gray-600 mb-6"
+                    animate={{ opacity: isSelected ? 0.8 : 0.6 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {plan.description}
+                  </motion.p>
                   
-                  <div className="mb-4">
-                    <span className="text-4xl font-bold text-gray-900">
+                  <motion.div 
+                    className="mb-4"
+                    animate={{ scale: isSelected ? 1.1 : 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <motion.span 
+                      className="text-4xl font-bold text-gray-900"
+                      animate={{ color: isSelected ? '#3B82F6' : '#111827' }}
+                      transition={{ duration: 0.3 }}
+                    >
                       ${getPrice(plan)}
-                    </span>
+                    </motion.span>
                     <span className="text-gray-600 ml-2">
                       /{billingCycle === 'yearly' ? 'year' : 'month'}
                     </span>
-                  </div>
+                  </motion.div>
                   
                   {billingCycle === 'yearly' && plan.monthlyPrice > 0 && (
-                    <div className="text-sm text-gray-600">
+                    <motion.div 
+                      className="text-sm text-gray-600"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
                       <span className="line-through">${plan.monthlyPrice}/month</span>
                       <span className="ml-2 text-green-600 font-medium">
                         Save {getYearlyDiscount(plan)}%
                       </span>
-                    </div>
+                    </motion.div>
                   )}
                 </div>
 
                 <div className="space-y-4 mb-8">
                   {plan.features.map((feature, featureIndex) => (
-                    <div key={featureIndex} className="flex items-start">
-                      <CheckIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
-                    </div>
+                    <motion.div 
+                      key={featureIndex} 
+                      className="flex items-start"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: featureIndex * 0.05 }}
+                    >
+                      <motion.div
+                        animate={{ 
+                          scale: isSelected ? 1.2 : 1,
+                          color: isSelected ? '#10B981' : '#10B981'
+                        }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <CheckIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                      </motion.div>
+                      <motion.span 
+                        className="text-gray-700"
+                        animate={{ 
+                          color: isSelected ? '#374151' : '#374151',
+                          fontWeight: isSelected ? '500' : '400'
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {feature}
+                      </motion.span>
+                    </motion.div>
                   ))}
                   
                   {plan.limitations.map((limitation, limitationIndex) => (
-                    <div key={limitationIndex} className="flex items-start">
+                    <motion.div 
+                      key={limitationIndex} 
+                      className="flex items-start"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: (plan.features.length + limitationIndex) * 0.05 }}
+                    >
                       <XMarkIcon className="h-5 w-5 text-gray-400 mt-0.5 mr-3 flex-shrink-0" />
                       <span className="text-gray-500">{limitation}</span>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
 
-                <Link
-                  href={plan.ctaLink}
-                  className={`w-full flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-colors ${
-                    plan.popular
-                      ? 'bg-primary-600 text-white hover:bg-primary-700'
-                      : 'bg-gray-900 text-white hover:bg-gray-800'
-                  }`}
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  {plan.cta}
-                  <ArrowRightIcon className="ml-2 h-4 w-4" />
-                </Link>
+                  <Link
+                    href={plan.ctaLink}
+                    className={`w-full flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                      isSelected
+                        ? 'bg-gradient-to-r from-primary-600 to-blue-600 text-white hover:from-primary-700 hover:to-blue-700 shadow-lg'
+                        : 'bg-gray-900 text-white hover:bg-gray-800 hover:shadow-md'
+                    }`}
+                  >
+                    <motion.span
+                      animate={{ 
+                        scale: isSelected ? 1.05 : 1,
+                        fontWeight: isSelected ? '600' : '500'
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {plan.cta}
+                    </motion.span>
+                    <motion.div
+                      animate={{ 
+                        x: isSelected ? 4 : 0,
+                        scale: isSelected ? 1.1 : 1
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ArrowRightIcon className="ml-2 h-4 w-4" />
+                    </motion.div>
+                  </Link>
+                </motion.div>
               </div>
             </motion.div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
