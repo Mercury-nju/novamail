@@ -132,20 +132,21 @@ export default function HomePage() {
           {[...Array(20)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-2 h-2 bg-primary-200 rounded-full opacity-60"
+              className="absolute w-3 h-3 bg-primary-300 rounded-full opacity-70"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
               }}
               animate={{
-                y: [0, -30, 0],
-                x: [0, Math.random() * 20 - 10, 0],
-                opacity: [0.6, 0.2, 0.6],
+                y: [0, -60, 0],
+                x: [0, Math.random() * 40 - 20, 0],
+                opacity: [0.7, 0.1, 0.7],
+                scale: [1, 1.5, 1],
               }}
               transition={{
-                duration: 3 + Math.random() * 2,
+                duration: 4 + Math.random() * 3,
                 repeat: Infinity,
-                delay: Math.random() * 2,
+                delay: Math.random() * 3,
                 ease: "easeInOut"
               }}
             />
@@ -153,37 +154,40 @@ export default function HomePage() {
           
           {/* Large floating circles */}
           <motion.div
-            className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-r from-primary-100 to-blue-100 rounded-full opacity-30"
+            className="absolute top-20 right-20 w-40 h-40 bg-gradient-to-r from-primary-100 to-blue-100 rounded-full opacity-40"
             animate={{
-              scale: [1, 1.2, 1],
+              scale: [1, 1.5, 1],
               rotate: [0, 180, 360],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-          />
-          <motion.div
-            className="absolute bottom-20 left-20 w-24 h-24 bg-gradient-to-r from-blue-100 to-primary-100 rounded-full opacity-40"
-            animate={{
-              scale: [1.2, 1, 1.2],
-              rotate: [360, 180, 0],
+              y: [0, -30, 0],
             }}
             transition={{
               duration: 15,
               repeat: Infinity,
-              ease: "linear"
+              ease: "easeInOut"
             }}
           />
           <motion.div
-            className="absolute top-1/2 left-1/4 w-16 h-16 bg-gradient-to-r from-primary-200 to-blue-200 rounded-full opacity-50"
+            className="absolute bottom-20 left-20 w-32 h-32 bg-gradient-to-r from-blue-100 to-primary-100 rounded-full opacity-50"
             animate={{
-              y: [0, -20, 0],
-              x: [0, 10, 0],
+              scale: [1.3, 1, 1.3],
+              rotate: [360, 180, 0],
+              x: [0, 20, 0],
             }}
             transition={{
-              duration: 6,
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute top-1/2 left-1/4 w-20 h-20 bg-gradient-to-r from-primary-200 to-blue-200 rounded-full opacity-60"
+            animate={{
+              y: [0, -40, 0],
+              x: [0, 25, 0],
+              scale: [1, 1.3, 1],
+            }}
+            transition={{
+              duration: 8,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -192,24 +196,25 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <motion.h1 
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
               className="text-5xl md:text-7xl lg:text-8xl font-bold text-gray-900 mb-8"
             >
               The Future of
               <motion.span 
-                initial={{ opacity: 0, scale: 0.8 }}
+                initial={{ opacity: 0, scale: 0.5, y: 20 }}
                 animate={{ 
                   opacity: 1, 
                   scale: 1,
+                  y: 0,
                   backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
                 }}
                 transition={{ 
-                  duration: 0.8, 
-                  delay: 0.3,
+                  duration: 1.2, 
+                  delay: 0.4,
                   backgroundPosition: {
-                    duration: 3,
+                    duration: 2.5,
                     repeat: Infinity,
                     ease: "easeInOut"
                   }
@@ -221,9 +226,9 @@ export default function HomePage() {
             </motion.h1>
             
             <motion.p 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              transition={{ duration: 1.0, delay: 0.6 }}
               className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed"
             >
               Create, send, and track professional email campaigns with AI assistance. 
@@ -231,25 +236,25 @@ export default function HomePage() {
             </motion.p>
 
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
+              transition={{ duration: 1.2, delay: 0.8 }}
               className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
             >
               <motion.div
                 whileHover={{ 
-                  scale: 1.05, 
-                  boxShadow: "0 20px 40px rgba(59, 130, 246, 0.4)",
-                  y: -2
+                  scale: 1.1, 
+                  boxShadow: "0 25px 50px rgba(59, 130, 246, 0.5)",
+                  y: -5
                 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 200, damping: 10 }}
               >
                 <Link href="/dashboard/campaigns/new" className="btn-primary text-lg px-10 py-4 flex items-center rounded-xl font-semibold">
                   Get Started
                   <motion.div
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
+                    animate={{ x: [0, 8, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
                   >
                     <ArrowRightIcon className="ml-2 h-5 w-5" />
                   </motion.div>
@@ -257,10 +262,10 @@ export default function HomePage() {
               </motion.div>
               <motion.button 
                 whileHover={{ 
-                  scale: 1.05,
-                  y: -2
+                  scale: 1.1,
+                  y: -5
                 }}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.9 }}
                 className="text-primary-600 hover:text-primary-700 font-semibold text-lg transition-all duration-300 px-6 py-3 rounded-lg hover:bg-primary-50"
               >
                 Watch Demo
