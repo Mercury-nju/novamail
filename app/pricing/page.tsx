@@ -30,7 +30,7 @@ export default function PricingPage() {
         'Up to 500 contacts',
         'Up to 1,000 emails per month',
         'Simple email templates',
-        'AI email generation (通义千问)',
+        'AI email generation',
         'Basic analytics',
         'Email support',
         'Contact import (CSV, TXT)',
@@ -57,7 +57,7 @@ export default function PricingPage() {
         'Up to 5,000 contacts',
         'Up to 25,000 emails per month',
         'All email templates (Simple + Professional)',
-        'AI email generation (通义千问)',
+        'AI email generation',
         'Advanced analytics & reporting',
         'Priority email support',
         'Contact import (CSV, TXT, Excel)',
@@ -82,7 +82,7 @@ export default function PricingPage() {
         'Unlimited contacts',
         'Unlimited emails',
         'All email templates + Custom templates',
-        'AI email generation (通义千问)',
+        'AI email generation',
         'Advanced analytics & reporting',
         'Dedicated account manager',
         'All import formats + API integration',
@@ -104,7 +104,7 @@ export default function PricingPage() {
   const faqs = [
     {
       question: 'What is AI email generation?',
-      answer: 'Our AI email generation uses 通义千问 (Tongyi Qianwen) to automatically create personalized email content based on your campaign theme, purpose, and business information. It works for both simple and professional templates.'
+      answer: 'Our AI email generation uses advanced AI technology to automatically create personalized email content based on your campaign theme, purpose, and business information. It works for both simple and professional templates.'
     },
     {
       question: 'What are professional templates?',
@@ -456,7 +456,7 @@ export default function PricingPage() {
                   { feature: 'Emails per month', free: '1,000', pro: '25,000', enterprise: 'Unlimited' },
                   { feature: 'Campaigns per month', free: '2', pro: 'Unlimited', enterprise: 'Unlimited' },
                   { feature: 'Email templates', free: 'Simple only', pro: 'Simple + Professional', enterprise: 'All + Custom' },
-                  { feature: 'AI email generation', free: 'Yes (通义千问)', pro: 'Yes (通义千问)', enterprise: 'Yes (通义千问)' },
+                  { feature: 'AI email generation', free: 'Yes', pro: 'Yes', enterprise: 'Yes' },
                   { feature: 'Contact import', free: 'CSV, TXT', pro: 'CSV, TXT, Excel', enterprise: 'All formats + API' },
                   { feature: 'Contact groups', free: 'Basic', pro: 'Advanced', enterprise: 'Advanced + Automation' },
                   { feature: 'SMTP configuration', free: 'No', pro: 'Yes', enterprise: 'Yes + Custom' },
