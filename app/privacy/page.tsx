@@ -150,7 +150,7 @@ export default function PrivacyPage() {
               如果您对数据处理有任何疑问，请联系我们的数据保护官：
             </p>
             <ul>
-              <li>邮箱：contact@novamail.com</li>
+              <li>邮箱：contact@novamail.com (实际接收：lihongyangnju@gmail.com)</li>
             </ul>
 
             <h2>15. 监管机构</h2>

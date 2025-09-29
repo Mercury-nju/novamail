@@ -126,7 +126,7 @@ export default function TermsPage() {
               如果您对这些服务条款有任何疑问，请通过以下方式联系我们：
             </p>
             <ul>
-              <li>邮箱：contact@novamail.com</li>
+              <li>邮箱：contact@novamail.com (实际接收：lihongyangnju@gmail.com)</li>
             </ul>
 
             <div className="mt-12 p-4 bg-gray-50 rounded-lg">

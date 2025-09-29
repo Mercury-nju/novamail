@@ -34,7 +34,7 @@ export default function ContactPage() {
                 <div className="space-y-3">
                   <div className="flex items-center">
                     <span className="text-gray-500 w-20">邮箱：</span>
-                    <a href="mailto:contact@novamail.com" className="text-primary-600 hover:text-primary-700">
+                    <a href="mailto:lihongyangnju@gmail.com" className="text-primary-600 hover:text-primary-700">
                       contact@novamail.com
                     </a>
                   </div>
