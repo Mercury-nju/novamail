@@ -77,8 +77,9 @@ export default function HomePage() {
               whileHover={{ scale: 1.05 }}
               className="flex items-center"
             >
-              <SparklesIcon className="h-8 w-8 text-primary-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">NovaMail</span>
+              <Link href="/" className="text-2xl font-bold text-primary-600">
+                NovaMail
+              </Link>
             </motion.div>
             <div className="flex items-center space-x-4">
               <motion.div whileHover={{ scale: 1.05 }}>
