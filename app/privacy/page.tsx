@@ -151,7 +151,7 @@ export default function PrivacyPage() {
             </p>
             <ul>
               <li>邮箱：privacy@novamail.com</li>
-              <li>地址：[公司注册地址]</li>
+              <li>地址：北京市朝阳区建国门外大街1号国贸大厦A座2001室，邮编：100004</li>
             </ul>
 
             <h2>15. 监管机构</h2>

@@ -1,327 +1,252 @@
-'use client'
+import { Metadata } from 'next'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import {
-  SparklesIcon,
-  EnvelopeIcon,
-  PhoneIcon,
-  MapPinIcon,
-  ArrowRightIcon
-} from '@heroicons/react/24/outline'
-import toast from 'react-hot-toast'
+export const metadata: Metadata = {
+  title: '联系我们 - NovaMail',
+  description: '联系NovaMail团队，获取支持和帮助',
+}
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    company: '',
-    subject: '',
-    message: ''
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('Message sent successfully! We\'ll get back to you soon.')
-      setFormData({ name: '', email: '', company: '', subject: '', message: '' })
-    } catch (error) {
-      toast.error('Failed to send message. Please try again.')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }))
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold text-primary-600">
-                NovaMail
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link href="/pricing" className="text-gray-600 hover:text-gray-900">
-                Pricing
-              </Link>
-              <Link href="/login" className="text-gray-600 hover:text-gray-900">
-                Sign In
-              </Link>
-              <Link href="/register" className="btn-primary">
-                Get Started
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Hero Section */}
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-6xl font-bold text-gray-900 mb-6"
-            >
-              Get in
-              <motion.span
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                className="text-primary-600 bg-gradient-to-r from-primary-600 to-blue-600 bg-clip-text text-transparent"
-              >
-                {" "}Touch
-              </motion.span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto"
-            >
-              Have questions about NovaMail? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-            </motion.p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">联系我们</h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              我们很乐意为您提供帮助。请选择最适合您需求的联系方式。
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Contact Form & Info */}
+      {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* Contact Information */}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">联系信息</h2>
+            
+            <div className="space-y-8">
+              {/* General Support */}
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">技术支持</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <span className="text-gray-500 w-20">邮箱：</span>
+                    <a href="mailto:support@novamail.com" className="text-primary-600 hover:text-primary-700">
+                      support@novamail.com
+                    </a>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-gray-500 w-20">电话：</span>
+                    <a href="tel:+86-400-888-9999" className="text-primary-600 hover:text-primary-700">
+                      +86-400-888-9999
+                    </a>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-gray-500 w-20">时间：</span>
+                    <span className="text-gray-700">周一至周五 9:00-18:00 (北京时间)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sales */}
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">销售咨询</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <span className="text-gray-500 w-20">邮箱：</span>
+                    <a href="mailto:sales@novamail.com" className="text-primary-600 hover:text-primary-700">
+                      sales@novamail.com
+                    </a>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-gray-500 w-20">电话：</span>
+                    <a href="tel:+86-400-888-8888" className="text-primary-600 hover:text-primary-700">
+                      +86-400-888-8888
+                    </a>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-gray-500 w-20">时间：</span>
+                    <span className="text-gray-700">周一至周五 9:00-18:00 (北京时间)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Legal */}
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">法律事务</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <span className="text-gray-500 w-20">邮箱：</span>
+                    <a href="mailto:legal@novamail.com" className="text-primary-600 hover:text-primary-700">
+                      legal@novamail.com
+                    </a>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-gray-500 w-20">地址：</span>
+                    <span className="text-gray-700">
+                      北京市朝阳区建国门外大街1号<br />
+                      国贸大厦A座2001室<br />
+                      邮编：100004
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Privacy */}
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">隐私保护</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <span className="text-gray-500 w-20">邮箱：</span>
+                    <a href="mailto:privacy@novamail.com" className="text-primary-600 hover:text-primary-700">
+                      privacy@novamail.com
+                    </a>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-gray-500 w-20">说明：</span>
+                    <span className="text-gray-700">数据保护相关问题</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="card"
-          >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a message</h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">发送消息</h2>
+            
+            <form className="bg-white rounded-lg p-8 shadow-sm border border-gray-200">
+              <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Name *
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                    姓名 *
                   </label>
                   <input
                     type="text"
+                    id="name"
                     name="name"
-                    value={formData.name}
-                    onChange={handleChange}
                     required
-                    className="input-field"
-                    placeholder="Your full name"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="请输入您的姓名"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email *
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    邮箱 *
                   </label>
                   <input
                     type="email"
+                    id="email"
                     name="email"
-                    value={formData.email}
-                    onChange={handleChange}
                     required
-                    className="input-field"
-                    placeholder="your@email.com"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="请输入您的邮箱地址"
                   />
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Company
-                </label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleChange}
-                  className="input-field"
-                  placeholder="Your company name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Subject *
-                </label>
-                <select
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  required
-                  className="input-field"
+
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    电话
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="请输入您的电话号码"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                    主题 *
+                  </label>
+                  <select
+                    id="subject"
+                    name="subject"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  >
+                    <option value="">请选择咨询类型</option>
+                    <option value="technical">技术支持</option>
+                    <option value="sales">销售咨询</option>
+                    <option value="billing">账单问题</option>
+                    <option value="feature">功能建议</option>
+                    <option value="bug">问题反馈</option>
+                    <option value="other">其他</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                    消息内容 *
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={6}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="请详细描述您的问题或需求..."
+                  />
+                </div>
+
+                <div className="flex items-start">
+                  <input
+                    type="checkbox"
+                    id="privacy"
+                    name="privacy"
+                    required
+                    className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="privacy" className="ml-3 text-sm text-gray-700">
+                    我同意<a href="/privacy" className="text-primary-600 hover:text-primary-700">隐私政策</a>和<a href="/terms" className="text-primary-600 hover:text-primary-700">服务条款</a>
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-primary-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors"
                 >
-                  <option value="">Select a subject</option>
-                  <option value="general">General Inquiry</option>
-                  <option value="sales">Sales Question</option>
-                  <option value="support">Technical Support</option>
-                  <option value="billing">Billing Question</option>
-                  <option value="partnership">Partnership Opportunity</option>
-                  <option value="other">Other</option>
-                </select>
+                  发送消息
+                </button>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Message *
-                </label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows={6}
-                  className="input-field"
-                  placeholder="Tell us how we can help you..."
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full btn-primary flex items-center justify-center disabled:opacity-50"
-              >
-                {isSubmitting ? 'Sending...' : 'Send Message'}
-                <ArrowRightIcon className="ml-2 h-4 w-4" />
-              </button>
             </form>
-          </motion.div>
-
-          {/* Contact Information */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="space-y-8"
-          >
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <EnvelopeIcon className="h-6 w-6 text-primary-600" />
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-gray-900">Email</h3>
-                    <p className="text-sm text-gray-600">support@novasend.com</p>
-                    <p className="text-sm text-gray-600">sales@novasend.com</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <PhoneIcon className="h-6 w-6 text-primary-600" />
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-gray-900">Phone</h3>
-                    <p className="text-sm text-gray-600">+1 (555) 123-4567</p>
-                    <p className="text-sm text-gray-600">Mon-Fri 9AM-6PM EST</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <MapPinIcon className="h-6 w-6 text-primary-600" />
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-gray-900">Address</h3>
-                    <p className="text-sm text-gray-600">
-                      123 Business Street<br />
-                      Suite 100<br />
-                      New York, NY 10001
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* FAQ Section */}
-            <div className="card">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Frequently Asked Questions</h3>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900">How quickly do you respond?</h4>
-                  <p className="text-sm text-gray-600">We typically respond within 24 hours during business days.</p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900">Do you offer phone support?</h4>
-                  <p className="text-sm text-gray-600">Yes, phone support is available for Pro and Enterprise customers.</p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900">Can I schedule a demo?</h4>
-                  <p className="text-sm text-gray-600">Absolutely! Use the "Sales Question" subject to request a demo.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA */}
-            <div className="card bg-primary-50 border-primary-200">
-              <h3 className="text-lg font-medium text-primary-900 mb-2">Ready to get started?</h3>
-              <p className="text-sm text-primary-700 mb-4">
-                Try NovaMail free for 14 days. No credit card required.
-              </p>
-              <Link href="/register" className="btn-primary">
-                Start Free Trial
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-white font-semibold mb-4">Product</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link href="/features" className="hover:text-white">Features</Link></li>
-                <li><Link href="/pricing" className="hover:text-white">Pricing</Link></li>
-                <li><Link href="/integrations" className="hover:text-white">Integrations</Link></li>
-                <li><Link href="/api" className="hover:text-white">API</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-4">Company</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link href="/about" className="hover:text-white">About</Link></li>
-                <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
-                <li><Link href="/careers" className="hover:text-white">Careers</Link></li>
-                <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link href="/help" className="hover:text-white">Help Center</Link></li>
-                <li><Link href="/docs" className="hover:text-white">Documentation</Link></li>
-                <li><Link href="/status" className="hover:text-white">Status</Link></li>
-                <li><Link href="/security" className="hover:text-white">Security</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-4">Legal</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link href="/privacy" className="hover:text-white">Privacy</Link></li>
-                <li><Link href="/terms" className="hover:text-white">Terms</Link></li>
-                <li><Link href="/cookies" className="hover:text-white">Cookies</Link></li>
-                <li><Link href="/gdpr" className="hover:text-white">GDPR</Link></li>
-              </ul>
-            </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 NovaMail. All rights reserved.</p>
+        </div>
+
+        {/* FAQ Section */}
+        <div className="mt-16">
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">常见问题</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">如何开始使用NovaMail？</h3>
+              <p className="text-gray-600">
+                注册账户后，您可以立即开始创建和发送邮件营销活动。我们提供详细的入门指南和模板库。
+              </p>
+            </div>
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">支持哪些邮件格式？</h3>
+              <p className="text-gray-600">
+                我们支持HTML邮件、纯文本邮件，以及响应式设计模板，确保在各种设备上都能完美显示。
+              </p>
+            </div>
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">如何导入联系人？</h3>
+              <p className="text-gray-600">
+                支持CSV、Excel文件导入，也可以手动添加联系人。我们提供详细的数据格式说明。
+              </p>
+            </div>
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">数据安全如何保障？</h3>
+              <p className="text-gray-600">
+                我们采用企业级加密技术，严格遵循数据保护法规，确保您的数据安全可靠。
+              </p>
+            </div>
           </div>
         </div>
       </div>

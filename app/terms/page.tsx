@@ -127,7 +127,7 @@ export default function TermsPage() {
             </p>
             <ul>
               <li>邮箱：legal@novamail.com</li>
-              <li>地址：[公司注册地址]</li>
+              <li>地址：北京市朝阳区建国门外大街1号国贸大厦A座2001室，邮编：100004</li>
             </ul>
 
             <div className="mt-12 p-4 bg-gray-50 rounded-lg">
