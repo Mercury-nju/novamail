@@ -8,7 +8,8 @@ import {
   ChartBarIcon,
   PlusIcon,
   ArrowUpIcon,
-  ArrowDownIcon
+  ArrowDownIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline'
 
 export default function DashboardPage() {
@@ -107,6 +108,49 @@ export default function DashboardPage() {
         </p>
       </div>
 
+      {/* Primary CTA - Create Campaign */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative overflow-hidden bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl shadow-lg"
+      >
+        <div className="absolute inset-0 bg-black opacity-10"></div>
+        <div className="relative px-6 py-8">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Ready to create your next email campaign?
+              </h2>
+              <p className="text-primary-100 mb-6 max-w-2xl">
+                Use our AI-powered assistant to generate professional email content in seconds, or create campaigns manually with our intuitive builder.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/dashboard/agent"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-primary-700 bg-white hover:bg-gray-50 transition-colors duration-200 shadow-sm"
+                >
+                  <SparklesIcon className="h-5 w-5 mr-2" />
+                  Create with AI Assistant
+                </Link>
+                <Link
+                  href="/dashboard/campaigns/new"
+                  className="inline-flex items-center px-6 py-3 border border-white border-opacity-30 text-base font-medium rounded-lg text-white hover:bg-white hover:bg-opacity-10 transition-colors duration-200"
+                >
+                  <PlusIcon className="h-5 w-5 mr-2" />
+                  Create Campaign Manually
+                </Link>
+              </div>
+            </div>
+            <div className="hidden lg:block ml-8">
+              <div className="w-32 h-32 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                <EnvelopeIcon className="h-16 w-16 text-white" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
       {/* Stats */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => (
@@ -114,7 +158,7 @@ export default function DashboardPage() {
             key={stat.name}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
+            transition={{ duration: 0.6, delay: (index + 1) * 0.1 }}
             className="card"
           >
             <div className="flex items-center">
@@ -160,7 +204,7 @@ export default function DashboardPage() {
               key={action.name}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
+              transition={{ duration: 0.6, delay: (index + 5) * 0.1 }}
             >
               <Link
                 href={action.href}

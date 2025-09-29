@@ -142,16 +142,144 @@ export default function ContactsPage() {
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
-    if (!file) return
-
-    if (file.type !== 'text/csv') {
-      toast.error('Please upload a CSV file')
+    if (!file) {
+      console.log('No file selected')
       return
     }
 
-    // Simulate CSV processing
-    toast.success('CSV file uploaded successfully')
+    console.log('File selected:', file.name, file.type, file.size)
+
+    const fileName = file.name.toLowerCase()
+    const isCSV = fileName.endsWith('.csv')
+    const isExcel = fileName.endsWith('.xlsx') || fileName.endsWith('.xls')
+    const isTXT = fileName.endsWith('.txt')
+
+    console.log('File type check:', { isCSV, isExcel, isTXT })
+
+    if (!isCSV && !isExcel && !isTXT) {
+      toast.error('请上传CSV、Excel或TXT格式的文件')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const content = e.target?.result as string
+      console.log('File content length:', content.length)
+      console.log('File content preview:', content.substring(0, 200))
+      
+      try {
+        const contacts = parseFileContent(content, file.name)
+        console.log('Parsed contacts:', contacts)
+        
+        if (contacts.length > 0) {
+          setContacts(prev => [...contacts, ...prev])
+          toast.success(`成功导入 ${contacts.length} 个联系人`)
+        } else {
+          toast.error('文件中没有找到有效的联系人数据')
+        }
+      } catch (error) {
+        console.error('Parse error:', error)
+        toast.error('文件解析失败，请检查文件格式')
+      }
+    }
+
+    reader.onerror = (error) => {
+      console.error('File read error:', error)
+      toast.error('文件读取失败')
+    }
+
+    // 对于Excel文件，我们需要特殊处理
+    if (isExcel) {
+      toast.error('Excel文件需要转换为CSV格式后导入')
+      return
+    }
+
+    reader.readAsText(file, 'utf-8')
     setShowImportModal(false)
+  }
+
+  const parseFileContent = (content: string, fileName: string): Contact[] => {
+    const contacts: Contact[] = []
+    const lines = content.split('\n').filter(line => line.trim())
+    
+    console.log('Total lines:', lines.length)
+    console.log('First few lines:', lines.slice(0, 3))
+
+    if (fileName.toLowerCase().endsWith('.txt')) {
+      // TXT格式：每行一个邮箱地址，可选格式 "姓名,邮箱" 或 "邮箱"
+      lines.forEach((line, index) => {
+        const trimmedLine = line.trim()
+        if (trimmedLine) {
+          if (trimmedLine.includes(',')) {
+            const [name, email] = trimmedLine.split(',').map(s => s.trim())
+            if (email && isValidEmail(email)) {
+              contacts.push({
+                id: Date.now() + index,
+                name: name || email.split('@')[0],
+                email: email,
+                status: 'active',
+                addedDate: new Date().toISOString().split('T')[0]
+              })
+            }
+          } else if (isValidEmail(trimmedLine)) {
+            contacts.push({
+              id: Date.now() + index,
+              name: trimmedLine.split('@')[0],
+              email: trimmedLine,
+              status: 'active',
+              addedDate: new Date().toISOString().split('T')[0]
+            })
+          }
+        }
+      })
+    } else {
+      // CSV格式：包含标题行
+      if (lines.length === 0) {
+        console.log('No lines found in file')
+        return contacts
+      }
+      
+      const [header, ...dataLines] = lines
+      console.log('Header:', header)
+      console.log('Data lines count:', dataLines.length)
+      
+      const headers = header.split(',').map(h => h.trim().toLowerCase())
+      console.log('Headers:', headers)
+      
+      const nameIndex = headers.findIndex(h => h.includes('name') || h.includes('姓名'))
+      const emailIndex = headers.findIndex(h => h.includes('email') || h.includes('邮箱'))
+      const segmentIndex = headers.findIndex(h => h.includes('segment') || h.includes('分层'))
+
+      console.log('Column indices:', { nameIndex, emailIndex, segmentIndex })
+
+      dataLines.forEach((line, index) => {
+        const values = line.split(',').map(v => v.trim().replace(/"/g, ''))
+        const name = nameIndex >= 0 ? values[nameIndex] : ''
+        const email = emailIndex >= 0 ? values[emailIndex] : ''
+        const segment = segmentIndex >= 0 ? values[segmentIndex] : ''
+
+        console.log(`Line ${index}:`, { name, email, segment, values })
+
+        if (email && isValidEmail(email)) {
+          contacts.push({
+            id: Date.now() + index,
+            name: name || email.split('@')[0],
+            email: email,
+            status: 'active',
+            addedDate: new Date().toISOString().split('T')[0],
+            userSegment: segment || undefined
+          })
+        }
+      })
+    }
+
+    console.log('Final contacts count:', contacts.length)
+    return contacts
+  }
+
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
   }
 
 
@@ -184,7 +312,7 @@ export default function ContactsPage() {
             className="btn-secondary flex items-center"
           >
             <CloudArrowUpIcon className="h-4 w-4 mr-2" />
-            Import CSV
+            Import Contacts
           </button>
           <button
             onClick={() => setShowAddModal(true)}
@@ -391,22 +519,34 @@ export default function ContactsPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Upload CSV File
+                  Upload File (CSV, TXT)
                 </label>
                 <input
                   type="file"
-                  accept=".csv"
+                  accept=".csv,.txt"
                   onChange={handleFileUpload}
                   className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
                 />
               </div>
               <div className="text-sm text-gray-500">
-                <p>CSV format should include:</p>
-                <ul className="list-disc list-inside mt-1">
-                  <li>Name (required)</li>
-                  <li>Email (required)</li>
-                  <li>User Segment (optional)</li>
-                </ul>
+                <p className="font-medium mb-2">支持的文件格式：</p>
+                <div className="space-y-2">
+                  <div>
+                    <p className="font-medium">CSV格式：</p>
+                    <ul className="list-disc list-inside mt-1 ml-2">
+                      <li>Name/姓名 (必填)</li>
+                      <li>Email/邮箱 (必填)</li>
+                      <li>User Segment/用户分层 (可选)</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-medium">TXT格式：</p>
+                    <ul className="list-disc list-inside mt-1 ml-2">
+                      <li>每行一个邮箱地址</li>
+                      <li>或格式：姓名,邮箱</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">

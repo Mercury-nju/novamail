@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { useRouter } from 'next/navigation'
-import { SparklesIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { signIn, getSession } from 'next-auth/react'
+import { SparklesIcon, EyeIcon, EyeSlashIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 
 export default function LoginPage() {
@@ -12,32 +13,61 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showGoogleSetupNote, setShowGoogleSetupNote] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const session = await getSession()
+      if (session) {
+        router.push('/dashboard')
+      }
+    }
+    checkSession()
+
+    // 检查是否有错误参数
+    const error = searchParams.get('error')
+    if (error === 'OAuthSignin') {
+      setShowGoogleSetupNote(true)
+      toast.error('Google登录失败，请检查网络连接或VPN设置')
+    }
+  }, [router, searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // For demo purposes, accept any email/password
-      if (email && password) {
-        toast.success('Login successful!')
-        router.push('/dashboard')
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        toast.error('登录失败，请检查邮箱和密码')
       } else {
-        toast.error('Please fill in all fields')
+        toast.success('登录成功！')
+        router.push('/dashboard')
       }
     } catch (error) {
-      toast.error('Login failed. Please try again.')
+      console.error('Login error:', error)
+      toast.error('登录时发生错误')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleGoogleLogin = () => {
-    toast.success('Google login coming soon!')
+  const handleGoogleLogin = async () => {
+    try {
+      setShowGoogleSetupNote(false)
+      await signIn('google', { callbackUrl: '/dashboard', redirect: true })
+    } catch (error) {
+      console.error('Google login failed:', error)
+      setShowGoogleSetupNote(true)
+      toast.error('Google登录失败，请检查网络连接或VPN设置')
+    }
   }
 
   return (
@@ -49,12 +79,11 @@ export default function LoginPage() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <Link href="/" className="flex items-center justify-center">
-            <SparklesIcon className="h-10 w-10 text-primary-600" />
-            <span className="ml-2 text-2xl font-bold text-gray-900">NovaMail</span>
-          </Link>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Welcome back
+          <div className="flex justify-center">
+            <SparklesIcon className="h-12 w-12 text-primary-600" />
+          </div>
+          <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
+            Welcome back 欢迎回来
           </h2>
           <p className="mt-2 text-sm text-gray-600">
             Sign in to your account to continue
@@ -183,16 +212,49 @@ export default function LoginPage() {
                 </svg>
                 <span className="ml-2">Google</span>
               </button>
+              
+              {showGoogleSetupNote && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4"
+                >
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-red-800">Google登录配置问题</h3>
+                      <div className="mt-1 text-sm text-red-700">
+                        <p>Google OAuth未正确配置。这可能是因为网络连接问题。</p>
+                        <div className="mt-2 text-sm">
+                          <p className="font-medium">解决方案：</p>
+                          <ol className="list-decimal list-inside mt-1 space-y-1">
+                            <li>检查VPN设置，确保TUN模式已开启</li>
+                            <li>尝试切换到全局代理模式</li>
+                            <li>或者暂时使用邮箱密码登录</li>
+                          </ol>
+                        </div>
+                        <div className="mt-3">
+                          <Link href="/google-setup" className="text-blue-600 hover:text-blue-500 underline">
+                            查看Google OAuth设置指南 →
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
             </div>
           </div>
 
-          <div className="text-center">
-            <span className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link href="/register" className="text-primary-600 hover:text-primary-500 font-medium">
+          <div className="text-center text-sm">
+            <p className="text-gray-600">
+              Don{"'"}t have an account?{' '}
+              <Link href="/register" className="text-primary-600 hover:text-primary-500">
                 Sign up
               </Link>
-            </span>
+            </p>
           </div>
         </motion.form>
       </div>

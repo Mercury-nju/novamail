@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { motion } from 'framer-motion'
 import {
   SparklesIcon,
@@ -19,11 +20,13 @@ import toast from 'react-hot-toast'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+  { name: 'AI Assistant', href: '/dashboard/agent', icon: SparklesIcon },
   { name: 'Contacts', href: '/dashboard/contacts', icon: UserGroupIcon },
   { name: 'Campaigns', href: '/dashboard/campaigns', icon: EnvelopeIcon },
   { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
   { name: 'Pricing', href: '/pricing', icon: Cog6ToothIcon },
+  { name: 'Admin', href: '/admin', icon: Cog6ToothIcon },
 ]
 
 export default function DashboardLayout({
@@ -34,11 +37,35 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
+  const { data: session } = useSession()
 
   const handleLogout = () => {
     toast.success('Logged out successfully')
     // In a real app, you would clear the auth token and redirect
     router.push('/')
+  }
+
+  // 获取用户显示信息
+  const getUserDisplayName = () => {
+    if (session?.user?.name) {
+      return session.user.name
+    }
+    if (session?.user?.email) {
+      return session.user.email.split('@')[0]
+    }
+    return 'User'
+  }
+
+  const getUserInitials = () => {
+    const name = getUserDisplayName()
+    if (name.includes('@')) {
+      return name.charAt(0).toUpperCase()
+    }
+    const parts = name.split(' ')
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase()
+    }
+    return name.charAt(0).toUpperCase()
   }
 
   return (
@@ -149,9 +176,9 @@ export default function DashboardLayout({
               <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" />
               <div className="flex items-center gap-x-2">
                 <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
-                  <span className="text-sm font-medium text-primary-700">JD</span>
+                  <span className="text-sm font-medium text-primary-700">{getUserInitials()}</span>
                 </div>
-                <span className="hidden lg:block text-sm font-medium text-gray-700">John Doe</span>
+                <span className="hidden lg:block text-sm font-medium text-gray-700">{getUserDisplayName()}</span>
               </div>
             </div>
           </div>

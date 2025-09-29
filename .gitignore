@@ -203,3 +203,4 @@ server/logs/
 
 # MongoDB data
 data/
+/generated/prisma
