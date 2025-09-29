@@ -227,21 +227,38 @@ export default function HomePage() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="py-16 bg-white relative z-10"
+        className="py-24 bg-white relative z-10 overflow-hidden"
       >
+        {/* Background Elements */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-1/4 left-0 w-96 h-96 bg-gradient-to-br from-blue-50 to-transparent rounded-full blur-3xl opacity-50" />
+          <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-gradient-to-br from-primary-50 to-transparent rounded-full blur-3xl opacity-50" />
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            className="text-center mb-20"
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Everything you need to succeed
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-6"
+            >
+              ✨ Powerful Features
+            </motion.span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Everything you need to 
+              <span className="text-primary-600"> succeed</span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Powerful features designed for modern email marketing
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Powerful features designed for modern email marketing. 
+              Built with cutting-edge technology to help you grow your business.
             </p>
           </motion.div>
 
@@ -257,24 +274,26 @@ export default function HomePage() {
                   y: -10,
                   transition: { type: "spring", stiffness: 300 }
                 }}
-                className="text-center group"
+                className="group relative"
               >
-                <motion.div 
-                  whileHover={{ 
-                    scale: 1.1,
-                    rotate: 5,
-                    transition: { type: "spring", stiffness: 300 }
-                  }}
-                  className="bg-gradient-to-br from-primary-100 to-primary-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:shadow-lg transition-shadow"
-                >
-                  <feature.icon className="h-8 w-8 text-primary-600" />
-                </motion.div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600">
-                  {feature.description}
-                </p>
+                <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 h-full">
+                  <motion.div 
+                    whileHover={{ 
+                      scale: 1.1,
+                      rotate: 5,
+                      transition: { type: "spring", stiffness: 300 }
+                    }}
+                    className="bg-gradient-to-br from-primary-100 to-primary-200 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:shadow-lg transition-shadow"
+                  >
+                    <feature.icon className="h-8 w-8 text-primary-600" />
+                  </motion.div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -287,52 +306,83 @@ export default function HomePage() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="py-16 bg-gradient-to-br from-gray-50 to-gray-100 relative z-10"
+        className="py-24 bg-gradient-to-br from-slate-50 via-white to-blue-50 relative z-10 overflow-hidden"
       >
+        {/* Background Pattern */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_50%)]" />
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-px h-full bg-gradient-to-b from-transparent via-primary-200 to-transparent opacity-30" />
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            className="text-center mb-20"
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              How it works
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-6"
+            >
+              🚀 Simple Process
+            </motion.span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              How it <span className="text-primary-600">works</span>
             </h2>
-            <p className="text-lg text-gray-600">
-              Get started in minutes, not hours
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Get started in minutes, not hours. Our intuitive process makes email marketing effortless.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {steps.map((step, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ 
-                  y: -5,
-                  transition: { type: "spring", stiffness: 300 }
-                }}
-                className="text-center group"
-              >
-                <motion.div 
+          <div className="relative">
+            {/* Connection Lines */}
+            <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary-200 to-transparent transform -translate-y-1/2" />
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4">
+              {steps.map((step, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
                   whileHover={{ 
-                    scale: 1.1,
+                    y: -5,
                     transition: { type: "spring", stiffness: 300 }
                   }}
-                  className="bg-gradient-to-br from-primary-600 to-primary-700 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold group-hover:shadow-lg transition-shadow"
+                  className="text-center group relative"
                 >
-                  {index + 1}
+                  <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 relative z-10">
+                    <motion.div 
+                      whileHover={{ 
+                        scale: 1.1,
+                        transition: { type: "spring", stiffness: 300 }
+                      }}
+                      className="bg-gradient-to-br from-primary-600 to-primary-700 text-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 text-xl font-bold group-hover:shadow-lg transition-shadow"
+                    >
+                      {index + 1}
+                    </motion.div>
+                    <p className="text-gray-700 text-lg leading-relaxed">
+                      {step}
+                    </p>
+                  </div>
+                  
+                  {/* Connection Arrow */}
+                  {index < steps.length - 1 && (
+                    <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-20">
+                      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg border border-gray-100">
+                        <ArrowRightIcon className="w-4 h-4 text-primary-600" />
+                      </div>
+                    </div>
+                  )}
                 </motion.div>
-                <p className="text-gray-700">
-                  {step}
-                </p>
-              </motion.div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </motion.section>
@@ -343,44 +393,88 @@ export default function HomePage() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="py-16 bg-gradient-to-r from-primary-600 to-primary-700 relative z-10"
+        className="py-24 bg-gradient-to-br from-primary-600 via-primary-700 to-blue-800 relative z-10 overflow-hidden"
       >
+        {/* Background Elements */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full blur-2xl" />
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.h2 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-3xl font-bold text-white mb-4"
+            className="bg-white/10 backdrop-blur-sm rounded-3xl p-12 border border-white/20"
           >
-            Ready to grow your business?
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto"
-          >
-            Join thousands of businesses using NovaSend to connect with their customers
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            whileHover={{ scale: 1.05, boxShadow: "0 10px 25px rgba(255, 255, 255, 0.3)" }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Link href="/dashboard/campaigns/new" className="bg-white text-primary-600 hover:bg-gray-100 font-medium py-3 px-8 rounded-lg transition-colors duration-200 flex items-center">
-              Get Started
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="inline-block px-6 py-3 bg-white/20 text-white rounded-full text-sm font-medium mb-8"
+            >
+              🎉 Ready to Get Started?
+            </motion.span>
+            
+            <motion.h2 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-4xl md:text-6xl font-bold text-white mb-6"
+            >
+              Ready to grow your 
+              <span className="text-yellow-300"> business?</span>
+            </motion.h2>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-xl text-primary-100 mb-10 max-w-3xl mx-auto leading-relaxed"
+            >
+              Join thousands of businesses using NovaMail to connect with their customers. 
+              Start your journey today with our powerful email marketing platform.
+            </motion.p>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            >
               <motion.div
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+                whileHover={{ 
+                  scale: 1.05, 
+                  boxShadow: "0 20px 40px rgba(255, 255, 255, 0.3)",
+                  y: -2
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
-                <ArrowRightIcon className="ml-2 h-5 w-5" />
+                <Link href="/dashboard/campaigns/new" className="bg-white text-primary-700 hover:bg-gray-50 text-lg px-10 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center">
+                  Get Started Free
+                  <ArrowRightIcon className="ml-2 h-5 w-5" />
+                </Link>
               </motion.div>
-            </Link>
+              
+              <motion.button 
+                whileHover={{ 
+                  scale: 1.05,
+                  y: -2
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="text-white hover:text-yellow-300 font-semibold text-lg transition-all duration-300 px-8 py-4 rounded-xl border-2 border-white/30 hover:border-white/50"
+              >
+                View Pricing
+              </motion.button>
+            </motion.div>
           </motion.div>
         </div>
       </motion.section>
