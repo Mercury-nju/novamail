@@ -137,6 +137,14 @@ export default function PricingPage() {
     return Math.round(((yearlyEquivalent - plan.yearlyPrice) / yearlyEquivalent) * 100)
   }
 
+  // 调试函数
+  const handleToggleBilling = () => {
+    console.log('Current billing cycle:', billingCycle)
+    const newCycle = billingCycle === 'monthly' ? 'yearly' : 'monthly'
+    console.log('New billing cycle:', newCycle)
+    setBillingCycle(newCycle)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -199,11 +207,11 @@ export default function PricingPage() {
                 Monthly
               </span>
               <button
-                onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-                className="relative inline-flex h-6 w-11 items-center rounded-full bg-primary-600 transition-colors"
+                onClick={handleToggleBilling}
+                className="relative inline-flex h-6 w-11 items-center rounded-full bg-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
                     billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-1'
                   }`}
                 />
@@ -309,16 +317,16 @@ export default function PricingPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Features
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Free
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Pro
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Enterprise
                   </th>
                 </tr>
@@ -337,16 +345,16 @@ export default function PricingPage() {
                   { feature: 'Support', free: 'Email', pro: 'Priority Email', enterprise: 'Dedicated Manager' }
                 ].map((row, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-4 sm:px-6 py-4 text-sm font-medium text-gray-900">
                       {row.feature}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-900 text-center">
                       {row.free}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-900 text-center">
                       {row.pro}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-900 text-center">
                       {row.enterprise}
                     </td>
                   </tr>
