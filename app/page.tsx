@@ -48,8 +48,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100 relative overflow-hidden">
-      {/* Background Elements */}
+      {/* Enhanced Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
+        {/* Main floating blobs */}
         <motion.div 
           style={{ y }}
           className="absolute -top-40 -right-40 w-80 h-80 bg-primary-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"
@@ -62,6 +63,52 @@ export default function HomePage() {
           style={{ y: useTransform(scrollYProgress, [0, 1], ['0%', '20%']) }}
           className="absolute top-40 left-1/2 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"
         />
+        
+        {/* Additional floating particles */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-primary-300 rounded-full opacity-60"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              x: [0, Math.random() * 20 - 10, 0],
+              scale: [1, 1.2, 1],
+              opacity: [0.6, 0.2, 0.6],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+        
+        {/* Large floating circles */}
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={`circle-${i}`}
+            className="absolute w-32 h-32 bg-gradient-to-br from-blue-100/20 to-purple-100/20 rounded-full blur-2xl"
+            style={{
+              left: `${20 + i * 30}%`,
+              top: `${30 + i * 20}%`,
+            }}
+            animate={{
+              scale: [1, 1.3, 1],
+              rotate: [0, 180, 360],
+              y: [0, -20, 0],
+              x: [0, 10, 0],
+            }}
+            transition={{
+              duration: 8 + i * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
       </div>
 
       {/* Header */}
@@ -109,17 +156,32 @@ export default function HomePage() {
         transition={{ duration: 1 }}
         className="pt-32 pb-32 relative z-10 overflow-hidden"
       >
-        {/* Elegant Background */}
+        {/* Enhanced Hero Background */}
         <div className="absolute inset-0 -z-10">
-          {/* Subtle gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50" />
+          {/* Dynamic gradient background */}
+          <motion.div 
+            className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50"
+            animate={{
+              background: [
+                "linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #eff6ff 100%)",
+                "linear-gradient(135deg, #f1f5f9 0%, #ffffff 50%, #dbeafe 100%)",
+                "linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #eff6ff 100%)"
+              ]
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
           
-          {/* Geometric shapes */}
+          {/* Animated geometric shapes */}
           <motion.div
             className="absolute top-1/4 right-1/4 w-64 h-64 bg-gradient-to-br from-blue-100/30 to-purple-100/30 rounded-full blur-3xl"
             animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
+              scale: [1, 1.3, 1],
+              opacity: [0.3, 0.6, 0.3],
+              rotate: [0, 180, 360],
             }}
             transition={{
               duration: 20,
@@ -132,6 +194,8 @@ export default function HomePage() {
             animate={{
               scale: [1.2, 1, 1.2],
               opacity: [0.4, 0.2, 0.4],
+              x: [0, 20, 0],
+              y: [0, -10, 0],
             }}
             transition={{
               duration: 15,
@@ -140,10 +204,44 @@ export default function HomePage() {
             }}
           />
           
-          {/* Subtle grid pattern */}
-          <div className="absolute inset-0 opacity-[0.02]">
+          {/* Floating orbs */}
+          {[...Array(5)].map((_, i) => (
+            <motion.div
+              key={`orb-${i}`}
+              className="absolute w-16 h-16 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full blur-xl"
+              style={{
+                left: `${10 + i * 20}%`,
+                top: `${20 + (i % 2) * 40}%`,
+              }}
+              animate={{
+                scale: [1, 1.5, 1],
+                opacity: [0.2, 0.4, 0.2],
+                y: [0, -30, 0],
+                x: [0, 15, 0],
+              }}
+              transition={{
+                duration: 6 + i,
+                repeat: Infinity,
+                delay: i * 0.5,
+                ease: "easeInOut"
+              }}
+            />
+          ))}
+          
+          {/* Animated grid pattern */}
+          <motion.div 
+            className="absolute inset-0 opacity-[0.02]"
+            animate={{
+              opacity: [0.02, 0.05, 0.02],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
             <div className="h-full w-full bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] bg-[size:50px_50px]" />
-          </div>
+          </motion.div>
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -229,10 +327,57 @@ export default function HomePage() {
         transition={{ duration: 0.8 }}
         className="py-24 bg-white relative z-10 overflow-hidden"
       >
-        {/* Background Elements */}
+        {/* Enhanced Background Elements */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/4 left-0 w-96 h-96 bg-gradient-to-br from-blue-50 to-transparent rounded-full blur-3xl opacity-50" />
-          <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-gradient-to-br from-primary-50 to-transparent rounded-full blur-3xl opacity-50" />
+          <motion.div 
+            className="absolute top-1/4 left-0 w-96 h-96 bg-gradient-to-br from-blue-50 to-transparent rounded-full blur-3xl opacity-50"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.5, 0.7, 0.5],
+              x: [0, 20, 0],
+            }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div 
+            className="absolute bottom-1/4 right-0 w-96 h-96 bg-gradient-to-br from-primary-50 to-transparent rounded-full blur-3xl opacity-50"
+            animate={{
+              scale: [1.2, 1, 1.2],
+              opacity: [0.5, 0.3, 0.5],
+              x: [0, -20, 0],
+            }}
+            transition={{
+              duration: 15,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          
+          {/* Floating particles for features section */}
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={`feature-particle-${i}`}
+              className="absolute w-3 h-3 bg-primary-200 rounded-full opacity-40"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -40, 0],
+                x: [0, Math.random() * 30 - 15, 0],
+                scale: [1, 1.3, 1],
+                opacity: [0.4, 0.1, 0.4],
+              }}
+              transition={{
+                duration: 4 + Math.random() * 3,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
+            />
+          ))}
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -308,10 +453,60 @@ export default function HomePage() {
         transition={{ duration: 0.8 }}
         className="py-24 bg-gradient-to-br from-slate-50 via-white to-blue-50 relative z-10 overflow-hidden"
       >
-        {/* Background Pattern */}
+        {/* Enhanced Background Pattern */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_50%)]" />
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-px h-full bg-gradient-to-b from-transparent via-primary-200 to-transparent opacity-30" />
+          <motion.div 
+            className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_50%)]"
+            animate={{
+              background: [
+                "radial-gradient(circle at 50% 50%, rgba(59,130,246,0.05), transparent 50%)",
+                "radial-gradient(circle at 30% 70%, rgba(59,130,246,0.08), transparent 50%)",
+                "radial-gradient(circle at 70% 30%, rgba(59,130,246,0.05), transparent 50%)",
+                "radial-gradient(circle at 50% 50%, rgba(59,130,246,0.05), transparent 50%)"
+              ]
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div 
+            className="absolute top-0 left-1/2 transform -translate-x-1/2 w-px h-full bg-gradient-to-b from-transparent via-primary-200 to-transparent opacity-30"
+            animate={{
+              opacity: [0.3, 0.6, 0.3],
+              scaleY: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          
+          {/* Floating geometric shapes */}
+          {[...Array(4)].map((_, i) => (
+            <motion.div
+              key={`how-it-works-${i}`}
+              className="absolute w-20 h-20 bg-gradient-to-br from-blue-100/30 to-purple-100/30 rounded-full blur-xl"
+              style={{
+                left: `${15 + i * 25}%`,
+                top: `${20 + (i % 2) * 60}%`,
+              }}
+              animate={{
+                scale: [1, 1.4, 1],
+                opacity: [0.3, 0.6, 0.3],
+                rotate: [0, 180, 360],
+                y: [0, -20, 0],
+              }}
+              transition={{
+                duration: 10 + i * 2,
+                repeat: Infinity,
+                delay: i * 0.5,
+                ease: "easeInOut"
+              }}
+            />
+          ))}
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -395,11 +590,72 @@ export default function HomePage() {
         transition={{ duration: 0.8 }}
         className="py-24 bg-gradient-to-br from-primary-600 via-primary-700 to-blue-800 relative z-10 overflow-hidden"
       >
-        {/* Background Elements */}
+        {/* Enhanced CTA Background Elements */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full blur-2xl" />
+          <motion.div 
+            className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.1, 0.2, 0.1],
+              x: [0, 30, 0],
+              y: [0, -20, 0],
+            }}
+            transition={{
+              duration: 15,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div 
+            className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl"
+            animate={{
+              scale: [1.2, 1, 1.2],
+              opacity: [0.05, 0.15, 0.05],
+              x: [0, -30, 0],
+              y: [0, 20, 0],
+            }}
+            transition={{
+              duration: 18,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div 
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full blur-2xl"
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.05, 0.1, 0.05],
+              rotate: [0, 180, 360],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          
+          {/* Floating stars */}
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={`star-${i}`}
+              className="absolute w-2 h-2 bg-white/30 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                scale: [1, 1.5, 1],
+                opacity: [0.3, 0.8, 0.3],
+                y: [0, -20, 0],
+                x: [0, Math.random() * 20 - 10, 0],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
+            />
+          ))}
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
