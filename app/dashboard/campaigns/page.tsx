@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 import {
   PlusIcon,
   MagnifyingGlassIcon,
@@ -17,15 +18,15 @@ import {
 import toast from 'react-hot-toast'
 
 interface Campaign {
-  id: number
+  id: string
   name: string
   status: 'draft' | 'scheduled' | 'sent' | 'paused'
   subject: string
   body: string
   recipients: number
   sentDate?: string
-  openRate: number
-  clickRate: number
+  openRate?: number
+  clickRate?: number
   createdAt: string
   userSegment?: string
   goal?: string
@@ -37,188 +38,43 @@ interface Campaign {
 }
 
 export default function CampaignsPage() {
+  const { data: session } = useSession()
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCampaigns, setSelectedCampaigns] = useState<number[]>([])
+  const [selectedCampaigns, setSelectedCampaigns] = useState<string[]>([])
+  const [showDraftsModal, setShowDraftsModal] = useState(false)
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('table')
+  const [campaigns, setCampaigns] = useState<Campaign[]>([])
+  const [loading, setLoading] = useState(true)
 
-  // Mock data
-  const [campaigns, setCampaigns] = useState<Campaign[]>([
-    {
-      id: 1,
-      name: 'Black Friday Sale',
-      status: 'sent',
-      subject: '🔥 50% Off Everything - Black Friday Special!',
-      body: `Hi there!
-
-Hope you're doing great! 👋
-
-我是NovaMail的团队，想和你分享一个关于black friday sale的特别消息。
-
-我们的产品是一个强大的AI邮件营销平台，帮助您轻松创建、发送和分析邮件活动。
-
-想了解更多？点击下面了解更多！
-
-Thanks for being awesome!
-NovaMail Team
-
-P.S. If this isn't your thing, no worries at all. Just let us know and we'll stop sending these updates.
-
----
-Unsubscribe | Update preferences`,
-      recipients: 1250,
-      sentDate: '2024-11-24',
-      openRate: 28.4,
-      clickRate: 4.2,
-      createdAt: '2024-11-20',
-      userSegment: 'active-users',
-      goal: 'promotional',
-      style: 'casual',
-      layout: 'image-text',
-      businessName: 'NovaMail',
-      productService: 'AI邮件营销平台'
-    },
-    {
-      id: 2,
-      name: 'Product Launch Announcement',
-      status: 'draft',
-      subject: 'Introducing Our New Product Line',
-      body: `尊敬的付费用户，
-
-您好！
-
-我是NovaMail的代表，特此向您传达关于product launch的重要信息。
-
-我们即将推出全新的产品功能，包括更智能的AI内容生成、更丰富的模板库和更详细的数据分析。
-
-我们相信这将为您带来巨大价值。如需了解更多信息或有问题咨询，请随时与我们联系。
-
-此致
-敬礼！
-
-NovaMail团队
-
----
-您可以随时取消订阅这些邮件。`,
-      recipients: 0,
-      openRate: 0,
-      clickRate: 0,
-      createdAt: '2024-11-22',
-      userSegment: 'paid-users',
-      goal: 'announcement',
-      style: 'formal',
-      layout: 'text-only',
-      businessName: 'NovaMail',
-      productService: 'AI邮件营销平台'
-    },
-    {
-      id: 3,
-      name: 'Weekly Newsletter',
-      status: 'sent',
-      subject: 'Weekly Updates & Industry Insights',
-      body: `Hi 活跃用户!
-
-作为我们的活跃用户，我们很高兴与您分享关于weekly updates的特别信息。
-
-本周我们为您准备了最新的行业洞察、产品更新和营销技巧分享。
-
-✨ 专为活跃用户设计的功能
-✨ 为什么这对您很重要
-✨ 如何开始使用
-
-准备好体验不同了吗？点击下面了解更多！
-
-Best regards,
-NovaMail Team
-
----
-您收到此邮件是因为您订阅了我们的更新。点击这里取消订阅。`,
-      recipients: 2100,
-      sentDate: '2024-11-20',
-      openRate: 22.1,
-      clickRate: 2.8,
-      createdAt: '2024-11-18',
-      userSegment: 'active-users',
-      goal: 'newsletter',
-      style: 'promotional',
-      layout: 'image-heavy',
-      businessName: 'NovaMail',
-      productService: 'AI邮件营销平台'
-    },
-    {
-      id: 4,
-      name: 'Holiday Greetings',
-      status: 'scheduled',
-      subject: 'Happy Holidays from Our Team!',
-      body: `Hello 新用户,
-
-I hope this email finds you well. I wanted to reach out to share some important information about holiday greetings.
-
-We've been working hard to bring you something valuable, and I'm pleased to announce that holiday greetings is now ready.
-
-Here's what you need to know:
-• What it is and why it matters
-• How it can benefit you
-• Next steps to get involved
-
-I believe this will be of great value to you. Please let me know if you have any questions.
-
-Warm regards,
-NovaMail Team
-
----
-You can unsubscribe from these emails at any time.`,
-      recipients: 1800,
-      sentDate: '2024-12-25',
-      openRate: 0,
-      clickRate: 0,
-      createdAt: '2024-11-25',
-      userSegment: 'new-users',
-      goal: 'greeting',
-      style: 'formal',
-      layout: 'text-only',
-      businessName: 'NovaMail',
-      productService: 'AI邮件营销平台'
-    },
-    {
-      id: 5,
-      name: 'Customer Feedback Request',
-      status: 'paused',
-      subject: 'How was your experience?',
-      body: `Hi 沉默用户!
-
-Hope you're doing great! 👋
-
-我是NovaMail的团队，想和你分享一个关于customer feedback的特别消息。
-
-我们非常重视您的使用体验，希望能听到您的声音。
-
-想了解更多？点击下面了解更多！
-
-Thanks for being awesome!
-NovaMail Team
-
-P.S. If this isn't your thing, no worries at all. Just let us know and we'll stop sending these updates.
-
----
-Unsubscribe | Update preferences`,
-      recipients: 500,
-      openRate: 0,
-      clickRate: 0,
-      createdAt: '2024-11-23',
-      userSegment: 'silent-users',
-      goal: 'feedback',
-      style: 'casual',
-      layout: 'image-text',
-      businessName: 'NovaMail',
-      productService: 'AI邮件营销平台'
+  useEffect(() => {
+    if (session?.user?.email) {
+      fetchCampaigns()
     }
-  ])
+  }, [session])
+
+  const fetchCampaigns = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/campaigns')
+      const data = await response.json()
+      
+      if (data.success) {
+        setCampaigns(data.campaigns)
+      }
+    } catch (error) {
+      console.error('Failed to fetch campaigns:', error)
+      toast.error('获取活动列表失败')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const filteredCampaigns = campaigns.filter(campaign =>
     campaign.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     campaign.subject.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const handleSelectCampaign = (campaignId: number) => {
+  const handleSelectCampaign = (campaignId: string) => {
     setSelectedCampaigns(prev =>
       prev.includes(campaignId)
         ? prev.filter(id => id !== campaignId)
@@ -234,15 +90,31 @@ Unsubscribe | Update preferences`,
     }
   }
 
-  const handleDeleteSelected = () => {
+  const handleDeleteSelected = async () => {
     if (selectedCampaigns.length === 0) {
-      toast.error('Please select campaigns to delete')
+      toast.error('请选择要删除的活动')
       return
     }
     
-    setCampaigns(prev => prev.filter(campaign => !selectedCampaigns.includes(campaign.id)))
-    setSelectedCampaigns([])
-    toast.success(`${selectedCampaigns.length} campaigns deleted`)
+    try {
+      const response = await fetch('/api/campaigns/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaignIds: selectedCampaigns })
+      })
+      
+      const data = await response.json()
+      if (data.success) {
+        toast.success('活动删除成功')
+        setSelectedCampaigns([])
+        fetchCampaigns()
+      } else {
+        toast.error(data.error || '删除失败')
+      }
+    } catch (error) {
+      console.error('Delete campaigns error:', error)
+      toast.error('删除活动失败')
+    }
   }
 
   const getStatusColor = (status: Campaign['status']) => {
@@ -275,6 +147,55 @@ Unsubscribe | Update preferences`,
     }
   }
 
+  const handleEditCampaign = (campaignId: string) => {
+    setShowDraftsModal(false)
+    window.location.href = `/dashboard/campaigns/edit/${campaignId}?mode=draft`
+  }
+
+  const handlePublishCampaign = async (campaignId: string) => {
+    try {
+      const response = await fetch(`/api/campaigns/${campaignId}/publish`, {
+        method: 'POST'
+      })
+      
+      const data = await response.json()
+      if (data.success) {
+        toast.success('活动发布成功')
+        setShowDraftsModal(false)
+        fetchCampaigns()
+      } else {
+        toast.error(data.error || '发布失败')
+      }
+    } catch (error) {
+      console.error('Publish campaign error:', error)
+      toast.error('发布活动失败')
+    }
+  }
+
+  const handleDeleteCampaign = async (campaignId: string) => {
+    if (confirm('确定要删除这个草稿活动吗？')) {
+      try {
+        const response = await fetch('/api/campaigns/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ campaignIds: [campaignId] })
+        })
+        
+        const data = await response.json()
+        if (data.success) {
+          toast.success('活动删除成功')
+          setShowDraftsModal(false)
+          fetchCampaigns()
+        } else {
+          toast.error(data.error || '删除失败')
+        }
+      } catch (error) {
+        console.error('Delete campaign error:', error)
+        toast.error('删除活动失败')
+      }
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -293,7 +214,10 @@ Unsubscribe | Update preferences`,
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-4">
-        <div className="card">
+        <div 
+          className="card cursor-pointer hover:shadow-md transition-shadow duration-200"
+          onClick={() => setShowDraftsModal(true)}
+        >
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <PencilIcon className="h-8 w-8 text-gray-600" />
@@ -415,7 +339,25 @@ Unsubscribe | Update preferences`,
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredCampaigns.map((campaign) => (
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                    Loading...
+                  </td>
+                </tr>
+              ) : filteredCampaigns.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                    {searchTerm ? 'No campaigns found matching your search.' : 'No campaigns yet. '}
+                    {!searchTerm && (
+                      <Link href="/dashboard/campaigns/new" className="text-primary-600 hover:text-primary-500">
+                        Create your first campaign
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+              ) : (
+                filteredCampaigns.map((campaign) => (
                 <tr key={campaign.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <input
@@ -448,10 +390,10 @@ Unsubscribe | Update preferences`,
                       {campaign.status === 'draft' ? '-' : campaign.recipients.toLocaleString()}
                     </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {campaign.status === 'draft' ? '-' : (campaign.openRate > 0 ? `${campaign.openRate}%` : '-')}
+                    {campaign.status === 'draft' ? '-' : (campaign.openRate && campaign.openRate > 0 ? `${campaign.openRate}%` : '-')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {campaign.status === 'draft' ? '-' : (campaign.clickRate > 0 ? `${campaign.clickRate}%` : '-')}
+                    {campaign.status === 'draft' ? '-' : (campaign.clickRate && campaign.clickRate > 0 ? `${campaign.clickRate}%` : '-')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
@@ -476,11 +418,125 @@ Unsubscribe | Update preferences`,
                     </div>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
+    </div>
+
+      {/* Drafts Modal */}
+      {showDraftsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[80vh] overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-900">Draft Campaigns</h2>
+                <button
+                  onClick={() => setShowDraftsModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <div className="overflow-y-auto max-h-[60vh]">
+              <div className="p-6">
+                {campaigns.filter(c => c.status === 'draft').length === 0 ? (
+                  <div className="text-center py-12">
+                    <PencilIcon className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No draft campaigns</h3>
+                    <p className="text-gray-500 mb-6">You haven't created any draft campaigns yet.</p>
+                    <Link 
+                      href="/dashboard/campaigns/new"
+                      className="btn-primary inline-flex items-center"
+                      onClick={() => setShowDraftsModal(false)}
+                    >
+                      <PlusIcon className="h-4 w-4 mr-2" />
+                      Create Campaign
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {campaigns.filter(c => c.status === 'draft').map((campaign) => (
+                      <motion.div
+                        key={campaign.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200"
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                              {campaign.name}
+                            </h3>
+                            <p className="text-sm text-gray-500 mb-2 line-clamp-2">
+                              {campaign.subject}
+                            </p>
+                            <div className="flex items-center text-xs text-gray-400">
+                              <span>Created {campaign.createdAt}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-1 ml-4">
+                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                              Draft
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs text-gray-500">
+                            Recipients: {campaign.recipients.toLocaleString()}
+                          </div>
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleEditCampaign(campaign.id)}
+                              className="px-3 py-1 text-xs font-medium text-blue-600 hover:text-blue-700 border border-blue-200 rounded-md hover:bg-blue-50 transition-colors"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handlePublishCampaign(campaign.id)}
+                              className="px-3 py-1 text-xs font-medium text-green-600 hover:text-green-700 border border-green-200 rounded-md hover:bg-green-50 transition-colors"
+                            >
+                              Publish
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCampaign(campaign.id)}
+                              className="px-3 py-1 text-xs font-medium text-red-600 hover:text-red-700 border border-red-200 rounded-md hover:bg-red-50 transition-colors"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {campaigns.filter(c => c.status === 'draft').length > 0 && (
+              <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">
+                    {campaigns.filter(c => c.status === 'draft').length} draft{campaigns.filter(c => c.status === 'draft').length !== 1 ? 's' : ''}
+                  </span>
+                  <button
+                    onClick={() => setShowDraftsModal(false)}
+                    className="btn-primary"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

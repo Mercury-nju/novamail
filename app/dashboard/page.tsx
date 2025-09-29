@@ -1,78 +1,103 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 import {
   EnvelopeIcon,
   UserGroupIcon,
   ChartBarIcon,
   PlusIcon,
   ArrowUpIcon,
-  ArrowDownIcon,
-  SparklesIcon
+  ArrowDownIcon
 } from '@heroicons/react/24/outline'
 
 export default function DashboardPage() {
-  const stats = [
+  const { data: session } = useSession()
+  const [stats, setStats] = useState([
     {
       name: 'Total Contacts',
-      value: '2,847',
-      change: '+12%',
-      changeType: 'positive',
+      value: '0',
+      change: '0%',
+      changeType: 'neutral',
       icon: UserGroupIcon,
     },
     {
       name: 'Emails Sent',
-      value: '1,234',
-      change: '+8%',
-      changeType: 'positive',
+      value: '0',
+      change: '0%',
+      changeType: 'neutral',
       icon: EnvelopeIcon,
     },
     {
       name: 'Delivery Rate',
-      value: '98.2%',
-      change: '+1.2%',
-      changeType: 'positive',
+      value: '0%',
+      change: '0%',
+      changeType: 'neutral',
       icon: ChartBarIcon,
     },
     {
       name: 'Reply Rate',
-      value: '5.8%',
-      change: '+0.8%',
-      changeType: 'positive',
+      value: '0%',
+      change: '0%',
+      changeType: 'neutral',
       icon: ChartBarIcon,
     },
-  ]
+  ])
+  const [recentCampaigns, setRecentCampaigns] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const recentCampaigns = [
-    {
-      id: 1,
-      name: 'Black Friday Sale',
-      status: 'Sent',
-      sentDate: '2024-11-24',
-      recipients: 1250,
-      deliveryRate: 98.5,
-      replyRate: 6.2,
-    },
-    {
-      id: 2,
-      name: 'Product Launch Announcement',
-      status: 'Draft',
-      sentDate: null,
-      recipients: 0,
-      deliveryRate: 0,
-      replyRate: 0,
-    },
-    {
-      id: 3,
-      name: 'Weekly Newsletter',
-      status: 'Sent',
-      sentDate: '2024-11-20',
-      recipients: 2100,
-      deliveryRate: 97.8,
-      replyRate: 4.5,
-    },
-  ]
+  useEffect(() => {
+    if (session?.user?.email) {
+      fetchDashboardData()
+    }
+  }, [session])
+
+  const fetchDashboardData = async () => {
+    try {
+      const response = await fetch('/api/dashboard/stats')
+      const data = await response.json()
+      
+      if (data.success) {
+        setStats([
+          {
+            name: 'Total Contacts',
+            value: data.stats.totalContacts.toLocaleString(),
+            change: '0%',
+            changeType: 'neutral',
+            icon: UserGroupIcon,
+          },
+          {
+            name: 'Emails Sent',
+            value: data.stats.totalEmailsSent.toLocaleString(),
+            change: '0%',
+            changeType: 'neutral',
+            icon: EnvelopeIcon,
+          },
+          {
+            name: 'Delivery Rate',
+            value: data.stats.deliveryRate > 0 ? `${data.stats.deliveryRate}%` : '0%',
+            change: '0%',
+            changeType: 'neutral',
+            icon: ChartBarIcon,
+          },
+          {
+            name: 'Reply Rate',
+            value: data.stats.replyRate > 0 ? `${data.stats.replyRate}%` : '0%',
+            change: '0%',
+            changeType: 'neutral',
+            icon: ChartBarIcon,
+          },
+        ])
+        setRecentCampaigns(data.recentCampaigns || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const quickActions = [
     {
@@ -123,22 +148,22 @@ export default function DashboardPage() {
                 Ready to create your next email campaign?
               </h2>
               <p className="text-primary-100 mb-6 max-w-2xl">
-                Use our AI-powered assistant to generate professional email content in seconds, or create campaigns manually with our intuitive builder.
+                Create engaging email campaigns that convert. Use our intuitive campaign builder to craft professional emails for your audience.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
-                  href="/dashboard/agent"
+                  href="/dashboard/campaigns/new"
                   className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-primary-700 bg-white hover:bg-gray-50 transition-colors duration-200 shadow-sm"
                 >
-                  <SparklesIcon className="h-5 w-5 mr-2" />
-                  Create with AI Assistant
+                  <PlusIcon className="h-5 w-5 mr-2" />
+                  Create New Campaign
                 </Link>
                 <Link
-                  href="/dashboard/campaigns/new"
+                  href="/dashboard/campaigns"
                   className="inline-flex items-center px-6 py-3 border border-white border-opacity-30 text-base font-medium rounded-lg text-white hover:bg-white hover:bg-opacity-10 transition-colors duration-200"
                 >
-                  <PlusIcon className="h-5 w-5 mr-2" />
-                  Create Campaign Manually
+                  <EnvelopeIcon className="h-5 w-5 mr-2" />
+                  View All Campaigns
                 </Link>
               </div>
             </div>
@@ -174,19 +199,21 @@ export default function DashboardPage() {
                     <div className="text-2xl font-semibold text-gray-900">
                       {stat.value}
                     </div>
-                    <div className={`ml-2 flex items-baseline text-sm font-semibold ${
-                      stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {stat.changeType === 'positive' ? (
-                        <ArrowUpIcon className="h-4 w-4 flex-shrink-0 self-center" />
-                      ) : (
-                        <ArrowDownIcon className="h-4 w-4 flex-shrink-0 self-center" />
-                      )}
-                      <span className="sr-only">
-                        {stat.changeType === 'positive' ? 'Increased' : 'Decreased'} by
-                      </span>
-                      {stat.change}
-                    </div>
+                    {stat.changeType !== 'neutral' && (
+                      <div className={`ml-2 flex items-baseline text-sm font-semibold ${
+                        stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {stat.changeType === 'positive' ? (
+                          <ArrowUpIcon className="h-4 w-4 flex-shrink-0 self-center" />
+                        ) : (
+                          <ArrowDownIcon className="h-4 w-4 flex-shrink-0 self-center" />
+                        )}
+                        <span className="sr-only">
+                          {stat.changeType === 'positive' ? 'Increased' : 'Decreased'} by
+                        </span>
+                        {stat.change}
+                      </div>
+                    )}
                   </dd>
                 </dl>
               </div>
@@ -263,38 +290,52 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {recentCampaigns.map((campaign) => (
-                  <tr key={campaign.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {campaign.name}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {campaign.sentDate ? `Sent ${campaign.sentDate}` : 'Draft'}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        campaign.status === 'Sent'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {campaign.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {campaign.recipients.toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {campaign.deliveryRate > 0 ? `${campaign.deliveryRate}%` : '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {campaign.replyRate > 0 ? `${campaign.replyRate}%` : '-'}
+                {loading ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                      Loading...
                     </td>
                   </tr>
-                ))}
+                ) : recentCampaigns.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                      No campaigns yet. <Link href="/dashboard/campaigns/new" className="text-primary-600 hover:text-primary-500">Create your first campaign</Link>
+                    </td>
+                  </tr>
+                ) : (
+                  recentCampaigns.map((campaign) => (
+                    <tr key={campaign.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {campaign.name}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {campaign.sentDate ? `Sent ${campaign.sentDate}` : 'Draft'}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          campaign.status === 'sent'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {campaign.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {campaign.recipients.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {campaign.deliveryRate > 0 ? `${campaign.deliveryRate}%` : '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {campaign.replyRate > 0 ? `${campaign.replyRate}%` : '-'}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

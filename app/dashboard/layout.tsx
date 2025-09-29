@@ -20,7 +20,6 @@ import toast from 'react-hot-toast'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
-  { name: 'AI Assistant', href: '/dashboard/agent', icon: SparklesIcon },
   { name: 'Contacts', href: '/dashboard/contacts', icon: UserGroupIcon },
   { name: 'Campaigns', href: '/dashboard/campaigns', icon: EnvelopeIcon },
   { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
