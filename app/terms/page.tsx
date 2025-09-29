@@ -12,7 +12,7 @@ export default function TermsPage() {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <h1 className="text-3xl font-bold text-gray-900">服务条款</h1>
-          <p className="text-gray-600 mt-2">最后更新：2024年12月</p>
+          <p className="text-gray-600 mt-2">最后更新：2025年1月</p>
         </div>
       </div>
 
@@ -132,7 +132,7 @@ export default function TermsPage() {
 
             <div className="mt-12 p-4 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600">
-                本服务条款自2024年12月起生效。通过使用NovaMail服务，您确认已阅读、理解并同意受这些条款的约束。
+                本服务条款自2025年1月起生效。通过使用NovaMail服务，您确认已阅读、理解并同意受这些条款的约束。
               </p>
             </div>
           </div>

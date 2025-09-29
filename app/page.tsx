@@ -540,7 +540,7 @@ export default function HomePage() {
           <div className="border-t border-gray-800 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="text-gray-400 text-sm mb-4 md:mb-0">
-                © 2024 NovaMail. All rights reserved.
+                © 2025 NovaMail. All rights reserved.
               </div>
               <div className="flex space-x-6 text-sm text-gray-400">
                 <Link href="/terms" className="hover:text-white transition-colors">服务条款</Link>
