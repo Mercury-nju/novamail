@@ -26,18 +26,21 @@ export default function PricingPage() {
       monthlyPrice: 0,
       yearlyPrice: 0,
       features: [
-        'Up to 1,000 contacts',
-        'Up to 5,000 emails per month',
-        'Basic email templates',
-        'Email support',
+        'Up to 500 contacts',
+        'Up to 1,000 emails per month',
+        'Simple email templates',
+        'AI email generation (通义千问)',
         'Basic analytics',
-        'NovaMail branding'
+        'Email support',
+        'Contact import (CSV, TXT)',
+        'Basic contact groups'
       ],
       limitations: [
-        'Limited to 3 campaigns per month',
+        'Limited to 2 campaigns per month',
+        'No professional templates',
         'No advanced segmentation',
-        'No A/B testing',
-        'No custom domain'
+        'No Excel import',
+        'NovaMail branding'
       ],
       popular: false,
       cta: 'Get Started Free',
@@ -47,19 +50,21 @@ export default function PricingPage() {
       id: 'pro',
       name: 'Pro',
       description: 'Best for growing businesses',
-      monthlyPrice: 29,
-      yearlyPrice: 290,
+      monthlyPrice: 19,
+      yearlyPrice: 190,
       features: [
-        'Up to 10,000 contacts',
-        'Up to 50,000 emails per month',
-        'Advanced email templates',
-        'Priority email support',
+        'Up to 5,000 contacts',
+        'Up to 25,000 emails per month',
+        'All email templates (Simple + Professional)',
+        'AI email generation (通义千问)',
         'Advanced analytics & reporting',
-        'Custom branding',
-        'A/B testing',
-        'Advanced segmentation',
-        'Automation workflows',
-        'API access'
+        'Priority email support',
+        'Contact import (CSV, TXT, Excel)',
+        'Advanced contact groups & segmentation',
+        'Campaign drafts & scheduling',
+        'Email preview & testing',
+        'Custom SMTP configuration',
+        'Remove NovaMail branding'
       ],
       limitations: [],
       popular: true,
@@ -70,23 +75,23 @@ export default function PricingPage() {
       id: 'enterprise',
       name: 'Enterprise',
       description: 'For large organizations',
-      monthlyPrice: 99,
-      yearlyPrice: 990,
+      monthlyPrice: 49,
+      yearlyPrice: 490,
       features: [
         'Unlimited contacts',
         'Unlimited emails',
-        'Custom email templates',
-        'Dedicated account manager',
+        'All email templates + Custom templates',
+        'AI email generation (通义千问)',
         'Advanced analytics & reporting',
+        'Dedicated account manager',
+        'All import formats + API integration',
+        'Advanced segmentation & automation',
+        'Campaign A/B testing',
         'White-label solution',
-        'Advanced A/B testing',
-        'Custom segmentation',
-        'Advanced automation',
-        'Full API access',
-        'Custom integrations',
+        'Custom domain & branding',
+        'Priority phone support',
         'SSO & advanced security',
-        'Custom domain',
-        'Priority phone support'
+        'Custom integrations'
       ],
       limitations: [],
       popular: false,
@@ -97,16 +102,20 @@ export default function PricingPage() {
 
   const faqs = [
     {
-      question: 'What happens when I reach my contact limit?',
-      answer: 'When you reach your contact limit, you can either upgrade your plan or remove inactive contacts. We\'ll notify you when you\'re approaching your limit.'
+      question: 'What is AI email generation?',
+      answer: 'Our AI email generation uses 通义千问 (Tongyi Qianwen) to automatically create personalized email content based on your campaign theme, purpose, and business information. It works for both simple and professional templates.'
     },
     {
-      question: 'Can I change my plan anytime?',
-      answer: 'Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and we\'ll prorate any billing differences.'
+      question: 'What are professional templates?',
+      answer: 'Professional templates are premium, visually-styled email designs including Modern Promo, Newsletter, E-commerce, and Event Invite templates. These are available in Pro and Enterprise plans.'
     },
     {
-      question: 'What payment methods do you accept?',
-      answer: 'We accept all major credit cards (Visa, MasterCard, American Express) and PayPal. Enterprise customers can also pay via bank transfer.'
+      question: 'Can I use my own SMTP server?',
+      answer: 'Yes! Pro and Enterprise plans allow you to configure your own SMTP settings, so you can send emails from your own domain and email address.'
+    },
+    {
+      question: 'What file formats can I import contacts from?',
+      answer: 'Free plan supports CSV and TXT files. Pro and Enterprise plans also support Excel files (.xlsx, .xls). Enterprise plans include API integration for advanced imports.'
     },
     {
       question: 'Is there a free trial?',
@@ -115,10 +124,6 @@ export default function PricingPage() {
     {
       question: 'Can I cancel anytime?',
       answer: 'Absolutely. You can cancel your subscription at any time from your account settings. You\'ll continue to have access until the end of your billing period.'
-    },
-    {
-      question: 'Do you offer discounts for non-profits?',
-      answer: 'Yes, we offer special pricing for qualified non-profit organizations. Contact our sales team for more information.'
     }
   ]
 
@@ -320,14 +325,15 @@ export default function PricingPage() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {[
-                  { feature: 'Contacts', free: '1,000', pro: '10,000', enterprise: 'Unlimited' },
-                  { feature: 'Emails per month', free: '5,000', pro: '50,000', enterprise: 'Unlimited' },
-                  { feature: 'Campaigns per month', free: '3', pro: 'Unlimited', enterprise: 'Unlimited' },
-                  { feature: 'Email templates', free: 'Basic', pro: 'Advanced', enterprise: 'Custom' },
-                  { feature: 'A/B testing', free: 'No', pro: 'Yes', enterprise: 'Advanced' },
-                  { feature: 'Automation workflows', free: 'No', pro: 'Yes', enterprise: 'Advanced' },
-                  { feature: 'API access', free: 'No', pro: 'Yes', enterprise: 'Full' },
-                  { feature: 'Custom branding', free: 'No', pro: 'Yes', enterprise: 'White-label' },
+                  { feature: 'Contacts', free: '500', pro: '5,000', enterprise: 'Unlimited' },
+                  { feature: 'Emails per month', free: '1,000', pro: '25,000', enterprise: 'Unlimited' },
+                  { feature: 'Campaigns per month', free: '2', pro: 'Unlimited', enterprise: 'Unlimited' },
+                  { feature: 'Email templates', free: 'Simple only', pro: 'Simple + Professional', enterprise: 'All + Custom' },
+                  { feature: 'AI email generation', free: 'Yes (通义千问)', pro: 'Yes (通义千问)', enterprise: 'Yes (通义千问)' },
+                  { feature: 'Contact import', free: 'CSV, TXT', pro: 'CSV, TXT, Excel', enterprise: 'All formats + API' },
+                  { feature: 'Contact groups', free: 'Basic', pro: 'Advanced', enterprise: 'Advanced + Automation' },
+                  { feature: 'SMTP configuration', free: 'No', pro: 'Yes', enterprise: 'Yes + Custom' },
+                  { feature: 'Branding', free: 'NovaMail', pro: 'Custom', enterprise: 'White-label' },
                   { feature: 'Support', free: 'Email', pro: 'Priority Email', enterprise: 'Dedicated Manager' }
                 ].map((row, index) => (
                   <tr key={index} className="hover:bg-gray-50">
