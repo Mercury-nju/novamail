@@ -150,8 +150,7 @@ export default function PrivacyPage() {
               如果您对数据处理有任何疑问，请联系我们的数据保护官：
             </p>
             <ul>
-              <li>邮箱：privacy@novamail.com</li>
-              <li>地址：北京市朝阳区建国门外大街1号国贸大厦A座2001室，邮编：100004</li>
+              <li>邮箱：contact@novamail.com</li>
             </ul>
 
             <h2>15. 监管机构</h2>

@@ -28,86 +28,19 @@ export default function ContactPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-8">联系信息</h2>
             
             <div className="space-y-8">
-              {/* General Support */}
+              {/* General Contact */}
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">技术支持</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">联系我们</h3>
                 <div className="space-y-3">
                   <div className="flex items-center">
                     <span className="text-gray-500 w-20">邮箱：</span>
-                    <a href="mailto:support@novamail.com" className="text-primary-600 hover:text-primary-700">
-                      support@novamail.com
-                    </a>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-gray-500 w-20">电话：</span>
-                    <a href="tel:+86-400-888-9999" className="text-primary-600 hover:text-primary-700">
-                      +86-400-888-9999
-                    </a>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-gray-500 w-20">时间：</span>
-                    <span className="text-gray-700">周一至周五 9:00-18:00 (北京时间)</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sales */}
-              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">销售咨询</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center">
-                    <span className="text-gray-500 w-20">邮箱：</span>
-                    <a href="mailto:sales@novamail.com" className="text-primary-600 hover:text-primary-700">
-                      sales@novamail.com
-                    </a>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-gray-500 w-20">电话：</span>
-                    <a href="tel:+86-400-888-8888" className="text-primary-600 hover:text-primary-700">
-                      +86-400-888-8888
-                    </a>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-gray-500 w-20">时间：</span>
-                    <span className="text-gray-700">周一至周五 9:00-18:00 (北京时间)</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Legal */}
-              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">法律事务</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center">
-                    <span className="text-gray-500 w-20">邮箱：</span>
-                    <a href="mailto:legal@novamail.com" className="text-primary-600 hover:text-primary-700">
-                      legal@novamail.com
-                    </a>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-gray-500 w-20">地址：</span>
-                    <span className="text-gray-700">
-                      北京市朝阳区建国门外大街1号<br />
-                      国贸大厦A座2001室<br />
-                      邮编：100004
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Privacy */}
-              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">隐私保护</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center">
-                    <span className="text-gray-500 w-20">邮箱：</span>
-                    <a href="mailto:privacy@novamail.com" className="text-primary-600 hover:text-primary-700">
-                      privacy@novamail.com
+                    <a href="mailto:contact@novamail.com" className="text-primary-600 hover:text-primary-700">
+                      contact@novamail.com
                     </a>
                   </div>
                   <div className="flex items-start">
                     <span className="text-gray-500 w-20">说明：</span>
-                    <span className="text-gray-700">数据保护相关问题</span>
+                    <span className="text-gray-700">技术支持、产品咨询、问题反馈</span>
                   </div>
                 </div>
               </div>
