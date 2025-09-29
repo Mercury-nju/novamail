@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import BackgroundAnimations from '@/components/BackgroundAnimations'
 import {
   CheckIcon,
   XMarkIcon,
@@ -151,7 +152,8 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative overflow-hidden">
+      <BackgroundAnimations variant="pricing" particleCount={10} />
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -419,8 +421,7 @@ export default function PricingPage() {
                 </motion.div>
               </div>
             </motion.div>
-            )
-          })}
+          )})}
         </div>
       </div>
 
