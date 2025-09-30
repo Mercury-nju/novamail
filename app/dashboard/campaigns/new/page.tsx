@@ -20,18 +20,18 @@ export default function NewCampaignPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
 
-  // 检查用户登录状态
-  useEffect(() => {
-    if (status === 'loading') {
-      return
-    }
-    
-    if (status === 'unauthenticated') {
-      // 用户未登录，重定向到登录页面
-      router.push('/login')
-      return
-    }
-  }, [session, status, router])
+  // 临时禁用认证检查，直接显示页面
+  // useEffect(() => {
+  //   if (status === 'loading') {
+  //     return
+  //   }
+  //   
+  //   if (status === 'unauthenticated') {
+  //     // 用户未登录，重定向到登录页面
+  //     router.push('/login')
+  //     return
+  //   }
+  // }, [session, status, router])
   const [step, setStep] = useState(1)
   const [emailMode, setEmailMode] = useState<'simple' | 'professional'>('simple')
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
