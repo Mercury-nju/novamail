@@ -4,12 +4,21 @@ import { NextRequest, NextResponse } from 'next/server'
 const TONGYI_API_KEY = process.env.TONGYI_API_KEY
 
 if (!TONGYI_API_KEY) {
-  throw new Error('TONGYI_API_KEY is not configured')
+  console.warn('TONGYI_API_KEY is not configured, AI features will be disabled')
 }
 const TONGYI_API_URL = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation'
 
 export async function POST(request: NextRequest) {
   try {
+    // 检查API密钥
+    if (!TONGYI_API_KEY) {
+      return NextResponse.json({
+        success: false,
+        error: 'AI service is not configured. Please contact administrator.',
+        fallback: true
+      }, { status: 503 })
+    }
+
     const body = await request.json()
     const { 
       emailMode, 
