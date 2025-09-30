@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import {
   ArrowLeftIcon,
   PaperAirplaneIcon,
@@ -13,8 +14,10 @@ import {
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import * as XLSX from 'xlsx'
+import DOMPurify from 'dompurify'
 
 export default function NewCampaignPage() {
+  const { data: session } = useSession()
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [emailMode, setEmailMode] = useState<'simple' | 'professional'>('simple')
@@ -35,14 +38,16 @@ export default function NewCampaignPage() {
     recipients: [] as string[]
   })
 
-  // 从 URL 参数中获取预选的收件人
+  // Get pre-selected recipients from URL parameters
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search)
       const recipients = params.get('recipients')
       if (recipients) {
         const recipientList = recipients.split(',').filter(email => email.trim())
-        setCampaignData(prev => ({ ...prev, recipients: recipientList }))
+        if (recipientList.length > 0) {
+          setCampaignData(prev => ({ ...prev, recipients: recipientList }))
+        }
       }
     }
   }, [])
@@ -66,6 +71,10 @@ export default function NewCampaignPage() {
         }),
       })
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
       const result = await response.json()
 
       if (result.success) {
@@ -74,15 +83,15 @@ export default function NewCampaignPage() {
           subject: result.subject, 
           body: result.body 
         }))
-        toast.success(`AI生成完成！使用${result.template}模板`)
+        toast.success(`AI generation completed! Using ${result.template} template`)
       } else {
-        throw new Error(result.error || '生成失败')
+        throw new Error(result.error || 'Generation failed')
       }
     } catch (error) {
       console.error('AI Generation Error:', error)
-      toast.error('AI生成失败，请稍后重试')
+      toast.error('AI generation failed, please try again later')
       
-      // 降级到简单生成（保持现有功能作为备用）
+      // Fallback to simple generation (keep existing functionality as backup)
       const fallbackSubject = emailMode === 'professional' 
         ? `Professional Email: ${campaignData.purpose}` 
         : `Message from ${campaignData.businessName || 'Us'}: ${campaignData.purpose}`
@@ -142,9 +151,38 @@ export default function NewCampaignPage() {
       toast.error('Please add at least one recipient')
       return
     }
+
+    // Check if user can send emails
+    try {
+      const response = await fetch('/api/user/check-permission', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'send_email',
+          currentCount: campaignData.recipients.length
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      
+      if (!data.allowed) {
+        toast.error(data.reason || 'You have reached your email sending limit. Please upgrade your plan.')
+        return
+      }
+    } catch (error) {
+      console.error('Permission check error:', error)
+      toast.error('Failed to verify permissions')
+      return
+    }
     
     try {
-      // 调用邮件发送API
+      // Call email sending API
       const response = await fetch('/api/campaigns/send', {
         method: 'POST',
         headers: {
@@ -156,17 +194,37 @@ export default function NewCampaignPage() {
         }),
       })
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
       const result = await response.json()
 
       if (result.success) {
+        // Update usage counter
+        try {
+          await fetch('/api/user/update-usage', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              action: 'send_email',
+              increment: campaignData.recipients.length
+            }),
+          })
+        } catch (error) {
+          console.error('Failed to update usage:', error)
+        }
+
         toast.success(`Campaign sent successfully to ${campaignData.recipients.length} recipients!`)
         router.push('/dashboard/campaigns')
       } else {
-        throw new Error(result.error || '发送失败')
+        throw new Error(result.error || 'Sending failed')
       }
     } catch (error) {
       console.error('Send campaign error:', error)
-      toast.error('邮件发送失败，请稍后重试')
+      toast.error('Email sending failed, please try again later')
     }
   }
 
@@ -175,19 +233,32 @@ export default function NewCampaignPage() {
     router.push('/dashboard/campaigns')
   }
 
-  // 模拟联系人数据
-  const [availableContacts] = useState([
-    { id: 1, name: 'John Smith', email: 'john.smith@example.com', status: 'active' },
-    { id: 2, name: 'Sarah Johnson', email: 'sarah.j@company.com', status: 'active' },
-    { id: 3, name: 'Mike Wilson', email: 'mike.wilson@email.com', status: 'active' },
-    { id: 4, name: 'Emily Davis', email: 'emily.davis@startup.io', status: 'active' },
-    { id: 5, name: 'David Brown', email: 'david.brown@tech.com', status: 'active' },
-    { id: 6, name: 'Lisa Chen', email: 'lisa.chen@design.com', status: 'active' },
-    { id: 7, name: 'Tom Anderson', email: 'tom.anderson@marketing.com', status: 'active' },
-    { id: 8, name: 'Anna Lee', email: 'anna.lee@business.com', status: 'active' }
-  ])
-
+  const [availableContacts, setAvailableContacts] = useState<any[]>([])
   const [selectedContacts, setSelectedContacts] = useState<number[]>([])
+
+  // Fetch real contacts from API
+  useEffect(() => {
+    if (session?.user?.email) {
+      fetchAvailableContacts()
+    }
+  }, [session])
+
+  const fetchAvailableContacts = async () => {
+    try {
+      const response = await fetch('/api/contacts')
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      if (data.success) {
+        setAvailableContacts(data.contacts || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch contacts:', error)
+    }
+  }
 
   const handleImportFromContacts = () => {
     setShowImportContactsModal(true)
@@ -258,6 +329,9 @@ export default function NewCampaignPage() {
 
   const parseFileContent = (content: string, fileName: string): string[] => {
     const emails: string[] = []
+    if (!content || content.trim().length === 0) {
+      return emails
+    }
     const lines = content.split('\n').filter(line => line.trim())
     
     if (fileName.toLowerCase().endsWith('.txt')) {
@@ -275,7 +349,13 @@ export default function NewCampaignPage() {
         }
       })
     } else {
+      if (lines.length === 0) {
+        return emails
+      }
       const [header, ...dataLines] = lines
+      if (!header) {
+        return emails
+      }
       const headers = header.split(',').map(h => h.trim().toLowerCase())
       const emailIndex = headers.findIndex(h => h.includes('email') || h.includes('邮箱'))
 
@@ -970,7 +1050,7 @@ export default function NewCampaignPage() {
                             color: '#333',
                             textAlign: 'left'
                           }}
-                          dangerouslySetInnerHTML={{ __html: campaignData.body }}
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(campaignData.body) }}
                           contentEditable={true}
                           onInput={(e) => {
                             const newContent = e.currentTarget.innerHTML
@@ -1091,21 +1171,12 @@ export default function NewCampaignPage() {
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => {
-                        const newEmails = [...campaignData.recipients, 'test@example.com']
+                        const newEmails = [...campaignData.recipients, 'your-email@example.com']
                         setCampaignData({ ...campaignData, recipients: newEmails })
                       }}
                       className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                     >
-                      + Test Email
-                    </button>
-                    <button
-                      onClick={() => {
-                        const newEmails = [...campaignData.recipients, 'demo@novamail.com']
-                        setCampaignData({ ...campaignData, recipients: newEmails })
-                      }}
-                      className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-                    >
-                      + Demo Email
+                      + Your Email
                     </button>
                   </div>
                 </div>

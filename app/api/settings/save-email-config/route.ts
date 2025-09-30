@@ -27,14 +27,9 @@ export async function POST(request: NextRequest) {
       pass: '***'
     })
 
-    // TODO: 保存到数据库
-    // await saveUserEmailConfig(session.user.email, {
-    //   host,
-    //   port,
-    //   user,
-    //   pass, // 应该加密存储
-    //   secure
-    // })
+    // Note: Email configuration saving is not yet implemented
+    // This would require adding a UserEmailConfig model to the database
+    // and implementing proper encryption for password storage
 
     return NextResponse.json({
       success: true,

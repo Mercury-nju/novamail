@@ -8,7 +8,10 @@ import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
   EyeIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
+  InformationCircleIcon,
+  ChevronDownIcon,
+  ChevronUpIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 
@@ -36,6 +39,8 @@ export default function EmailSettingsPage() {
     success: boolean
     message: string
   } | null>(null)
+  const [showGuides, setShowGuides] = useState(false)
+  const [selectedProvider, setSelectedProvider] = useState<string>('')
 
   const handleInputChange = (field: keyof SMTPConfig, value: string | number | boolean) => {
     setSmtpConfig(prev => ({
@@ -46,7 +51,7 @@ export default function EmailSettingsPage() {
 
   const handleTestConnection = async () => {
     if (!smtpConfig.host || !smtpConfig.user || !smtpConfig.pass) {
-      toast.error('请填写完整的SMTP配置信息')
+      toast.error('Please fill in complete SMTP configuration information')
       return
     }
 
@@ -67,23 +72,23 @@ export default function EmailSettingsPage() {
       if (result.success) {
         setTestResult({
           success: true,
-          message: '邮箱配置测试成功！'
+          message: 'Email configuration test successful!'
         })
-        toast.success('邮箱配置测试成功！')
+        toast.success('Email configuration test successful!')
       } else {
         setTestResult({
           success: false,
-          message: result.error || '邮箱配置测试失败'
+          message: result.error || 'Email configuration test failed'
         })
-        toast.error(result.error || '邮箱配置测试失败')
+        toast.error(result.error || 'Email configuration test failed')
       }
     } catch (error) {
       console.error('Test connection error:', error)
       setTestResult({
         success: false,
-        message: '网络错误，请稍后重试'
+        message: 'Network error, please try again later'
       })
-      toast.error('网络错误，请稍后重试')
+      toast.error('Network error, please try again later')
     } finally {
       setIsTesting(false)
     }
@@ -91,7 +96,7 @@ export default function EmailSettingsPage() {
 
   const handleSaveConfig = async () => {
     if (!smtpConfig.host || !smtpConfig.user || !smtpConfig.pass) {
-      toast.error('请填写完整的SMTP配置信息')
+      toast.error('Please fill in complete SMTP configuration information')
       return
     }
 
@@ -109,42 +114,93 @@ export default function EmailSettingsPage() {
       const result = await response.json()
 
       if (result.success) {
-        toast.success('邮箱配置保存成功！')
+        toast.success('Email configuration saved successfully!')
       } else {
-        toast.error(result.error || '保存失败')
+        toast.error(result.error || 'Save failed')
       }
     } catch (error) {
       console.error('Save config error:', error)
-      toast.error('保存失败，请稍后重试')
+      toast.error('Save failed, please try again later')
     } finally {
       setIsSaving(false)
     }
   }
 
-  const getProviderConfig = (provider: string) => {
-    const configs = {
-      gmail: {
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false
-      },
-      outlook: {
-        host: 'smtp-mail.outlook.com',
-        port: 587,
-        secure: false
-      },
-      yahoo: {
-        host: 'smtp.mail.yahoo.com',
-        port: 587,
-        secure: false
-      },
-      custom: {
-        host: '',
-        port: 587,
-        secure: false
+  const emailProviders = {
+    gmail: {
+      name: 'Gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      guide: {
+        title: 'Gmail SMTP Configuration',
+        steps: [
+          'Enable 2-Factor Authentication on your Gmail account',
+          'Go to Google Account settings > Security',
+          'Generate an App Password for "Mail"',
+          'Use your Gmail address as username',
+          'Use the generated App Password (not your regular password)'
+        ],
+        note: 'Gmail requires App Passwords for SMTP authentication when 2FA is enabled.'
+      }
+    },
+    outlook: {
+      name: 'Outlook/Hotmail',
+      host: 'smtp-mail.outlook.com',
+      port: 587,
+      secure: false,
+      guide: {
+        title: 'Outlook SMTP Configuration',
+        steps: [
+          'Use your full Outlook email address as username',
+          'Use your regular Outlook password',
+          'Enable "Less secure app access" if needed',
+          'Or use App Passwords if 2FA is enabled'
+        ],
+        note: 'Outlook may require enabling "Less secure app access" in account settings.'
+      }
+    },
+    yahoo: {
+      name: 'Yahoo Mail',
+      host: 'smtp.mail.yahoo.com',
+      port: 587,
+      secure: false,
+      guide: {
+        title: 'Yahoo Mail SMTP Configuration',
+        steps: [
+          'Enable 2-Factor Authentication',
+          'Generate an App Password in Yahoo Account Security',
+          'Use your Yahoo email address as username',
+          'Use the generated App Password'
+        ],
+        note: 'Yahoo requires App Passwords for SMTP when 2FA is enabled.'
+      }
+    },
+    custom: {
+      name: 'Custom SMTP',
+      host: '',
+      port: 587,
+      secure: false,
+      guide: {
+        title: 'Custom SMTP Configuration',
+        steps: [
+          'Contact your email provider for SMTP settings',
+          'Common ports: 587 (TLS), 465 (SSL), 25 (unencrypted)',
+          'Use your full email address as username',
+          'Use your email password or App Password'
+        ],
+        note: 'Check with your email provider for specific SMTP requirements.'
       }
     }
-    return configs[provider as keyof typeof configs] || configs.custom
+  }
+
+  const getProviderConfig = (provider: string) => {
+    const config = emailProviders[provider as keyof typeof emailProviders]
+    return {
+      host: config.host,
+      port: config.port,
+      secure: config.secure
+    }
   }
 
   const handleProviderSelect = (provider: string) => {
@@ -153,15 +209,16 @@ export default function EmailSettingsPage() {
       ...prev,
       ...config
     }))
+    setSelectedProvider(provider)
   }
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">邮箱设置</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Email Settings</h1>
         <p className="mt-1 text-sm text-gray-600">
-          配置您的邮箱账户，用于发送邮件活动
+          Configure your email account for sending email campaigns
         </p>
       </div>
 
@@ -169,33 +226,32 @@ export default function EmailSettingsPage() {
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <EnvelopeIcon className="h-5 w-5 mr-2 text-blue-600" />
-          当前状态
+          Current Status
         </h3>
         <div className="flex items-center space-x-3">
           <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-          <span className="text-sm text-gray-600">未配置邮箱账户</span>
+          <span className="text-sm text-gray-600">Email account not configured</span>
         </div>
         <p className="text-xs text-gray-500 mt-2">
-          配置邮箱后，您发送的邮件将显示为来自您的邮箱地址
+          After configuring your email, your sent emails will appear to come from your email address
         </p>
       </div>
 
       {/* Email Provider Selection */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">选择邮箱服务商</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Select Email Provider</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { id: 'gmail', name: 'Gmail', icon: '📧' },
-            { id: 'outlook', name: 'Outlook', icon: '📮' },
-            { id: 'yahoo', name: 'Yahoo', icon: '📬' },
-            { id: 'custom', name: '自定义', icon: '⚙️' }
-          ].map((provider) => (
+          {Object.entries(emailProviders).map(([key, provider]) => (
             <button
-              key={provider.id}
-              onClick={() => handleProviderSelect(provider.id)}
-              className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 transition-colors text-center"
+              key={key}
+              onClick={() => handleProviderSelect(key)}
+              className={`p-4 border-2 rounded-lg transition-colors text-center ${
+                selectedProvider === key 
+                  ? 'border-blue-500 bg-blue-50' 
+                  : 'border-gray-200 hover:border-blue-500'
+              }`}
             >
-              <div className="text-2xl mb-2">{provider.icon}</div>
+              <div className="text-2xl mb-2">📧</div>
               <div className="text-sm font-medium text-gray-900">{provider.name}</div>
             </button>
           ))}
@@ -204,12 +260,12 @@ export default function EmailSettingsPage() {
 
       {/* SMTP Configuration */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">SMTP 配置</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">SMTP Configuration</h3>
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                SMTP 服务器
+                SMTP Server
               </label>
               <input
                 type="text"
@@ -221,7 +277,7 @@ export default function EmailSettingsPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                端口
+                Port
               </label>
               <input
                 type="number"
@@ -235,7 +291,7 @@ export default function EmailSettingsPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              邮箱地址
+              Email Address
             </label>
             <input
               type="email"
@@ -248,14 +304,14 @@ export default function EmailSettingsPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              应用密码
+              App Password / Email Password
             </label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={smtpConfig.pass}
                 onChange={(e) => handleInputChange('pass', e.target.value)}
-                placeholder="输入应用密码或邮箱密码"
+                placeholder="Enter app password or email password"
                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <button
@@ -271,7 +327,7 @@ export default function EmailSettingsPage() {
               </button>
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              Gmail 用户请使用应用专用密码，不是您的登录密码
+              Gmail users should use App Passwords, not your regular login password
             </p>
           </div>
 
@@ -284,7 +340,7 @@ export default function EmailSettingsPage() {
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
             <label htmlFor="secure" className="ml-2 text-sm text-gray-700">
-              使用 SSL/TLS 加密连接
+              Use SSL/TLS encrypted connection
             </label>
           </div>
         </div>
@@ -322,10 +378,10 @@ export default function EmailSettingsPage() {
           {isTesting ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              <span>测试中...</span>
+              <span>Testing...</span>
             </>
           ) : (
-            <span>测试连接</span>
+            <span>Test Connection</span>
           )}
         </button>
 
@@ -337,41 +393,55 @@ export default function EmailSettingsPage() {
           {isSaving ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              <span>保存中...</span>
+              <span>Saving...</span>
             </>
           ) : (
-            <span>保存配置</span>
+            <span>Save Configuration</span>
           )}
         </button>
       </div>
 
-      {/* Help Section */}
-      <div className="bg-blue-50 rounded-xl border border-blue-200 p-6">
-        <h4 className="text-sm font-medium text-blue-900 mb-3">配置帮助</h4>
-        <div className="space-y-3 text-sm text-blue-800">
-          <div>
-            <strong>Gmail:</strong>
-            <ul className="list-disc list-inside mt-1 ml-2">
-              <li>启用两步验证</li>
-              <li>生成应用专用密码</li>
-              <li>使用应用密码而不是登录密码</li>
-            </ul>
+      {/* Provider Guides */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <button
+          onClick={() => setShowGuides(!showGuides)}
+          className="flex items-center justify-between w-full text-left"
+        >
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+            <InformationCircleIcon className="h-5 w-5 mr-2 text-blue-600" />
+            Email Provider Setup Guides
+          </h3>
+          {showGuides ? (
+            <ChevronUpIcon className="h-5 w-5 text-gray-400" />
+          ) : (
+            <ChevronDownIcon className="h-5 w-5 text-gray-400" />
+          )}
+        </button>
+        
+        {showGuides && (
+          <div className="mt-6 space-y-6">
+            {Object.entries(emailProviders).map(([key, provider]) => (
+              <div key={key} className="border border-gray-200 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-900 mb-3">{provider.guide.title}</h4>
+                <div className="space-y-2">
+                  <div>
+                    <strong className="text-sm text-gray-700">Steps:</strong>
+                    <ol className="list-decimal list-inside mt-1 space-y-1 text-sm text-gray-600">
+                      {provider.guide.steps.map((step, index) => (
+                        <li key={index}>{step}</li>
+                      ))}
+                    </ol>
+                  </div>
+                  <div className="bg-yellow-50 border border-yellow-200 rounded p-3">
+                    <p className="text-sm text-yellow-800">
+                      <strong>Note:</strong> {provider.guide.note}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-          <div>
-            <strong>Outlook:</strong>
-            <ul className="list-disc list-inside mt-1 ml-2">
-              <li>使用您的邮箱地址和密码</li>
-              <li>确保启用了SMTP访问</li>
-            </ul>
-          </div>
-          <div>
-            <strong>自定义SMTP:</strong>
-            <ul className="list-disc list-inside mt-1 ml-2">
-              <li>联系您的邮件服务提供商获取SMTP设置</li>
-              <li>确保端口和加密设置正确</li>
-            </ul>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   )

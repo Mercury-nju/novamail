@@ -5,7 +5,7 @@ import BackgroundAnimations from '@/components/BackgroundAnimations'
 import { 
   EnvelopeIcon, 
   ChartBarIcon, 
-  TemplateIcon, 
+  DocumentTextIcon, 
   UserGroupIcon,
   CogIcon,
   ShieldCheckIcon,
@@ -27,11 +27,11 @@ export default function FeaturesPage() {
       ]
     },
     {
-      icon: TemplateIcon,
+      icon: DocumentTextIcon,
       title: "专业模板库",
       description: "丰富的邮件模板，支持自定义设计，打造品牌专属邮件",
       details: [
-        "50+专业模板",
+        "专业模板",
         "响应式设计",
         "品牌定制",
         "拖拽编辑器"

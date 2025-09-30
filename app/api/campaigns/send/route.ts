@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         }
 
         const result = await transporter.sendMail(mailOptions)
-        console.log(`Email sent to ${email}:`, result.messageId)
+        // Email sent successfully
         return { email, success: true, messageId: result.messageId }
       } catch (error) {
         console.error(`Failed to send email to ${email}:`, error)
@@ -84,15 +84,16 @@ export async function POST(request: NextRequest) {
 }
 
 // 临时函数：获取用户邮箱配置
-// TODO: 从数据库获取用户邮箱配置
+// Note: User email configuration is currently read from environment variables
+// Future implementation should store user-specific SMTP settings in database
 async function getUserEmailConfig(userEmail: string) {
   // 临时返回默认配置，实际应该从数据库获取
   // 这里先使用环境变量作为默认配置
   return {
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT || '587'),
-    user: process.env.EMAIL_USER || 'your-email@gmail.com',
-    pass: process.env.EMAIL_PASS || 'your-app-password',
+    host: process.env.EMAIL_SERVER_HOST || process.env.EMAIL_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.EMAIL_SERVER_PORT || process.env.EMAIL_PORT || '587'),
+    user: process.env.EMAIL_SERVER_USER || process.env.EMAIL_USER || 'your-email@gmail.com',
+    pass: process.env.EMAIL_SERVER_PASSWORD || process.env.EMAIL_PASS || 'your-app-password',
     secure: process.env.EMAIL_SECURE === 'true'
   }
 }

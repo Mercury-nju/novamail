@@ -47,7 +47,7 @@ export default function ContactsPage() {
   const [editingGroup, setEditingGroup] = useState<{ id: string; name: string } | null>(null)
   const [contacts, setContacts] = useState<Contact[]>([])
   const [userSegments, setUserSegments] = useState<{ id: string; name: string }[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -67,7 +67,7 @@ export default function ContactsPage() {
       }
     } catch (error) {
       console.error('Failed to fetch contacts:', error)
-      toast.error('获取联系人列表失败')
+      toast.error('Failed to fetch contacts list')
     } finally {
       setLoading(false)
     }
@@ -112,7 +112,7 @@ export default function ContactsPage() {
 
   const handleDeleteSelected = async () => {
     if (selectedContacts.length === 0) {
-      toast.error('请选择要删除的联系人')
+      toast.error('Please select contacts to delete')
       return
     }
     
@@ -125,15 +125,15 @@ export default function ContactsPage() {
       
       const data = await response.json()
       if (data.success) {
-        toast.success('联系人删除成功')
+        toast.success('Contacts deleted successfully')
         setSelectedContacts([])
         fetchContacts()
       } else {
-        toast.error(data.error || '删除失败')
+        toast.error(data.error || 'Delete failed')
       }
     } catch (error) {
       console.error('Delete contacts error:', error)
-      toast.error('删除联系人失败')
+      toast.error('Failed to delete contacts')
     }
   }
 

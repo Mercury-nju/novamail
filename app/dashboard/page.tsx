@@ -46,7 +46,7 @@ export default function DashboardPage() {
     },
   ])
   const [recentCampaigns, setRecentCampaigns] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (session?.user?.email) {

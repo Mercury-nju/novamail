@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 import BackgroundAnimations from '@/components/BackgroundAnimations'
 import {
   CheckIcon,
@@ -16,9 +19,12 @@ import {
 } from '@heroicons/react/24/outline'
 
 export default function PricingPage() {
+  const { data: session } = useSession()
+  const router = useRouter()
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
   const [selectedPlan, setSelectedPlan] = useState('pro')
   const [hoveredPlan, setHoveredPlan] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const plans = [
     {
@@ -32,6 +38,7 @@ export default function PricingPage() {
         'Up to 1,000 emails per month',
         'Simple email templates',
         'AI email generation',
+        'SMTP configuration',
         'Basic analytics',
         'Email support',
         'Contact import (CSV, TXT)',
@@ -65,7 +72,7 @@ export default function PricingPage() {
         'Advanced contact groups & segmentation',
         'Campaign drafts & scheduling',
         'Email preview & testing',
-        'Custom SMTP configuration',
+        'SMTP configuration',
         'Remove NovaMail branding'
       ],
       limitations: [],
@@ -77,8 +84,7 @@ export default function PricingPage() {
       id: 'enterprise',
       name: 'Enterprise',
       description: 'For large organizations',
-      monthlyPrice: 49,
-      yearlyPrice: 490,
+      consult: true,
       features: [
         'Unlimited contacts',
         'Unlimited emails',
@@ -113,7 +119,7 @@ export default function PricingPage() {
     },
     {
       question: 'Can I use my own SMTP server?',
-      answer: 'Yes! Pro and Enterprise plans allow you to configure your own SMTP settings, so you can send emails from your own domain and email address.'
+      answer: 'Yes! All plans allow you to configure your own SMTP settings, so you can send emails from your own domain and email address.'
     },
     {
       question: 'What file formats can I import contacts from?',
@@ -134,21 +140,66 @@ export default function PricingPage() {
   }
 
   const getYearlyDiscount = (plan: typeof plans[0]) => {
-    if (plan.monthlyPrice === 0) return 0
+    if (!plan.monthlyPrice || plan.monthlyPrice === 0) return 0
     const yearlyEquivalent = plan.monthlyPrice * 12
     return Math.round(((yearlyEquivalent - plan.yearlyPrice) / yearlyEquivalent) * 100)
   }
 
-  // 调试函数
-  const handleToggleBilling = () => {
-    console.log('Current billing cycle:', billingCycle)
-    const newCycle = billingCycle === 'monthly' ? 'yearly' : 'monthly'
-    console.log('New billing cycle:', newCycle)
+  const handleBillingCycleChange = (newCycle: 'monthly' | 'yearly') => {
     setBillingCycle(newCycle)
   }
 
   const handlePlanSelect = (planId: string) => {
     setSelectedPlan(planId)
+  }
+
+  const handleSubscribe = async (planId: string) => {
+    if (!session) {
+      router.push('/login')
+      return
+    }
+
+    if (planId === 'free') {
+      router.push('/register')
+      return
+    }
+
+    if (planId === 'enterprise') {
+      router.push('/contact')
+      return
+    }
+
+    setIsLoading(true)
+    
+    try {
+      const response = await fetch('/api/paddle/create-subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          plan: planId,
+          billingCycle: billingCycle
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      
+      if (data.success && data.checkoutUrl) {
+        window.location.href = data.checkoutUrl
+      } else {
+        throw new Error(data.error || 'Failed to create subscription')
+      }
+    } catch (error) {
+      console.error('Subscription error:', error)
+      toast.error('Failed to start subscription process')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -198,7 +249,7 @@ export default function PricingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto"
+              className="text-xl text-gray-600 mb-4 max-w-3xl mx-auto"
             >
               Choose the perfect plan for your email marketing needs. Start free, upgrade when you're ready.
             </motion.p>
@@ -208,247 +259,132 @@ export default function PricingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex items-center justify-center space-x-4 mb-12"
+              className="flex items-center justify-center mb-0"
             >
-              <span className={`text-sm font-medium ${billingCycle === 'monthly' ? 'text-gray-900' : 'text-gray-500'}`}>
-                Monthly
-              </span>
-              <button
-                onClick={handleToggleBilling}
-                className="relative inline-flex h-6 w-11 items-center rounded-full bg-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
-                    billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-1'
+              <div className="bg-gray-100 p-1 rounded-lg flex">
+                <button
+                  type="button"
+                  onClick={() => handleBillingCycleChange('monthly')}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 cursor-pointer select-none ${
+                    billingCycle === 'monthly'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
                   }`}
-                />
-              </button>
-              <span className={`text-sm font-medium ${billingCycle === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
-                Yearly
-              </span>
-              {billingCycle === 'yearly' && (
-                <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                  Save up to 17%
-                </span>
-              )}
+                >
+                  Monthly
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleBillingCycleChange('yearly')}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 relative cursor-pointer select-none ${
+                    billingCycle === 'yearly'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Yearly
+                  {billingCycle === 'yearly' && (
+                    <span className="absolute -top-1 -right-1 inline-flex items-center px-1.5 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                      Save 17%
+                    </span>
+                  )}
+                </button>
+              </div>
             </motion.div>
           </div>
         </div>
       </div>
 
+
       {/* Pricing Cards */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {plans.map((plan, index) => {
-            const isSelected = selectedPlan === plan.id
-            const isHovered = hoveredPlan === plan.id
-            
-            return (
+      <div className="bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {plans.map((plan, index) => (
               <motion.div
                 key={plan.id}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ 
-                  opacity: 1, 
-                  y: 0,
-                  scale: isSelected ? 1.05 : 1,
-                  rotateY: isHovered ? 2 : 0
-                }}
-                transition={{ 
-                  duration: 0.6, 
-                  delay: index * 0.1,
-                  scale: { duration: 0.3 },
-                  rotateY: { duration: 0.2 }
-                }}
-                whileHover={{ 
-                  scale: 1.02,
-                  rotateY: 1,
-                  transition: { duration: 0.2 }
-                }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handlePlanSelect(plan.id)}
-                onMouseEnter={() => setHoveredPlan(plan.id)}
-                onMouseLeave={() => setHoveredPlan(null)}
-                className={`relative bg-white rounded-2xl shadow-lg border-2 cursor-pointer transition-all duration-300 ${
-                  isSelected 
-                    ? 'border-primary-500 shadow-2xl shadow-primary-200' 
-                    : isHovered 
-                      ? 'border-primary-300 shadow-xl' 
-                      : 'border-gray-200'
-                } overflow-hidden`}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="bg-white rounded-2xl border border-gray-200 p-6 relative"
               >
-                {isSelected && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary-600 to-blue-600 text-white text-center py-2 text-sm font-medium"
-                  >
-                    <motion.span
-                      initial={{ scale: 0.8 }}
-                      animate={{ scale: 1 }}
-                      transition={{ duration: 0.2, delay: 0.1 }}
-                    >
-                      ✨ Selected Plan
-                    </motion.span>
-                  </motion.div>
-                )}
-              
-              <div className="p-8">
-                <div className="text-center mb-8">
-                  <motion.h3 
-                    className="text-2xl font-bold text-gray-900 mb-2"
-                    animate={{ color: isSelected ? '#3B82F6' : '#111827' }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {plan.name}
-                  </motion.h3>
-                  <motion.p 
-                    className="text-gray-600 mb-6"
-                    animate={{ opacity: isSelected ? 0.8 : 0.6 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {plan.description}
-                  </motion.p>
-                  
-                  <motion.div 
-                    className="mb-4"
-                    animate={{ scale: isSelected ? 1.1 : 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <motion.span 
-                      className="text-4xl font-bold text-gray-900"
-                      animate={{ color: isSelected ? '#3B82F6' : '#111827' }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      ${getPrice(plan)}
-                    </motion.span>
-                    <span className="text-gray-600 ml-2">
-                      /{billingCycle === 'yearly' ? 'year' : 'month'}
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-1">{plan.name}</h3>
+                  <div className="text-4xl font-bold text-gray-900 mb-1 flex items-center justify-center gap-2">
+                    <span>
+                      {plan.id === 'free' ? 'Free' : plan.consult ? 'Custom' : `$${getPrice(plan)}`}
+                      {plan.id !== 'free' && !plan.consult && (
+                        <span className="text-lg font-normal text-gray-500">
+                          /{billingCycle === 'yearly' ? 'year' : 'month'}
+                        </span>
+                      )}
                     </span>
-                  </motion.div>
-                  
-                  {billingCycle === 'yearly' && plan.monthlyPrice > 0 && (
-                    <motion.div 
-                      className="text-sm text-gray-600"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <span className="line-through">${plan.monthlyPrice}/month</span>
-                      <span className="ml-2 text-green-600 font-medium">
+                    {billingCycle === 'yearly' && plan.monthlyPrice && plan.monthlyPrice > 0 && !plan.consult && (
+                      <span className="text-sm font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">
                         Save {getYearlyDiscount(plan)}%
                       </span>
-                    </motion.div>
+                    )}
+                  </div>
+                  <p className="text-gray-600 text-sm">{plan.description}</p>
+                </div>
+
+                <div className="space-y-3 mb-6">
+                  {plan.features.slice(0, 4).map((feature, featureIndex) => (
+                    <div key={featureIndex} className="flex items-start">
+                      <CheckIcon className="h-4 w-4 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                      <span className="text-gray-700 text-sm">{feature}</span>
+                    </div>
+                  ))}
+                  {plan.features.length > 4 && (
+                    <div className="text-xs text-gray-500">
+                      + {plan.features.length - 4} more features
+                    </div>
                   )}
                 </div>
 
-                <div className="space-y-4 mb-8">
-                  {plan.features.map((feature, featureIndex) => (
-                    <motion.div 
-                      key={featureIndex} 
-                      className="flex items-start"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3, delay: featureIndex * 0.05 }}
-                    >
-                      <motion.div
-                        animate={{ 
-                          scale: isSelected ? 1.2 : 1,
-                          color: isSelected ? '#10B981' : '#10B981'
-                        }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <CheckIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                      </motion.div>
-                      <motion.span 
-                        className="text-gray-700"
-                        animate={{ 
-                          color: isSelected ? '#374151' : '#374151',
-                          fontWeight: isSelected ? '500' : '400'
-                        }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {feature}
-                      </motion.span>
-                    </motion.div>
-                  ))}
-                  
-                  {plan.limitations.map((limitation, limitationIndex) => (
-                    <motion.div 
-                      key={limitationIndex} 
-                      className="flex items-start"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3, delay: (plan.features.length + limitationIndex) * 0.05 }}
-                    >
-                      <XMarkIcon className="h-5 w-5 text-gray-400 mt-0.5 mr-3 flex-shrink-0" />
-                      <span className="text-gray-500">{limitation}</span>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                <button
+                  onClick={() => handleSubscribe(plan.id)}
+                  disabled={isLoading}
+                  className={`w-full flex items-center justify-center px-4 py-2.5 rounded-lg font-medium transition-all duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed ${
+                    plan.id === 'free'
+                      ? 'bg-gray-900 text-white hover:bg-gray-800'
+                      : plan.consult
+                      ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-primary-600 text-white hover:bg-primary-700'
+                  }`}
                 >
-                  <Link
-                    href={plan.ctaLink}
-                    className={`w-full flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
-                      isSelected
-                        ? 'bg-gradient-to-r from-primary-600 to-blue-600 text-white hover:from-primary-700 hover:to-blue-700 shadow-lg'
-                        : 'bg-gray-900 text-white hover:bg-gray-800 hover:shadow-md'
-                    }`}
-                  >
-                    <motion.span
-                      animate={{ 
-                        scale: isSelected ? 1.05 : 1,
-                        fontWeight: isSelected ? '600' : '500'
-                      }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {plan.cta}
-                    </motion.span>
-                    <motion.div
-                      animate={{ 
-                        x: isSelected ? 4 : 0,
-                        scale: isSelected ? 1.1 : 1
-                      }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ArrowRightIcon className="ml-2 h-4 w-4" />
-                    </motion.div>
-                  </Link>
-                </motion.div>
-              </div>
-            </motion.div>
-          )})}
+                  {isLoading ? 'Processing...' : plan.cta}
+                  <ArrowRightIcon className="ml-2 h-4 w-4" />
+                </button>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Features Comparison */}
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Compare All Features</h2>
+      {/* Detailed Comparison Table */}
+      <div className="bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Compare All Features</h2>
             <p className="text-lg text-gray-600">See what's included in each plan</p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="min-w-full divide-y divide-gray-200 bg-white rounded-lg shadow-sm">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Features
                   </th>
-                  <th className="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Free
-                  </th>
-                  <th className="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Pro
-                  </th>
-                  <th className="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Enterprise
-                  </th>
+                  {plans.map((plan) => (
+                    <th key={plan.id} className="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <div className="space-y-2">
+                        <div className="text-lg font-bold text-gray-900">{plan.name}</div>
+                        <div className="text-sm text-gray-600">{plan.description}</div>
+                      </div>
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -460,7 +396,7 @@ export default function PricingPage() {
                   { feature: 'AI email generation', free: 'Yes', pro: 'Yes', enterprise: 'Yes' },
                   { feature: 'Contact import', free: 'CSV, TXT', pro: 'CSV, TXT, Excel', enterprise: 'All formats + API' },
                   { feature: 'Contact groups', free: 'Basic', pro: 'Advanced', enterprise: 'Advanced + Automation' },
-                  { feature: 'SMTP configuration', free: 'No', pro: 'Yes', enterprise: 'Yes + Custom' },
+                  { feature: 'SMTP configuration', free: 'Yes', pro: 'Yes', enterprise: 'Yes + Custom' },
                   { feature: 'Branding', free: 'NovaMail', pro: 'Custom', enterprise: 'White-label' },
                   { feature: 'Support', free: 'Email', pro: 'Priority Email', enterprise: 'Dedicated Manager' }
                 ].map((row, index) => (
@@ -486,21 +422,21 @@ export default function PricingPage() {
       </div>
 
       {/* FAQ Section */}
-      <div className="bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+      <div className="bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Frequently Asked Questions</h2>
             <p className="text-lg text-gray-600">Everything you need to know about our pricing</p>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {faqs.map((faq, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+                className="bg-gray-50 rounded-lg border border-gray-200 p-4"
               >
                 <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-start">
                   <QuestionMarkCircleIcon className="h-5 w-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0" />
@@ -515,12 +451,12 @@ export default function PricingPage() {
 
       {/* CTA Section */}
       <div className="bg-primary-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold text-white mb-2">
               Ready to get started?
             </h2>
-            <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-primary-100 mb-6 max-w-2xl mx-auto">
               Join thousands of businesses using NovaMail to grow their email marketing
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">

@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { motion } from 'framer-motion'
-import BackgroundAnimations from '@/components/BackgroundAnimations'
 import {
   SparklesIcon,
   HomeIcon,
@@ -15,7 +14,8 @@ import {
   Cog6ToothIcon,
   Bars3Icon,
   XMarkIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  CreditCardIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 
@@ -24,6 +24,7 @@ const navigation = [
   { name: 'Contacts', href: '/dashboard/contacts', icon: UserGroupIcon },
   { name: 'Campaigns', href: '/dashboard/campaigns', icon: EnvelopeIcon },
   { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
+  { name: 'Billing', href: '/dashboard/billing', icon: CreditCardIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
   { name: 'Pricing', href: '/pricing', icon: Cog6ToothIcon },
 ]
@@ -68,8 +69,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 relative overflow-hidden">
-      <BackgroundAnimations variant="dashboard" particleCount={6} showGrid={false} />
+    <div className="min-h-screen bg-gray-50">
       {/* Mobile sidebar */}
       <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />

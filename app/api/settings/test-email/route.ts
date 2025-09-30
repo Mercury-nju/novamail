@@ -22,21 +22,21 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'SMTP连接测试成功'
+      message: 'SMTP connection test successful'
     })
 
   } catch (error) {
     console.error('SMTP test error:', error)
     
-    let errorMessage = 'SMTP连接测试失败'
+    let errorMessage = 'SMTP connection test failed'
     
     if (error instanceof Error) {
       if (error.message.includes('Invalid login')) {
-        errorMessage = '邮箱地址或密码错误'
+        errorMessage = 'Invalid email address or password'
       } else if (error.message.includes('ECONNREFUSED')) {
-        errorMessage = '无法连接到SMTP服务器'
+        errorMessage = 'Unable to connect to SMTP server'
       } else if (error.message.includes('timeout')) {
-        errorMessage = '连接超时，请检查网络和服务器设置'
+        errorMessage = 'Connection timeout, please check network and server settings'
       } else {
         errorMessage = error.message
       }

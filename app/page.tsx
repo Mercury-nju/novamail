@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import TemplateShowcase from '@/components/TemplateShowcase'
 import { 
   SparklesIcon, 
   EnvelopeIcon, 
@@ -160,42 +161,14 @@ export default function HomePage() {
         <div className="absolute inset-0 -z-10">
           {/* Dynamic gradient background */}
           <motion.div 
-            className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50"
+            className="absolute inset-0"
             animate={{
               background: [
-                "linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #eff6ff 100%)",
-                "linear-gradient(135deg, #f1f5f9 0%, #ffffff 50%, #dbeafe 100%)",
-                "linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #eff6ff 100%)"
+                "linear-gradient(135deg, #f0f9ff 0%, #ffffff 30%, #e0f2fe 70%, #f0f9ff 100%)",
+                "linear-gradient(135deg, #e0f2fe 0%, #ffffff 30%, #dbeafe 70%, #e0f2fe 100%)",
+                "linear-gradient(135deg, #f3e8ff 0%, #ffffff 30%, #e9d5ff 70%, #f3e8ff 100%)",
+                "linear-gradient(135deg, #f0f9ff 0%, #ffffff 30%, #e0f2fe 70%, #f0f9ff 100%)"
               ]
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          
-          {/* Animated geometric shapes */}
-          <motion.div
-            className="absolute top-1/4 right-1/4 w-64 h-64 bg-gradient-to-br from-blue-100/30 to-purple-100/30 rounded-full blur-3xl"
-            animate={{
-              scale: [1, 1.3, 1],
-              opacity: [0.3, 0.6, 0.3],
-              rotate: [0, 180, 360],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          <motion.div
-            className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-gradient-to-br from-primary-100/40 to-blue-100/40 rounded-full blur-2xl"
-            animate={{
-              scale: [1.2, 1, 1.2],
-              opacity: [0.4, 0.2, 0.4],
-              x: [0, 20, 0],
-              y: [0, -10, 0],
             }}
             transition={{
               duration: 15,
@@ -204,44 +177,145 @@ export default function HomePage() {
             }}
           />
           
-          {/* Floating orbs */}
-          {[...Array(5)].map((_, i) => (
+          {/* Large floating geometric shapes */}
+          <motion.div
+            className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-blue-200/40 to-purple-200/40 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.4, 1],
+              opacity: [0.3, 0.7, 0.3],
+              rotate: [0, 180, 360],
+              x: [0, 50, 0],
+              y: [0, -30, 0],
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-gradient-to-br from-primary-200/50 to-pink-200/50 rounded-full blur-3xl"
+            animate={{
+              scale: [1.2, 1, 1.2],
+              opacity: [0.4, 0.8, 0.4],
+              rotate: [360, 180, 0],
+              x: [0, -40, 0],
+              y: [0, 20, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute top-1/2 left-1/2 w-72 h-72 bg-gradient-to-br from-green-200/30 to-teal-200/30 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.2, 0.6, 0.2],
+              rotate: [0, 90, 180, 270, 360],
+              x: [0, 30, -20, 0],
+              y: [0, -20, 30, 0],
+            }}
+            transition={{
+              duration: 30,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          
+          {/* Floating particles */}
+          {[...Array(12)].map((_, i) => (
             <motion.div
-              key={`orb-${i}`}
-              className="absolute w-16 h-16 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full blur-xl"
+              key={`particle-${i}`}
+              className="absolute rounded-full bg-primary-300/40 blur-sm"
               style={{
-                left: `${10 + i * 20}%`,
-                top: `${20 + (i % 2) * 40}%`,
+                width: `${Math.random() * 12 + 6}px`,
+                height: `${Math.random() * 12 + 6}px`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
               }}
               animate={{
+                y: [0, Math.random() * 80 - 40, 0],
+                x: [0, Math.random() * 60 - 30, 0],
+                opacity: [0.4, 0.8, 0.4],
                 scale: [1, 1.5, 1],
-                opacity: [0.2, 0.4, 0.2],
-                y: [0, -30, 0],
-                x: [0, 15, 0],
               }}
               transition={{
-                duration: 6 + i,
+                duration: Math.random() * 15 + 10,
                 repeat: Infinity,
-                delay: i * 0.5,
-                ease: "easeInOut"
+                delay: i * 0.3,
+                ease: "easeInOut",
               }}
             />
           ))}
           
+          {/* Floating orbs with different colors */}
+          {[...Array(8)].map((_, i) => {
+            const colors = [
+              'from-blue-200/30 to-purple-200/30',
+              'from-pink-200/30 to-rose-200/30',
+              'from-green-200/30 to-emerald-200/30',
+              'from-cyan-200/30 to-blue-200/30',
+              'from-indigo-200/30 to-blue-200/30',
+              'from-purple-200/30 to-pink-200/30',
+              'from-teal-200/30 to-cyan-200/30',
+              'from-slate-200/30 to-gray-200/30'
+            ];
+            return (
+              <motion.div
+                key={`orb-${i}`}
+                className={`absolute w-20 h-20 bg-gradient-to-br ${colors[i]} rounded-full blur-xl`}
+                style={{
+                  left: `${5 + i * 12}%`,
+                  top: `${10 + (i % 3) * 30}%`,
+                }}
+                animate={{
+                  scale: [1, 1.8, 1],
+                  opacity: [0.3, 0.7, 0.3],
+                  y: [0, -40, 0],
+                  x: [0, 20, 0],
+                  rotate: [0, 180, 360],
+                }}
+                transition={{
+                  duration: 8 + i * 2,
+                  repeat: Infinity,
+                  delay: i * 0.4,
+                  ease: "easeInOut"
+                }}
+              />
+            );
+          })}
+          
           {/* Animated grid pattern */}
-          <motion.div 
-            className="absolute inset-0 opacity-[0.02]"
+          <motion.div
+            className="absolute inset-0 opacity-[0.03]"
             animate={{
-              opacity: [0.02, 0.05, 0.02],
+              opacity: [0.03, 0.08, 0.03],
             }}
             transition={{
-              duration: 8,
+              duration: 12,
               repeat: Infinity,
               ease: "easeInOut"
             }}
           >
-            <div className="h-full w-full bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] bg-[size:50px_50px]" />
+            <div className="h-full w-full bg-[linear-gradient(rgba(59,130,246,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.1)_1px,transparent_1px)] bg-[size:60px_60px]" />
           </motion.div>
+          
+          {/* Light rays effect */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+            animate={{
+              x: ['-100%', '100%'],
+              opacity: [0, 0.3, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2
+            }}
+          />
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -309,6 +383,13 @@ export default function HomePage() {
                   y: -2
                 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  // Scroll to the "How it Works" section
+                  const howItWorksSection = document.getElementById('how-it-works');
+                  if (howItWorksSection) {
+                    howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
                 className="text-primary-600 hover:text-primary-700 font-medium text-lg transition-all duration-300 px-6 py-3 rounded-lg hover:bg-primary-50"
               >
                 Watch Demo
@@ -325,7 +406,10 @@ export default function HomePage() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="py-24 bg-white relative z-10 overflow-hidden"
+        className="py-24 relative z-10 overflow-hidden"
+        style={{
+          background: 'linear-gradient(to bottom, rgba(240,249,255,0.8) 0%, rgba(240,249,255,0.6) 20%, rgba(240,249,255,0.4) 40%, rgba(240,249,255,0.2) 60%, rgba(255,255,255,0.8) 80%, rgba(255,255,255,1) 100%)'
+        }}
       >
         {/* Enhanced Background Elements */}
         <div className="absolute inset-0 -z-10">
@@ -445,8 +529,180 @@ export default function HomePage() {
         </div>
       </motion.section>
 
+      {/* Product Showcase - Professional Templates */}
+      <TemplateShowcase />
+
+      {/* Simple Email Flow Showcase */}
+      <motion.section 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="py-24 bg-white relative z-10 overflow-hidden"
+      >
+        {/* Background Elements */}
+        <div className="absolute inset-0 -z-10">
+          <motion.div 
+            className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-green-200/30 to-blue-200/30 rounded-full blur-3xl"
+            animate={{ 
+              scale: [1, 1.1, 1], 
+              opacity: [0.3, 0.5, 0.3],
+              x: [0, 50, 0],
+              y: [0, -30, 0]
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div 
+            className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-gradient-to-l from-purple-200/30 to-pink-200/30 rounded-full blur-3xl"
+            animate={{ 
+              scale: [1, 1.2, 1], 
+              opacity: [0.4, 0.6, 0.4],
+              x: [0, -40, 0],
+              y: [0, 40, 0]
+            }}
+            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="inline-block px-4 py-2 bg-green-100 text-green-800 text-sm font-medium rounded-full mb-6"
+            >
+              Simple Email Flow
+            </motion.span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Create <span className="text-green-600">Simple</span> Emails in Minutes
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Perfect for personal messages, newsletters, and business communications. 
+              Clean, professional, and easy to create.
+            </p>
+          </motion.div>
+
+          {/* Simple Email Flow Demo */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Side - Process Steps */}
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="space-y-8"
+            >
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                    1
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Choose Simple Email</h3>
+                    <p className="text-gray-600">Select the simple email option for clean, text-based communications.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                    2
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">AI Content Generation</h3>
+                    <p className="text-gray-600">Our AI analyzes your business information and generates natural, engaging email content.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                    3
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Edit & Send</h3>
+                    <p className="text-gray-600">Review the generated content, make any edits, and send to your recipients.</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Right Side - Email Preview */}
+            <motion.div 
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+                {/* Email Header */}
+                <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-bold">N</span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">NovaMail</p>
+                        <p className="text-xs text-gray-500">noreply@novamail.com</p>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-500">Just now</div>
+                  </div>
+                </div>
+
+                {/* Email Content */}
+                <div className="p-6">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Subject: Welcome to Our Service</h3>
+                  </div>
+                  
+                  <div className="space-y-4 text-gray-700">
+                    <p>Dear Customer,</p>
+                    
+                    <p>Thank you for choosing our service. We're excited to have you on board and look forward to helping you achieve your goals.</p>
+                    
+                    <p>Here's what you can expect from us:</p>
+                    
+                    <ul className="list-disc list-inside space-y-2 ml-4">
+                      <li>Personalized support and guidance</li>
+                      <li>Regular updates on your progress</li>
+                      <li>Access to our knowledge base and resources</li>
+                    </ul>
+                    
+                    <p>If you have any questions or need assistance, please don't hesitate to reach out to us.</p>
+                    
+                    <p>Best regards,<br />The NovaMail Team</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Elements */}
+              <motion.div 
+                className="absolute -top-4 -right-4 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center"
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  rotate: [0, 180, 360]
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                <span className="text-white text-xs">✓</span>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </motion.section>
+
       {/* How it Works */}
       <motion.section 
+        id="how-it-works"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -552,7 +808,7 @@ export default function HomePage() {
                   }}
                   className="text-center group relative"
                 >
-                  <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 relative z-10">
+                  <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 relative z-10 h-full flex flex-col">
                     <motion.div 
                       whileHover={{ 
                         scale: 1.1,
@@ -562,7 +818,7 @@ export default function HomePage() {
                     >
                       {index + 1}
                     </motion.div>
-                    <p className="text-gray-700 text-lg leading-relaxed">
+                    <p className="text-gray-700 text-lg leading-relaxed flex-grow">
                       {step}
                     </p>
                   </div>
@@ -754,40 +1010,39 @@ export default function HomePage() {
                 <span className="text-2xl font-bold text-primary-400">NovaMail</span>
               </motion.div>
               <p className="text-gray-400 text-sm leading-relaxed">
-                专业的电子邮件营销平台，帮助您创建、发送和跟踪营销活动。
+                Professional email marketing platform to help you create, send and track marketing campaigns.
               </p>
             </div>
 
             {/* Product */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">产品</h3>
+              <h3 className="text-lg font-semibold mb-4">Product</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/pricing" className="hover:text-white transition-colors">定价</Link></li>
-                <li><Link href="/features" className="hover:text-white transition-colors">功能</Link></li>
-                <li><Link href="/templates" className="hover:text-white transition-colors">模板</Link></li>
-                <li><Link href="/integrations" className="hover:text-white transition-colors">集成</Link></li>
+                <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
+                <li><Link href="/features" className="hover:text-white transition-colors">Features</Link></li>
+                <li><Link href="/templates" className="hover:text-white transition-colors">Templates</Link></li>
+                <li><Link href="/integrations" className="hover:text-white transition-colors">Integrations</Link></li>
               </ul>
             </div>
 
             {/* Support */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">支持</h3>
+              <h3 className="text-lg font-semibold mb-4">Support</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/faq" className="hover:text-white transition-colors">常见问题</Link></li>
-                <li><Link href="/contact" className="hover:text-white transition-colors">联系我们</Link></li>
-                <li><Link href="/help" className="hover:text-white transition-colors">帮助中心</Link></li>
-                <li><Link href="/api" className="hover:text-white transition-colors">API文档</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
+                <li><Link href="/help" className="hover:text-white transition-colors">Help Center</Link></li>
+                <li><Link href="/api" className="hover:text-white transition-colors">API Docs</Link></li>
               </ul>
             </div>
 
             {/* Legal */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">法律</h3>
+              <h3 className="text-lg font-semibold mb-4">Legal</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/terms" className="hover:text-white transition-colors">服务条款</Link></li>
-                <li><Link href="/privacy" className="hover:text-white transition-colors">隐私政策</Link></li>
-                <li><Link href="/cookies" className="hover:text-white transition-colors">Cookie政策</Link></li>
-                <li><Link href="/gdpr" className="hover:text-white transition-colors">GDPR合规</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/cookie" className="hover:text-white transition-colors">Cookie Policy</Link></li>
+                <li><Link href="/gdpr" className="hover:text-white transition-colors">GDPR Compliance</Link></li>
               </ul>
             </div>
           </div>
@@ -799,9 +1054,9 @@ export default function HomePage() {
                 © 2025 NovaMail. All rights reserved.
               </div>
               <div className="flex space-x-6 text-sm text-gray-400">
-                <Link href="/terms" className="hover:text-white transition-colors">服务条款</Link>
-                <Link href="/privacy" className="hover:text-white transition-colors">隐私政策</Link>
-                <Link href="/cookies" className="hover:text-white transition-colors">Cookie</Link>
+                <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+                <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                <Link href="/cookie" className="hover:text-white transition-colors">Cookie Policy</Link>
               </div>
             </div>
           </div>

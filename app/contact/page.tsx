@@ -1,10 +1,5 @@
-import { Metadata } from 'next'
+// Note: This page is a Client Component due to global providers, so metadata export is not allowed
 import BackgroundAnimations from '@/components/BackgroundAnimations'
-
-export const metadata: Metadata = {
-  title: '联系我们 - NovaMail',
-  description: '联系NovaMail团队，获取支持和帮助',
-}
 
 export default function ContactPage() {
   return (
@@ -14,9 +9,9 @@ export default function ContactPage() {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">联系我们</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              我们很乐意为您提供帮助。请选择最适合您需求的联系方式。
+              We're here to help. Please choose the contact method that best suits your needs.
             </p>
           </div>
         </div>
@@ -27,22 +22,67 @@ export default function ContactPage() {
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Information */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">联系信息</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Contact Information</h2>
             
             <div className="space-y-8">
               {/* General Contact */}
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">联系我们</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">General Contact</h3>
                 <div className="space-y-3">
                   <div className="flex items-center">
-                    <span className="text-gray-500 w-20">邮箱：</span>
+                    <span className="text-gray-500 w-20">Email:</span>
                     <a href="mailto:lihongyangnju@gmail.com" className="text-primary-600 hover:text-primary-700">
                       contact@novamail.com
                     </a>
                   </div>
                   <div className="flex items-start">
-                    <span className="text-gray-500 w-20">说明：</span>
-                    <span className="text-gray-700">技术支持、产品咨询、问题反馈</span>
+                    <span className="text-gray-500 w-20">Info:</span>
+                    <span className="text-gray-700">Technical support, product inquiries, feedback</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Business Hours */}
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Business Hours</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Monday - Friday</span>
+                    <span className="text-gray-900">9:00 AM - 6:00 PM (UTC)</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Saturday</span>
+                    <span className="text-gray-900">10:00 AM - 4:00 PM (UTC)</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Sunday</span>
+                    <span className="text-gray-900">Closed</span>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500 mt-4">
+                  We typically respond to emails within 24 hours during business days.
+                </p>
+              </div>
+
+              {/* Response Times */}
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Response Times</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">General Inquiries</span>
+                    <span className="text-gray-900">Within 24 hours</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Technical Support</span>
+                    <span className="text-gray-900">Within 12 hours</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Billing Questions</span>
+                    <span className="text-gray-900">Within 6 hours</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Urgent Issues</span>
+                    <span className="text-gray-900">Within 2 hours</span>
                   </div>
                 </div>
               </div>
@@ -51,13 +91,13 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">发送消息</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Send Message</h2>
             
             <form className="bg-white rounded-lg p-8 shadow-sm border border-gray-200">
               <div className="space-y-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    姓名 *
+                    Name *
                   </label>
                   <input
                     type="text"
@@ -65,13 +105,13 @@ export default function ContactPage() {
                     name="name"
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="请输入您的姓名"
+                    placeholder="Enter your name"
                   />
                 </div>
 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    邮箱 *
+                    Email *
                   </label>
                   <input
                     type="email"
@@ -79,26 +119,26 @@ export default function ContactPage() {
                     name="email"
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="请输入您的邮箱地址"
+                    placeholder="Enter your email address"
                   />
                 </div>
 
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                    电话
+                    Phone
                   </label>
                   <input
                     type="tel"
                     id="phone"
                     name="phone"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="请输入您的电话号码"
+                    placeholder="Enter your phone number"
                   />
                 </div>
 
                 <div>
                   <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                    主题 *
+                    Subject *
                   </label>
                   <select
                     id="subject"
@@ -106,19 +146,19 @@ export default function ContactPage() {
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   >
-                    <option value="">请选择咨询类型</option>
-                    <option value="technical">技术支持</option>
-                    <option value="sales">销售咨询</option>
-                    <option value="billing">账单问题</option>
-                    <option value="feature">功能建议</option>
-                    <option value="bug">问题反馈</option>
-                    <option value="other">其他</option>
+                    <option value="">Please select inquiry type</option>
+                    <option value="technical">Technical Support</option>
+                    <option value="sales">Sales Inquiry</option>
+                    <option value="billing">Billing Issue</option>
+                    <option value="feature">Feature Request</option>
+                    <option value="bug">Bug Report</option>
+                    <option value="other">Other</option>
                   </select>
                 </div>
 
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                    消息内容 *
+                    Message *
                   </label>
                   <textarea
                     id="message"
@@ -126,7 +166,7 @@ export default function ContactPage() {
                     rows={6}
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="请详细描述您的问题或需求..."
+                    placeholder="Please describe your question or needs in detail..."
                   />
                 </div>
 
@@ -139,7 +179,7 @@ export default function ContactPage() {
                     className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                   />
                   <label htmlFor="privacy" className="ml-3 text-sm text-gray-700">
-                    我同意<a href="/privacy" className="text-primary-600 hover:text-primary-700">隐私政策</a>和<a href="/terms" className="text-primary-600 hover:text-primary-700">服务条款</a>
+                    I agree to the <a href="/privacy" className="text-primary-600 hover:text-primary-700">Privacy Policy</a> and <a href="/terms" className="text-primary-600 hover:text-primary-700">Terms of Service</a>
                   </label>
                 </div>
 
@@ -147,24 +187,24 @@ export default function ContactPage() {
                   type="submit"
                   className="w-full bg-primary-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors"
                 >
-                  发送消息
+                  Send Message
                 </button>
               </div>
             </form>
           </div>
         </div>
 
-        {/* FAQ Link */}
+        {/* Help Center Link */}
         <div className="mt-16 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">需要更多帮助？</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Need More Help?</h2>
           <p className="text-gray-600 mb-6">
-            查看我们的常见问题解答，快速找到您需要的答案
+            Check out our Help Center to quickly find the answers you need
           </p>
           <a
-            href="/faq"
+            href="/help"
             className="inline-flex items-center bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors"
           >
-            查看常见问题
+            Visit Help Center
           </a>
         </div>
       </div>

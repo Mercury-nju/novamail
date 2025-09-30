@@ -44,7 +44,7 @@ export default function CampaignsPage() {
   const [showDraftsModal, setShowDraftsModal] = useState(false)
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('table')
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -63,7 +63,7 @@ export default function CampaignsPage() {
       }
     } catch (error) {
       console.error('Failed to fetch campaigns:', error)
-      toast.error('获取活动列表失败')
+      toast.error('Failed to fetch campaigns list')
     } finally {
       setLoading(false)
     }
@@ -92,7 +92,7 @@ export default function CampaignsPage() {
 
   const handleDeleteSelected = async () => {
     if (selectedCampaigns.length === 0) {
-      toast.error('请选择要删除的活动')
+      toast.error('Please select campaigns to delete')
       return
     }
     
@@ -105,11 +105,11 @@ export default function CampaignsPage() {
       
       const data = await response.json()
       if (data.success) {
-        toast.success('活动删除成功')
+        toast.success('Campaigns deleted successfully')
         setSelectedCampaigns([])
         fetchCampaigns()
       } else {
-        toast.error(data.error || '删除失败')
+        toast.error(data.error || 'Delete failed')
       }
     } catch (error) {
       console.error('Delete campaigns error:', error)
@@ -183,11 +183,11 @@ export default function CampaignsPage() {
         
         const data = await response.json()
         if (data.success) {
-          toast.success('活动删除成功')
+          toast.success('Campaigns deleted successfully')
           setShowDraftsModal(false)
           fetchCampaigns()
         } else {
-          toast.error(data.error || '删除失败')
+          toast.error(data.error || 'Delete failed')
         }
       } catch (error) {
         console.error('Delete campaign error:', error)

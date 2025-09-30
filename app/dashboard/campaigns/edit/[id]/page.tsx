@@ -9,6 +9,7 @@ import {
   PencilIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import DOMPurify from 'dompurify'
 import EmailEditor from '@/components/EmailEditor'
 
 interface CampaignData {
@@ -45,64 +46,32 @@ export default function EditCampaignPage() {
 
   useEffect(() => {
     if (mode === 'draft') {
-      const mockDrafts = [
-        {
-          id: 2,
-          name: 'Product Launch Announcement',
-          purpose: 'Announce our new product launch',
-          status: 'draft',
-          subject: '🚀 Exciting News: Our New Product is Here!',
-          body: `Hi there!
+      fetchDraftCampaign()
+    }
+  }, [campaignId, mode])
 
-We're thrilled to announce the launch of our brand new product, [Product Name]! It's designed to [briefly explain what it does and its main benefit].
-
-Key features include:
-- Feature 1
-- Feature 2
-- Feature 3
-
-Learn more and get started today!
-
-Thanks,
-The [Business Name] Team`,
-          recipients: 0,
-          businessName: 'NovaMail',
-          productService: 'AI Email Platform'
-        },
-        {
-          id: 4,
-          name: 'Holiday Season Greetings',
-          purpose: 'Send holiday greetings to customers',
-          status: 'draft',
-          subject: '🎄 Happy Holidays from [Business Name]!',
-          body: `Dear Customer,
-
-Wishing you and your loved ones a joyful holiday season! We're grateful for your support throughout the year.
-
-As a special thank you, enjoy [offer/discount] on your next purchase.
-
-Happy Holidays!
-The [Business Name] Team`,
-          recipients: 0,
-          businessName: 'NovaMail',
-          productService: 'Email Marketing'
-        }
-      ]
-      const draft = mockDrafts.find(d => d.id === parseInt(campaignId))
-      if (draft) {
+  const fetchDraftCampaign = async () => {
+    try {
+      const response = await fetch(`/api/campaigns/${campaignId}`)
+      const data = await response.json()
+      if (data.success && data.campaign) {
         setCampaignData({
-          ...draft,
-          purpose: draft.purpose || 'General campaign purpose',
-          body: draft.body || '',
-          businessName: draft.businessName || '',
-          productService: draft.productService || ''
+          ...data.campaign,
+          purpose: data.campaign.purpose || 'General campaign purpose',
+          body: data.campaign.body || '',
+          businessName: data.campaign.businessName || '',
+          productService: data.campaign.productService || ''
         })
       } else {
         toast.error('Draft not found.')
         router.push('/dashboard/campaigns')
       }
+    } catch (error) {
+      console.error('Failed to fetch draft campaign:', error)
+      toast.error('Failed to load draft campaign')
+      router.push('/dashboard/campaigns')
     }
-  }, [campaignId, mode, router])
+  }
 
   const progress = ((step - 1) / 1) * 100
 
@@ -259,7 +228,7 @@ The [Business Name] Team`,
           <div className="space-y-8">
             {/* Email Content Creation */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="text-lg font-image.pngsemibold text-gray-900 mb-4 flex items-center">
                 <PencilIcon className="h-5 w-5 mr-2 text-blue-600" />
                 Email Content
               </h3>
@@ -304,7 +273,7 @@ The [Business Name] Team`,
                       </div>
                       <div className="p-4">
                         <div className="prose max-w-none text-gray-800"
-                             dangerouslySetInnerHTML={{ __html: campaignData.body }} />
+                             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(campaignData.body) }} />
                       </div>
                     </div>
                   </div>
@@ -321,7 +290,7 @@ The [Business Name] Team`,
                       <div className="text-xs text-gray-600">To:</div>
                       <div className="text-sm font-medium text-gray-900">{campaignData.subject}</div>
                       <div className="text-xs text-gray-500 border-t pt-2 line-clamp-3">
-                        <div dangerouslySetInnerHTML={{ __html: campaignData.body.substring(0, 100) + '...' }} />
+                        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(campaignData.body.substring(0, 100) + '...') }} />
                       </div>
                     </div>
                   </div>

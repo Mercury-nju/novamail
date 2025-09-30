@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // 通义千问API配置
-const TONGYI_API_KEY = process.env.TONGYI_API_KEY || 'sk-9bf19547ddbd4be1a87a7a43cf251097'
+const TONGYI_API_KEY = process.env.TONGYI_API_KEY
+
+if (!TONGYI_API_KEY) {
+  throw new Error('TONGYI_API_KEY is not configured')
+}
 const TONGYI_API_URL = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation'
 
 export async function POST(request: NextRequest) {
@@ -204,6 +208,10 @@ export async function POST(request: NextRequest) {
       })
     })
 
+    if (!contentResponse.ok) {
+      throw new Error(`Tongyi API error: ${contentResponse.status}`)
+    }
+
     const contentResult = await contentResponse.json()
     let generatedContent = contentResult.output?.text
 
@@ -268,6 +276,10 @@ export async function POST(request: NextRequest) {
         }
       })
     })
+
+    if (!subjectResponse.ok) {
+      throw new Error(`Tongyi API error: ${subjectResponse.status}`)
+    }
 
     const subjectResult = await subjectResponse.json()
     const generatedSubject = subjectResult.output?.text?.trim() || `关于${campaignTheme}的消息`

@@ -1,9 +1,4 @@
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: '服务条款 - NovaMail',
-  description: 'NovaMail 服务条款和用户协议',
-}
+// Note: This page is a Client Component due to global providers, so metadata export is not allowed
 
 export default function TermsPage() {
   return (
@@ -11,8 +6,8 @@ export default function TermsPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-gray-900">服务条款</h1>
-          <p className="text-gray-600 mt-2">最后更新：2025年1月</p>
+          <h1 className="text-3xl font-bold text-gray-900">Terms of Service</h1>
+          <p className="text-gray-600 mt-2">Last updated: January 2025</p>
         </div>
       </div>
 
@@ -21,117 +16,117 @@ export default function TermsPage() {
         <div className="bg-white rounded-lg shadow-sm p-8">
           <div className="prose prose-lg max-w-none">
             
-            <h2>1. 服务概述</h2>
+            <h2>1. Service Overview</h2>
             <p>
-              NovaMail（以下简称"我们"或"服务"）是一个专业的电子邮件营销平台，为用户提供创建、发送和跟踪电子邮件营销活动的服务。
+              NovaMail (hereinafter referred to as "we" or "service") is a professional email marketing platform that provides users with services to create, send and track email marketing campaigns.
             </p>
 
-            <h2>2. 接受条款</h2>
+            <h2>2. Acceptance of Terms</h2>
             <p>
-              通过访问或使用NovaMail服务，您同意受本服务条款的约束。如果您不同意这些条款，请不要使用我们的服务。
+              By accessing or using NovaMail services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
             </p>
 
-            <h2>3. 用户账户</h2>
-            <h3>3.1 账户注册</h3>
+            <h2>3. User Account</h2>
+            <h3>3.1 Account Registration</h3>
             <p>
-              您需要创建一个账户才能使用我们的服务。您有责任提供准确、完整和最新的信息。
+              You need to create an account to use our services. You are responsible for providing accurate, complete and up-to-date information.
             </p>
             
-            <h3>3.2 账户安全</h3>
+            <h3>3.2 Account Security</h3>
             <p>
-              您有责任维护账户密码的机密性，并对在您账户下发生的所有活动负责。
+              You are responsible for maintaining the confidentiality of your account password and for all activities that occur under your account.
             </p>
 
-            <h2>4. 服务使用</h2>
-            <h3>4.1 许可使用</h3>
+            <h2>4. Service Usage</h2>
+            <h3>4.1 Permitted Use</h3>
             <p>
-              我们授予您有限的、非独占的、不可转让的许可，以使用我们的服务进行合法的商业和个人用途。
+              We grant you a limited, non-exclusive, non-transferable license to use our services for lawful business and personal purposes.
             </p>
 
-            <h3>4.2 禁止行为</h3>
-            <p>您不得：</p>
+            <h3>4.2 Prohibited Activities</h3>
+            <p>You may not:</p>
             <ul>
-              <li>发送垃圾邮件或未经请求的电子邮件</li>
-              <li>违反任何适用的法律法规</li>
-              <li>侵犯他人的知识产权</li>
-              <li>传播恶意软件或有害内容</li>
-              <li>尝试未经授权访问我们的系统</li>
-              <li>干扰或破坏服务的正常运行</li>
+              <li>Send spam or unsolicited emails</li>
+              <li>Violate any applicable laws or regulations</li>
+              <li>Infringe on others' intellectual property rights</li>
+              <li>Distribute malware or harmful content</li>
+              <li>Attempt unauthorized access to our systems</li>
+              <li>Interfere with or disrupt the normal operation of services</li>
             </ul>
 
-            <h2>5. 内容责任</h2>
+            <h2>5. Content Responsibility</h2>
             <p>
-              您对通过我们的服务创建、发送或分享的所有内容负责。我们不对用户生成的内容承担责任。
+              You are responsible for all content created, sent, or shared through our services. We are not responsible for user-generated content.
             </p>
 
-            <h2>6. 隐私和数据保护</h2>
+            <h2>6. Privacy and Data Protection</h2>
             <p>
-              我们重视您的隐私。有关我们如何收集、使用和保护您的信息，请参阅我们的隐私政策。
+              We value your privacy. Please refer to our Privacy Policy for information on how we collect, use, and protect your information.
             </p>
 
-            <h2>7. 服务可用性</h2>
+            <h2>7. Service Availability</h2>
             <p>
-              我们努力保持服务的高可用性，但不保证服务不会中断。我们可能会进行定期维护和更新。
+              We strive to maintain high service availability, but do not guarantee that services will not be interrupted. We may perform regular maintenance and updates.
             </p>
 
-            <h2>8. 费用和付款</h2>
-            <h3>8.1 定价</h3>
+            <h2>8. Fees and Payment</h2>
+            <h3>8.1 Pricing</h3>
             <p>
-              我们的服务提供免费和付费计划。付费计划的价格在我们的网站上公布。
+              Our services offer free and paid plans. Prices for paid plans are published on our website.
             </p>
 
-            <h3>8.2 付款条款</h3>
+            <h3>8.2 Payment Terms</h3>
             <p>
-              付费服务按订阅周期收费。所有费用均需预付，且不可退还，除非法律另有规定。
+              Paid services are charged on a subscription basis. All fees must be paid in advance and are non-refundable, unless otherwise required by law.
             </p>
 
-            <h2>9. 知识产权</h2>
+            <h2>9. Intellectual Property</h2>
             <p>
-              NovaMail及其所有相关商标、版权和其他知识产权归我们所有。您不得复制、修改或分发我们的知识产权。
+              NovaMail and all related trademarks, copyrights, and other intellectual property rights are owned by us. You may not copy, modify, or distribute our intellectual property.
             </p>
 
-            <h2>10. 服务终止</h2>
-            <h3>10.1 用户终止</h3>
+            <h2>10. Service Termination</h2>
+            <h3>10.1 User Termination</h3>
             <p>
-              您可以随时通过账户设置终止您的账户。
+              You may terminate your account at any time through account settings.
             </p>
 
-            <h3>10.2 我们终止</h3>
+            <h3>10.2 Our Termination</h3>
             <p>
-              如果我们发现您违反了这些条款，我们可能会暂停或终止您的账户。
+              We may suspend or terminate your account if we find that you have violated these terms.
             </p>
 
-            <h2>11. 免责声明</h2>
+            <h2>11. Disclaimer</h2>
             <p>
-              我们的服务按"现状"提供，不提供任何明示或暗示的保证。我们不保证服务将满足您的需求或不会中断。
+              Our services are provided "as is" without any express or implied warranties. We do not guarantee that the services will meet your needs or will not be interrupted.
             </p>
 
-            <h2>12. 责任限制</h2>
+            <h2>12. Limitation of Liability</h2>
             <p>
-              在法律允许的最大范围内，我们对任何间接、偶然、特殊或后果性损害不承担责任。
+              To the maximum extent permitted by law, we are not liable for any indirect, incidental, special, or consequential damages.
             </p>
 
-            <h2>13. 争议解决</h2>
+            <h2>13. Dispute Resolution</h2>
             <p>
-              因使用我们的服务而产生的任何争议应通过友好协商解决。如协商不成，应提交有管辖权的法院解决。
+              Any disputes arising from the use of our services should be resolved through friendly negotiation. If negotiation fails, the dispute should be submitted to a court with jurisdiction.
             </p>
 
-            <h2>14. 条款修改</h2>
+            <h2>14. Terms Modification</h2>
             <p>
-              我们保留随时修改这些条款的权利。重大变更将通过电子邮件或网站通知您。
+              We reserve the right to modify these terms at any time. Significant changes will be notified to you via email or website.
             </p>
 
-            <h2>15. 联系信息</h2>
+            <h2>15. Contact Information</h2>
             <p>
-              如果您对这些服务条款有任何疑问，请通过以下方式联系我们：
+              If you have any questions about these Terms of Service, please contact us through the following:
             </p>
             <ul>
-              <li>邮箱：contact@novamail.com (实际接收：lihongyangnju@gmail.com)</li>
+              <li>Email: contact@novamail.com (actual recipient: lihongyangnju@gmail.com)</li>
             </ul>
 
             <div className="mt-12 p-4 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600">
-                本服务条款自2025年1月起生效。通过使用NovaMail服务，您确认已阅读、理解并同意受这些条款的约束。
+                These Terms of Service are effective from January 2025. By using NovaMail services, you confirm that you have read, understood, and agree to be bound by these terms.
               </p>
             </div>
           </div>

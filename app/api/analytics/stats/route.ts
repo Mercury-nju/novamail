@@ -80,21 +80,11 @@ export async function GET(request: NextRequest) {
         analytics: {
           emailStats: [
             { name: 'Total Sent', value: '0', change: '0%', changeType: 'neutral' },
-            { name: 'Delivered', value: '0', change: '0%', changeType: 'neutral' },
-            { name: 'Replied', value: '0', change: '0%', changeType: 'neutral' },
-            { name: 'Unsubscribed', value: '0', change: '0%', changeType: 'neutral' },
-            { name: 'Bounced', value: '0', change: '0%', changeType: 'neutral' }
+            { name: 'Total Recipients', value: '0', change: '0%', changeType: 'neutral' }
           ],
           engagementStats: [
             { name: 'Open Rate', value: '0%', change: '0%', changeType: 'neutral' },
-            { name: 'Click Rate', value: '0%', change: '0%', changeType: 'neutral' },
-            { name: 'Conversion Rate', value: '0%', change: '0%', changeType: 'neutral' },
-            { name: 'Unsubscribe Rate', value: '0%', change: '0%', changeType: 'neutral' }
-          ],
-          timeStats: [
-            { name: 'Best Send Time', value: 'N/A', change: 'No data', changeType: 'neutral' },
-            { name: 'Avg Response Time', value: 'N/A', change: 'No data', changeType: 'neutral' },
-            { name: 'Peak Engagement', value: 'N/A', change: 'No data', changeType: 'neutral' }
+            { name: 'Click Rate', value: '0%', change: '0%', changeType: 'neutral' }
           ],
           hasData: false
         }
@@ -103,11 +93,8 @@ export async function GET(request: NextRequest) {
 
     // 计算统计数据
     const sentCampaigns = campaigns.filter(c => c.status === 'sent')
-    const totalSent = sentCampaigns.reduce((sum, c) => sum + c.recipients, 0)
-    const totalDelivered = Math.floor(totalSent * 0.985) // 模拟98.5%投递率
-    const totalReplied = Math.floor(totalSent * 0.058) // 模拟5.8%回复率
-    const totalUnsubscribed = Math.floor(totalSent * 0.002) // 模拟0.2%退订率
-    const totalBounced = Math.floor(totalSent * 0.015) // 模拟1.5%退信率
+    const totalSent = sentCampaigns.length
+    const totalRecipients = sentCampaigns.reduce((sum, c) => sum + c.recipients, 0)
 
     // 计算平均打开率和点击率
     const avgOpenRate = sentCampaigns.length > 0 
@@ -123,21 +110,11 @@ export async function GET(request: NextRequest) {
       analytics: {
         emailStats: [
           { name: 'Total Sent', value: totalSent.toLocaleString(), change: '0%', changeType: 'neutral' },
-          { name: 'Delivered', value: totalDelivered.toLocaleString(), change: '0%', changeType: 'neutral' },
-          { name: 'Replied', value: totalReplied.toLocaleString(), change: '0%', changeType: 'neutral' },
-          { name: 'Unsubscribed', value: totalUnsubscribed.toLocaleString(), change: '0%', changeType: 'neutral' },
-          { name: 'Bounced', value: totalBounced.toLocaleString(), change: '0%', changeType: 'neutral' }
+          { name: 'Total Recipients', value: totalRecipients.toLocaleString(), change: '0%', changeType: 'neutral' }
         ],
         engagementStats: [
           { name: 'Open Rate', value: `${avgOpenRate.toFixed(1)}%`, change: '0%', changeType: 'neutral' },
-          { name: 'Click Rate', value: `${avgClickRate.toFixed(1)}%`, change: '0%', changeType: 'neutral' },
-          { name: 'Conversion Rate', value: `${(avgClickRate * 0.6).toFixed(1)}%`, change: '0%', changeType: 'neutral' },
-          { name: 'Unsubscribe Rate', value: `${(totalUnsubscribed / totalSent * 100).toFixed(1)}%`, change: '0%', changeType: 'neutral' }
-        ],
-        timeStats: [
-          { name: 'Best Send Time', value: '10:00 AM', change: 'Tue, Thu', changeType: 'neutral' },
-          { name: 'Avg Response Time', value: '2.4 hrs', change: 'No data', changeType: 'neutral' },
-          { name: 'Peak Engagement', value: 'Weekdays', change: 'Mon-Fri', changeType: 'neutral' }
+          { name: 'Click Rate', value: `${avgClickRate.toFixed(1)}%`, change: '0%', changeType: 'neutral' }
         ],
         hasData: true
       }
