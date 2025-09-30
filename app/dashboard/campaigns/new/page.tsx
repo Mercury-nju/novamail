@@ -17,8 +17,21 @@ import * as XLSX from 'xlsx'
 import DOMPurify from 'dompurify'
 
 export default function NewCampaignPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const router = useRouter()
+
+  // 检查用户登录状态
+  useEffect(() => {
+    if (status === 'loading') {
+      return
+    }
+    
+    if (status === 'unauthenticated') {
+      // 用户未登录，重定向到登录页面
+      router.push('/login')
+      return
+    }
+  }, [session, status, router])
   const [step, setStep] = useState(1)
   const [emailMode, setEmailMode] = useState<'simple' | 'professional'>('simple')
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')

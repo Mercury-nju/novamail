@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import {
   EnvelopeIcon,
@@ -14,7 +15,8 @@ import {
 } from '@heroicons/react/24/outline'
 
 export default function DashboardPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [stats, setStats] = useState([
     {
       name: 'Total Contacts',
@@ -49,10 +51,21 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    if (status === 'loading') {
+      return
+    }
+    
+    // 临时禁用认证检查，直接显示dashboard
+    // if (status === 'unauthenticated') {
+    //   // 用户未登录，重定向到登录页面
+    //   router.push('/login')
+    //   return
+    // }
+    
     if (session?.user?.email) {
       fetchDashboardData()
     }
-  }, [session])
+  }, [session, status, router])
 
   const fetchDashboardData = async () => {
     try {

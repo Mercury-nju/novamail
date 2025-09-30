@@ -1,0 +1,11 @@
+name = "novamail"
+compatibility_date = "2024-01-01"
+
+[build]
+command = "npm run build"
+
+[[pages_build_output_dir]]
+path = ".next"
+
+[env.production]
+name = "novamail-prod"

@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import TemplateShowcase from '@/components/TemplateShowcase'
 import { 
   SparklesIcon, 
@@ -14,8 +16,20 @@ import {
 } from '@heroicons/react/24/outline'
 
 export default function HomePage() {
+  const { data: session } = useSession()
+  const router = useRouter()
   const { scrollYProgress } = useScroll()
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
+
+  const handleGetStarted = () => {
+    if (session) {
+      // 用户已登录，直接跳转到dashboard
+      router.push('/dashboard/campaigns/new')
+    } else {
+      // 用户未登录，跳转到登录页面
+      router.push('/login')
+    }
+  }
 
   const features = [
     {
@@ -367,7 +381,10 @@ export default function HomePage() {
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <Link href="/dashboard/campaigns/new" className="btn-primary text-lg px-8 py-3 flex items-center rounded-lg font-medium">
+                <button 
+                  onClick={handleGetStarted}
+                  className="btn-primary text-lg px-8 py-3 flex items-center rounded-lg font-medium"
+                >
                   Get Started
                   <motion.div
                     animate={{ x: [0, 5, 0] }}
@@ -375,7 +392,7 @@ export default function HomePage() {
                   >
                     <ArrowRightIcon className="ml-2 h-5 w-5" />
                   </motion.div>
-                </Link>
+                </button>
               </motion.div>
               <motion.button 
                 whileHover={{ 

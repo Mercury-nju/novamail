@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
@@ -37,7 +37,51 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+
+  // 检查用户登录状态
+  useEffect(() => {
+    console.log('DashboardLayout - Session:', session, 'Status:', status)
+    console.log('DashboardLayout - Session user:', session?.user)
+    console.log('DashboardLayout - Session accessToken:', (session as any)?.accessToken)
+    
+    // 等待session加载完成
+    if (status === 'loading') {
+      console.log('Session is loading, waiting...')
+      return
+    }
+    
+    // 临时禁用重定向，直接显示dashboard
+    console.log('DashboardLayout - Rendering dashboard regardless of auth status')
+    
+    if (session) {
+      console.log('Session found, user is logged in:', session.user)
+    }
+  }, [session, status, router])
+
+  // 如果正在加载，显示加载状态
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // 临时禁用认证检查，直接显示dashboard
+  // if (status === 'unauthenticated') {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center">
+  //       <div className="text-center">
+  //         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+  //         <p className="mt-4 text-gray-600">Redirecting to login...</p>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   const handleLogout = () => {
     toast.success('Logged out successfully')
