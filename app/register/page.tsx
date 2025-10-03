@@ -37,13 +37,13 @@ export default function RegisterPage() {
     setIsLoading(true)
 
     try {
-      // 基本验证
+      // Basic validation
       if (!formData.email) {
         toast.error('Please enter your email address')
         return
       }
 
-      // 发送验证码
+      // Send verification code
       const response = await fetch('/api/auth/send-verification', {
         method: 'POST',
         headers: {
@@ -77,13 +77,13 @@ export default function RegisterPage() {
     setIsLoading(true)
 
     try {
-      // 验证码验证
+      // Verify verification code
       if (!verificationCode || verificationCode.length !== 6) {
         toast.error('Please enter a valid 6-digit verification code')
         return
       }
 
-      // 完整注册API调用
+      // Complete registration API call
       const response = await fetch('/api/auth/verify-code', {
         method: 'POST',
         headers: {
@@ -152,7 +152,7 @@ export default function RegisterPage() {
     }
   }
 
-  // 验证码页面
+  // Verification page
   if (step === 'verify') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -234,7 +234,7 @@ export default function RegisterPage() {
     )
   }
 
-  // 密码强度要求
+  // Password strength requirements
   const passwordRequirements = [
     { label: 'At least 8 characters', met: formData.password.length >= 8 },
     { label: 'Contains uppercase letter', met: /[A-Z]/.test(formData.password) },

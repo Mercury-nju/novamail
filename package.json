@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:open": "node scripts/dev-and-open.js",
+    "dev:open:win": "scripts\\dev-and-open.bat",
     "build": "prisma generate && next build",
     "build:cloudflare": "prisma generate && next build",
     "start": "next start",
@@ -30,6 +32,7 @@
     "autoprefixer": "^10.4.0",
     "axios": "^1.5.0",
     "bcryptjs": "^3.0.2",
+    "critters": "^0.0.23",
     "csrf": "^3.1.0",
     "date-fns": "^2.30.0",
     "dompurify": "^3.2.7",

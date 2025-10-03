@@ -26,11 +26,11 @@ function LoginForm() {
     }
     checkSession()
 
-    // 检查是否有错误参数
+    // Check for error parameters
     const error = searchParams.get('error')
     if (error === 'OAuthSignin') {
       setShowGoogleSetupNote(true)
-      toast.error('Google登录失败，请检查网络连接或VPN设置')
+      toast.error('Google login failed, please check network connection or VPN settings')
     }
   }, [router, searchParams])
 
@@ -46,14 +46,14 @@ function LoginForm() {
       })
 
       if (result?.error) {
-        toast.error('登录失败，请检查邮箱和密码')
+        toast.error('Login failed, please check email and password')
       } else {
-        toast.success('登录成功！')
+        toast.success('Login successful!')
         router.push('/dashboard')
       }
     } catch (error) {
       console.error('Login error:', error)
-      toast.error('登录时发生错误')
+      toast.error('An error occurred during login')
     } finally {
       setIsLoading(false)
     }
@@ -66,7 +66,7 @@ function LoginForm() {
     } catch (error) {
       console.error('Google login failed:', error)
       setShowGoogleSetupNote(true)
-      toast.error('Google登录失败，请检查网络连接或VPN设置')
+      toast.error('Google login failed, please check network connection or VPN settings')
     }
   }
 
@@ -83,7 +83,7 @@ function LoginForm() {
             <SparklesIcon className="h-12 w-12 text-primary-600" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-            Welcome back 欢迎回来
+Welcome back to NovaMail
           </h2>
           {/* Version 2.1 - Google Login Fully Functional */}
           <p className="mt-2 text-sm text-gray-600">
@@ -225,20 +225,20 @@ function LoginForm() {
                       <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-sm font-medium text-red-800">Google登录配置问题</h3>
+                      <h3 className="text-sm font-medium text-red-800">Google Login Configuration Issue</h3>
                       <div className="mt-1 text-sm text-red-700">
-                        <p>Google OAuth未正确配置。这可能是因为网络连接问题。</p>
+                        <p>Google OAuth is not properly configured. This might be due to network connection issues.</p>
                         <div className="mt-2 text-sm">
-                          <p className="font-medium">解决方案：</p>
+                          <p className="font-medium">Solutions:</p>
                           <ol className="list-decimal list-inside mt-1 space-y-1">
-                            <li>检查VPN设置，确保TUN模式已开启</li>
-                            <li>尝试切换到全局代理模式</li>
-                            <li>或者暂时使用邮箱密码登录</li>
+                            <li>Check VPN settings and ensure TUN mode is enabled</li>
+                            <li>Try switching to global proxy mode</li>
+                            <li>Or use email/password login temporarily</li>
                           </ol>
                         </div>
                         <div className="mt-3">
                           <Link href="/google-setup" className="text-blue-600 hover:text-blue-500 underline">
-                            查看Google OAuth设置指南 →
+                            View Google OAuth Setup Guide →
                           </Link>
                         </div>
                       </div>

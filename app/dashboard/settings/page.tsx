@@ -255,7 +255,7 @@ export default function SettingsPage() {
                       className="input-field"
                     >
                       <option value="en">English</option>
-                      <option value="zh">中文</option>
+                      <option value="zh">Chinese</option>
                       <option value="es">Español</option>
                       <option value="fr">Français</option>
                       <option value="de">Deutsch</option>
@@ -735,14 +735,14 @@ export default function SettingsPage() {
               className="space-y-6"
             >
               <div className="card">
-                <h2 className="text-lg font-medium text-gray-900 mb-4">邮箱账户配置</h2>
+                <h2 className="text-lg font-medium text-gray-900 mb-4">Email Account Configuration</h2>
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                   <div className="flex items-center space-x-3">
                     <EnvelopeIcon className="h-5 w-5 text-blue-600" />
                     <div>
-                      <h3 className="text-sm font-medium text-blue-900">配置您的邮箱账户</h3>
+                      <h3 className="text-sm font-medium text-blue-900">Configure Your Email Account</h3>
                       <p className="text-sm text-blue-700 mt-1">
-                        配置后，您发送的邮件将显示为来自您的邮箱地址，而不是系统默认邮箱
+                        After configuration, emails you send will appear to come from your email address instead of the system default email
                       </p>
                     </div>
                   </div>
@@ -750,15 +750,15 @@ export default function SettingsPage() {
                 
                 <div className="text-center py-8">
                   <EnvelopeIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">配置邮箱账户</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Configure Email Account</h3>
                   <p className="text-gray-600 mb-6">
-                    设置您的SMTP配置，使用自己的邮箱发送邮件活动
+                    Set up your SMTP configuration to send email campaigns using your own email
                   </p>
                   <a
                     href="/dashboard/settings/email"
                     className="btn-primary"
                   >
-                    前往邮箱配置
+                    Go to Email Settings
                   </a>
                 </div>
               </div>

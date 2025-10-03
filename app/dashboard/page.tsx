@@ -55,9 +55,9 @@ export default function DashboardPage() {
       return
     }
     
-    // 临时禁用认证检查，直接显示dashboard
+    // Temporarily disable auth check, show dashboard directly
     // if (status === 'unauthenticated') {
-    //   // 用户未登录，重定向到登录页面
+    //   // User not logged in, redirect to login page
     //   router.push('/login')
     //   return
     // }

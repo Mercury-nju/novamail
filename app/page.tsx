@@ -12,7 +12,8 @@ import {
   ChartBarIcon, 
   UserGroupIcon,
   ArrowRightIcon,
-  CheckIcon
+  CheckIcon,
+  EyeIcon
 } from '@heroicons/react/24/outline'
 
 export default function HomePage() {
@@ -23,10 +24,10 @@ export default function HomePage() {
 
   const handleGetStarted = () => {
     if (session) {
-      // 用户已登录，直接跳转到dashboard
+      // User is logged in, redirect to dashboard
       router.push('/dashboard/campaigns/new')
     } else {
-      // 用户未登录，跳转到登录页面
+      // User is not logged in, redirect to login page
       router.push('/login')
     }
   }
@@ -130,7 +131,7 @@ export default function HomePage() {
       <motion.header 
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
         className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -168,7 +169,7 @@ export default function HomePage() {
       <motion.section 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
+        transition={{ duration: 0.6 }}
         className="pt-32 pb-32 relative z-10 overflow-hidden"
       >
         {/* Enhanced Hero Background */}
@@ -185,7 +186,7 @@ export default function HomePage() {
               ]
             }}
             transition={{
-              duration: 15,
+              duration: 5,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -202,7 +203,7 @@ export default function HomePage() {
               y: [0, -30, 0],
             }}
             transition={{
-              duration: 25,
+              duration: 7,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -217,7 +218,7 @@ export default function HomePage() {
               y: [0, 20, 0],
             }}
             transition={{
-              duration: 20,
+              duration: 10,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -232,7 +233,7 @@ export default function HomePage() {
               y: [0, -20, 30, 0],
             }}
             transition={{
-              duration: 30,
+                duration: 15,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -256,9 +257,9 @@ export default function HomePage() {
                 scale: [1, 1.5, 1],
               }}
               transition={{
-                duration: Math.random() * 15 + 10,
+                duration: Math.random() * 8 + 5,
                 repeat: Infinity,
-                delay: i * 0.3,
+                delay: i * 0.15,
                 ease: "easeInOut",
               }}
             />
@@ -292,7 +293,7 @@ export default function HomePage() {
                   rotate: [0, 180, 360],
                 }}
                 transition={{
-                  duration: 8 + i * 2,
+                  duration: 4 + i,
                   repeat: Infinity,
                   delay: i * 0.4,
                   ease: "easeInOut"
@@ -308,7 +309,7 @@ export default function HomePage() {
               opacity: [0.03, 0.08, 0.03],
             }}
             transition={{
-              duration: 12,
+              duration: 7,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -324,7 +325,7 @@ export default function HomePage() {
               opacity: [0, 0.3, 0],
             }}
             transition={{
-              duration: 8,
+              duration: 5,
               repeat: Infinity,
               ease: "easeInOut",
               delay: 2
@@ -336,7 +337,7 @@ export default function HomePage() {
             <motion.h1 
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
               className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6"
             >
               The Future of
@@ -347,8 +348,8 @@ export default function HomePage() {
                   scale: 1
                 }}
                 transition={{ 
-                  duration: 0.8, 
-                  delay: 0.3
+                  duration: 0.5, 
+                  delay: 0.2
                 }}
                 className="text-primary-600 bg-gradient-to-r from-primary-600 to-blue-600 bg-clip-text text-transparent"
               >
@@ -359,7 +360,7 @@ export default function HomePage() {
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
               className="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
             >
               Create, send, and track professional email campaigns with AI assistance. 
@@ -369,7 +370,7 @@ export default function HomePage() {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
             >
               <motion.div
@@ -388,7 +389,7 @@ export default function HomePage() {
                   Get Started
                   <motion.div
                     animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
+                    transition={{ duration: 1, repeat: Infinity }}
                   >
                     <ArrowRightIcon className="ml-2 h-5 w-5" />
                   </motion.div>
@@ -422,7 +423,7 @@ export default function HomePage() {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.5 }}
         className="py-24 relative z-10 overflow-hidden"
         style={{
           background: 'linear-gradient(to bottom, rgba(240,249,255,0.8) 0%, rgba(240,249,255,0.6) 20%, rgba(240,249,255,0.4) 40%, rgba(240,249,255,0.2) 60%, rgba(255,255,255,0.8) 80%, rgba(255,255,255,1) 100%)'
@@ -438,7 +439,7 @@ export default function HomePage() {
               x: [0, 20, 0],
             }}
             transition={{
-              duration: 12,
+              duration: 7,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -451,7 +452,7 @@ export default function HomePage() {
               x: [0, -20, 0],
             }}
             transition={{
-              duration: 15,
+              duration: 5,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -473,9 +474,9 @@ export default function HomePage() {
                 opacity: [0.4, 0.1, 0.4],
               }}
               transition={{
-                duration: 4 + Math.random() * 3,
+                duration: 2.5 + Math.random() * 2,
                 repeat: Infinity,
-                delay: Math.random() * 2,
+                delay: Math.random() * 1,
               }}
             />
           ))}
@@ -486,7 +487,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.5 }}
             className="text-center mb-20"
           >
             <motion.span 
@@ -515,7 +516,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
                 whileHover={{ 
                   y: -10,
                   transition: { type: "spring", stiffness: 300 }
@@ -547,14 +548,103 @@ export default function HomePage() {
       </motion.section>
 
       {/* Product Showcase - Professional Templates */}
-      <TemplateShowcase />
+      <motion.section 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="py-24 relative"
+      >
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-0 left-1/4 w-72 h-72 bg-primary-100 rounded-full filter blur-3xl opacity-30"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-100 rounded-full filter blur-3xl opacity-20"></div>
+        </div>
+
+        {/* Add full professional template showcase */}
+        <TemplateShowcase />
+        
+        {/* Old simple showcase - keeping for backup */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" style={{ display: 'none' }}>
+          <div className="text-center mb-16">
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-4"
+            >
+              Professional Template Showcase
+            </motion.span>
+            <motion.h2 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
+            >
+              Professional Templates Make Your
+              <span className="text-primary-600"> Emails Stand Out</span>
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-xl text-gray-600 max-w-3xl mx-auto"
+            >
+              Choose professional templates, AI intelligently generates content, easily create beautiful marketing emails
+            </motion.p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
+            {[
+              {
+                icon: <SparklesIcon className="w-8 h-8" />,
+                title: "Smart Generation",
+                description: "AI automatically generates professional content based on templates, saving 90% of creation time"
+              },
+              {
+                icon: <EyeIcon className="w-8 h-8" />,
+                title: "Real-time Preview", 
+                description: "What you see is what you get, real-time preview of email effects, ensuring perfect presentation"
+              },
+              {
+                icon: <CheckIcon className="w-8 h-8" />,
+                title: "Professional Templates",
+                description: "Beautiful templates covering various industry needs, enhancing brand image"
+              }
+            ].map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
+                className="text-center p-6 bg-white rounded-xl shadow-lg border border-gray-100"
+              >
+                <div className="w-16 h-16 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </motion.section>
 
       {/* Simple Email Flow Showcase */}
       <motion.section 
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.5 }}
         className="py-24 bg-white relative z-10 overflow-hidden"
       >
         {/* Background Elements */}
@@ -586,7 +676,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.5 }}
             className="text-center mb-20"
           >
             <motion.span 
@@ -614,7 +704,7 @@ export default function HomePage() {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.5 }}
               className="space-y-8"
             >
               <div className="space-y-6">
@@ -655,7 +745,7 @@ export default function HomePage() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
               className="relative"
             >
               <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
@@ -723,7 +813,7 @@ export default function HomePage() {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.5 }}
         className="py-24 bg-gradient-to-br from-slate-50 via-white to-blue-50 relative z-10 overflow-hidden"
       >
         {/* Enhanced Background Pattern */}
@@ -739,7 +829,7 @@ export default function HomePage() {
               ]
             }}
             transition={{
-              duration: 20,
+              duration: 10,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -751,7 +841,7 @@ export default function HomePage() {
               scaleY: [1, 1.1, 1],
             }}
             transition={{
-              duration: 8,
+              duration: 5,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -773,7 +863,7 @@ export default function HomePage() {
                 y: [0, -20, 0],
               }}
               transition={{
-                duration: 10 + i * 2,
+                duration: 5 + i,
                 repeat: Infinity,
                 delay: i * 0.5,
                 ease: "easeInOut"
@@ -787,7 +877,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.5 }}
             className="text-center mb-20"
           >
             <motion.span 
@@ -818,7 +908,7 @@ export default function HomePage() {
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
                   whileHover={{ 
                     y: -5,
                     transition: { type: "spring", stiffness: 300 }
@@ -860,7 +950,7 @@ export default function HomePage() {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.5 }}
         className="py-24 bg-gradient-to-br from-primary-600 via-primary-700 to-blue-800 relative z-10 overflow-hidden"
       >
         {/* Enhanced CTA Background Elements */}
@@ -874,7 +964,7 @@ export default function HomePage() {
               y: [0, -20, 0],
             }}
             transition={{
-              duration: 15,
+              duration: 5,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -901,7 +991,7 @@ export default function HomePage() {
               rotate: [0, 180, 360],
             }}
             transition={{
-              duration: 20,
+              duration: 10,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -923,9 +1013,9 @@ export default function HomePage() {
                 x: [0, Math.random() * 20 - 10, 0],
               }}
               transition={{
-                duration: 3 + Math.random() * 2,
+                duration: 2 + Math.random() * 1.5,
                 repeat: Infinity,
-                delay: Math.random() * 2,
+                delay: Math.random() * 1,
               }}
             />
           ))}
@@ -936,7 +1026,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.5 }}
             className="bg-white/10 backdrop-blur-sm rounded-3xl p-12 border border-white/20"
           >
             <motion.span 
@@ -953,7 +1043,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
               className="text-4xl md:text-6xl font-bold text-white mb-6"
             >
               Ready to grow your 
@@ -1013,7 +1103,7 @@ export default function HomePage() {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.5 }}
         className="bg-gray-900 text-white py-12 relative z-10"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

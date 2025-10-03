@@ -3,238 +3,231 @@
 import { motion } from 'framer-motion'
 import BackgroundAnimations from '@/components/BackgroundAnimations'
 import { 
-  EnvelopeIcon, 
-  ChartBarIcon, 
-  DocumentTextIcon, 
+  SparklesIcon,
+  TemplateIcon,
   UserGroupIcon,
+  ChartBarIcon,
   CogIcon,
   ShieldCheckIcon,
-  RocketLaunchIcon,
-  SparklesIcon
+  ArrowRightIcon,
+  CheckIcon
 } from '@heroicons/react/24/outline'
 
 export default function FeaturesPage() {
   const features = [
     {
-      icon: EnvelopeIcon,
-      title: "智能邮件生成",
-      description: "基于先进AI技术，自动生成个性化邮件内容，提高营销效果",
-      details: [
-        "AI智能内容生成",
-        "个性化邮件模板",
-        "多语言支持",
-        "内容优化建议"
+      icon: SparklesIcon,
+      title: "Smart Email Generation",
+      description: "AI-powered email content generation using advanced technology to create personalized content and improve marketing effectiveness",
+      features: [
+        "AI Smart Content Generation",
+        "Personalized Email Templates",
+        "Multi-language Support",
+        "Content Optimization Suggestions"
       ]
     },
     {
-      icon: DocumentTextIcon,
-      title: "专业模板库",
-      description: "丰富的邮件模板，支持自定义设计，打造品牌专属邮件",
-      details: [
-        "专业模板",
-        "响应式设计",
-        "品牌定制",
-        "拖拽编辑器"
+      icon: TemplateIcon,
+      title: "Professional Template Library",
+      description: "Rich email templates with custom design support to create brand-specific emails",
+      features: [
+        "Professional Templates",
+        "Responsive Design",
+        "Brand Customization",
+        "Drag & Drop Editor"
       ]
     },
     {
       icon: UserGroupIcon,
-      title: "联系人管理",
-      description: "高效管理联系人，支持分组、标签和批量操作",
-      details: [
-        "智能分组",
-        "批量导入",
-        "状态跟踪",
-        "数据同步"
+      title: "Contact Management",
+      description: "Efficiently manage contacts with support for grouping, tagging and batch operations",
+      features: [
+        "Smart Grouping",
+        "Batch Import",
+        "Status Tracking",
+        "Data Synchronization"
       ]
     },
     {
       icon: ChartBarIcon,
-      title: "数据分析",
-      description: "详细的邮件发送统计，帮助优化营销策略",
-      details: [
-        "实时统计",
-        "打开率分析",
-        "点击率追踪",
-        "ROI计算"
+      title: "Data Analytics",
+      description: "Detailed email sending statistics to help optimize marketing strategies",
+      features: [
+        "Real-time Statistics",
+        "Open Rate Analysis",
+        "Click Rate Tracking",
+        "ROI Calculation"
       ]
     },
     {
       icon: CogIcon,
-      title: "SMTP配置",
-      description: "支持自定义SMTP设置，使用自己的邮箱发送邮件",
-      details: [
-        "多邮箱支持",
-        "安全认证",
-        "发送测试",
-        "配置备份"
+      title: "SMTP Configuration",
+      description: "Support for custom SMTP settings to send emails using your own email account",
+      features: [
+        "Multi-email Support",
+        "Secure Authentication",
+        "Send Testing",
+        "Configuration Backup"
       ]
     },
     {
       icon: ShieldCheckIcon,
-      title: "数据安全",
-      description: "企业级安全保障，保护用户数据和隐私",
-      details: [
-        "数据加密",
-        "隐私保护",
-        "合规认证",
-        "安全审计"
+      title: "Data Security",
+      description: "Enterprise-level security assurance to protect user data and privacy",
+      features: [
+        "Data Encryption",
+        "Privacy Protection",
+        "Compliance Certification",
+        "Security Audit"
       ]
     }
   ]
 
   const stats = [
-    { number: "10K+", label: "活跃用户" },
-    { number: "1M+", label: "邮件发送" },
-    { number: "99.9%", label: "送达率" },
-    { number: "24/7", label: "技术支持" }
+    { number: "10K+", label: "Active Users" },
+    { number: "1M+", label: "Emails Sent" },
+    { number: "99.9%", label: "Delivery Rate" },
+    { number: "24/7", label: "Technical Support" }
   ]
 
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">
-      <BackgroundAnimations variant="features" particleCount={12} />
+      <BackgroundAnimations variant="default" particleCount={15} />
+      
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-gray-200 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex justify-between items-center py-12">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h1 className="text-3xl font-bold text-gray-900">功能特性</h1>
-              <p className="text-gray-600 mt-2">了解NovaMail的强大功能</p>
+              <h1 className="text-3xl font-bold text-gray-900">Features</h1>
+              <p className="text-gray-600 mt-2">More Nova Mail's powerful features</p>
             </motion.div>
           </div>
         </div>
       </div>
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-primary-600 via-primary-700 to-blue-800 py-20">
+      <section className="relative py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              强大的邮件营销
-              <span className="block text-yellow-300">功能套件</span>
+            <h2 className="text-5xl font-bold text-gray-900 mb-6">
+              Powerful Email Marketing
+              <span className="block text-yellow-300">Feature Suite</span>
             </h2>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto mb-12">
-              从智能内容生成到数据分析，NovaMail为您提供完整的邮件营销解决方案
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              From smart content generation to data analytics, NovaMail provides you with a complete email marketing solution
             </p>
           </motion.div>
+        </div>
+      </section>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+      {/* Statistics */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                key={stat.label}
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-blue-200">{stat.label}</div>
+                <div className="text-4xl font-bold text-primary-600 mb-2">{stat.number}</div>
+                <div className="text-gray-600">{stat.label}</div>
               </motion.div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Features Grid */}
-      <div className="py-20">
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">核心功能</h3>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              每个功能都经过精心设计，旨在提升您的邮件营销效果
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">Core Features</h3>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Each feature is carefully designed to improve your email marketing effectiveness
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <motion.div
-                key={index}
+                key={feature.title}
                 initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow"
               >
-                <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mr-4">
-                    <feature.icon className="w-6 h-6 text-primary-600" />
-                  </div>
-                  <h4 className="text-xl font-semibold text-gray-900">{feature.title}</h4>
+                <div className="w-16 h-16 bg-primary-100 rounded-xl flex items-center justify-center mb-6">
+                  <feature.icon className="w-8 h-8 text-primary-600" />
                 </div>
                 
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  {feature.description}
-                </p>
-
-                <ul className="space-y-2">
-                  {feature.details.map((detail, detailIndex) => (
-                    <li key={detailIndex} className="flex items-center text-sm text-gray-500">
-                      <div className="w-1.5 h-1.5 bg-primary-400 rounded-full mr-3"></div>
-                      {detail}
-                    </li>
+                <h4 className="text-xl font-semibold text-gray-900 mb-4">{feature.title}</h4>
+                <p className="text-gray-600 mb-6">{feature.description}</p>
+                
+                <div className="space-y-2">
+                  {feature.features.map((feat, featIndex) => (
+                    <div key={featIndex} className="flex items-center text-sm text-gray-700">
+                      <CheckIcon className="w-4 h-4 text-green-500 mr-2" />
+                      {feat}
+                    </div>
                   ))}
-                </ul>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* CTA Section */}
-      <div className="bg-gray-900 py-20">
+      <section className="py-20 bg-gradient-to-r from-primary-500 to-blue-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              准备开始您的邮件营销之旅？
-            </h3>
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              立即注册NovaMail，体验强大的邮件营销功能
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Ready to start your email marketing journey?
+            </h2>
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+              Register NovaMail now and experience powerful email marketing features
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.a
-                href="/dashboard/campaigns/new"
-                className="bg-primary-600 text-white px-8 py-4 rounded-lg font-medium hover:bg-primary-700 transition-colors inline-flex items-center justify-center"
+              <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                className="bg-white text-primary-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center justify-center"
               >
-                <RocketLaunchIcon className="w-5 h-5 mr-2" />
-                立即开始
-              </motion.a>
-              <motion.a
-                href="/pricing"
-                className="border-2 border-white/30 text-white px-8 py-4 rounded-lg font-medium hover:bg-white/10 transition-colors inline-flex items-center justify-center"
+                <span>Get Started</span>
+                <ArrowRightIcon className="w-4 h-4 ml-2" />
+              </motion.button>
+              <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                className="border-2 border-white text-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-primary-600 transition-colors"
               >
-                <SparklesIcon className="w-5 h-5 mr-2" />
-                查看定价
-              </motion.a>
+                View Pricing
+              </motion.button>
             </div>
           </motion.div>
         </div>
-      </div>
+      </section>
     </div>
   )
 }

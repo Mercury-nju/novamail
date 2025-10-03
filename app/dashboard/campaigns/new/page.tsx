@@ -20,14 +20,14 @@ export default function NewCampaignPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
 
-  // 临时禁用认证检查，直接显示页面
+  // Temporarily disable auth check, show page directly
   // useEffect(() => {
   //   if (status === 'loading') {
   //     return
   //   }
   //   
   //   if (status === 'unauthenticated') {
-  //     // 用户未登录，重定向到登录页面
+  //     // User not logged in, redirect to login page
   //     router.push('/login')
   //     return
   //   }
@@ -40,8 +40,8 @@ export default function NewCampaignPage() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [showImportContactsModal, setShowImportContactsModal] = useState(false)
   const [showImportFileModal, setShowImportFileModal] = useState(false)
+  const [toneStyle, setToneStyle] = useState<string>('friendly')
   const [campaignData, setCampaignData] = useState({
-    name: '',
     purpose: '',
     subject: '',
     body: '',
@@ -71,7 +71,15 @@ export default function NewCampaignPage() {
     setIsGenerating(true)
     
     try {
-      // 调用真实的AI服务
+      // Call the real AI service
+      console.log('Generating email with:', { emailMode, selectedTemplate, toneStyle, campaignData })
+      
+      // Add default targetUrl for preview to ensure button display
+      const campaignDataWithUrl = {
+        ...campaignData,
+        targetUrl: campaignData.targetUrl || 'https://example.com/event'
+      }
+      
       const response = await fetch('/api/ai/generate-email', {
         method: 'POST',
         headers: {
@@ -80,7 +88,8 @@ export default function NewCampaignPage() {
         body: JSON.stringify({
           emailMode,
           selectedTemplate,
-          campaignData
+          toneStyle,
+          campaignData: campaignDataWithUrl
         }),
       })
 
@@ -135,8 +144,8 @@ export default function NewCampaignPage() {
 
   const handleNext = () => {
     if (step === 1) {
-      if (!campaignData.name.trim() || !campaignData.purpose.trim()) {
-        toast.error('Please fill in Campaign Theme and Purpose')
+      if (!campaignData.purpose.trim()) {
+        toast.error('Please fill in Campaign Purpose')
         return
       }
       if (emailMode === 'professional' && !selectedTemplate) {
@@ -156,6 +165,9 @@ export default function NewCampaignPage() {
   const handleBack = () => {
     if (step > 1) {
       setStep(step - 1)
+    } else {
+      // Move to campaign list if in first step
+      router.push('/dashboard/campaigns')
     }
   }
 
@@ -303,7 +315,7 @@ export default function NewCampaignPage() {
     const isTXT = fileName.endsWith('.txt')
 
     if (!isCSV && !isExcel && !isTXT) {
-      toast.error('请上传CSV、Excel或TXT格式的文件')
+      toast.error('Please upload CSV, Excel or TXT format file')
       return
     }
 
@@ -332,11 +344,11 @@ export default function NewCampaignPage() {
         setShowImportFileModal(false)
         toast.success(`Added ${emails.length} contacts from file`)
       } else {
-        toast.error('文件中没有找到有效的邮箱地址')
+        toast.error('No valid email addresses found in file')
       }
     } catch (error) {
       console.error('File processing error:', error)
-      toast.error('文件处理失败，请检查文件格式')
+      toast.error('File processing failed, please check file format')
     }
   }
 
@@ -370,7 +382,7 @@ export default function NewCampaignPage() {
         return emails
       }
       const headers = header.split(',').map(h => h.trim().toLowerCase())
-      const emailIndex = headers.findIndex(h => h.includes('email') || h.includes('邮箱'))
+      const emailIndex = headers.findIndex(h => h.includes('email') || h.toLowerCase().includes('mail'))
 
       dataLines.forEach((line) => {
         const values = line.split(',').map(v => v.trim().replace(/"/g, ''))
@@ -408,7 +420,7 @@ export default function NewCampaignPage() {
           }
 
           const headers = (jsonData[0] as string[]).map(h => h?.toString().toLowerCase().trim() || '')
-          const emailIndex = headers.findIndex(h => h.includes('email') || h.includes('邮箱'))
+          const emailIndex = headers.findIndex(h => h.includes('email') || h.toLowerCase().includes('mail'))
 
           const emails: string[] = []
           
@@ -486,6 +498,10 @@ export default function NewCampaignPage() {
                 {previewTemplate === 'newsletter' && 'Newsletter Template Preview'}
                 {previewTemplate === 'ecommerce' && 'E-commerce Template Preview'}
                 {previewTemplate === 'event' && 'Event Invite Template Preview'}
+                {previewTemplate === 'announcement' && 'Announcement Template Preview'}
+                {previewTemplate === 'welcome' && 'Welcome Template Preview'}
+                {previewTemplate === 'survey' && 'Survey Template Preview'}
+                {previewTemplate === 'thank-you' && 'Thank You Template Preview'}
               </h3>
               <button
                 onClick={() => setShowPreview(false)}
@@ -516,6 +532,10 @@ export default function NewCampaignPage() {
                           {previewTemplate === 'newsletter' && '📰 Weekly Newsletter: Latest Updates & Insights'}
                           {previewTemplate === 'ecommerce' && '🛒 New Collection Arrived: Shop Now & Save 20%'}
                           {previewTemplate === 'event' && '🎉 You\'re Invited: Exclusive Event This Weekend!'}
+                          {previewTemplate === 'announcement' && '📢 Important Announcement from Our Team'}
+                          {previewTemplate === 'welcome' && '👋 Welcome to Our Community!'}
+                          {previewTemplate === 'survey' && '📊 Your Opinion Matters - Quick Survey'}
+                          {previewTemplate === 'thank-you' && '🙏 Thank You for Your Support'}
                         </div>
                       </div>
                       
@@ -591,6 +611,82 @@ export default function NewCampaignPage() {
                             )}
                           </div>
                         )}
+                        
+                        {previewTemplate === 'announcement' && (
+                          <div className="space-y-4 text-sm text-gray-700">
+                            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-lg text-center">
+                              <h2 className="text-lg font-bold text-gray-900 mb-2">📢 Important Announcement</h2>
+                              <p className="text-gray-600 mb-3">We have exciting news to share with you</p>
+                            </div>
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                              <p className="text-gray-700 mb-3">This is an important update that affects our community and services.</p>
+                              {campaignData.targetUrl && (
+                                <div className="text-center">
+                                  <button className="bg-indigo-600 text-white px-6 py-2 rounded-lg text-sm font-medium">
+                                    Learn More
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {previewTemplate === 'welcome' && (
+                          <div className="space-y-4 text-sm text-gray-700">
+                            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg text-center">
+                              <h2 className="text-lg font-bold text-gray-900 mb-2">👋 Welcome to Our Community</h2>
+                              <p className="text-gray-600 mb-3">We're thrilled to have you join us</p>
+                            </div>
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                              <p className="text-gray-700 mb-3">Thank you for becoming part of our amazing community. We're here to help you succeed!</p>
+                              {campaignData.targetUrl && (
+                                <div className="text-center">
+                                  <button className="bg-yellow-600 text-white px-6 py-2 rounded-lg text-sm font-medium">
+                                    Get Started
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {previewTemplate === 'survey' && (
+                          <div className="space-y-4 text-sm text-gray-700">
+                            <div className="bg-gradient-to-r from-teal-50 to-cyan-50 p-4 rounded-lg text-center">
+                              <h2 className="text-lg font-bold text-gray-900 mb-2">📊 Your Opinion Matters</h2>
+                              <p className="text-gray-600 mb-3">Help us improve by sharing your feedback</p>
+                            </div>
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                              <p className="text-gray-700 mb-3">We value your input and would love to hear your thoughts on our services.</p>
+                              {campaignData.targetUrl && (
+                                <div className="text-center">
+                                  <button className="bg-teal-600 text-white px-6 py-2 rounded-lg text-sm font-medium">
+                                    Take Survey
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {previewTemplate === 'thank-you' && (
+                          <div className="space-y-4 text-sm text-gray-700">
+                            <div className="bg-gradient-to-r from-rose-50 to-pink-50 p-4 rounded-lg text-center">
+                              <h2 className="text-lg font-bold text-gray-900 mb-2">🙏 Thank You</h2>
+                              <p className="text-gray-600 mb-3">We appreciate your support and trust</p>
+                            </div>
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                              <p className="text-gray-700 mb-3">Your support means the world to us. We're grateful for your continued partnership.</p>
+                              {campaignData.targetUrl && (
+                                <div className="text-center">
+                                  <button className="bg-rose-600 text-white px-6 py-2 rounded-lg text-sm font-medium">
+                                    Continue
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                     
                         {previewTemplate === 'event' && (
                           <div className="space-y-4 text-sm text-gray-700">
@@ -656,6 +752,10 @@ export default function NewCampaignPage() {
                           {previewTemplate === 'newsletter' && '📰 Weekly Newsletter: Latest Updates'}
                           {previewTemplate === 'ecommerce' && '🛒 New Collection: Shop Now & Save'}
                           {previewTemplate === 'event' && '🎉 You\'re Invited: Event This Weekend!'}
+                          {previewTemplate === 'announcement' && '📢 Important Announcement from Our Team'}
+                          {previewTemplate === 'welcome' && '👋 Welcome to Our Community!'}
+                          {previewTemplate === 'survey' && '📊 Your Opinion Matters - Quick Survey'}
+                          {previewTemplate === 'thank-you' && '🙏 Thank You for Your Support'}
                         </div>
                       </div>
                       
@@ -744,6 +844,97 @@ export default function NewCampaignPage() {
                                   <button className="bg-pink-600 text-white px-4 py-2 rounded text-xs w-full font-medium">✅ RSVP Yes</button>
                                   <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded text-xs w-full">❓ Maybe Later</button>
                                 </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {previewTemplate === 'announcement' && (
+                          <div className="space-y-3">
+                            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded text-center">
+                              <div className="text-2xl mb-3">📢</div>
+                              <div className="text-lg font-bold text-gray-900 mb-2">Important Update</div>
+                              <div className="text-gray-600 mb-3">We have exciting news to share!</div>
+                            </div>
+                            <div className="bg-white border border-indigo-200 rounded p-3">
+                              <div className="text-xs text-gray-600 mb-2">📋 Announcement Details:</div>
+                              <div className="text-xs text-gray-700">• New features coming soon</div>
+                              <div className="text-xs text-gray-700">• System maintenance scheduled</div>
+                              <div className="text-xs text-gray-700">• Important policy updates</div>
+                            </div>
+                            {campaignData.targetUrl && (
+                              <button className="bg-indigo-600 text-white px-4 py-2 rounded text-xs w-full font-medium">
+                                <a href={campaignData.targetUrl} className="text-white">📖 Read Full Announcement</a>
+                              </button>
+                            )}
+                          </div>
+                        )}
+                        
+                        {previewTemplate === 'welcome' && (
+                          <div className="space-y-3">
+                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded text-center">
+                              <div className="text-2xl mb-3">👋</div>
+                              <div className="text-lg font-bold text-gray-900 mb-2">Welcome Aboard!</div>
+                              <div className="text-gray-600 mb-3">We're thrilled to have you join us!</div>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="bg-white border border-green-200 rounded p-3">
+                                <div className="text-xs text-gray-600 mb-2">🎯 Getting Started:</div>
+                                <div className="text-xs text-gray-700">• Complete your profile</div>
+                                <div className="text-xs text-gray-700">• Explore our features</div>
+                                <div className="text-xs text-gray-700">• Join our community</div>
+                              </div>
+                              {campaignData.targetUrl && (
+                                <button className="bg-green-600 text-white px-4 py-2 rounded text-xs w-full font-medium">
+                                  <a href={campaignData.targetUrl} className="text-white">🚀 Get Started</a>
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {previewTemplate === 'survey' && (
+                          <div className="space-y-3">
+                            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded text-center">
+                              <div className="text-2xl mb-3">📊</div>
+                              <div className="text-lg font-bold text-gray-900 mb-2">Quick Survey</div>
+                              <div className="text-gray-600 mb-3">Your feedback helps us improve!</div>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="bg-white border border-yellow-200 rounded p-3">
+                                <div className="text-xs text-gray-600 mb-2">📝 Survey Topics:</div>
+                                <div className="text-xs text-gray-700">• Product satisfaction</div>
+                                <div className="text-xs text-gray-700">• Service quality</div>
+                                <div className="text-xs text-gray-700">• Future improvements</div>
+                              </div>
+                              <div className="text-xs text-gray-500 text-center">⏱️ Takes only 2 minutes</div>
+                              {campaignData.targetUrl && (
+                                <button className="bg-yellow-600 text-white px-4 py-2 rounded text-xs w-full font-medium">
+                                  <a href={campaignData.targetUrl} className="text-white">📋 Take Survey</a>
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {previewTemplate === 'thank-you' && (
+                          <div className="space-y-3">
+                            <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded text-center">
+                              <div className="text-2xl mb-3">🙏</div>
+                              <div className="text-lg font-bold text-gray-900 mb-2">Thank You!</div>
+                              <div className="text-gray-600 mb-3">We appreciate your support!</div>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="bg-white border border-purple-200 rounded p-3">
+                                <div className="text-xs text-gray-600 mb-2">💝 What's Next:</div>
+                                <div className="text-xs text-gray-700">• Your order is being processed</div>
+                                <div className="text-xs text-gray-700">• You'll receive updates soon</div>
+                                <div className="text-xs text-gray-700">• Thank you for choosing us</div>
+                              </div>
+                              {campaignData.targetUrl && (
+                                <button className="bg-purple-600 text-white px-4 py-2 rounded text-xs w-full font-medium">
+                                  <a href={campaignData.targetUrl} className="text-white">📦 Track Order</a>
+                                </button>
                               )}
                             </div>
                           </div>
@@ -845,9 +1036,12 @@ export default function NewCampaignPage() {
                 
                 {/* Professional Template Styles */}
                 {emailMode === 'professional' && (
-                  <div className="mt-6">
-                    <h5 className="text-sm font-medium text-gray-700 mb-4">Choose Template Style:</h5>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="mt-8">
+                    <div className="text-center mb-8">
+                      <h5 className="text-lg font-semibold text-gray-900 mb-2">Choose Template Style</h5>
+                      <p className="text-sm text-gray-600">Select from our professional email templates</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                       {[
                         { 
                           id: 'modern-promo', 
@@ -880,20 +1074,52 @@ export default function NewCampaignPage() {
                           desc: 'Party and event themed',
                           gradient: 'from-pink-50 to-purple-50',
                           accentColor: 'pink'
+                        },
+                        { 
+                          id: 'announcement', 
+                          name: 'Announcement', 
+                          icon: '📢', 
+                          desc: 'Formal announcement style',
+                          gradient: 'from-indigo-50 to-blue-50',
+                          accentColor: 'indigo'
+                        },
+                        { 
+                          id: 'welcome', 
+                          name: 'Welcome', 
+                          icon: '👋', 
+                          desc: 'Warm welcome message',
+                          gradient: 'from-yellow-50 to-orange-50',
+                          accentColor: 'yellow'
+                        },
+                        { 
+                          id: 'survey', 
+                          name: 'Survey', 
+                          icon: '📊', 
+                          desc: 'Feedback collection',
+                          gradient: 'from-teal-50 to-cyan-50',
+                          accentColor: 'teal'
+                        },
+                        { 
+                          id: 'thank-you', 
+                          name: 'Thank You', 
+                          icon: '🙏', 
+                          desc: 'Gratitude and appreciation',
+                          gradient: 'from-rose-50 to-pink-50',
+                          accentColor: 'rose'
                         }
                       ].map((template) => (
                         <button
                           key={template.id}
                           onClick={() => setSelectedTemplate(template.id)}
-                          className={`p-4 border-2 rounded-lg text-left transition-all duration-200 ${
+                          className={`p-6 border-2 rounded-xl text-center transition-all duration-200 hover:shadow-md ${
                             selectedTemplate === template.id
-                              ? 'border-blue-500 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              ? 'border-blue-500 bg-blue-50 shadow-md'
+                              : 'border-gray-200 hover:border-gray-300 bg-white'
                           }`}
                         >
-                          <div className="text-2xl mb-2">{template.icon}</div>
-                          <h6 className="font-semibold text-gray-900 mb-1">{template.name}</h6>
-                          <p className="text-xs text-gray-600">{template.desc}</p>
+                          <div className="text-3xl mb-3">{template.icon}</div>
+                          <h6 className="font-semibold text-gray-900 mb-2 text-sm">{template.name}</h6>
+                          <p className="text-xs text-gray-600 leading-relaxed">{template.desc}</p>
                           
                           {/* Template Preview */}
                           <div className="mt-3 border border-gray-200 rounded p-2 bg-white">
@@ -938,6 +1164,83 @@ export default function NewCampaignPage() {
               </div>
             </div>
 
+            {/* Tone Style Selection */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <SwatchIcon className="h-5 w-5 mr-2 text-blue-600" />
+                Tone Style Selection
+              </h3>
+              <div className="space-y-4">
+                <p className="text-sm text-gray-600 mb-4">Choose the tone and style for your email content:</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    { 
+                      id: 'friendly', 
+                      name: 'Friendly', 
+                      icon: '😊', 
+                      desc: 'Warm and approachable tone',
+                      color: 'from-green-50 to-blue-50',
+                      borderColor: 'border-green-200'
+                    },
+                    { 
+                      id: 'professional', 
+                      name: 'Professional', 
+                      icon: '💼', 
+                      desc: 'Formal and business-like',
+                      color: 'from-blue-50 to-indigo-50',
+                      borderColor: 'border-blue-200'
+                    },
+                    { 
+                      id: 'casual', 
+                      name: 'Casual', 
+                      icon: '😎', 
+                      desc: 'Relaxed and informal',
+                      color: 'from-yellow-50 to-orange-50',
+                      borderColor: 'border-yellow-200'
+                    },
+                    { 
+                      id: 'enthusiastic', 
+                      name: 'Enthusiastic', 
+                      icon: '🚀', 
+                      desc: 'Energetic and exciting',
+                      color: 'from-red-50 to-pink-50',
+                      borderColor: 'border-red-200'
+                    },
+                    { 
+                      id: 'persuasive', 
+                      name: 'Persuasive', 
+                      icon: '💡', 
+                      desc: 'Convincing and compelling',
+                      color: 'from-purple-50 to-indigo-50',
+                      borderColor: 'border-purple-200'
+                    },
+                    { 
+                      id: 'informative', 
+                      name: 'Informative', 
+                      icon: '📚', 
+                      desc: 'Clear and educational',
+                      color: 'from-gray-50 to-slate-50',
+                      borderColor: 'border-gray-200'
+                    }
+                  ].map((tone) => (
+                    <button
+                      key={tone.id}
+                      onClick={() => setToneStyle(tone.id)}
+                      className={`p-4 border-2 rounded-lg text-left transition-all duration-200 ${
+                        toneStyle === tone.id
+                          ? 'border-blue-500 bg-blue-50'
+                          : `border-gray-200 hover:${tone.borderColor}`
+                      }`}
+                    >
+                      <div className="text-2xl mb-2">{tone.icon}</div>
+                      <h6 className="font-semibold text-gray-900 mb-1">{tone.name}</h6>
+                      <p className="text-xs text-gray-600">{tone.desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             {/* Campaign Information */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -946,12 +1249,8 @@ export default function NewCampaignPage() {
               </h3>
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Campaign Theme *</label>
-                  <input type="text" value={campaignData.name} onChange={(e) => setCampaignData({ ...campaignData, name: e.target.value })} placeholder="Enter campaign theme" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                </div>
-                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Campaign Purpose *</label>
-                  <textarea value={campaignData.purpose} onChange={(e) => setCampaignData({ ...campaignData, purpose: e.target.value })} placeholder="What is the purpose of this?" rows={3} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                  <textarea value={campaignData.purpose} onChange={(e) => setCampaignData({ ...campaignData, purpose: e.target.value })} placeholder="What is the purpose of this campaign? Describe what you want to achieve." rows={3} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                 </div>
 
                 <div>
@@ -1005,7 +1304,6 @@ export default function NewCampaignPage() {
               <button
                 onClick={handleNext}
                 disabled={
-                  !campaignData.name.trim() || 
                   !campaignData.purpose.trim() ||
                   (emailMode === 'professional' && !selectedTemplate) ||
                   isGenerating
@@ -1050,31 +1348,59 @@ export default function NewCampaignPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Email Body</label>
                   <div className="space-y-4">
-                    {/* 邮件内容显示和编辑 */}
+                    {/* Email content display and editing */}
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-2">邮件内容 (可编辑)</label>
-                      <div className="border border-gray-300 rounded-lg bg-white min-h-[200px]">
-                        <div 
-                          className="p-4"
-                          style={{ 
-                            fontFamily: 'Arial, sans-serif',
-                            fontSize: '14px',
-                            lineHeight: '1.6',
-                            color: '#333',
-                            textAlign: 'left'
-                          }}
-                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(campaignData.body) }}
-                          contentEditable={true}
-                          onInput={(e) => {
-                            const newContent = e.currentTarget.innerHTML
-                            setCampaignData({ ...campaignData, body: newContent })
-                          }}
-                          suppressContentEditableWarning={true}
-                        />
+                      <label className="block text-xs font-medium text-gray-600 mb-2">Email Content (Editable)</label>
+                      
+                      {/* Email client simulation interface */}
+                      <div className="border border-gray-300 rounded-lg bg-gray-50 p-4">
+                        {/* Email client header */}
+                        <div className="bg-white border-b border-gray-200 p-3 rounded-t-lg">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                <span className="text-white text-sm font-bold">G</span>
+                              </div>
+                              <div>
+                                <div className="text-sm font-medium text-gray-900">Gmail</div>
+                                <div className="text-xs text-gray-500">Email Preview</div>
+                              </div>
+                            </div>
+                            <div className="flex space-x-1">
+                              <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                              <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                              <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Email content area */}
+                        <div className="bg-white border-x border-b border-gray-200 rounded-b-lg min-h-[400px] overflow-auto">
+                          <div 
+                            className="w-full"
+                            style={{ 
+                              fontFamily: 'Arial, sans-serif',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              color: '#333',
+                              textAlign: 'left',
+                              minHeight: '400px',
+                              padding: '0',
+                              margin: '0'
+                            }}
+                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(campaignData.body) }}
+                            contentEditable={true}
+                            onInput={(e) => {
+                              const newContent = e.currentTarget.innerHTML
+                              setCampaignData({ ...campaignData, body: newContent })
+                            }}
+                            suppressContentEditableWarning={true}
+                          />
+                        </div>
                       </div>
                     </div>
                     
-                    {/* 隐藏的 HTML 编辑器 (用于保存) */}
+                    {/* Hidden HTML editor (for saving) */}
                     <textarea 
                       value={campaignData.body} 
                       onChange={(e) => setCampaignData({ ...campaignData, body: e.target.value })} 
@@ -1100,8 +1426,8 @@ export default function NewCampaignPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Campaign Summary</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <div className="text-sm font-medium text-gray-700 mb-2">Campaign Theme</div>
-                  <div className="text-gray-900">{campaignData.name}</div>
+                  <div className="text-sm font-medium text-gray-700 mb-2">Tone Style</div>
+                  <div className="text-gray-900 capitalize">{toneStyle}</div>
                 </div>
                 <div>
                   <div className="text-sm font-medium text-gray-700 mb-2">Email Style</div>
@@ -1325,27 +1651,27 @@ export default function NewCampaignPage() {
                 </div>
                 
                 <div className="text-sm text-gray-500">
-                  <p className="font-medium mb-2">支持的文件格式：</p>
+                  <p className="font-medium mb-2">Supported file formats:</p>
                   <div className="space-y-2">
                     <div>
-                      <p className="font-medium">Excel格式 (.xlsx, .xls)：</p>
+                      <p className="font-medium">Excel format (.xlsx, .xls):</p>
                       <ul className="list-disc list-inside mt-1 ml-2">
-                        <li>Email/邮箱 (必填)</li>
-                        <li>Name/姓名 (可选)</li>
+                        <li>Email (required)</li>
+                        <li>Name (optional)</li>
                       </ul>
                     </div>
                     <div>
-                      <p className="font-medium">CSV格式：</p>
+                      <p className="font-medium">CSV format:</p>
                       <ul className="list-disc list-inside mt-1 ml-2">
-                        <li>Email/邮箱 (必填)</li>
-                        <li>Name/姓名 (可选)</li>
+                        <li>Email (required)</li>
+                        <li>Name (optional)</li>
                       </ul>
                     </div>
                     <div>
-                      <p className="font-medium">TXT格式：</p>
+                      <p className="font-medium">TXT format:</p>
                       <ul className="list-disc list-inside mt-1 ml-2">
-                        <li>每行一个邮箱地址</li>
-                        <li>或格式：姓名,邮箱</li>
+                        <li>One email address per line</li>
+                        <li>Or format: Name,Email</li>
                       </ul>
                     </div>
                   </div>
