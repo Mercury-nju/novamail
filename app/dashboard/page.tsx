@@ -55,12 +55,11 @@ export default function DashboardPage() {
       return
     }
     
-    // Temporarily disable auth check, show dashboard directly
-    // if (status === 'unauthenticated') {
-    //   // User not logged in, redirect to login page
-    //   router.push('/login')
-    //   return
-    // }
+    if (status === 'unauthenticated') {
+      // User not logged in, redirect to login page
+      router.push('/login')
+      return
+    }
     
     if (session?.user?.email) {
       fetchDashboardData()
