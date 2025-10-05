@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 移除静态导出以支持API路由
-  // output: 'export',
+  // 启用静态导出以兼容Cloudflare Pages
+  output: 'export',
   trailingSlash: true, // Cloudflare Pages兼容
   
   // 图片优化配置
   images: {
-    unoptimized: false, // 启用图片优化
+    unoptimized: true, // 静态导出需要禁用图片优化
     domains: [
       'lh3.googleusercontent.com', // Google
       'images.unsplash.com',        // Unsplash

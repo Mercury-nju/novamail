@@ -48,18 +48,10 @@ const providers: any[] = [
   })
 ]
 
-// Enable Google OAuth with real credentials
+// Enable Google OAuth with simplified configuration
 providers.unshift(GoogleProvider({
   clientId: process.env.GOOGLE_CLIENT_ID || "1081642412409-177t2l8f1ok1jro7xht5v90dvd6d30i8.apps.googleusercontent.com",
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET || "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5tU",
-  authorization: {
-    params: {
-      scope: "openid email profile",
-      prompt: "consent",
-      access_type: "offline",
-      response_type: "code"
-    }
-  }
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET || "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5tU"
 }))
 
 
