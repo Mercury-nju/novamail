@@ -46,7 +46,24 @@ function LoginForm() {
 
   const handleGoogleSignIn = async () => {
     try {
-      await signIn('google', { callbackUrl })
+      // 使用Google OAuth 2.0客户端库
+      const clientId = "1081642412409-177t2l8f1ok1jro7xht5v90dvd6d30i8.apps.googleusercontent.com"
+      
+      // 创建Google OAuth URL
+      const redirectUri = `${window.location.origin}/google-callback`
+      const scope = 'openid email profile'
+      const responseType = 'code'
+      
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+        `client_id=${clientId}&` +
+        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+        `scope=${encodeURIComponent(scope)}&` +
+        `response_type=${responseType}&` +
+        `access_type=offline&` +
+        `prompt=consent`
+      
+      // 跳转到Google OAuth页面
+      window.location.href = authUrl
     } catch (error) {
       console.error('Google login error:', error)
       alert('Google login failed')
