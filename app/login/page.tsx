@@ -160,7 +160,17 @@ function LoginForm() {
                   transition: 'all 0.2s ease-in-out'
                 }}
                 onClick={() => {
-                  window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=1081642412409-177t2l8f1ok1jro7xht5v90dvd6d30i8.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=openid%20email%20profile&response_type=code&access_type=offline&prompt=consent'
+                  // 强制跳转到Google OAuth，不使用NextAuth
+                  const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' +
+                    'client_id=1081642412409-177t2l8f1ok1jro7xht5v90dvd6d30i8.apps.googleusercontent.com&' +
+                    'redirect_uri=https://novamail.pages.dev/google-callback&' +
+                    'scope=openid%20email%20profile&' +
+                    'response_type=code&' +
+                    'access_type=offline&' +
+                    'prompt=consent'
+                  
+                  console.log('Redirecting to Google OAuth:', googleAuthUrl)
+                  window.location.href = googleAuthUrl
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#f9fafb'
