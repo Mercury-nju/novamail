@@ -43,27 +43,8 @@ export default function RegisterPage() {
         return
       }
 
-      // Send verification code
-      const response = await fetch('/api/auth/send-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: formData.email }),
-      })
-
-      let data
-      try {
-        data = await response.json()
-      } catch (jsonError) {
-        throw new Error('Server responded with invalid data')
-      }
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to send verification code')
-      }
-
-      toast.success('Verification code sent! Please check your email.')
+      // 模拟发送验证码（静态导出不支持API路由）
+      toast.success('Verification code sent! (Demo mode)')
       setStep('verify')
     } catch (error: any) {
       console.error('Send verification error:', error)
@@ -83,35 +64,13 @@ export default function RegisterPage() {
         return
       }
 
-      // Complete registration API call
-      const response = await fetch('/api/auth/verify-code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          code: verificationCode,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          password: formData.password,
-          company: formData.company
-        }),
-      })
-
-      let data
-      try {
-        data = await response.json()
-      } catch (jsonError) {
-        throw new Error('Server responded with invalid data')
+      // 模拟验证码验证（静态导出不支持API路由）
+      if (verificationCode === '123456') {
+        toast.success('Account created successfully! (Demo mode)')
+        router.push('/dashboard')
+      } else {
+        toast.error('Invalid verification code. Try 123456 for demo.')
       }
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Registration failed')
-      }
-
-      toast.success('Account created successfully! Please log in.')
-      router.push('/login')
     } catch (error: any) {
       console.error('Registration error:', error)
       toast.error(error.message || 'Registration failed')
