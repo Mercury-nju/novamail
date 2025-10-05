@@ -131,7 +131,7 @@ function LoginForm() {
 
             <div className="mt-4">
               <a
-                href="https://accounts.google.com/o/oauth2/v2/auth?client_id=1081642412409-177t2l8f1ok1jro7xht5v90dvd6d30i8.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=openid%20email%20profile&response_type=code&access_type=offline&prompt=consent&state=test"
+                href="https://accounts.google.com/o/oauth2/v2/auth?client_id=1081642412409-177t2l8f1ok1jro7xht5v90dvd6d30i8.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=openid%20email%20profile&response_type=code"
                 style={{
                   width: '100%',
                   height: '40px',
