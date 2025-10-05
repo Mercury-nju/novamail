@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs"
 
 const prisma = new PrismaClient()
 
-const providers = [
+const providers: any[] = [
   CredentialsProvider({
     name: "credentials",
     credentials: {
