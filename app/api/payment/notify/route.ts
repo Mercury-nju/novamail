@@ -130,7 +130,7 @@ async function handlePaymentNotification(params: any, provider: PaymentProvider)
 
   } catch (error) {
     console.error('Payment notification processing error:', error)
-    return { success: false, error: error.message }
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
 
