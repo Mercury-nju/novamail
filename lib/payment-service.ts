@@ -73,7 +73,7 @@ class AlipayService {
 
       // 生成签名
       const sign = this.generateSign(params);
-      params['sign'] = sign;
+      (params as any)['sign'] = sign;
 
       // 构建支付URL
       const paymentUrl = `${this.gateway}?${this.buildQueryString(params)}`;
