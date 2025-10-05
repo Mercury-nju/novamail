@@ -130,7 +130,8 @@ function LoginForm() {
             </div>
 
             <div className="mt-4">
-              <div 
+              <a
+                href="https://accounts.google.com/o/oauth2/v2/auth?client_id=1081642412409-177t2l8f1ok1jro7xht5v90dvd6d30i8.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=openid%20email%20profile&response_type=code&access_type=offline&prompt=consent"
                 style={{
                   width: '100%',
                   height: '40px',
@@ -148,19 +149,6 @@ function LoginForm() {
                   boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
                   transition: 'all 0.2s ease-in-out'
                 }}
-                onClick={() => {
-                  // 强制跳转到Google OAuth，不使用NextAuth
-                  const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' +
-                    'client_id=1081642412409-177t2l8f1ok1jro7xht5v90dvd6d30i8.apps.googleusercontent.com&' +
-                    'redirect_uri=https://novamail.pages.dev/google-callback&' +
-                    'scope=openid%20email%20profile&' +
-                    'response_type=code&' +
-                    'access_type=offline&' +
-                    'prompt=consent'
-                  
-                  console.log('Redirecting to Google OAuth:', googleAuthUrl)
-                  window.location.href = googleAuthUrl
-                }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#f9fafb'
                 }}
@@ -175,7 +163,7 @@ function LoginForm() {
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
                 Continue with Google
-              </div>
+              </a>
             </div>
           </form>
 
