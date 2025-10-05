@@ -73,7 +73,7 @@ class AliyunEmailService {
 
       // 生成签名
       const signature = this.generateSignature(params);
-      params['Signature'] = signature;
+      (params as any)['Signature'] = signature;
 
       // 发送请求
       const response = await fetch(this.endpoint, {
