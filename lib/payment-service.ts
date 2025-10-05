@@ -161,7 +161,7 @@ class WechatPayService {
 
       // 生成签名
       const sign = this.generateSign(params);
-      params['sign'] = sign;
+      (params as any)['sign'] = sign;
 
       // 调用微信支付API
       const xmlData = this.buildXML(params);
