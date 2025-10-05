@@ -3,8 +3,8 @@
 
 interface CDNConfig {
   domain: string;
-  regions: string[];
-  features: string[];
+  regions: readonly string[];
+  features: readonly string[];
 }
 
 // 国内CDN服务商配置
