@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { useState, useEffect, Suspense } from 'react'
-import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 function LoginForm() {
@@ -24,19 +23,9 @@ function LoginForm() {
     setLoading(true)
     
     try {
-      const result = await signIn('credentials', {
-        redirect: false,
-        email,
-        password,
-        callbackUrl: '/dashboard'
-      })
-      
-      if (result?.error) {
-        alert('Invalid credentials')
-      } else if (result?.ok) {
-        // 使用window.location.href确保完全跳转
-        window.location.href = '/dashboard'
-      }
+      // 简化的登录处理，不使用NextAuth
+      console.log('Email login attempt:', email)
+      alert('Email login is temporarily disabled. Please use Google login.')
     } catch (error) {
       alert('Login failed')
     } finally {
