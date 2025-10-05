@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import BackgroundAnimations from '@/components/BackgroundAnimations'
 import { 
   SparklesIcon,
-  TemplateIcon,
+  DocumentTextIcon,
   UserGroupIcon,
   ChartBarIcon,
   CogIcon,
@@ -27,7 +27,7 @@ export default function FeaturesPage() {
       ]
     },
     {
-      icon: TemplateIcon,
+      icon: DocumentTextIcon,
       title: "Professional Template Library",
       description: "Rich email templates with custom design support to create brand-specific emails",
       features: [

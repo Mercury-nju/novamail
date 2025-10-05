@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
 
 // 价格计算
 function calculatePrice(planType: string, billingCycle: string) {
-  const pricing = {
+  const pricing: Record<string, Record<string, { amount: number; currency: string }>> = {
     starter: {
       monthly: { amount: 1900, currency: 'CNY' }, // ¥19.00
       yearly: { amount: 19000, currency: 'CNY' }   // ¥190.00 (约2个月免费)
