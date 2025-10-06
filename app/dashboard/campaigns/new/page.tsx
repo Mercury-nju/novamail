@@ -78,15 +78,35 @@ export default function NewCampaignPage() {
         targetUrl: campaignData.targetUrl || 'https://example.com/event'
       }
       
-      // 静态导出模式：使用客户端AI生成逻辑
-      const generatedContent = generateClientSideContent(emailMode, selectedTemplate, campaignDataWithUrl)
-      
-      setCampaignData(prev => ({ 
-        ...prev, 
-        subject: generatedContent.subject, 
-        body: generatedContent.body 
-      }))
-      toast.success(`AI generation completed! Using ${selectedTemplate || 'default'} template`)
+      const response = await fetch('/api/ai/generate-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          emailMode,
+          selectedTemplate,
+          toneStyle,
+          campaignData: campaignDataWithUrl
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+
+      if (result.success) {
+        setCampaignData(prev => ({ 
+          ...prev, 
+          subject: result.subject, 
+          body: result.body 
+        }))
+        toast.success(`AI generation completed! Using ${result.template} template`)
+      } else {
+        throw new Error(result.error || 'Generation failed')
+      }
     } catch (error) {
       console.error('AI Generation Error:', error)
       toast.error('AI generation failed, please try again later')
@@ -120,70 +140,6 @@ export default function NewCampaignPage() {
     }
   }
 
-  // 客户端AI生成函数
-  const generateClientSideContent = (emailMode: string, selectedTemplate: string, campaignData: any) => {
-    const { purpose, businessName, targetUrl } = campaignData
-
-    let subject: string
-    let body: string
-
-    if (emailMode === 'professional') {
-      subject = `Professional Update: ${purpose}`
-      body = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px;">
-          <h1 style="color: #333; margin-bottom: 20px;">Dear Valued Partner,</h1>
-          <p style="line-height: 1.6; color: #666; margin-bottom: 20px;">
-            We hope this message finds you well. We are writing to inform you about an important update regarding ${purpose}.
-          </p>
-          <p style="line-height: 1.6; color: #666; margin-bottom: 20px;">
-            This development represents a significant step forward in our commitment to providing you with the best possible service and solutions.
-          </p>
-          ${targetUrl ? `
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${targetUrl}" style="background: #007bff; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;">Learn More</a>
-          </div>
-          ` : ''}
-          <p style="line-height: 1.6; color: #666;">
-            We appreciate your continued partnership and look forward to serving you.
-          </p>
-          <p style="line-height: 1.6; color: #666;">
-            Best regards,<br>
-            The ${businessName || 'NovaMail'} Team
-          </p>
-          <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #999;">
-            <p>© 2024 ${businessName || 'NovaMail'}. All rights reserved.</p>
-          </div>
-        </div>
-      `
-    } else {
-      subject = `Hey! Check out ${purpose}`
-      body = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px;">
-          <h1 style="color: #333; margin-bottom: 20px;">Hi there! 👋</h1>
-          <p style="line-height: 1.6; color: #666; margin-bottom: 20px;">
-            Hope you're doing great! We wanted to share something exciting with you about ${purpose}.
-          </p>
-          <p style="line-height: 1.6; color: #666; margin-bottom: 20px;">
-            We think you'll love what we've been working on. It's designed to make your experience even better!
-          </p>
-          ${targetUrl ? `
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${targetUrl}" style="background: #28a745; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;">Check it out! 🚀</a>
-          </div>
-          ` : ''}
-          <p style="line-height: 1.6; color: #666;">
-            Thanks for being awesome!<br>
-            The ${businessName || 'NovaMail'} Team
-          </p>
-          <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #999;">
-            <p>© 2024 ${businessName || 'NovaMail'}. All rights reserved.</p>
-          </div>
-        </div>
-      `
-    }
-
-    return { subject, body }
-  }
 
   const handleNext = () => {
     if (step === 1) {
@@ -220,23 +176,76 @@ export default function NewCampaignPage() {
       return
     }
 
-    // 静态导出模式：模拟发送过程
+    // Check if user can send emails
     try {
-      console.log('Sending campaign:', {
-        subject: campaignData.subject,
-        recipients: campaignData.recipients.length,
-        businessName: campaignData.businessName
+      const response = await fetch('/api/user/check-permission', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'send_email',
+          currentCount: campaignData.recipients.length
+        }),
       })
 
-      // 模拟发送延迟
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
 
-      // 模拟发送结果
-      const successCount = Math.floor(campaignData.recipients.length * 0.95) // 95% 成功率
-      const failedCount = campaignData.recipients.length - successCount
+      const data = await response.json()
+      
+      if (!data.allowed) {
+        toast.error(data.reason || 'You have reached your email sending limit. Please upgrade your plan.')
+        return
+      }
+    } catch (error) {
+      console.error('Permission check error:', error)
+      toast.error('Failed to verify permissions')
+      return
+    }
+    
+    try {
+      // Call email sending API
+      const response = await fetch('/api/campaigns/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          campaignData,
+          recipients: campaignData.recipients
+        }),
+      })
 
-      toast.success(`Campaign sent successfully to ${successCount} recipients! ${failedCount > 0 ? `${failedCount} failed.` : ''}`)
-      router.push('/dashboard/campaigns')
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+
+      if (result.success) {
+        // Update usage counter
+        try {
+          await fetch('/api/user/update-usage', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              action: 'send_email',
+              increment: campaignData.recipients.length
+            }),
+          })
+        } catch (error) {
+          console.error('Failed to update usage:', error)
+        }
+
+        toast.success(`Campaign sent successfully to ${campaignData.recipients.length} recipients!`)
+        router.push('/dashboard/campaigns')
+      } else {
+        throw new Error(result.error || 'Sending failed')
+      }
     } catch (error) {
       console.error('Send campaign error:', error)
       toast.error('Email sending failed, please try again later')
@@ -259,61 +268,16 @@ export default function NewCampaignPage() {
 
   const fetchAvailableContacts = async () => {
     try {
-      // 静态导出模式：使用模拟联系人数据
-      const mockContacts = [
-        {
-          id: 1,
-          name: 'John Doe',
-          email: 'john.doe@example.com',
-          status: 'active',
-          tags: ['VIP', 'Customer'],
-          lastContact: '2024-01-20',
-          totalEmails: 15,
-          openRate: 85.2
-        },
-        {
-          id: 2,
-          name: 'Jane Smith',
-          email: 'jane.smith@example.com',
-          status: 'active',
-          tags: ['Newsletter'],
-          lastContact: '2024-01-19',
-          totalEmails: 8,
-          openRate: 72.5
-        },
-        {
-          id: 3,
-          name: 'Mike Johnson',
-          email: 'mike.johnson@example.com',
-          status: 'active',
-          tags: ['Prospect'],
-          lastContact: '2024-01-18',
-          totalEmails: 5,
-          openRate: 60.0
-        },
-        {
-          id: 4,
-          name: 'Sarah Wilson',
-          email: 'sarah.wilson@example.com',
-          status: 'active',
-          tags: ['Customer'],
-          lastContact: '2024-01-17',
-          totalEmails: 12,
-          openRate: 78.9
-        },
-        {
-          id: 5,
-          name: 'David Brown',
-          email: 'david.brown@example.com',
-          status: 'active',
-          tags: ['VIP'],
-          lastContact: '2024-01-16',
-          totalEmails: 20,
-          openRate: 92.1
-        }
-      ]
+      const response = await fetch('/api/contacts')
       
-      setAvailableContacts(mockContacts)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      if (data.success) {
+        setAvailableContacts(data.contacts || [])
+      }
     } catch (error) {
       console.error('Failed to fetch contacts:', error)
     }
