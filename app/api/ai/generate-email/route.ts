@@ -27,7 +27,6 @@ export async function POST(request: NextRequest) {
     } = body
 
     const {
-      name: campaignTheme,
       purpose: campaignPurpose,
       businessName,
       productService,
@@ -72,6 +71,38 @@ export async function POST(request: NextRequest) {
           goal: "attract attendance and generate RSVPs",
           colors: "pink and purple gradients, warm inviting colors",
           elements: "invitation cards, event detail boxes, RSVP buttons, welcoming emojis"
+        },
+        'announcement': {
+          style: "formal announcement format with structured information",
+          tone: "professional and authoritative",
+          structure: "announcement header, structured content sections, important details box, call-to-action",
+          goal: "communicate important information clearly and professionally",
+          colors: "indigo and blue gradients, professional color scheme",
+          elements: "announcement cards, structured sections, professional layout, clear CTAs"
+        },
+        'welcome': {
+          style: "warm welcome message with onboarding elements",
+          tone: "welcoming and encouraging",
+          structure: "welcome header, getting started guide, feature highlights, next steps",
+          goal: "welcome new users and guide them through onboarding",
+          colors: "yellow and orange gradients, warm welcoming colors",
+          elements: "welcome cards, feature highlights, step-by-step guides, encouraging CTAs"
+        },
+        'survey': {
+          style: "feedback collection format with survey elements",
+          tone: "engaging and appreciative",
+          structure: "survey introduction, question previews, time estimate, participation incentives",
+          goal: "encourage survey participation and feedback collection",
+          colors: "teal and cyan gradients, engaging survey colors",
+          elements: "survey cards, question previews, time indicators, participation CTAs"
+        },
+        'thank-you': {
+          style: "gratitude and appreciation format",
+          tone: "grateful and warm",
+          structure: "thank you header, appreciation message, next steps, continued engagement",
+          goal: "express gratitude and maintain customer relationship",
+          colors: "rose and pink gradients, warm appreciation colors",
+          elements: "thank you cards, appreciation messages, next steps, relationship CTAs"
         }
       }
 
@@ -100,7 +131,6 @@ export async function POST(request: NextRequest) {
 
       userPrompt = `Create a natural, engaging ${templateInfo.style} email based on this information:
       
-      Campaign Theme: ${campaignTheme}
       Campaign Purpose: ${campaignPurpose}
       Business Name: ${businessName || 'Not specified'}
       Product/Service: ${productService || 'General offerings'}
@@ -111,10 +141,13 @@ export async function POST(request: NextRequest) {
       IMPORTANT: 
       - Write natural, engaging email content that flows well
       - Don't just list the information above - create a compelling narrative
-      - Use the campaign theme and purpose to craft an interesting story
+      - Use the campaign purpose to craft an interesting story
       - Make it sound professional but conversational
       - Include relevant details about the business and offerings
       - Create a natural call-to-action that fits the context
+      - Use the business name throughout the email naturally
+      - Incorporate the product/service description into the content
+      - Make the target URL feel natural in the call-to-action
       
       CRITICAL: You MUST create a ${selectedTemplate} template with these specific elements:
       ${selectedTemplate === 'modern-promo' ? `
@@ -145,6 +178,34 @@ export async function POST(request: NextRequest) {
       - Welcoming design
       - Pink/purple color scheme
       - Event footer` : ''}
+      ${selectedTemplate === 'announcement' ? `
+      - Formal announcement header
+      - Structured content sections
+      - Important details in highlighted box
+      - Professional call-to-action
+      - Indigo/blue color scheme
+      - Formal footer` : ''}
+      ${selectedTemplate === 'welcome' ? `
+      - Warm welcome header with emoji
+      - Getting started guide sections
+      - Feature highlights
+      - Encouraging call-to-action
+      - Yellow/orange color scheme
+      - Welcoming footer` : ''}
+      ${selectedTemplate === 'survey' ? `
+      - Survey introduction header
+      - Question preview sections
+      - Time estimate indicator
+      - Participation call-to-action
+      - Teal/cyan color scheme
+      - Survey footer` : ''}
+      ${selectedTemplate === 'thank-you' ? `
+      - Gratitude header with emoji
+      - Appreciation message
+      - Next steps section
+      - Relationship call-to-action
+      - Rose/pink color scheme
+      - Thank you footer` : ''}
       
       Use the target URL for call-to-action buttons if provided.
       Make it visually appealing with proper styling, colors, and layout.`
@@ -172,7 +233,6 @@ export async function POST(request: NextRequest) {
 
       userPrompt = `Write a natural, engaging simple email based on this information:
       
-      Campaign Theme: ${campaignTheme}
       Campaign Purpose: ${campaignPurpose}
       Business Name: ${businessName || 'Not specified'}
       Product/Service: ${productService || 'General offerings'}
@@ -183,9 +243,11 @@ export async function POST(request: NextRequest) {
       - Start with a proper greeting (Dear [Name], or Hello,)
       - Write natural, engaging email content that flows well
       - Don't just list the information above - create a compelling narrative
-      - Use the campaign theme and purpose to craft an interesting story
+      - Use the campaign purpose to craft an interesting story
       - Make it sound professional but conversational
       - Include relevant details about the business and offerings
+      - Use the business name naturally throughout the email
+      - Incorporate the product/service description into the content naturally
       - End with proper closing (Best regards, Sincerely, etc.) and signature
       - NO buttons, NO call-to-action elements, NO fancy styling
       - Use proper paragraph breaks with <p> tags
@@ -273,9 +335,12 @@ export async function POST(request: NextRequest) {
             { 
               role: "user", 
               content: `为以下邮件写一个吸引人的主题行：
-              邮件主题：${campaignTheme} - ${campaignPurpose}
-              目标受众：${businessName || '普通受众'}
-              模板风格：${emailMode === 'professional' ? selectedTemplate : 'simple'}`
+              邮件目的：${campaignPurpose}
+              业务名称：${businessName || '普通业务'}
+              产品服务：${productService || '通用服务'}
+              模板风格：${emailMode === 'professional' ? selectedTemplate : 'simple'}
+              
+              请根据邮件目的和业务特点，生成一个吸引人、简洁的主题行（50字符以内）。`
             }
           ]
         },
@@ -291,7 +356,7 @@ export async function POST(request: NextRequest) {
     }
 
     const subjectResult = await subjectResponse.json()
-    const generatedSubject = subjectResult.output?.text?.trim() || `关于${campaignTheme}的消息`
+    const generatedSubject = subjectResult.output?.text?.trim() || `关于${campaignPurpose}的消息`
 
     return NextResponse.json({
       success: true,

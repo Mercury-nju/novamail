@@ -1350,8 +1350,122 @@ export default function NewCampaignPage() {
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-2">Email Content (Editable)</label>
                       
+                      {/* Editing Toolbar */}
+                      <div className="border border-gray-300 rounded-t-lg bg-gray-100 p-3 flex items-center space-x-2">
+                        <button
+                          onClick={() => {
+                            const selection = window.getSelection()
+                            if (selection && selection.rangeCount > 0) {
+                              document.execCommand('bold')
+                            }
+                          }}
+                          className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                          title="Bold"
+                        >
+                          <strong>B</strong>
+                        </button>
+                        <button
+                          onClick={() => {
+                            const selection = window.getSelection()
+                            if (selection && selection.rangeCount > 0) {
+                              document.execCommand('italic')
+                            }
+                          }}
+                          className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                          title="Italic"
+                        >
+                          <em>I</em>
+                        </button>
+                        <button
+                          onClick={() => {
+                            const selection = window.getSelection()
+                            if (selection && selection.rangeCount > 0) {
+                              document.execCommand('underline')
+                            }
+                          }}
+                          className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                          title="Underline"
+                        >
+                          <u>U</u>
+                        </button>
+                        <div className="w-px h-6 bg-gray-300"></div>
+                        <button
+                          onClick={() => {
+                            const selection = window.getSelection()
+                            if (selection && selection.rangeCount > 0) {
+                              document.execCommand('justifyLeft')
+                            }
+                          }}
+                          className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                          title="Align Left"
+                        >
+                          ⬅️
+                        </button>
+                        <button
+                          onClick={() => {
+                            const selection = window.getSelection()
+                            if (selection && selection.rangeCount > 0) {
+                              document.execCommand('justifyCenter')
+                            }
+                          }}
+                          className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                          title="Align Center"
+                        >
+                          ↔️
+                        </button>
+                        <button
+                          onClick={() => {
+                            const selection = window.getSelection()
+                            if (selection && selection.rangeCount > 0) {
+                              document.execCommand('justifyRight')
+                            }
+                          }}
+                          className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                          title="Align Right"
+                        >
+                          ➡️
+                        </button>
+                        <div className="w-px h-6 bg-gray-300"></div>
+                        <button
+                          onClick={() => {
+                            const selection = window.getSelection()
+                            if (selection && selection.rangeCount > 0) {
+                              document.execCommand('insertUnorderedList')
+                            }
+                          }}
+                          className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                          title="Bullet List"
+                        >
+                          • List
+                        </button>
+                        <button
+                          onClick={() => {
+                            const selection = window.getSelection()
+                            if (selection && selection.rangeCount > 0) {
+                              document.execCommand('insertOrderedList')
+                            }
+                          }}
+                          className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                          title="Numbered List"
+                        >
+                          1. List
+                        </button>
+                        <div className="flex-1"></div>
+                        <button
+                          onClick={() => {
+                            const newContent = prompt('Enter HTML content:', campaignData.body)
+                            if (newContent !== null) {
+                              setCampaignData({ ...campaignData, body: newContent })
+                            }
+                          }}
+                          className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                        >
+                          HTML Editor
+                        </button>
+                      </div>
+                      
                       {/* Email client simulation interface */}
-                      <div className="border border-gray-300 rounded-lg bg-gray-50 p-4">
+                      <div className="border-l border-r border-b border-gray-300 rounded-b-lg bg-gray-50 p-4">
                         {/* Email client header */}
                         <div className="bg-white border-b border-gray-200 p-3 rounded-t-lg">
                           <div className="flex items-center justify-between">
@@ -1361,7 +1475,7 @@ export default function NewCampaignPage() {
                               </div>
                               <div>
                                 <div className="text-sm font-medium text-gray-900">Gmail</div>
-                                <div className="text-xs text-gray-500">Email Preview</div>
+                                <div className="text-xs text-gray-500">Email Editor</div>
                               </div>
                             </div>
                             <div className="flex space-x-1">
@@ -1375,6 +1489,7 @@ export default function NewCampaignPage() {
                         {/* Email content area */}
                         <div className="bg-white border-x border-b border-gray-200 rounded-b-lg min-h-[400px] overflow-auto">
                           <div 
+                            id="email-editor"
                             className="w-full"
                             style={{ 
                               fontFamily: 'Arial, sans-serif',
@@ -1383,8 +1498,9 @@ export default function NewCampaignPage() {
                               color: '#333',
                               textAlign: 'left',
                               minHeight: '400px',
-                              padding: '0',
-                              margin: '0'
+                              padding: '20px',
+                              margin: '0',
+                              outline: 'none'
                             }}
                             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(campaignData.body) }}
                             contentEditable={true}
@@ -1392,9 +1508,34 @@ export default function NewCampaignPage() {
                               const newContent = e.currentTarget.innerHTML
                               setCampaignData({ ...campaignData, body: newContent })
                             }}
+                            onKeyDown={(e) => {
+                              // Handle keyboard shortcuts
+                              if (e.ctrlKey || e.metaKey) {
+                                switch (e.key) {
+                                  case 'b':
+                                    e.preventDefault()
+                                    document.execCommand('bold')
+                                    break
+                                  case 'i':
+                                    e.preventDefault()
+                                    document.execCommand('italic')
+                                    break
+                                  case 'u':
+                                    e.preventDefault()
+                                    document.execCommand('underline')
+                                    break
+                                }
+                              }
+                            }}
                             suppressContentEditableWarning={true}
                           />
                         </div>
+                      </div>
+                      
+                      {/* Editing Tips */}
+                      <div className="mt-2 text-xs text-gray-500">
+                        💡 <strong>Editing Tips:</strong> Use Ctrl+B for bold, Ctrl+I for italic, Ctrl+U for underline. 
+                        Click and drag to select text, then use the toolbar buttons above.
                       </div>
                     </div>
                     
@@ -1404,6 +1545,96 @@ export default function NewCampaignPage() {
                       onChange={(e) => setCampaignData({ ...campaignData, body: e.target.value })} 
                       className="hidden"
                     />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Enhanced Preview Section */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <span className="mr-2">📱</span>
+                Email Preview (Web & Mobile)
+              </h3>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Desktop Preview */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-4 flex items-center">
+                    <span className="mr-2">🖥️</span>
+                    Desktop Preview
+                  </h4>
+                  <div className="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                      {/* Email Header */}
+                      <div className="border-b border-gray-200 p-4">
+                        <div className="text-xs text-gray-600 mb-1">Subject:</div>
+                        <div className="font-medium text-gray-900">{campaignData.subject}</div>
+                      </div>
+                      
+                      {/* Email Body Preview */}
+                      <div className="p-6">
+                        <div 
+                          className="w-full"
+                          style={{ 
+                            fontFamily: 'Arial, sans-serif',
+                            fontSize: '14px',
+                            lineHeight: '1.6',
+                            color: '#333',
+                            textAlign: 'left'
+                          }}
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(campaignData.body) }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mobile Preview */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-4 flex items-center">
+                    <span className="mr-2">📱</span>
+                    Mobile Preview
+                  </h4>
+                  <div className="w-80 mx-auto border-2 border-gray-800 rounded-lg bg-gray-900 overflow-hidden">
+                    {/* Phone Header */}
+                    <div className="h-8 bg-gray-800 flex items-center justify-between px-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-1 h-1 bg-white rounded-full"></div>
+                        <div className="w-1 h-1 bg-white rounded-full"></div>
+                        <div className="w-1 h-1 bg-white rounded-full"></div>
+                      </div>
+                      <div className="text-xs text-white">9:41</div>
+                      <div className="flex items-center space-x-1">
+                        <div className="w-4 h-2 border border-white rounded-sm">
+                          <div className="w-full h-full bg-green-500 rounded-sm"></div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Phone Content */}
+                    <div className="bg-white">
+                      <div className="p-3 border-b border-gray-100">
+                        <div className="text-xs text-gray-500 mb-1">From: {campaignData.businessName || 'NovaMail'} &lt;noreply@novamail.com&gt;</div>
+                        <div className="text-xs text-gray-500 mb-2">Subject:</div>
+                        <div className="text-xs font-medium text-gray-900 leading-tight">{campaignData.subject}</div>
+                      </div>
+                      
+                      {/* Mobile Email Body */}
+                      <div className="p-3 text-xs text-gray-700 overflow-y-auto h-[300px]">
+                        <div 
+                          className="w-full"
+                          style={{ 
+                            fontFamily: 'Arial, sans-serif',
+                            fontSize: '12px',
+                            lineHeight: '1.4',
+                            color: '#333',
+                            textAlign: 'left'
+                          }}
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(campaignData.body) }}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
