@@ -16,10 +16,9 @@ import * as XLSX from 'xlsx'
 import DOMPurify from 'dompurify'
 
 export default function NewCampaignPage() {
-  const { data: session, status } = useSession()
   const router = useRouter()
 
-  // Temporarily disable auth check, show page directly
+  // Static export mode: no session check
   // useEffect(() => {
   //   if (status === 'loading') {
   //     return
