@@ -53,76 +53,50 @@ export default function DashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
-      // 模拟数据，因为静态导出不支持API调用
-      const mockData = {
-        stats: {
-          totalContacts: 1247,
-          totalEmailsSent: 3421,
-          deliveryRate: 98.5,
-          replyRate: 12.3
-        },
-        recentCampaigns: [
-          {
-            id: 1,
-            name: 'Welcome Series',
-            status: 'sent',
-            recipients: 1250,
-            deliveryRate: 98.5,
-            replyRate: 12.3,
-            sentDate: '2024-01-20'
-          },
-          {
-            id: 2,
-            name: 'Product Launch',
-            status: 'sent',
-            recipients: 2100,
-            deliveryRate: 97.8,
-            replyRate: 15.2,
-            sentDate: '2024-01-18'
-          },
-          {
-            id: 3,
-            name: 'Newsletter #45',
-            status: 'draft',
-            recipients: 0,
-            deliveryRate: 0,
-            replyRate: 0,
-            sentDate: null
-          }
-        ]
+      // 从真实API获取数据
+      const response = await fetch('/api/dashboard/stats')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch dashboard data')
       }
       
-      setStats([
-        {
-          name: 'Total Contacts',
-          value: mockData.stats.totalContacts.toLocaleString(),
-          change: '0%',
-          changeType: 'neutral',
-          icon: UserGroupIcon,
-        },
-        {
-          name: 'Emails Sent',
-          value: mockData.stats.totalEmailsSent.toLocaleString(),
-          change: '0%',
-          changeType: 'neutral',
-          icon: EnvelopeIcon,
-        },
-        {
-          name: 'Delivery Rate',
-          value: mockData.stats.deliveryRate > 0 ? `${mockData.stats.deliveryRate}%` : '0%',
-          change: '0%',
-          changeType: 'neutral',
-          icon: ChartBarIcon,
-        },
-        {
-          name: 'Reply Rate',
-          value: mockData.stats.replyRate > 0 ? `${mockData.stats.replyRate}%` : '0%',
-          change: '0%',
-          changeType: 'neutral',
-          icon: ChartBarIcon,
-        },
-      ])
-      setRecentCampaigns(mockData.recentCampaigns || [])
+      const data = await response.json()
+      
+      if (data.success) {
+        setStats([
+          {
+            name: 'Total Contacts',
+            value: data.stats.totalContacts.toLocaleString(),
+            change: '0%',
+            changeType: 'neutral',
+            icon: UserGroupIcon,
+          },
+          {
+            name: 'Emails Sent',
+            value: data.stats.totalEmailsSent.toLocaleString(),
+            change: '0%',
+            changeType: 'neutral',
+            icon: EnvelopeIcon,
+          },
+          {
+            name: 'Delivery Rate',
+            value: data.stats.deliveryRate > 0 ? `${data.stats.deliveryRate}%` : '0%',
+            change: '0%',
+            changeType: 'neutral',
+            icon: ChartBarIcon,
+          },
+          {
+            name: 'Reply Rate',
+            value: data.stats.replyRate > 0 ? `${data.stats.replyRate}%` : '0%',
+            change: '0%',
+            changeType: 'neutral',
+            icon: ChartBarIcon,
+          },
+        ])
+        setRecentCampaigns(data.recentCampaigns || [])
+      } else {
+        throw new Error(data.error || 'Failed to fetch data')
+      }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error)
     } finally {

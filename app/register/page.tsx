@@ -43,9 +43,25 @@ export default function RegisterPage() {
         return
       }
 
-      // 模拟发送验证码（静态导出不支持API路由）
-      toast.success('Verification code sent! (Demo mode)')
-      setStep('verify')
+      // 发送真实验证码
+      const response = await fetch('/api/auth/send-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email
+        }),
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        toast.success('Verification code sent! Please check your email.')
+        setStep('verify')
+      } else {
+        throw new Error(result.error || 'Failed to send verification code')
+      }
     } catch (error: any) {
       console.error('Send verification error:', error)
       toast.error(error.message || 'Failed to send verification code')

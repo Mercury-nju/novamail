@@ -1,65 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
 export async function GET(request: NextRequest) {
   try {
-    // 静态导出模式：返回模拟联系人数据
-    const mockContacts = [
-      {
-        id: 1,
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        status: 'active',
-        tags: ['VIP', 'Customer'],
-        lastContact: '2024-01-20',
-        totalEmails: 15,
-        openRate: 85.2
-      },
-      {
-        id: 2,
-        name: 'Jane Smith',
-        email: 'jane.smith@example.com',
-        status: 'active',
-        tags: ['Newsletter'],
-        lastContact: '2024-01-19',
-        totalEmails: 8,
-        openRate: 72.5
-      },
-      {
-        id: 3,
-        name: 'Mike Johnson',
-        email: 'mike.johnson@example.com',
-        status: 'active',
-        tags: ['Prospect'],
-        lastContact: '2024-01-18',
-        totalEmails: 5,
-        openRate: 60.0
-      },
-      {
-        id: 4,
-        name: 'Sarah Wilson',
-        email: 'sarah.wilson@example.com',
-        status: 'active',
-        tags: ['Customer'],
-        lastContact: '2024-01-17',
-        totalEmails: 12,
-        openRate: 78.9
-      },
-      {
-        id: 5,
-        name: 'David Brown',
-        email: 'david.brown@example.com',
-        status: 'active',
-        tags: ['VIP'],
-        lastContact: '2024-01-16',
-        totalEmails: 20,
-        openRate: 92.1
-      }
-    ]
+    // 获取当前用户ID（这里需要根据实际的认证系统获取）
+    // 暂时使用一个默认用户ID，实际应该从session或token中获取
+    const userId = 'default-user-id' // TODO: 从认证系统获取真实用户ID
+
+    // 从数据库获取真实联系人数据
+    const contacts = await prisma.contact.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' }
+    })
+
+    // 格式化联系人数据
+    const formattedContacts = contacts.map(contact => ({
+      id: contact.id,
+      name: `${contact.firstName || ''} ${contact.lastName || ''}`.trim() || 'Unknown',
+      email: contact.email,
+      status: 'active',
+      tags: contact.userSegment ? [contact.userSegment] : [],
+      lastContact: contact.updatedAt.toISOString().split('T')[0],
+      totalEmails: 0, // TODO: 从邮件发送记录中计算
+      openRate: 0 // TODO: 从邮件统计中计算
+    }))
 
     return NextResponse.json({
       success: true,
-      contacts: mockContacts,
-      total: mockContacts.length
+      contacts: formattedContacts,
+      total: formattedContacts.length
     })
 
   } catch (error) {

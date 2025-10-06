@@ -35,24 +35,11 @@ export async function POST(request: NextRequest) {
     const transporter = createTransporter()
     
     if (!transporter) {
-      // 如果没有配置SMTP，使用模拟发送
-      console.log('Using mock email sending (SMTP not configured)')
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      const successCount = Math.floor(recipients.length * 0.95)
-      const failedCount = recipients.length - successCount
-
       return NextResponse.json({
-        success: true,
-        message: `Campaign sent successfully (Mock Mode)`,
-        stats: {
-          total: recipients.length,
-          sent: successCount,
-          failed: failedCount,
-          deliveryRate: (successCount / recipients.length * 100).toFixed(1)
-        },
-        mockMode: true
-      })
+        success: false,
+        error: 'SMTP is not configured. Please configure SMTP settings to send emails.',
+        details: 'SMTP credentials are required for email sending functionality.'
+      }, { status: 503 })
     }
 
     // 真实邮件发送
@@ -93,8 +80,7 @@ export async function POST(request: NextRequest) {
         failed: failedCount,
         deliveryRate: recipients.length > 0 ? (successCount / recipients.length * 100).toFixed(1) : '0'
       },
-      errors: errors.length > 0 ? errors : undefined,
-      mockMode: false
+      errors: errors.length > 0 ? errors : undefined
     })
 
   } catch (error) {
