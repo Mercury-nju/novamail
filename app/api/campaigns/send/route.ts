@@ -3,6 +3,9 @@ import nodemailer from 'nodemailer'
 import { prisma } from '@/lib/prisma'
 import crypto from 'crypto'
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic'
+
 // 解密函数
 function decrypt(encryptedText: string, key: string): string {
   const algorithm = 'aes-256-cbc'
