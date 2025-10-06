@@ -142,7 +142,7 @@ function LoginForm() {
               </div>
               
               <div className="mt-4">
-              <button
+                <button
                 onClick={() => {
                   console.log('Google login clicked, redirecting to Google OAuth...')
                   window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=email&response_type=code'
@@ -178,7 +178,7 @@ function LoginForm() {
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
                 Continue with Google
-              </a>
+              </button>
             </div>
           </form>
 
