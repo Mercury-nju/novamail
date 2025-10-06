@@ -259,12 +259,11 @@ export default function NewCampaignPage() {
   const [availableContacts, setAvailableContacts] = useState<any[]>([])
   const [selectedContacts, setSelectedContacts] = useState<number[]>([])
 
-  // Fetch real contacts from API
+  // Fetch real contacts from API (static export mode)
   useEffect(() => {
-    if (session?.user?.email) {
-      fetchAvailableContacts()
-    }
-  }, [session])
+    // Static export mode: always fetch contacts
+    fetchAvailableContacts()
+  }, [])
 
   const fetchAvailableContacts = async () => {
     try {
