@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // 通义千问API配置
-const TONGYI_API_KEY = process.env.TONGYI_API_KEY
+const TONGYI_API_KEY = process.env.DASHSCOPE_API_KEY
 
 if (!TONGYI_API_KEY) {
-  console.warn('TONGYI_API_KEY is not configured, AI features will be disabled')
+  console.warn('DASHSCOPE_API_KEY is not configured, AI features will be disabled')
 }
 const TONGYI_API_URL = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation'
 
