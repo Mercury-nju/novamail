@@ -78,7 +78,7 @@ export default function NewCampaignPage() {
         targetUrl: campaignData.targetUrl || 'https://example.com/event'
       }
       
-      const response = await fetch('https://novamail-api.your-username.workers.dev/api/ai/generate-email', {
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/ai/generate-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
