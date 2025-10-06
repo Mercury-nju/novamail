@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 禁用静态导出以支持API路由和数据库
-  // output: 'export', // 已禁用，因为需要API路由支持
+  // 启用静态导出以支持Cloudflare Pages
+  output: 'export', // 启用静态导出
   trailingSlash: true, // Cloudflare Pages兼容
   
   // 图片优化配置
@@ -189,8 +189,8 @@ const nextConfig = {
   },
   
   // 输出配置 (兼容Cloudflare Pages)
-  // output: 'export', // 如需静态导出可取消注释
-  trailingSlash: true, // Cloudflare Pages兼容
+  // output: 'export', // 已在上面启用
+  // trailingSlash: true, // Cloudflare Pages兼容 (已在上面启用)
 }
 
 module.exports = nextConfig
