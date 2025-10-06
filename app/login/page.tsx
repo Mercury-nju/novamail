@@ -129,7 +129,19 @@ function LoginForm() {
               </button>
             </div>
 
-            <div className="mt-4">
+              <div className="mt-4">
+                <p className="text-sm text-gray-600 mb-2">测试Google OAuth URL:</p>
+                <a
+                  href="https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=email&response_type=code"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-500 text-sm break-all"
+                >
+                  https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=email&response_type=code
+                </a>
+              </div>
+              
+              <div className="mt-4">
               <a
                 href="https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=email&response_type=code"
                 onClick={() => {
