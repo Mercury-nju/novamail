@@ -320,7 +320,29 @@ export default function NewCampaignPage() {
     try {
       let emails: string[] = []
 
-      if (isExcel) {
+      if (isCSV) {
+        // 使用Workers API处理CSV文件
+        const formData = new FormData()
+        formData.append('csvFile', file)
+
+        const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/contacts/import', {
+          method: 'POST',
+          body: formData
+        })
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        const data = await response.json()
+        if (data.success) {
+          emails = data.data.contacts.map((contact: any) => contact.email)
+          toast.success(`Successfully imported ${emails.length} contacts from CSV`)
+        } else {
+          toast.error(data.message || 'Failed to import contacts')
+          return
+        }
+      } else if (isExcel) {
         emails = await parseExcelFile(file)
       } else {
         const reader = new FileReader()
