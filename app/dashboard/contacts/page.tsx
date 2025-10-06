@@ -28,44 +28,31 @@ export default function ContactsPage() {
   const fetchContacts = async () => {
     try {
       setLoading(true)
-      // 使用模拟数据，因为API路由在静态导出中不可用
-      const mockContacts: Contact[] = [
-        {
-          id: '1',
-          name: 'John Doe',
-          email: 'john@example.com',
-          status: 'active',
-          tags: ['customer', 'vip'],
-          lastContact: '2024-01-15',
-          totalEmails: 12,
-          openRate: 85
-        },
-        {
-          id: '2',
-          name: 'Jane Smith',
-          email: 'jane@example.com',
-          status: 'active',
-          tags: ['prospect'],
-          lastContact: '2024-01-10',
-          totalEmails: 8,
-          openRate: 92
-        },
-        {
-          id: '3',
-          name: 'Bob Johnson',
-          email: 'bob@example.com',
-          status: 'inactive',
-          tags: ['customer'],
-          lastContact: '2023-12-20',
-          totalEmails: 5,
-          openRate: 45
-        }
-      ]
       
-      setContacts(mockContacts)
+      // 构建查询参数
+      const params = new URLSearchParams()
+      if (searchTerm) params.append('search', searchTerm)
+      if (selectedStatus !== 'all') params.append('status', selectedStatus)
+      params.append('page', '1')
+      params.append('limit', '100')
+      
+      const response = await fetch(`https://novamail-api.lihongyangnju.workers.dev/api/contacts?${params}`)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      if (data.success) {
+        setContacts(data.data.contacts || [])
+      } else {
+        throw new Error(data.error || 'Failed to fetch contacts')
+      }
     } catch (error) {
       console.error('Failed to fetch contacts:', error)
       toast.error('Failed to load contacts')
+      // 如果API失败，设置为空数组而不是模拟数据
+      setContacts([])
     } finally {
       setLoading(false)
     }

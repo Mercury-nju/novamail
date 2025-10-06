@@ -34,33 +34,35 @@ export default function AnalyticsPage() {
   const fetchAnalytics = async () => {
     try {
       setLoading(true)
-      // 使用模拟数据
-      const mockAnalytics: AnalyticsData = {
-        totalEmails: 15420,
-        totalOpens: 6784,
-        totalClicks: 1234,
-        openRate: 44.0,
-        clickRate: 8.0,
-        unsubscribeRate: 0.8,
-        bounceRate: 2.1,
-        revenue: 45680,
-        conversions: 156
+      
+      const response = await fetch(`https://novamail-api.lihongyangnju.workers.dev/api/analytics?timeRange=${timeRange}`)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
-
-      const mockChartData: ChartData[] = [
-        { date: '2024-01-01', emails: 1200, opens: 528, clicks: 96 },
-        { date: '2024-01-02', emails: 1100, opens: 484, clicks: 88 },
-        { date: '2024-01-03', emails: 1300, opens: 572, clicks: 104 },
-        { date: '2024-01-04', emails: 1250, opens: 550, clicks: 100 },
-        { date: '2024-01-05', emails: 1400, opens: 616, clicks: 112 },
-        { date: '2024-01-06', emails: 1350, opens: 594, clicks: 108 },
-        { date: '2024-01-07', emails: 1200, opens: 528, clicks: 96 }
-      ]
-
-      setAnalytics(mockAnalytics)
-      setChartData(mockChartData)
+      
+      const data = await response.json()
+      if (data.success) {
+        setAnalytics(data.data.analytics)
+        setChartData(data.data.chartData)
+      } else {
+        throw new Error(data.error || 'Failed to fetch analytics')
+      }
     } catch (error) {
       console.error('Failed to fetch analytics:', error)
+      // 如果API失败，设置为空数据而不是模拟数据
+      setAnalytics({
+        totalEmails: 0,
+        totalOpens: 0,
+        totalClicks: 0,
+        openRate: 0,
+        clickRate: 0,
+        unsubscribeRate: 0,
+        bounceRate: 0,
+        revenue: 0,
+        conversions: 0
+      })
+      setChartData([])
     } finally {
       setLoading(false)
     }

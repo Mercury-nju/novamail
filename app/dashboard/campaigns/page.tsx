@@ -31,61 +31,28 @@ export default function CampaignsPage() {
   const fetchCampaigns = async () => {
     try {
       setLoading(true)
-      // 使用模拟数据
-      const mockCampaigns: Campaign[] = [
-        {
-          id: '1',
-          name: 'Welcome Series - Part 1',
-          subject: 'Welcome to NovaMail!',
-          status: 'sent',
-          recipients: 1250,
-          sent: 1245,
-          opened: 498,
-          clicked: 87,
-          createdAt: '2024-01-15',
-          sentAt: '2024-01-15'
-        },
-        {
-          id: '2',
-          name: 'Product Launch Announcement',
-          subject: 'Introducing Our New Features',
-          status: 'scheduled',
-          recipients: 2100,
-          sent: 0,
-          opened: 0,
-          clicked: 0,
-          createdAt: '2024-01-20',
-          scheduledAt: '2024-01-25'
-        },
-        {
-          id: '3',
-          name: 'Monthly Newsletter',
-          subject: 'January Updates & Tips',
-          status: 'draft',
-          recipients: 0,
-          sent: 0,
-          opened: 0,
-          clicked: 0,
-          createdAt: '2024-01-22'
-        },
-        {
-          id: '4',
-          name: 'Black Friday Sale',
-          subject: '50% Off Everything - Limited Time!',
-          status: 'sent',
-          recipients: 3500,
-          sent: 3480,
-          opened: 1392,
-          clicked: 348,
-          createdAt: '2023-11-20',
-          sentAt: '2023-11-24'
-        }
-      ]
       
-      setCampaigns(mockCampaigns)
+      // 构建查询参数
+      const params = new URLSearchParams()
+      if (selectedStatus !== 'all') params.append('status', selectedStatus)
+      
+      const response = await fetch(`https://novamail-api.lihongyangnju.workers.dev/api/campaigns?${params}`)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      if (data.success) {
+        setCampaigns(data.data.campaigns || [])
+      } else {
+        throw new Error(data.error || 'Failed to fetch campaigns')
+      }
     } catch (error) {
       console.error('Failed to fetch campaigns:', error)
       toast.error('Failed to load campaigns')
+      // 如果API失败，设置为空数组而不是模拟数据
+      setCampaigns([])
     } finally {
       setLoading(false)
     }
