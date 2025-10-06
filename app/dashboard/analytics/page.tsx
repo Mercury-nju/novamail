@@ -10,8 +10,8 @@ interface AnalyticsData {
   clickRate: number
   unsubscribeRate: number
   bounceRate: number
-  revenue: number
-  conversions: number
+  deliveryRate: number
+  spamRate: number
 }
 
 interface ChartData {
@@ -59,8 +59,8 @@ export default function AnalyticsPage() {
         clickRate: 0,
         unsubscribeRate: 0,
         bounceRate: 0,
-        revenue: 0,
-        conversions: 0
+        deliveryRate: 0,
+        spamRate: 0
       })
       setChartData([])
     } finally {
@@ -119,7 +119,14 @@ export default function AnalyticsPage() {
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Emails</p>
+              <div className="flex items-center">
+                <p className="text-sm font-medium text-gray-600">Total Emails</p>
+                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Total number of emails sent through all campaigns">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
               <p className="text-2xl font-bold text-gray-900">{analytics.totalEmails.toLocaleString()}</p>
             </div>
           </div>
@@ -134,7 +141,14 @@ export default function AnalyticsPage() {
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Open Rate</p>
+              <div className="flex items-center">
+                <p className="text-sm font-medium text-gray-600">Open Rate</p>
+                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of recipients who opened your emails">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
               <p className="text-2xl font-bold text-gray-900">{analytics.openRate}%</p>
             </div>
           </div>
@@ -148,7 +162,14 @@ export default function AnalyticsPage() {
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Click Rate</p>
+              <div className="flex items-center">
+                <p className="text-sm font-medium text-gray-600">Click Rate</p>
+                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of recipients who clicked links in your emails">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
               <p className="text-2xl font-bold text-gray-900">{analytics.clickRate}%</p>
             </div>
           </div>
@@ -156,14 +177,21 @@ export default function AnalyticsPage() {
 
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+            <div className="p-2 bg-green-100 rounded-lg">
+              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">${analytics.revenue.toLocaleString()}</p>
+              <div className="flex items-center">
+                <p className="text-sm font-medium text-gray-600">Delivery Rate</p>
+                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of emails successfully delivered to recipients' inboxes">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{analytics.deliveryRate}%</p>
             </div>
           </div>
         </div>
@@ -221,42 +249,98 @@ export default function AnalyticsPage() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Engagement Metrics</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Total Opens</span>
+              <div className="flex items-center">
+                <span className="text-sm text-gray-600">Total Opens</span>
+                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Total number of email opens across all campaigns">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
               <span className="font-semibold">{analytics.totalOpens.toLocaleString()}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Total Clicks</span>
+              <div className="flex items-center">
+                <span className="text-sm text-gray-600">Total Clicks</span>
+                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Total number of link clicks across all campaigns">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
               <span className="font-semibold">{analytics.totalClicks.toLocaleString()}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Unsubscribe Rate</span>
+              <div className="flex items-center">
+                <span className="text-sm text-gray-600">Unsubscribe Rate</span>
+                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of recipients who unsubscribed from your emails">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
               <span className="font-semibold">{analytics.unsubscribeRate}%</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Bounce Rate</span>
+              <div className="flex items-center">
+                <span className="text-sm text-gray-600">Bounce Rate</span>
+                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of emails that bounced (could not be delivered)">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
               <span className="font-semibold">{analytics.bounceRate}%</span>
             </div>
           </div>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Business Metrics</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Delivery Metrics</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Total Revenue</span>
-              <span className="font-semibold">${analytics.revenue.toLocaleString()}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-gray-600">Delivery Rate</span>
+                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of emails successfully delivered to recipients' inboxes">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
+              <span className="font-semibold">{analytics.deliveryRate}%</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Conversions</span>
-              <span className="font-semibold">{analytics.conversions}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-gray-600">Spam Rate</span>
+                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of emails marked as spam by recipients">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
+              <span className="font-semibold">{analytics.spamRate}%</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Revenue per Email</span>
-              <span className="font-semibold">${(analytics.revenue / analytics.totalEmails).toFixed(2)}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-gray-600">Avg Open Rate</span>
+                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Average open rate across all campaigns">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
+              <span className="font-semibold">{analytics.openRate}%</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Conversion Rate</span>
-              <span className="font-semibold">{((analytics.conversions / analytics.totalClicks) * 100).toFixed(1)}%</span>
+              <div className="flex items-center">
+                <span className="text-sm text-gray-600">Avg Click Rate</span>
+                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Average click rate across all campaigns">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
+              <span className="font-semibold">{analytics.clickRate}%</span>
             </div>
           </div>
         </div>
@@ -282,7 +366,7 @@ export default function AnalyticsPage() {
                   Click Rate
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Revenue
+                  Delivery Rate
                 </th>
               </tr>
             </thead>
@@ -294,7 +378,7 @@ export default function AnalyticsPage() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3,480</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">40.0%</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10.0%</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$12,450</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">95.2%</td>
               </tr>
               <tr>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -303,7 +387,7 @@ export default function AnalyticsPage() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1,245</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">45.0%</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7.0%</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$3,200</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">98.1%</td>
               </tr>
               <tr>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -312,7 +396,7 @@ export default function AnalyticsPage() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2,100</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">38.0%</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">6.5%</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$8,900</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">97.8%</td>
               </tr>
             </tbody>
           </table>
