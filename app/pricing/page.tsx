@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import BackgroundAnimations from '@/components/BackgroundAnimations'
@@ -19,7 +18,6 @@ import {
 } from '@heroicons/react/24/outline'
 
 export default function PricingPage() {
-  const { data: session } = useSession()
   const router = useRouter()
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
   const [selectedPlan, setSelectedPlan] = useState('pro')
@@ -154,10 +152,9 @@ export default function PricingPage() {
   }
 
   const handleSubscribe = async (planId: string) => {
-    if (!session) {
-      router.push('/login')
-      return
-    }
+    // 静态导出模式：直接跳转到登录页面
+    router.push('/login')
+    return
 
     if (planId === 'free') {
       router.push('/register')
