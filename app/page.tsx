@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import TemplateShowcase from '@/components/TemplateShowcase'
 import { 
@@ -17,19 +16,13 @@ import {
 } from '@heroicons/react/24/outline'
 
 export default function HomePage() {
-  const { data: session } = useSession()
   const router = useRouter()
   const { scrollYProgress } = useScroll()
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
 
   const handleGetStarted = () => {
-    if (session) {
-      // User is logged in, redirect to dashboard
-      router.push('/dashboard/campaigns/new')
-    } else {
-      // User is not logged in, redirect to login page
-      router.push('/login')
-    }
+    // Always redirect to login page (no session check in static export)
+    router.push('/login')
   }
 
   const features = [
