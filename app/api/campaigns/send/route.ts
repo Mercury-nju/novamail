@@ -19,7 +19,7 @@ const createTransporter = () => {
     return null
   }
   
-  return nodemailer.createTransporter(SMTP_CONFIG)
+  return nodemailer.createTransport(SMTP_CONFIG)
 }
 
 export async function POST(request: NextRequest) {
