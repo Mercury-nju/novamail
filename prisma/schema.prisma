@@ -62,6 +62,9 @@ model User {
   contactsCount       Int @default(0)
   campaignsCount      Int @default(0)
   lastUsageReset      DateTime @default(now())
+  
+  // Email configuration (encrypted)
+  emailConfig         String?
 
   accounts Account[]
   sessions Session[]

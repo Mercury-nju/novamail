@@ -1,44 +1,99 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
+import { prisma } from '@/lib/prisma'
+import crypto from 'crypto'
 
-// 邮件发送配置
-const SMTP_CONFIG = {
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
+// 解密函数
+function decrypt(encryptedText: string, key: string): string {
+  const algorithm = 'aes-256-cbc'
+  const textParts = encryptedText.split(':')
+  const iv = Buffer.from(textParts.shift()!, 'hex')
+  const encryptedData = textParts.join(':')
+  const decipher = crypto.createDecipher(algorithm, key)
+  let decrypted = decipher.update(encryptedData, 'hex', 'utf8')
+  decrypted += decipher.final('utf8')
+  return decrypted
+}
+
+// 获取当前用户ID
+async function getCurrentUserId(request: NextRequest): Promise<string | null> {
+  try {
+    const sessionToken = request.cookies.get('next-auth.session-token')?.value
+    if (sessionToken) {
+      const session = await prisma.session.findUnique({
+        where: { sessionToken },
+        include: { user: true }
+      })
+      return session?.userId || null
+    }
+    return null
+  } catch (error) {
+    console.error('Error getting user ID:', error)
+    return null
   }
 }
 
-// 创建邮件传输器
-const createTransporter = () => {
-  if (!SMTP_CONFIG.auth.user || !SMTP_CONFIG.auth.pass) {
-    console.warn('SMTP credentials not configured, using mock sending')
+// 创建用户邮件传输器
+const createUserTransporter = async (userId: string) => {
+  try {
+    // 获取用户邮箱配置
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { emailConfig: true }
+    })
+
+    if (!user?.emailConfig) {
+      throw new Error('User email configuration not found')
+    }
+
+    // 解密配置
+    const encryptionKey = process.env.ENCRYPTION_KEY || 'default-key'
+    const emailConfig = JSON.parse(decrypt(user.emailConfig, encryptionKey))
+
+    return nodemailer.createTransport({
+      host: emailConfig.smtpHost,
+      port: parseInt(emailConfig.smtpPort),
+      secure: emailConfig.isSecure,
+      auth: {
+        user: emailConfig.email,
+        pass: emailConfig.password
+      }
+    })
+  } catch (error) {
+    console.error('Error creating user transporter:', error)
     return null
   }
-  
-  return nodemailer.createTransport(SMTP_CONFIG)
 }
 
 export async function POST(request: NextRequest) {
   try {
     const { campaignData, recipients } = await request.json()
 
+    // 获取当前用户ID
+    const userId = await getCurrentUserId(request)
+    
+    if (!userId) {
+      return NextResponse.json({
+        success: false,
+        error: 'User not authenticated'
+      }, { status: 401 })
+    }
+
     console.log('Sending campaign:', {
       subject: campaignData.subject,
       recipients: recipients.length,
-      businessName: campaignData.businessName
+      businessName: campaignData.businessName,
+      userId
     })
 
-    const transporter = createTransporter()
+    // 创建用户邮件传输器
+    const transporter = await createUserTransporter(userId)
     
     if (!transporter) {
       return NextResponse.json({
         success: false,
-        error: 'SMTP is not configured. Please configure SMTP settings to send emails.',
-        details: 'SMTP credentials are required for email sending functionality.'
+        error: 'Email configuration not found. Please configure your email settings first.',
+        details: 'Go to Settings > Email to configure your email account.'
       }, { status: 503 })
     }
 
@@ -47,10 +102,23 @@ export async function POST(request: NextRequest) {
     let failedCount = 0
     const errors: string[] = []
 
+    // 获取用户邮箱配置用于发件人信息
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { emailConfig: true }
+    })
+    
+    let senderEmail = 'noreply@novamail.com'
+    if (user?.emailConfig) {
+      const encryptionKey = process.env.ENCRYPTION_KEY || 'default-key'
+      const emailConfig = JSON.parse(decrypt(user.emailConfig, encryptionKey))
+      senderEmail = emailConfig.email
+    }
+
     for (const recipient of recipients) {
       try {
         const mailOptions = {
-          from: `"${campaignData.businessName || 'NovaMail'}" <${SMTP_CONFIG.auth.user}>`,
+          from: `"${campaignData.businessName || 'NovaMail'}" <${senderEmail}>`,
           to: recipient,
           subject: campaignData.subject,
           html: campaignData.body,
