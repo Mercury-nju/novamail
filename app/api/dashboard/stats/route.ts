@@ -1,11 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+// 获取当前用户ID的辅助函数
+async function getCurrentUserId(request: NextRequest): Promise<string | null> {
+  try {
+    // 方法1: 从Authorization header获取JWT token
+    const authHeader = request.headers.get('authorization')
+    if (authHeader?.startsWith('Bearer ')) {
+      const token = authHeader.substring(7)
+      // TODO: 验证JWT token并提取用户ID
+      // 这里需要实现JWT验证逻辑
+      return null // 暂时返回null，需要实现JWT验证
+    }
+
+    // 方法2: 从cookie获取session
+    const sessionToken = request.cookies.get('next-auth.session-token')?.value
+    if (sessionToken) {
+      const session = await prisma.session.findUnique({
+        where: { sessionToken },
+        include: { user: true }
+      })
+      return session?.userId || null
+    }
+
+    // 方法3: 从Google OAuth获取用户信息
+    // 这里可以根据Google OAuth的响应获取用户ID
+    
+    return null
+  } catch (error) {
+    console.error('Error getting user ID:', error)
+    return null
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
-    // 获取当前用户ID（这里需要根据实际的认证系统获取）
-    // 暂时使用一个默认用户ID，实际应该从session或token中获取
-    const userId = 'default-user-id' // TODO: 从认证系统获取真实用户ID
+    // 从请求头或cookie中获取用户信息
+    // 这里需要根据实际的认证系统实现
+    const userId = await getCurrentUserId(request)
+    
+    if (!userId) {
+      return NextResponse.json({
+        success: false,
+        error: 'User not authenticated'
+      }, { status: 401 })
+    }
 
     // 获取用户统计数据
     const user = await prisma.user.findUnique({

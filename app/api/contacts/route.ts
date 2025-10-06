@@ -1,11 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+// 获取当前用户ID的辅助函数
+async function getCurrentUserId(request: NextRequest): Promise<string | null> {
+  try {
+    // 从cookie获取session
+    const sessionToken = request.cookies.get('next-auth.session-token')?.value
+    if (sessionToken) {
+      const session = await prisma.session.findUnique({
+        where: { sessionToken },
+        include: { user: true }
+      })
+      return session?.userId || null
+    }
+    return null
+  } catch (error) {
+    console.error('Error getting user ID:', error)
+    return null
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
-    // 获取当前用户ID（这里需要根据实际的认证系统获取）
-    // 暂时使用一个默认用户ID，实际应该从session或token中获取
-    const userId = 'default-user-id' // TODO: 从认证系统获取真实用户ID
+    // 获取当前用户ID
+    const userId = await getCurrentUserId(request)
+    
+    if (!userId) {
+      return NextResponse.json({
+        success: false,
+        error: 'User not authenticated'
+      }, { status: 401 })
+    }
 
     // 从数据库获取真实联系人数据
     const contacts = await prisma.contact.findMany({
