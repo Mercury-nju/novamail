@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// 强制动态渲染
-export const dynamic = 'force-dynamic'
-
 // 获取当前用户ID的辅助函数
 async function getCurrentUserId(request: NextRequest): Promise<string | null> {
   try {

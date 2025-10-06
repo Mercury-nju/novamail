@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// 强制动态渲染
-export const dynamic = 'force-dynamic'
-
 // 通义千问API配置
 const TONGYI_API_KEY = process.env.DASHSCOPE_API_KEY
 
@@ -16,7 +13,7 @@ export async function POST(request: NextRequest) {
     // 检查API密钥
     if (!TONGYI_API_KEY) {
       return NextResponse.json({
-        success: false,
+          success: false, 
         error: 'AI service is not configured. Please contact administrator.',
         fallback: true
       }, { status: 503 })
