@@ -3,9 +3,28 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url)
     
+    // 处理CORS预检请求
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Access-Control-Max-Age': '86400',
+        }
+      })
+    }
+    
     // 只处理POST请求
     if (request.method !== 'POST') {
-      return new Response('Method not allowed', { status: 405 })
+      return new Response('Method not allowed', { 
+        status: 405,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        }
+      })
     }
 
     try {
@@ -31,7 +50,10 @@ export default {
           fallback: true
         }), {
           status: 503,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
         })
       }
 
@@ -277,7 +299,10 @@ export default {
         template: emailMode === 'professional' ? selectedTemplate : 'simple',
         generatedBy: '通义千问 qwen-turbo'
       }), {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
       })
 
     } catch (error) {
@@ -289,7 +314,10 @@ export default {
         details: error.message
       }), {
         status: 500,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
       })
     }
   }
