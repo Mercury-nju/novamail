@@ -148,7 +148,7 @@ function LoginForm() {
                   // 生成随机state参数
                   const state = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
                   // 完整的Google OAuth URL，包含所有必需参数
-                  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=email%20profile&response_type=code&state=${state}&prompt=select_account&access_type=offline`
+                  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=email%20profile&response_type=code&state=${state}&prompt=consent&access_type=offline`
                   console.log('Redirecting to:', googleAuthUrl)
                   window.location.href = googleAuthUrl
                 }}
