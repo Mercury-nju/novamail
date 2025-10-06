@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 创建邮件传输器
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       host: emailConfig.smtpHost,
       port: parseInt(emailConfig.smtpPort),
       secure: emailConfig.isSecure,
