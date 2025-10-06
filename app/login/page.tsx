@@ -132,6 +132,9 @@ function LoginForm() {
             <div className="mt-4">
               <a
                 href="https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=email&response_type=code"
+                onClick={() => {
+                  console.log('Google login clicked, redirecting to:', 'https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=email&response_type=code')
+                }}
                 style={{
                   width: '100%',
                   height: '40px',

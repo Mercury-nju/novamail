@@ -59,7 +59,7 @@ function GoogleCallbackContent() {
             </svg>
           </div>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Google 登录处理中
+            Google Login Processing
           </h2>
           <p className="mt-2 text-sm text-gray-600">
             {status}
