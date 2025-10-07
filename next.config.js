@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 启用静态导出以支持Cloudflare Pages
-  output: 'export', // 启用静态导出
+  // 暂时禁用静态导出以支持API路由和测试页面
+  // output: 'export', // 注释掉静态导出
   trailingSlash: true, // Cloudflare Pages兼容
   
   // 图片优化配置
