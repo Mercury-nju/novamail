@@ -43,12 +43,8 @@ export default function SubscriptionPage() {
     setCreating(planId);
     
     try {
-      // 获取用户邮箱（这里简化处理，实际应该从用户会话获取）
-      const customerEmail = prompt('请输入您的邮箱地址:');
-      if (!customerEmail) {
-        setCreating(null);
-        return;
-      }
+      // 直接创建订阅，使用默认邮箱（实际应该从用户会话获取）
+      const customerEmail = 'user@example.com'; // 这里应该从用户登录状态获取
 
       const response = await fetch('/api/creem/subscriptions', {
         method: 'POST',
@@ -65,7 +61,7 @@ export default function SubscriptionPage() {
       const data = await response.json();
       
       if (data.success && data.checkoutUrl) {
-        // 跳转到Creem支付页面
+        // 直接跳转到Creem支付页面
         window.location.href = data.checkoutUrl;
       } else {
         alert('创建订阅失败: ' + data.message);

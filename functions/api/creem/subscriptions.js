@@ -30,13 +30,13 @@ export async function onRequest(context) {
   try {
     var body = await request.json();
     var planId = body.planId;
-    var customerEmail = body.customerEmail;
+    var customerEmail = body.customerEmail || 'customer@example.com'; // 默认邮箱
     var billingCycle = body.billingCycle || 'monthly';
 
-    if (!planId || !customerEmail) {
+    if (!planId) {
       return new Response(JSON.stringify({
         success: false,
-        message: 'Missing required fields: planId and customerEmail'
+        message: 'Missing required field: planId'
       }), {
         status: 400,
         headers: corsHeaders
