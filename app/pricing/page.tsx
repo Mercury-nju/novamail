@@ -73,8 +73,18 @@ export default function PricingPage() {
     } else if (planId === 'enterprise') {
       router.push('/contact');
     } else {
-      // 跳转到订阅页面进行付费订阅
-      router.push('/subscription');
+      // 检查用户是否已登录
+      const token = localStorage.getItem('auth-token');
+      const userEmail = localStorage.getItem('user-email');
+      const isLoggedIn = !!(token && userEmail);
+      
+      if (!isLoggedIn) {
+        // 未登录用户跳转到登录页面
+        router.push('/login?redirect=/subscription');
+      } else {
+        // 已登录用户跳转到订阅页面
+        router.push('/subscription');
+      }
     }
   };
 

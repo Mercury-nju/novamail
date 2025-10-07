@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface CreemPlan {
   id: string;
@@ -13,14 +14,24 @@ interface CreemPlan {
 }
 
 export default function SubscriptionPage() {
+  const router = useRouter();
   const [plans, setPlans] = useState<CreemPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     fetchPlans();
+    checkAuthStatus();
   }, []);
+
+  const checkAuthStatus = () => {
+    // 检查用户是否已登录（这里简化处理，实际应该检查session或token）
+    const token = localStorage.getItem('auth-token');
+    const userEmail = localStorage.getItem('user-email');
+    setIsLoggedIn(!!(token && userEmail));
+  };
 
   const fetchPlans = async () => {
     try {
@@ -40,11 +51,18 @@ export default function SubscriptionPage() {
   };
 
   const createSubscription = async (planId: string) => {
+    // 检查用户是否已登录
+    if (!isLoggedIn) {
+      // 未登录用户跳转到登录页面
+      router.push('/login?redirect=/subscription');
+      return;
+    }
+
     setCreating(planId);
     
     try {
-      // 直接创建订阅，使用默认邮箱（实际应该从用户会话获取）
-      const customerEmail = 'user@example.com'; // 这里应该从用户登录状态获取
+      // 已登录用户，从localStorage获取邮箱
+      const customerEmail = localStorage.getItem('user-email') || 'user@example.com';
 
       const response = await fetch('/api/creem/subscriptions', {
         method: 'POST',
@@ -109,9 +127,16 @@ export default function SubscriptionPage() {
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             🚀 选择您的订阅计划
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 mb-4">
             解锁NovaMail的全部功能，提升您的邮件营销效果
           </p>
+          {!isLoggedIn && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-md mx-auto">
+              <p className="text-yellow-800">
+                <span className="font-semibold">提示：</span> 请先登录后再进行订阅
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
