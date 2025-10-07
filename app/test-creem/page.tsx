@@ -34,18 +34,25 @@ export default function CreemTestPage() {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">🔗 直接测试链接</h2>
               <div className="space-y-2">
                 <a 
-                  href="https://novamail-api.lihongyangnju.workers.dev/api/creem/test" 
+                  href="https://novamail.pages.dev/api/creem/test" 
                   target="_blank"
                   className="block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
                   🔗 测试Creem API连接
                 </a>
                 <a 
-                  href="https://novamail-api.lihongyangnju.workers.dev/api/creem/webhook-test" 
+                  href="https://novamail.pages.dev/api/creem/webhook-test" 
                   target="_blank"
                   className="block px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
                   📡 测试Webhook接收
+                </a>
+                <a 
+                  href="https://novamail.pages.dev/api/creem/plans" 
+                  target="_blank"
+                  className="block px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                >
+                  📋 获取Creem计划
                 </a>
               </div>
             </div>
