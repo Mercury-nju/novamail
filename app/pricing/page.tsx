@@ -30,8 +30,8 @@ export default function PricingPage() {
       id: 'pro',
       name: 'Pro',
       description: 'Best for growing businesses',
-      monthlyPrice: 29,
-      yearlyPrice: 290,
+      monthlyPrice: 19,
+      yearlyPrice: 190,
       features: [
         'Up to 10,000 contacts',
         'Up to 50,000 emails per month',
@@ -49,8 +49,8 @@ export default function PricingPage() {
       id: 'enterprise',
       name: 'Enterprise',
       description: 'For large organizations',
-      monthlyPrice: 99,
-      yearlyPrice: 990,
+      monthlyPrice: null,
+      yearlyPrice: null,
       features: [
         'Unlimited contacts',
         'Unlimited emails',
@@ -152,10 +152,16 @@ export default function PricingPage() {
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                 <p className="text-gray-600 mb-4">{plan.description}</p>
                 <div className="text-4xl font-bold text-gray-900 mb-2">
-                  ¥{billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}
-                  <span className="text-lg text-gray-500">
-                    /{billingCycle === 'monthly' ? 'month' : 'year'}
-                  </span>
+                  {plan.monthlyPrice === null ? (
+                    <span className="text-lg">咨询报价</span>
+                  ) : (
+                    <>
+                      ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}
+                      <span className="text-lg text-gray-500">
+                        /{billingCycle === 'monthly' ? 'month' : 'year'}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
 

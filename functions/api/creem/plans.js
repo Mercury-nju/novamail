@@ -18,7 +18,7 @@ export async function onRequest(context) {
       name: 'Free Plan',
       description: 'Perfect for getting started',
       price: 0,
-      currency: 'CNY',
+      currency: 'USD',
       billingCycle: 'monthly',
       features: [
         'Up to 500 contacts',
@@ -33,8 +33,8 @@ export async function onRequest(context) {
       id: 'pro',
       name: 'Pro Plan',
       description: 'Best for growing businesses',
-      price: 29,
-      currency: 'CNY',
+      price: 19,
+      currency: 'USD',
       billingCycle: 'monthly',
       features: [
         'Up to 10,000 contacts',
@@ -51,9 +51,9 @@ export async function onRequest(context) {
       id: 'enterprise',
       name: 'Enterprise Plan',
       description: 'For large organizations',
-      price: 99,
-      currency: 'CNY',
-      billingCycle: 'monthly',
+      price: null,
+      currency: 'USD',
+      billingCycle: 'custom',
       features: [
         'Unlimited contacts',
         'Unlimited emails',
