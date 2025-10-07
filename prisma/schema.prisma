@@ -8,6 +8,8 @@ generator client {
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+  // 生产环境使用Cloudflare D1
+  // url = env("CLOUDFLARE_D1_DATABASE_URL")
 }
 
 model Account {
