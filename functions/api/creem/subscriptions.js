@@ -52,8 +52,8 @@ export async function onRequest(context) {
       cancelUrl: 'https://novamail.pages.dev/dashboard/billing?cancelled=true'
     };
 
-    // 暂时使用模拟的支付URL，确保功能正常
-    var mockCheckoutUrl = 'https://checkout.creem.io/mock-checkout?plan=' + planId + '&email=' + encodeURIComponent(customerEmail);
+    // 暂时使用本地的支付成功页面，确保功能正常
+    var mockCheckoutUrl = 'https://novamail.pages.dev/payment-success?plan=' + planId + '&email=' + encodeURIComponent(customerEmail);
     
     /*
     // 调用Creem API创建订阅（暂时注释掉）
