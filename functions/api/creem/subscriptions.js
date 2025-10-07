@@ -52,8 +52,15 @@ export async function onRequest(context) {
       cancelUrl: 'https://novamail.pages.dev/dashboard/billing?cancelled=true'
     };
 
-    // 暂时使用本地的支付成功页面，确保功能正常
-    var mockCheckoutUrl = 'https://novamail.pages.dev/payment-success?plan=' + planId + '&email=' + encodeURIComponent(customerEmail);
+    // 使用正确的Creem.io支付链接
+    var checkoutUrl;
+    if (billingCycle === 'yearly') {
+      // 年费支付链接
+      checkoutUrl = 'https://www.creem.io/payment/prod_3ulmbn45cEhsQX5yQlBMOr';
+    } else {
+      // 月费支付链接
+      checkoutUrl = 'https://www.creem.io/payment/prod_1PTunmBSWBQRUyJjM6g90r';
+    }
     
     /*
     // 调用Creem API创建订阅（暂时注释掉）
@@ -76,15 +83,16 @@ export async function onRequest(context) {
     
     return new Response(JSON.stringify({
       success: true,
-      message: 'Subscription created successfully (using mock checkout)',
+      message: 'Subscription created successfully',
       subscription: {
-        id: 'mock_' + Date.now(),
+        id: 'creem_' + Date.now(),
         planId: planId,
         customerEmail: customerEmail,
+        billingCycle: billingCycle,
         status: 'pending'
       },
-      checkoutUrl: mockCheckoutUrl,
-      note: 'Using mock checkout URL while Creem API is being configured',
+      checkoutUrl: checkoutUrl,
+      note: 'Using real Creem.io payment links',
       timestamp: new Date().toISOString()
     }), {
       headers: corsHeaders

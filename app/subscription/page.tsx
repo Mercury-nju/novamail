@@ -20,6 +20,7 @@ export default function SubscriptionPage() {
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
   useEffect(() => {
     fetchPlans();
@@ -73,7 +74,7 @@ export default function SubscriptionPage() {
         body: JSON.stringify({
           planId: planId,
           customerEmail: customerEmail,
-          billingCycle: 'monthly'
+          billingCycle: billingCycle
         })
       });
 
@@ -131,6 +132,28 @@ export default function SubscriptionPage() {
           <p className="text-xl text-gray-600 mb-4">
             解锁NovaMail的全部功能，提升您的邮件营销效果
           </p>
+          
+          {/* Billing Cycle Toggle */}
+          <div className="flex items-center justify-center mb-8">
+            <span className={`mr-3 ${billingCycle === 'monthly' ? 'text-gray-900' : 'text-gray-500'}`}>
+              月费
+            </span>
+            <button
+              onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
+              className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+            <span className={`ml-3 ${billingCycle === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
+              年费
+              <span className="ml-1 text-sm text-green-600">(省20%)</span>
+            </span>
+          </div>
+          
           {!isLoggedIn && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-md mx-auto">
               <p className="text-yellow-800">
