@@ -73,7 +73,7 @@ export default function PricingPage() {
     return true;
   };
 
-  const handleSubscribe = (planId: string) => {
+  const handleSubscribe = async (planId: string) => {
     if (planId === 'free') {
       router.push('/register');
     } else if (planId === 'enterprise') {
@@ -84,10 +84,20 @@ export default function PricingPage() {
       
       if (!isLoggedIn) {
         // 未登录用户跳转到登录页面
-        router.push('/login?redirect=/subscription');
+        router.push('/login?redirect=/pricing');
       } else {
-        // 已登录用户跳转到订阅页面
-        router.push('/subscription');
+        // 已登录用户直接跳转到Creem.io支付页面
+        const customerEmail = localStorage.getItem('user-email') || 
+                             sessionStorage.getItem('user-email') || 
+                             'user@example.com';
+        
+        // 根据选择的计费周期跳转到对应的支付页面
+        const checkoutUrl = billingCycle === 'yearly' 
+          ? 'https://www.creem.io/payment/prod_3ulmbn45cEhsQX5yQlBMOr'
+          : 'https://www.creem.io/payment/prod_1PTunmBSWBQRUyJjM6g90r';
+        
+        // 直接跳转到Creem.io支付页面
+        window.location.href = checkoutUrl;
       }
     }
   };
