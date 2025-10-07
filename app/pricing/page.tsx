@@ -67,6 +67,16 @@ export default function PricingPage() {
     }
   ];
 
+  const checkLoginStatus = () => {
+    // 检查多种可能的登录状态存储方式
+    const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token');
+    const userEmail = localStorage.getItem('user-email') || sessionStorage.getItem('user-email');
+    const nextAuthToken = localStorage.getItem('nextauth.token') || sessionStorage.getItem('nextauth.token');
+    
+    // 检查是否有任何登录标识
+    return !!(token || userEmail || nextAuthToken);
+  };
+
   const handleSubscribe = (planId: string) => {
     if (planId === 'free') {
       router.push('/register');
@@ -74,9 +84,7 @@ export default function PricingPage() {
       router.push('/contact');
     } else {
       // 检查用户是否已登录
-      const token = localStorage.getItem('auth-token');
-      const userEmail = localStorage.getItem('user-email');
-      const isLoggedIn = !!(token && userEmail);
+      const isLoggedIn = checkLoginStatus();
       
       if (!isLoggedIn) {
         // 未登录用户跳转到登录页面

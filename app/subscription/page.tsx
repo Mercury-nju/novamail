@@ -27,10 +27,13 @@ export default function SubscriptionPage() {
   }, []);
 
   const checkAuthStatus = () => {
-    // 检查用户是否已登录（这里简化处理，实际应该检查session或token）
-    const token = localStorage.getItem('auth-token');
-    const userEmail = localStorage.getItem('user-email');
-    setIsLoggedIn(!!(token && userEmail));
+    // 检查多种可能的登录状态存储方式
+    const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token');
+    const userEmail = localStorage.getItem('user-email') || sessionStorage.getItem('user-email');
+    const nextAuthToken = localStorage.getItem('nextauth.token') || sessionStorage.getItem('nextauth.token');
+    
+    // 检查是否有任何登录标识
+    setIsLoggedIn(!!(token || userEmail || nextAuthToken));
   };
 
   const fetchPlans = async () => {
@@ -61,8 +64,10 @@ export default function SubscriptionPage() {
     setCreating(planId);
     
     try {
-      // 已登录用户，从localStorage获取邮箱
-      const customerEmail = localStorage.getItem('user-email') || 'user@example.com';
+      // 已登录用户，从多种存储方式获取邮箱
+      const customerEmail = localStorage.getItem('user-email') || 
+                           sessionStorage.getItem('user-email') || 
+                           'user@example.com';
 
       const response = await fetch('/api/creem/subscriptions', {
         method: 'POST',
