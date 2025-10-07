@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       console.log('📊 事件类型:', event.type)
       console.log('📊 事件数据:', event.data)
     } catch (e) {
-      console.log('❌ 解析事件数据失败:', e.message)
+      console.log('❌ 解析事件数据失败:', e instanceof Error ? e.message : 'Unknown error')
     }
     
     // 返回成功响应
