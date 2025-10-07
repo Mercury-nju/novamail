@@ -84,10 +84,10 @@ export default function SubscriptionPage() {
         // 直接跳转到Creem支付页面
         window.location.href = data.checkoutUrl;
       } else {
-        alert('创建订阅失败: ' + data.message);
+        alert('Subscription creation failed: ' + data.message);
       }
     } catch (err) {
-      alert('网络错误: ' + (err as Error).message);
+      alert('Network error: ' + (err as Error).message);
     } finally {
       setCreating(null);
     }
@@ -98,7 +98,7 @@ export default function SubscriptionPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">正在加载订阅计划...</p>
+          <p className="mt-4 text-gray-600">Loading subscription plans...</p>
         </div>
       </div>
     );
@@ -109,13 +109,13 @@ export default function SubscriptionPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-600 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">加载失败</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Loading Failed</h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button 
             onClick={fetchPlans}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-            重试
+            Retry
           </button>
         </div>
       </div>
@@ -127,16 +127,16 @@ export default function SubscriptionPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            🚀 选择您的订阅计划
+            🚀 Choose Your Subscription Plan
           </h1>
           <p className="text-xl text-gray-600 mb-4">
-            解锁NovaMail的全部功能，提升您的邮件营销效果
+            Unlock all NovaMail features and boost your email marketing results
           </p>
           
           {/* Billing Cycle Toggle */}
           <div className="flex items-center justify-center mb-8">
             <span className={`mr-3 ${billingCycle === 'monthly' ? 'text-gray-900' : 'text-gray-500'}`}>
-              月费
+              Monthly
             </span>
             <button
               onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
@@ -149,15 +149,15 @@ export default function SubscriptionPage() {
               />
             </button>
             <span className={`ml-3 ${billingCycle === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
-              年费
-              <span className="ml-1 text-sm text-green-600">(省20%)</span>
+              Yearly
+              <span className="ml-1 text-sm text-green-600">(Save 20%)</span>
             </span>
           </div>
           
           {!isLoggedIn && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-md mx-auto">
               <p className="text-yellow-800">
-                <span className="font-semibold">提示：</span> 请先登录后再进行订阅
+                <span className="font-semibold">Note:</span> Please log in first before subscribing
               </p>
             </div>
           )}
@@ -169,7 +169,7 @@ export default function SubscriptionPage() {
               {plan.name.toLowerCase().includes('pro') && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    最受欢迎
+                    Most Popular
                   </span>
                 </div>
               )}
@@ -179,7 +179,7 @@ export default function SubscriptionPage() {
                 <p className="text-gray-600 mb-4">{plan.description}</p>
                 <div className="text-4xl font-bold text-blue-600 mb-2">
                   ${plan.price}
-                  <span className="text-lg text-gray-500">/{plan.billingCycle === 'monthly' ? '月' : '年'}</span>
+                  <span className="text-lg text-gray-500">/{plan.billingCycle === 'monthly' ? 'month' : 'year'}</span>
                 </div>
               </div>
 
@@ -203,14 +203,14 @@ export default function SubscriptionPage() {
                     : 'bg-gray-900 text-white hover:bg-gray-800'
                 } ${creating === plan.id ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                {creating === plan.id ? (
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    创建订阅中...
-                  </div>
-                ) : (
-                  '立即订阅'
-                )}
+                  {creating === plan.id ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Creating subscription...
+                    </div>
+                  ) : (
+                    'Subscribe Now'
+                  )}
               </button>
             </div>
           ))}
@@ -218,10 +218,10 @@ export default function SubscriptionPage() {
 
         <div className="mt-12 text-center">
           <p className="text-gray-600 mb-4">
-            需要帮助？查看我们的 <a href="/help" className="text-blue-600 hover:underline">帮助中心</a>
+            Need help? Check out our <a href="/help" className="text-blue-600 hover:underline">Help Center</a>
           </p>
           <p className="text-sm text-gray-500">
-            所有订阅都通过Creem安全支付处理
+            All subscriptions are processed securely through Creem
           </p>
         </div>
       </div>

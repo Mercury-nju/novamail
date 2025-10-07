@@ -31,20 +31,20 @@ function PaymentSuccessContent() {
 
         {/* Success Message */}
         <h1 className="text-2xl font-bold text-gray-900 mb-4">
-          🎉 支付成功！
+          🎉 Payment Successful!
         </h1>
         
         <p className="text-gray-600 mb-6">
-          感谢您的订阅！您的NovaMail {planId} 计划已激活。
+          Thank you for your subscription! Your NovaMail {planId} plan has been activated.
         </p>
 
         {/* Plan Details */}
         <div className="bg-gray-50 rounded-lg p-4 mb-6">
-          <h3 className="font-semibold text-gray-900 mb-2">订阅详情</h3>
+          <h3 className="font-semibold text-gray-900 mb-2">Subscription Details</h3>
           <div className="text-sm text-gray-600 space-y-1">
-            <p><strong>计划:</strong> {planId}</p>
-            <p><strong>邮箱:</strong> {email}</p>
-            <p><strong>状态:</strong> <span className="text-green-600">已激活</span></p>
+            <p><strong>Plan:</strong> {planId}</p>
+            <p><strong>Email:</strong> {email}</p>
+            <p><strong>Status:</strong> <span className="text-green-600">Activated</span></p>
           </div>
         </div>
 
@@ -54,21 +54,21 @@ function PaymentSuccessContent() {
             href="/dashboard"
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            进入控制台
+            Go to Dashboard
           </Link>
           
           <Link 
             href="/dashboard/billing"
             className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors"
           >
-            查看账单
+            View Billing
           </Link>
         </div>
 
         {/* Note */}
         <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
           <p className="text-sm text-yellow-800">
-            <strong>注意:</strong> 这是模拟支付页面。实际部署时会跳转到真实的Creem.io支付页面。
+            <strong>Note:</strong> This is a mock payment page. In production, users will be redirected to the real Creem.io payment page.
           </p>
         </div>
       </div>
@@ -82,7 +82,7 @@ export default function PaymentSuccessPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">正在加载支付结果...</p>
+          <p className="mt-4 text-gray-600">Loading payment results...</p>
         </div>
       </div>
     }>

@@ -7,7 +7,7 @@ import { Suspense } from 'react'
 function GoogleCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [status, setStatus] = useState('处理中...')
+  const [status, setStatus] = useState('Processing...')
 
   useEffect(() => {
     const handleGoogleCallback = async () => {
@@ -16,7 +16,7 @@ function GoogleCallbackContent() {
         const error = searchParams.get('error')
         
         if (error) {
-          setStatus('登录失败: ' + error)
+          setStatus('Login failed: ' + error)
           setTimeout(() => {
             router.push('/login')
           }, 3000)
@@ -24,7 +24,7 @@ function GoogleCallbackContent() {
         }
         
         if (code) {
-          setStatus('登录成功！正在跳转...')
+          setStatus('Login successful! Redirecting...')
           
           // 这里可以添加代码来交换授权码获取访问令牌
           // 但为了简化，我们直接跳转到dashboard
@@ -32,14 +32,14 @@ function GoogleCallbackContent() {
             router.push('/dashboard')
           }, 2000)
         } else {
-          setStatus('未收到授权码')
+          setStatus('No authorization code received')
           setTimeout(() => {
             router.push('/login')
           }, 3000)
         }
       } catch (error) {
         console.error('Google callback error:', error)
-        setStatus('处理登录时出错')
+        setStatus('Error processing login')
         setTimeout(() => {
           router.push('/login')
         }, 3000)
