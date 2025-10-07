@@ -68,7 +68,7 @@ export default function AnalyticsPage() {
     }
   }
 
-  const InfoTooltip = ({ title, children }: { title: string; children: React.ReactNode }) => {
+  const InfoTooltip = ({ title }: { title: string }) => {
     const [showTooltip, setShowTooltip] = useState(false)
 
     return (
