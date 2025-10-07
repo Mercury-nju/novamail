@@ -133,7 +133,7 @@ export default function SubscriptionPage() {
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                 <p className="text-gray-600 mb-4">{plan.description}</p>
                 <div className="text-4xl font-bold text-blue-600 mb-2">
-                  ¥{plan.price}
+                  ${plan.price}
                   <span className="text-lg text-gray-500">/{plan.billingCycle === 'monthly' ? '月' : '年'}</span>
                 </div>
               </div>
