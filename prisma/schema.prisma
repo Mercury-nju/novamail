@@ -56,6 +56,8 @@ model User {
   subscriptionPlan   String?  @default("free") // free, pro, enterprise
   subscriptionEndsAt DateTime?
   stripeCustomerId   String?
+  creemCustomerId    String?
+  creemSubscriptionId String?
   
   // Usage tracking
   emailsSentThisMonth Int @default(0)
@@ -128,7 +130,8 @@ model VerificationCode {
 
 model Subscription {
   id                String   @id @default(cuid())
-  stripeSubscriptionId String @unique
+  stripeSubscriptionId String? @unique
+  creemSubscriptionId String? @unique
   userId            String
   plan              String   // free, pro, enterprise
   status            String   // active, canceled, past_due, incomplete
@@ -143,12 +146,16 @@ model Subscription {
 
 model Payment {
   id                String   @id @default(cuid())
-  stripePaymentIntentId String @unique
+  stripePaymentIntentId String? @unique
+  creemPaymentId    String? @unique
   userId            String
+  subscriptionId    String?
   amount            Int      // Amount in cents
   currency          String   @default("usd")
   status            String   // succeeded, pending, failed
   description       String?
+  paymentMethod     String?
+  failureReason     String?
   createdAt         DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

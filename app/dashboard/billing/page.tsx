@@ -33,14 +33,27 @@ export default function BillingPage() {
     try {
       setLoading(true)
       
-      // 从API获取真实的用户订阅数据
-      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/billing')
+      // 从Creem API获取真实的用户订阅数据
+      const response = await fetch('/api/creem/subscriptions')
       
       if (response.ok) {
         const data = await response.json()
-        if (data.success) {
-          setBilling(data.data.billing)
-          setInvoices(data.data.invoices)
+        if (data.success && data.data) {
+          const subscription = data.data
+          setBilling({
+            currentPlan: subscription.plan.name,
+            monthlyEmails: subscription.plan.limits.emails,
+            emailsUsed: 0, // 从使用统计API获取
+            nextBillingDate: subscription.currentPeriodEnd,
+            amount: subscription.plan.price,
+            status: subscription.status
+          })
+          // 获取发票历史
+          const invoicesResponse = await fetch('/api/creem/invoices')
+          if (invoicesResponse.ok) {
+            const invoicesData = await invoicesResponse.json()
+            setInvoices(invoicesData.data || [])
+          }
         } else {
           // 如果用户没有订阅，显示免费计划
           setBilling({
