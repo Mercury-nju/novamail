@@ -82,7 +82,7 @@ async function handleSubscriptionCreated(data: any) {
 async function handleSubscriptionUpdated(data: any) {
   // 更新订阅信息
   await prisma.user.update({
-    where: { subscriptionId: data.id },
+    where: { creemSubscriptionId: data.id },
     data: {
       subscriptionStatus: data.status,
       subscriptionPlan: data.plan.name,
@@ -94,7 +94,7 @@ async function handleSubscriptionUpdated(data: any) {
 async function handleSubscriptionCanceled(data: any) {
   // 标记订阅为已取消
   await prisma.user.update({
-    where: { subscriptionId: data.id },
+    where: { creemSubscriptionId: data.id },
     data: {
       subscriptionStatus: 'canceled',
       subscriptionEndsAt: new Date(data.currentPeriodEnd),
