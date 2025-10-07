@@ -437,6 +437,54 @@ async function handleAnalyticsAPI(request, env, ctx) {
     }
   }
   
+  // 处理 /api/billing 路由
+  if (pathname === '/api/billing') {
+    if (request.method === 'GET') {
+      try {
+        // 模拟从数据库获取用户订阅数据
+        // 实际应用中应该根据用户ID查询数据库
+        const mockBilling = {
+          currentPlan: 'Free',
+          monthlyEmails: 1000,
+          emailsUsed: 0,
+          nextBillingDate: '',
+          amount: 0,
+          status: 'active'
+        }
+        
+        const mockInvoices = []
+        
+        return new Response(JSON.stringify({
+          success: true,
+          data: {
+            billing: mockBilling,
+            invoices: mockInvoices
+          }
+        }), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+          }
+        })
+      } catch (error) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Failed to fetch billing data'
+        }), {
+          status: 500,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+          }
+        })
+      }
+    }
+  }
+  
   return new Response('Method not allowed', { 
     status: 405,
     headers: {

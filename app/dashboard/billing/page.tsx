@@ -32,44 +32,51 @@ export default function BillingPage() {
   const fetchBillingData = async () => {
     try {
       setLoading(true)
-      // 使用模拟数据
-      const mockBilling: BillingData = {
-        currentPlan: 'Pro',
-        monthlyEmails: 10000,
-        emailsUsed: 3240,
-        nextBillingDate: '2024-02-15',
-        amount: 29.99,
-        status: 'active'
-      }
-
-      const mockInvoices: Invoice[] = [
-        {
-          id: 'inv_001',
-          date: '2024-01-15',
-          amount: 29.99,
-          status: 'paid',
-          description: 'Pro Plan - January 2024'
-        },
-        {
-          id: 'inv_002',
-          date: '2023-12-15',
-          amount: 29.99,
-          status: 'paid',
-          description: 'Pro Plan - December 2023'
-        },
-        {
-          id: 'inv_003',
-          date: '2023-11-15',
-          amount: 29.99,
-          status: 'paid',
-          description: 'Pro Plan - November 2023'
+      
+      // 从API获取真实的用户订阅数据
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/billing')
+      
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setBilling(data.data.billing)
+          setInvoices(data.data.invoices)
+        } else {
+          // 如果用户没有订阅，显示免费计划
+          setBilling({
+            currentPlan: 'Free',
+            monthlyEmails: 1000,
+            emailsUsed: 0,
+            nextBillingDate: '',
+            amount: 0,
+            status: 'active'
+          })
+          setInvoices([])
         }
-      ]
-
-      setBilling(mockBilling)
-      setInvoices(mockInvoices)
+      } else {
+        // API失败时显示免费计划
+        setBilling({
+          currentPlan: 'Free',
+          monthlyEmails: 1000,
+          emailsUsed: 0,
+          nextBillingDate: '',
+          amount: 0,
+          status: 'active'
+        })
+        setInvoices([])
+      }
     } catch (error) {
       console.error('Failed to fetch billing data:', error)
+      // 错误时显示免费计划
+      setBilling({
+        currentPlan: 'Free',
+        monthlyEmails: 1000,
+        emailsUsed: 0,
+        nextBillingDate: '',
+        amount: 0,
+        status: 'active'
+      })
+      setInvoices([])
     } finally {
       setLoading(false)
     }
@@ -146,14 +153,14 @@ export default function BillingPage() {
           <div>
             <p className="text-sm font-medium text-gray-600">Plan</p>
             <p className="text-2xl font-bold text-gray-900">{billing.currentPlan}</p>
-            <p className="text-sm text-gray-500">${billing.amount}/month</p>
+            <p className="text-sm text-gray-500">{billing.amount === 0 ? 'Free plan' : `$${billing.amount}/month`}</p>
           </div>
           <div>
             <p className="text-sm font-medium text-gray-600">Next Billing</p>
             <p className="text-lg font-semibold text-gray-900">
-              {new Date(billing.nextBillingDate).toLocaleDateString()}
+              {billing.nextBillingDate ? new Date(billing.nextBillingDate).toLocaleDateString() : 'No billing'}
             </p>
-            <p className="text-sm text-gray-500">${billing.amount}</p>
+            <p className="text-sm text-gray-500">{billing.amount === 0 ? 'Free plan' : `$${billing.amount}`}</p>
           </div>
           <div>
             <p className="text-sm font-medium text-gray-600">Emails This Month</p>
@@ -264,47 +271,77 @@ export default function BillingPage() {
         <h2 className="text-lg font-semibold text-gray-900 mb-6">Available Plans</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="border border-gray-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Starter</h3>
-            <p className="text-3xl font-bold text-gray-900 mb-4">$9<span className="text-lg text-gray-500">/month</span></p>
+          <div className={`border rounded-lg p-6 ${billing?.currentPlan === 'Free' ? 'border-2 border-primary-500 relative' : 'border-gray-200'}`}>
+            {billing?.currentPlan === 'Free' && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-primary-500 text-white px-3 py-1 text-sm font-semibold rounded-full">Current</span>
+              </div>
+            )}
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Free</h3>
+            <p className="text-3xl font-bold text-gray-900 mb-4">$0<span className="text-lg text-gray-500">/month</span></p>
             <ul className="space-y-2 text-sm text-gray-600">
-              <li>• 1,000 emails/month</li>
-              <li>• Basic templates</li>
+              <li>• Up to 500 contacts</li>
+              <li>• Up to 1,000 emails/month</li>
+              <li>• Simple email templates</li>
+              <li>• AI email generation</li>
+              <li>• SMTP configuration</li>
+              <li>• Basic analytics</li>
               <li>• Email support</li>
             </ul>
-            <button className="w-full mt-4 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-              Current Plan
+            <button className={`w-full mt-4 px-4 py-2 rounded-lg transition-colors ${
+              billing?.currentPlan === 'Free' 
+                ? 'bg-primary-600 text-white cursor-default' 
+                : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              {billing?.currentPlan === 'Free' ? 'Current Plan' : 'Downgrade'}
             </button>
           </div>
 
-          <div className="border-2 border-primary-500 rounded-lg p-6 relative">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span className="bg-primary-500 text-white px-3 py-1 text-sm font-semibold rounded-full">Current</span>
-            </div>
+          <div className={`border rounded-lg p-6 ${billing?.currentPlan === 'Pro' ? 'border-2 border-primary-500 relative' : 'border-gray-200'}`}>
+            {billing?.currentPlan === 'Pro' && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-primary-500 text-white px-3 py-1 text-sm font-semibold rounded-full">Current</span>
+              </div>
+            )}
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Pro</h3>
-            <p className="text-3xl font-bold text-gray-900 mb-4">$29<span className="text-lg text-gray-500">/month</span></p>
+            <p className="text-3xl font-bold text-gray-900 mb-4">$19<span className="text-lg text-gray-500">/month</span></p>
             <ul className="space-y-2 text-sm text-gray-600">
-              <li>• 10,000 emails/month</li>
-              <li>• Advanced templates</li>
+              <li>• Up to 5,000 contacts</li>
+              <li>• Up to 25,000 emails/month</li>
+              <li>• All email templates</li>
               <li>• AI email generation</li>
+              <li>• Advanced analytics</li>
               <li>• Priority support</li>
+              <li>• Remove NovaMail branding</li>
             </ul>
-            <button className="w-full mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-              Current Plan
+            <button className={`w-full mt-4 px-4 py-2 rounded-lg transition-colors ${
+              billing?.currentPlan === 'Pro' 
+                ? 'bg-primary-600 text-white cursor-default' 
+                : 'bg-primary-600 text-white hover:bg-primary-700'
+            }`}>
+              {billing?.currentPlan === 'Pro' ? 'Current Plan' : 'Upgrade to Pro'}
             </button>
           </div>
 
-          <div className="border border-gray-200 rounded-lg p-6">
+          <div className={`border rounded-lg p-6 ${billing?.currentPlan === 'Enterprise' ? 'border-2 border-primary-500 relative' : 'border-gray-200'}`}>
+            {billing?.currentPlan === 'Enterprise' && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-primary-500 text-white px-3 py-1 text-sm font-semibold rounded-full">Current</span>
+              </div>
+            )}
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Enterprise</h3>
-            <p className="text-3xl font-bold text-gray-900 mb-4">$99<span className="text-lg text-gray-500">/month</span></p>
+            <p className="text-3xl font-bold text-gray-900 mb-4">Custom<span className="text-lg text-gray-500"> pricing</span></p>
             <ul className="space-y-2 text-sm text-gray-600">
+              <li>• Unlimited contacts</li>
               <li>• Unlimited emails</li>
               <li>• Custom templates</li>
               <li>• Advanced analytics</li>
               <li>• Dedicated support</li>
+              <li>• White-label solution</li>
+              <li>• Custom integrations</li>
             </ul>
             <button className="w-full mt-4 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
-              Upgrade
+              Contact Sales
             </button>
           </div>
         </div>
