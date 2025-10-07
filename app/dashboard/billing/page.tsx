@@ -346,13 +346,17 @@ export default function BillingPage() {
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Pro</h3>
             <p className="text-3xl font-bold text-gray-900 mb-4">$19<span className="text-lg text-gray-500">/month</span></p>
             <ul className="space-y-2 text-sm text-gray-600">
-              <li>• Up to 5,000 contacts</li>
-              <li>• Up to 25,000 emails/month</li>
-              <li>• All email templates</li>
+              <li>• Up to 10,000 contacts</li>
+              <li>• Up to 50,000 emails/month</li>
+              <li>• Advanced email templates</li>
               <li>• AI email generation</li>
               <li>• Advanced analytics</li>
               <li>• Priority support</li>
-              <li>• Remove NovaMail branding</li>
+              <li>• Contact segmentation</li>
+              <li>• A/B testing</li>
+              <li>• Excel import support</li>
+              <li>• Email scheduling</li>
+              <li>• Custom branding</li>
             </ul>
             <button className={`w-full mt-4 px-4 py-2 rounded-lg transition-colors ${
               billing?.currentPlan === 'Pro' 

@@ -26,7 +26,9 @@ export async function onRequest(context) {
         'Basic email templates',
         'AI email generation',
         'Basic analytics',
-        'Email support'
+        'Email support',
+        'Contact import (CSV, TXT)',
+        'Basic contact groups'
       ]
     },
     {
@@ -44,7 +46,11 @@ export async function onRequest(context) {
         'Advanced analytics',
         'Priority support',
         'Contact segmentation',
-        'A/B testing'
+        'A/B testing',
+        'Excel import support',
+        'Advanced contact groups',
+        'Email scheduling',
+        'Custom branding'
       ]
     },
     {
@@ -63,7 +69,10 @@ export async function onRequest(context) {
         'Dedicated support',
         'Advanced segmentation',
         'API access',
-        'Custom integrations'
+        'Custom integrations',
+        'White-label solution',
+        'SLA guarantee',
+        'Custom onboarding'
       ]
     }
   ];

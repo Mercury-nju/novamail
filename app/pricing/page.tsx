@@ -18,10 +18,12 @@ export default function PricingPage() {
       features: [
         'Up to 500 contacts',
         'Up to 1,000 emails per month',
-        'Simple email templates',
+        'Basic email templates',
         'AI email generation',
         'Basic analytics',
-        'Email support'
+        'Email support',
+        'Contact import (CSV, TXT)',
+        'Basic contact groups'
       ],
       cta: 'Get Started Free',
       popular: false
@@ -40,7 +42,11 @@ export default function PricingPage() {
         'Advanced analytics',
         'Priority support',
         'Contact segmentation',
-        'A/B testing'
+        'A/B testing',
+        'Excel import support',
+        'Advanced contact groups',
+        'Email scheduling',
+        'Custom branding'
       ],
       cta: 'Start Pro Trial',
       popular: true
