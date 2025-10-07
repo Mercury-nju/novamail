@@ -57,7 +57,7 @@ model User {
   subscriptionEndsAt DateTime?
   stripeCustomerId   String?
   creemCustomerId    String?
-  creemSubscriptionId String?
+  creemSubscriptionId String? @unique
   
   // Usage tracking
   emailsSentThisMonth Int @default(0)
