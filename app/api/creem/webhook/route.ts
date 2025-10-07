@@ -74,8 +74,7 @@ async function handleSubscriptionCreated(data: any) {
       subscriptionId: data.id,
       subscriptionStatus: data.status,
       subscriptionPlan: data.plan.name,
-      subscriptionStartDate: new Date(data.currentPeriodStart),
-      subscriptionEndDate: new Date(data.currentPeriodEnd),
+      subscriptionEndsAt: new Date(data.currentPeriodEnd),
     }
   })
 }
@@ -87,7 +86,7 @@ async function handleSubscriptionUpdated(data: any) {
     data: {
       subscriptionStatus: data.status,
       subscriptionPlan: data.plan.name,
-      subscriptionEndDate: new Date(data.currentPeriodEnd),
+      subscriptionEndsAt: new Date(data.currentPeriodEnd),
     }
   })
 }
@@ -98,7 +97,7 @@ async function handleSubscriptionCanceled(data: any) {
     where: { subscriptionId: data.id },
     data: {
       subscriptionStatus: 'canceled',
-      subscriptionEndDate: new Date(data.currentPeriodEnd),
+      subscriptionEndsAt: new Date(data.currentPeriodEnd),
     }
   })
 }
