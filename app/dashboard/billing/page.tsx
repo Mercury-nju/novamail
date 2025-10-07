@@ -248,22 +248,49 @@ export default function BillingPage() {
             <h2 className="text-lg font-semibold text-gray-900">Payment Method</h2>
             <p className="text-gray-600">Manage your payment information</p>
           </div>
-          <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-            Update Payment Method
-          </button>
+          {billing?.currentPlan === 'Free' ? (
+            <button 
+              onClick={() => setShowUpgradeModal(true)}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            >
+              Add Payment Method
+            </button>
+          ) : (
+            <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              Update Payment Method
+            </button>
+          )}
         </div>
 
-        <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-          <div className="p-2 bg-white rounded-lg shadow-sm">
-            <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
+        {billing?.currentPlan === 'Free' ? (
+          <div className="text-center py-8">
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Payment Method</h3>
+              <p className="text-gray-600 mb-4">You're currently on the free plan. Add a payment method to upgrade to a paid plan.</p>
+              <button 
+                onClick={() => setShowUpgradeModal(true)}
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                Upgrade Plan
+              </button>
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-medium text-gray-900">•••• •••• •••• 4242</p>
-            <p className="text-sm text-gray-500">Expires 12/25</p>
+        ) : (
+          <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+            <div className="p-2 bg-white rounded-lg shadow-sm">
+              <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900">•••• •••• •••• 4242</p>
+              <p className="text-sm text-gray-500">Expires 12/25</p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Plan Comparison */}
