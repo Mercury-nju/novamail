@@ -68,6 +68,30 @@ export default function AnalyticsPage() {
     }
   }
 
+  const InfoTooltip = ({ title, children }: { title: string; children: React.ReactNode }) => {
+    const [showTooltip, setShowTooltip] = useState(false)
+
+    return (
+      <div className="relative inline-block">
+        <button
+          className="ml-1 text-gray-400 hover:text-gray-600 transition-colors"
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
+        {showTooltip && (
+          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg z-50 max-w-xs">
+            <div className="text-center">{title}</div>
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -121,11 +145,7 @@ export default function AnalyticsPage() {
             <div className="ml-4">
               <div className="flex items-center">
                 <p className="text-sm font-medium text-gray-600">Total Emails</p>
-                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Total number of emails sent through all campaigns">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                <InfoTooltip title="Total number of emails sent through all campaigns" />
               </div>
               <p className="text-2xl font-bold text-gray-900">{analytics.totalEmails.toLocaleString()}</p>
             </div>
@@ -143,11 +163,7 @@ export default function AnalyticsPage() {
             <div className="ml-4">
               <div className="flex items-center">
                 <p className="text-sm font-medium text-gray-600">Open Rate</p>
-                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of recipients who opened your emails">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                <InfoTooltip title="Percentage of recipients who opened your emails" />
               </div>
               <p className="text-2xl font-bold text-gray-900">{analytics.openRate}%</p>
             </div>
@@ -164,11 +180,7 @@ export default function AnalyticsPage() {
             <div className="ml-4">
               <div className="flex items-center">
                 <p className="text-sm font-medium text-gray-600">Click Rate</p>
-                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of recipients who clicked links in your emails">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                <InfoTooltip title="Percentage of recipients who clicked links in your emails" />
               </div>
               <p className="text-2xl font-bold text-gray-900">{analytics.clickRate}%</p>
             </div>
@@ -185,11 +197,7 @@ export default function AnalyticsPage() {
             <div className="ml-4">
               <div className="flex items-center">
                 <p className="text-sm font-medium text-gray-600">Delivery Rate</p>
-                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of emails successfully delivered to recipients' inboxes">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                <InfoTooltip title="Percentage of emails successfully delivered to recipients' inboxes" />
               </div>
               <p className="text-2xl font-bold text-gray-900">{analytics.deliveryRate}%</p>
             </div>
@@ -251,44 +259,28 @@ export default function AnalyticsPage() {
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <span className="text-sm text-gray-600">Total Opens</span>
-                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Total number of email opens across all campaigns">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                <InfoTooltip title="Total number of email opens across all campaigns" />
               </div>
               <span className="font-semibold">{analytics.totalOpens.toLocaleString()}</span>
             </div>
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <span className="text-sm text-gray-600">Total Clicks</span>
-                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Total number of link clicks across all campaigns">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                <InfoTooltip title="Total number of link clicks across all campaigns" />
               </div>
               <span className="font-semibold">{analytics.totalClicks.toLocaleString()}</span>
             </div>
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <span className="text-sm text-gray-600">Unsubscribe Rate</span>
-                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of recipients who unsubscribed from your emails">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                <InfoTooltip title="Percentage of recipients who unsubscribed from your emails" />
               </div>
               <span className="font-semibold">{analytics.unsubscribeRate}%</span>
             </div>
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <span className="text-sm text-gray-600">Bounce Rate</span>
-                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of emails that bounced (could not be delivered)">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                <InfoTooltip title="Percentage of emails that bounced (could not be delivered)" />
               </div>
               <span className="font-semibold">{analytics.bounceRate}%</span>
             </div>
@@ -301,44 +293,28 @@ export default function AnalyticsPage() {
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <span className="text-sm text-gray-600">Delivery Rate</span>
-                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of emails successfully delivered to recipients' inboxes">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                <InfoTooltip title="Percentage of emails successfully delivered to recipients' inboxes" />
               </div>
               <span className="font-semibold">{analytics.deliveryRate}%</span>
             </div>
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <span className="text-sm text-gray-600">Spam Rate</span>
-                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Percentage of emails marked as spam by recipients">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                <InfoTooltip title="Percentage of emails marked as spam by recipients" />
               </div>
               <span className="font-semibold">{analytics.spamRate}%</span>
             </div>
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <span className="text-sm text-gray-600">Avg Open Rate</span>
-                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Average open rate across all campaigns">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                <InfoTooltip title="Average open rate across all campaigns" />
               </div>
               <span className="font-semibold">{analytics.openRate}%</span>
             </div>
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <span className="text-sm text-gray-600">Avg Click Rate</span>
-                <button className="ml-1 text-gray-400 hover:text-gray-600" title="Average click rate across all campaigns">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                <InfoTooltip title="Average click rate across all campaigns" />
               </div>
               <span className="font-semibold">{analytics.clickRate}%</span>
             </div>
