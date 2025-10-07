@@ -3,7 +3,7 @@ export async function onRequest(context) {
   var request = context.request;
   var env = context.env;
   var apiKey = env.CREEM_API_KEY || 'creem_22oMcuzUH4TeWyWVAVjTes';
-  var baseUrl = env.CREEM_BASE_URL || 'https://api.creem.com/v1';
+  var baseUrl = env.CREEM_BASE_URL || 'https://api.creem.io/v1';
   
   var corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -53,7 +53,7 @@ export async function onRequest(context) {
     };
 
     // 暂时使用模拟的支付URL，确保功能正常
-    var mockCheckoutUrl = 'https://checkout.creem.com/mock-checkout?plan=' + planId + '&email=' + encodeURIComponent(customerEmail);
+    var mockCheckoutUrl = 'https://checkout.creem.io/mock-checkout?plan=' + planId + '&email=' + encodeURIComponent(customerEmail);
     
     /*
     // 调用Creem API创建订阅（暂时注释掉）

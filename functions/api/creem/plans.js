@@ -2,7 +2,7 @@
 export async function onRequest(context) {
   var env = context.env;
   var apiKey = env.CREEM_API_KEY || 'creem_22oMcuzUH4TeWyWVAVjTes';
-  var baseUrl = env.CREEM_BASE_URL || 'https://api.creem.com/v1';
+  var baseUrl = env.CREEM_BASE_URL || 'https://api.creem.io/v1';
   
   var corsHeaders = {
     'Access-Control-Allow-Origin': '*',
