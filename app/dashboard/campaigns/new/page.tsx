@@ -176,6 +176,28 @@ export default function NewCampaignPage() {
       return
     }
 
+    // 检查用户订阅等级和邮件发送限制
+    const getUserPlan = () => {
+      // 在实际应用中，这应该从用户数据中获取
+      return 'free'; // 可以是 'free', 'pro', 'enterprise'
+    };
+
+    const getEmailLimit = () => {
+      const plan = getUserPlan();
+      switch (plan) {
+        case 'free': return 1000;
+        case 'pro': return 50000;
+        case 'enterprise': return -1; // 无限制
+        default: return 1000;
+      }
+    };
+
+    const emailLimit = getEmailLimit();
+    if (emailLimit !== -1 && campaignData.recipients.length > emailLimit) {
+      toast.error(`Email limit exceeded. Your plan allows up to ${emailLimit} emails per month. Upgrade to send more.`)
+      return;
+    }
+
     // Check if user can send emails
     try {
       const response = await fetch('/api/user/check-permission', {

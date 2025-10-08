@@ -21,6 +21,25 @@ export default function ContactsPage() {
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
 
+  // 模拟用户订阅等级检查
+  const getUserPlan = () => {
+    // 在实际应用中，这应该从用户数据中获取
+    return 'free'; // 可以是 'free', 'pro', 'enterprise'
+  };
+
+  const getContactLimit = () => {
+    const plan = getUserPlan();
+    switch (plan) {
+      case 'free': return 500;
+      case 'pro': return 10000;
+      case 'enterprise': return -1; // 无限制
+      default: return 500;
+    }
+  };
+
+  const contactLimit = getContactLimit();
+  const isAtLimit = contactLimit !== -1 && contacts.length >= contactLimit;
+
   useEffect(() => {
       fetchContacts()
   }, [])
@@ -107,7 +126,15 @@ export default function ContactsPage() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Contacts</p>
-              <p className="text-2xl font-bold text-gray-900">{contacts.length}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {contacts.length}
+                {contactLimit !== -1 && (
+                  <span className="text-sm font-normal text-gray-500"> / {contactLimit}</span>
+                )}
+              </p>
+              {isAtLimit && (
+                <p className="text-xs text-red-600 mt-1">Contact limit reached. Upgrade to add more contacts.</p>
+              )}
             </div>
           </div>
         </div>
