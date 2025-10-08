@@ -213,7 +213,7 @@ export default function ApiKeysPage() {
                 <li>• POST /contacts - Create contact</li>
                 <li>• GET /campaigns - List campaigns</li>
                 <li>• POST /campaigns - Create campaign</li>
-                <li>• POST /campaigns/{id}/send - Send campaign</li>
+                <li>• POST /campaigns/&#123;id&#125;/send - Send campaign</li>
                 <li>• GET /analytics - Get analytics data</li>
               </ul>
             </div>
