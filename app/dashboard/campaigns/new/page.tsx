@@ -263,7 +263,7 @@ export default function NewCampaignPage() {
   // Fetch real contacts from API (static export mode)
   useEffect(() => {
     // Static export mode: always fetch contacts
-    fetchAvailableContacts()
+      fetchAvailableContacts()
   }, [])
 
   const fetchAvailableContacts = async () => {

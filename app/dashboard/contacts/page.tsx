@@ -22,7 +22,7 @@ export default function ContactsPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([])
 
   useEffect(() => {
-    fetchContacts()
+      fetchContacts()
   }, [])
 
   const fetchContacts = async () => {
@@ -60,7 +60,7 @@ export default function ContactsPage() {
 
   const filteredContacts = contacts.filter(contact => {
     const matchesSearch = contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         contact.email.toLowerCase().includes(searchTerm.toLowerCase())
+      contact.email.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = selectedStatus === 'all' || contact.status === selectedStatus
     const matchesTags = selectedTags.length === 0 || 
                        selectedTags.some(tag => contact.tags.includes(tag))
@@ -246,7 +246,7 @@ export default function ContactsPage() {
                       {contact.tags.map((tag) => (
                         <span key={tag} className="inline-flex px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
                           {tag}
-                        </span>
+                      </span>
                       ))}
                     </div>
                   </td>
@@ -265,7 +265,7 @@ export default function ContactsPage() {
                   </td>
                 </tr>
               ))}
-            </tbody>
+          </tbody>
           </table>
         </div>
       </div>
@@ -279,8 +279,8 @@ export default function ContactsPage() {
           <p className="mt-1 text-sm text-gray-500">Get started by adding your first contact.</p>
           <div className="mt-6">
             <button className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
-              Add Contact
-            </button>
+                Add Contact
+              </button>
           </div>
         </div>
       )}

@@ -66,7 +66,10 @@ export default function PricingPage() {
         'Dedicated support',
         'Advanced segmentation',
         'API access',
-        'Custom integrations'
+        'Custom integrations',
+        'White-label solution',
+        'SLA guarantee',
+        'Custom onboarding'
       ],
       cta: 'Contact Sales',
       popular: false
@@ -115,8 +118,8 @@ export default function PricingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-between items-center">
             <Link href="/" className="text-2xl font-bold text-gray-900">
-              NovaMail
-            </Link>
+                NovaMail
+              </Link>
             <div className="flex space-x-4">
               <Link href="/login" className="text-gray-600 hover:text-gray-900">
                 Sign In
@@ -130,7 +133,7 @@ export default function PricingPage() {
       </div>
 
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Simple, transparent pricing
@@ -138,8 +141,8 @@ export default function PricingPage() {
           <p className="text-xl text-gray-600 mb-8">
             Choose the plan that's right for your business
           </p>
-          
-          {/* Billing Toggle */}
+            
+            {/* Billing Toggle */}
           <div className="flex items-center justify-center mb-8">
             <span className={`mr-3 ${billingCycle === 'monthly' ? 'text-gray-900' : 'text-gray-500'}`}>
               Monthly
@@ -153,19 +156,19 @@ export default function PricingPage() {
                   billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
-            </button>
+                </button>
             <span className={`ml-3 ${billingCycle === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
-              Yearly
+                  Yearly
               <span className="ml-1 text-sm text-green-600">(Save 20%)</span>
-            </span>
+                    </span>
           </div>
         </div>
 
-        {/* Pricing Cards */}
+      {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {plans.map((plan) => (
             <div
-              key={plan.id}
+                key={plan.id}
               className={`bg-white rounded-lg shadow-lg p-8 relative ${
                 plan.popular ? 'ring-2 ring-blue-500 scale-105' : ''
               }`}
@@ -174,7 +177,7 @@ export default function PricingPage() {
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
                     Most Popular
-                  </span>
+                        </span>
                 </div>
               )}
               
@@ -206,25 +209,25 @@ export default function PricingPage() {
                 ))}
               </ul>
 
-              <button
-                onClick={() => handleSubscribe(plan.id)}
+                <button
+                  onClick={() => handleSubscribe(plan.id)}
                 className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
                   plan.popular
-                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      ? 'bg-blue-600 text-white hover:bg-blue-700'
                     : 'bg-gray-900 text-white hover:bg-gray-800'
-                }`}
-              >
+                  }`}
+                >
                 {plan.cta}
-              </button>
-            </div>
+                </button>
+                      </div>
           ))}
-        </div>
+      </div>
 
-        {/* FAQ Section */}
+      {/* FAQ Section */}
         <div className="mt-16 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">
             Frequently Asked Questions
-          </h2>
+            </h2>
           <div className="max-w-3xl mx-auto text-left space-y-6">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">

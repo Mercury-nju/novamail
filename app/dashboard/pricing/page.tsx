@@ -17,32 +17,40 @@ export default function PricingPage() {
 
   const plans: PricingPlan[] = [
     {
-      id: 'starter',
-      name: 'Starter',
-      price: billingCycle === 'monthly' ? 9 : 90,
+      id: 'free',
+      name: 'Free',
+      price: 0,
       emails: 1000,
       features: [
-        '1,000 emails per month',
+        'Up to 500 contacts',
+        'Up to 1,000 emails per month',
         'Basic email templates',
-        'Contact management',
+        'AI email generation',
+        'Basic analytics',
         'Email support',
-        'Basic analytics'
+        'Contact import (CSV, TXT)',
+        'Basic contact groups'
       ],
       current: true
     },
     {
       id: 'pro',
       name: 'Pro',
-      price: billingCycle === 'monthly' ? 29 : 290,
-      emails: 10000,
+      price: billingCycle === 'monthly' ? 19 : 190,
+      emails: 50000,
       features: [
-        '10,000 emails per month',
+        'Up to 10,000 contacts',
+        'Up to 50,000 emails per month',
         'Advanced email templates',
         'AI email generation',
         'Advanced analytics',
         'Priority support',
-        'Custom branding',
-        'A/B testing'
+        'Contact segmentation',
+        'A/B testing',
+        'Excel import support',
+        'Advanced contact groups',
+        'Email scheduling',
+        'Custom branding'
       ],
       popular: true,
       current: false
@@ -50,17 +58,21 @@ export default function PricingPage() {
     {
       id: 'enterprise',
       name: 'Enterprise',
-      price: billingCycle === 'monthly' ? 99 : 990,
+      price: billingCycle === 'monthly' ? 0 : 0, // Custom pricing
       emails: -1, // Unlimited
       features: [
+        'Unlimited contacts',
         'Unlimited emails',
         'Custom email templates',
         'Advanced AI features',
         'Custom analytics',
         'Dedicated support',
-        'White-label solution',
+        'Advanced segmentation',
         'API access',
-        'Custom integrations'
+        'Custom integrations',
+        'White-label solution',
+        'SLA guarantee',
+        'Custom onboarding'
       ],
       current: false
     }
@@ -136,8 +148,14 @@ export default function PricingPage() {
             <div className="text-center">
               <h3 className="text-2xl font-bold text-gray-900">{plan.name}</h3>
               <div className="mt-4">
-                <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
-                <span className="text-gray-600">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>
+                {plan.id === 'enterprise' ? (
+                  <span className="text-2xl font-bold text-gray-900">Consult for Price</span>
+                ) : (
+                  <>
+                    <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
+                    <span className="text-gray-600">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>
+                  </>
+                )}
               </div>
               <p className="text-gray-600 mt-2">
                 {plan.emails === -1 ? 'Unlimited' : plan.emails.toLocaleString()} emails per month
@@ -172,7 +190,7 @@ export default function PricingPage() {
                       : 'bg-gray-900 text-white hover:bg-gray-800'
                   }`}
                 >
-                  {plan.id === 'starter' ? 'Downgrade' : 'Upgrade to Pro'}
+                  {plan.id === 'free' ? 'Current Plan' : plan.id === 'enterprise' ? 'Contact Sales' : 'Upgrade to Pro'}
                 </button>
               )}
             </div>
