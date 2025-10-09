@@ -907,6 +907,62 @@ async function handleAIGenerateEmail(request, env) {
       });
     }
 
+    // 临时禁用 AI 生成，使用模拟内容
+    const mockSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
+    const mockBody = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+          <h1 style="margin: 0; font-size: 28px;">${campaignData.purpose}</h1>
+          <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">by ${campaignData.businessName || 'Our Company'}</p>
+        </div>
+        
+        <div style="padding: 30px 0;">
+          <h2 style="color: #333; margin-bottom: 20px;">Introducing ${campaignData.productService || 'Our New Product'}</h2>
+          <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+            We're excited to share ${campaignData.purpose.toLowerCase()} with you. This is a great opportunity to experience our premium services and discover what makes us different.
+          </p>
+          
+          <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #333; margin-top: 0;">Key Benefits:</h3>
+            <ul style="color: #666; line-height: 1.6;">
+              <li>Professional quality and service</li>
+              <li>Easy to use and implement</li>
+              <li>Comprehensive support</li>
+              <li>Proven results</li>
+            </ul>
+          </div>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Get Started Now</a>
+          </div>
+          
+          <p style="color: #666; line-height: 1.6;">
+            Don't miss this opportunity to transform your business. Our team is here to help you succeed.
+          </p>
+        </div>
+        
+        <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+          <p>Best regards,<br>
+          <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
+          <p style="margin-top: 20px;">
+            <a href="#" style="color: #667eea; text-decoration: none;">Unsubscribe</a> | 
+            <a href="#" style="color: #667eea; text-decoration: none;">Contact Us</a>
+          </p>
+        </div>
+      </div>
+    `;
+    
+    return new Response(JSON.stringify({
+      success: true,
+      subject: mockSubject,
+      body: mockBody,
+      template: selectedTemplate || 'ai-generated',
+      note: 'Using enhanced mock content (AI temporarily disabled)',
+      timestamp: new Date().toISOString()
+    }), {
+      headers: corsHeaders
+    });
+
     // 检测用户输入语言（优先英文）
     const isChineseInput = /[\u4e00-\u9fff]/.test(
       (campaignData.businessName || '') + 
