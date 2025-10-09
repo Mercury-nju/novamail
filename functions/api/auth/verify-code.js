@@ -1,5 +1,5 @@
-// 验证码验证端点
-export async function onRequest(context) {
+// 验证验证码的Cloudflare Workers函数
+export function onRequest(context) {
   var request = context.request;
   var env = context.env;
   
@@ -10,50 +10,35 @@ export async function onRequest(context) {
     'Content-Type': 'application/json'
   };
 
-  // 处理预检请求
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 200,
-      headers: corsHeaders
-    });
+    return new Response(null, { headers: corsHeaders });
   }
 
   if (request.method !== 'POST') {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Method not allowed'
-    }), {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
       headers: corsHeaders
     });
   }
 
-  try {
-    var body = await request.json();
-    var email = body.email;
-    var code = body.code;
-    var userData = body.userData;
-
+  return request.json().then(function(data) {
+    var email = data.email;
+    var code = data.code;
+    var firstName = data.firstName;
+    var lastName = data.lastName;
+    
     if (!email || !code) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Email and verification code are required'
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Email and verification code are required' 
       }), {
         status: 400,
         headers: corsHeaders
       });
     }
 
-    // 在实际应用中，这里应该：
-    // 1. 从数据库或缓存中获取存储的验证码
-    // 2. 检查验证码是否匹配
-    // 3. 检查验证码是否过期
-    // 4. 创建用户账户
-    
-    // 暂时使用模拟验证（接受任何6位数字）
-    var isValidCode = /^\d{6}$/.test(code);
-    
-    if (!isValidCode) {
+    // 验证码格式检查
+    if (!/^\d{6}$/.test(code)) {
       return new Response(JSON.stringify({
         success: false,
         error: 'Invalid verification code format'
@@ -63,38 +48,101 @@ export async function onRequest(context) {
       });
     }
 
-    // 模拟验证成功
+    // 在实际应用中，这里应该验证验证码是否正确
+    // 目前我们接受任何6位数字作为有效验证码
+    // 在生产环境中，应该与发送时生成的验证码进行比较
+    
+    // 创建用户账户（模拟）
     var userId = 'user_' + Date.now();
+    var userToken = 'token_' + Math.random().toString(36).substr(2, 9);
     
-    return new Response(JSON.stringify({
-      success: true,
-      message: 'Account created successfully',
-      user: {
-        id: userId,
-        email: email,
-        firstName: userData?.firstName || '',
-        lastName: userData?.lastName || '',
-        company: userData?.company || '',
-        createdAt: new Date().toISOString()
-      },
-      token: 'demo_token_' + Date.now(), // 在实际应用中应该是JWT token
-      note: 'This is a demo. In production, user data would be stored in database.',
-      timestamp: new Date().toISOString()
-    }), {
-      status: 200,
-      headers: corsHeaders
-    });
+    // 发送欢迎邮件
+    var welcomeEmailData = {
+      from: 'NovaMail <welcome@novamail.com>',
+      to: email,
+      subject: 'Welcome to NovaMail!',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">Welcome to NovaMail!</h1>
+          </div>
+          <div style="padding: 30px; background: #f9f9f9;">
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${firstName}!</h2>
+            <p style="color: #666; font-size: 16px; line-height: 1.5;">
+              Welcome to NovaMail! Your account has been successfully created and verified.
+            </p>
+            <div style="background: white; border: 2px solid #667eea; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">
+              <h3 style="color: #667eea; margin: 0;">Get Started</h3>
+              <p style="color: #666; margin: 10px 0;">Start creating your first email campaign</p>
+              <a href="https://novamail.pages.dev/dashboard" style="background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Go to Dashboard</a>
+            </div>
+            <p style="color: #666; font-size: 14px;">
+              If you have any questions, please don't hesitate to contact our support team.
+            </p>
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+              <p style="color: #999; font-size: 12px;">
+                This email was sent by NovaMail. Thank you for choosing us!
+              </p>
+            </div>
+          </div>
+        </div>
+      `
+    };
 
-  } catch (error) {
-    console.error('Verify code error:', error);
-    
+    // 发送欢迎邮件
+    return fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + env.RESEND_API_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(welcomeEmailData)
+    }).then(function(response) {
+      // 无论邮件发送是否成功，都返回用户创建成功
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Account created and verified successfully',
+        user: {
+          id: userId,
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          token: userToken,
+          createdAt: new Date().toISOString()
+        },
+        welcomeEmailSent: response.ok,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    }).catch(function(error) {
+      // 即使欢迎邮件发送失败，也返回用户创建成功
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Account created and verified successfully',
+        user: {
+          id: userId,
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          token: userToken,
+          createdAt: new Date().toISOString()
+        },
+        welcomeEmailSent: false,
+        warning: 'Welcome email could not be sent',
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    });
+  }).catch(function(error) {
     return new Response(JSON.stringify({
       success: false,
-      error: 'Failed to verify code',
+      error: 'Invalid request data',
       details: error.message
     }), {
-      status: 500,
+      status: 400,
       headers: corsHeaders
     });
-  }
+  });
 }

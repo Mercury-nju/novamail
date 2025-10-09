@@ -1,5 +1,5 @@
-// 验证码发送端点
-export async function onRequest(context) {
+// 发送验证码的Cloudflare Workers函数
+export function onRequest(context) {
   var request = context.request;
   var env = context.env;
   
@@ -10,32 +10,24 @@ export async function onRequest(context) {
     'Content-Type': 'application/json'
   };
 
-  // 处理预检请求
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 200,
-      headers: corsHeaders
-    });
+    return new Response(null, { headers: corsHeaders });
   }
 
   if (request.method !== 'POST') {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Method not allowed'
-    }), {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
       headers: corsHeaders
     });
   }
 
-  try {
-    var body = await request.json();
-    var email = body.email;
-
+  return request.json().then(function(data) {
+    var email = data.email;
+    
     if (!email) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Email is required'
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Email is required' 
       }), {
         status: 400,
         headers: corsHeaders
@@ -45,39 +37,85 @@ export async function onRequest(context) {
     // 生成6位验证码
     var verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
     
-    // 在实际应用中，这里应该：
-    // 1. 发送邮件到用户邮箱
-    // 2. 将验证码存储到数据库或缓存中
-    // 3. 设置过期时间（如10分钟）
-    
-    // 暂时使用模拟发送
-    console.log('Verification code for ' + email + ': ' + verificationCode);
-    
-    // 模拟邮件发送延迟
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // 使用Resend API发送邮件
+    var emailData = {
+      from: 'NovaMail <noreply@novamail.com>',
+      to: email,
+      subject: 'Your NovaMail Verification Code',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">NovaMail</h1>
+          </div>
+          <div style="padding: 30px; background: #f9f9f9;">
+            <h2 style="color: #333; margin-bottom: 20px;">Verify Your Email Address</h2>
+            <p style="color: #666; font-size: 16px; line-height: 1.5;">
+              Thank you for signing up for NovaMail! To complete your registration, please use the verification code below:
+            </p>
+            <div style="background: white; border: 2px solid #667eea; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">
+              <span style="font-size: 32px; font-weight: bold; color: #667eea; letter-spacing: 5px;">${verificationCode}</span>
+            </div>
+            <p style="color: #666; font-size: 14px;">
+              This code will expire in 10 minutes. If you didn't request this code, please ignore this email.
+            </p>
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+              <p style="color: #999; font-size: 12px;">
+                This email was sent by NovaMail. If you have any questions, please contact our support team.
+              </p>
+            </div>
+          </div>
+        </div>
+      `
+    };
 
-    return new Response(JSON.stringify({
-      success: true,
-      message: 'Verification code sent successfully',
-      email: email,
-      code: verificationCode, // 在实际应用中不应该返回验证码
-      note: 'This is a demo. In production, the code would be sent via email.',
-      timestamp: new Date().toISOString()
-    }), {
-      status: 200,
-      headers: corsHeaders
+    // 调用Resend API
+    return fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + env.RESEND_API_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(emailData)
+    }).then(function(response) {
+      if (response.ok) {
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Verification code sent successfully',
+          code: verificationCode, // 在开发环境中返回验证码用于测试
+          timestamp: new Date().toISOString()
+        }), {
+          headers: corsHeaders
+        });
+      } else {
+        return response.text().then(function(errorText) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'Failed to send verification code',
+            details: errorText
+          }), {
+            status: 500,
+            headers: corsHeaders
+          });
+        });
+      }
+    }).catch(function(error) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Network error while sending verification code',
+        details: error.message
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
     });
-
-  } catch (error) {
-    console.error('Send verification error:', error);
-    
+  }).catch(function(error) {
     return new Response(JSON.stringify({
       success: false,
-      error: 'Failed to send verification code',
+      error: 'Invalid request data',
       details: error.message
     }), {
-      status: 500,
+      status: 400,
       headers: corsHeaders
     });
-  }
+  });
 }

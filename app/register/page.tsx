@@ -43,14 +43,29 @@ export default function RegisterPage() {
         return
       }
 
-      // 模拟验证码发送（本地模式）
-      console.log('Sending verification code to:', formData.email)
+      // 调用真实的验证码发送API
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/send-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email
+        })
+      })
+
+      const result = await response.json()
       
-      // 模拟网络延迟
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      toast.success('Verification code sent! Please check your email.')
-      setStep('verify')
+      if (result.success) {
+        toast.success('Verification code sent! Please check your email.')
+        setStep('verify')
+        // 在开发环境中显示验证码（仅用于测试）
+        if (result.code) {
+          console.log('Verification code for testing:', result.code)
+        }
+      } else {
+        toast.error(result.error || 'Failed to send verification code')
+      }
     } catch (error: any) {
       console.error('Send verification error:', error)
       toast.error(error.message || 'Failed to send verification code')
@@ -69,22 +84,32 @@ export default function RegisterPage() {
         return
       }
 
-      // 模拟验证码验证（本地模式）
-      console.log('Verifying code:', verificationCode, 'for email:', formData.email)
+      // 调用真实的验证码验证API
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/verify-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          code: verificationCode,
+          firstName: formData.firstName,
+          lastName: formData.lastName
+        })
+      })
+
+      const result = await response.json()
       
-      // 模拟网络延迟
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // 接受任何6位数字作为有效验证码
-      if (/^\d{6}$/.test(verificationCode)) {
+      if (result.success) {
         toast.success('Account created successfully!')
         // 存储用户信息到本地存储
         localStorage.setItem('user-email', formData.email)
         localStorage.setItem('user-name', `${formData.firstName} ${formData.lastName}`)
-        localStorage.setItem('user-token', 'demo_token_' + Date.now())
+        localStorage.setItem('user-token', result.user.token)
+        localStorage.setItem('user-id', result.user.id)
         router.push('/dashboard')
       } else {
-        toast.error('Invalid verification code. Please enter 6 digits.')
+        toast.error(result.error || 'Invalid verification code')
       }
     } catch (error: any) {
       console.error('Registration error:', error)
@@ -98,13 +123,28 @@ export default function RegisterPage() {
     setIsResending(true)
 
     try {
-      // 模拟重新发送验证码（本地模式）
-      console.log('Resending verification code to:', formData.email)
+      // 调用真实的验证码发送API
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/send-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email
+        })
+      })
+
+      const result = await response.json()
       
-      // 模拟网络延迟
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      toast.success('New verification code sent!')
+      if (result.success) {
+        toast.success('New verification code sent!')
+        // 在开发环境中显示验证码（仅用于测试）
+        if (result.code) {
+          console.log('New verification code for testing:', result.code)
+        }
+      } else {
+        toast.error(result.error || 'Failed to resend verification code')
+      }
     } catch (error: any) {
       console.error('Resend verification error:', error)
       toast.error(error.message || 'Failed to resend verification code')
@@ -131,9 +171,9 @@ export default function RegisterPage() {
             <p className="mt-2 text-sm text-gray-600">
               We've sent a 6-digit verification code to <strong>{formData.email}</strong>
             </p>
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800">
-                <strong>Demo Mode:</strong> For testing, you can use any 6-digit number as the verification code.
+            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-800">
+                <strong>Check your email:</strong> We've sent a 6-digit verification code to your email address.
               </p>
             </div>
           </motion.div>
