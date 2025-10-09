@@ -133,8 +133,8 @@ export default function HomePage() {
               whileHover={{ scale: 1.05 }}
               className="flex items-center"
             >
-              <Link href="/" className="text-2xl font-bold text-primary-600">
-                NovaMail
+              <Link href="/" className="flex items-center">
+                <img src="/logo-horizontal.svg" alt="NovaMail Logo" className="h-8 w-auto" />
               </Link>
             </motion.div>
             <div className="flex items-center space-x-4">

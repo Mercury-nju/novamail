@@ -134,8 +134,8 @@ export default function DashboardLayout({
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
           <div className="flex h-16 items-center px-4">
-            <Link href="/dashboard" className="text-2xl font-bold text-primary-600">
-              NovaMail
+            <Link href="/dashboard" className="flex items-center">
+              <img src="/logo-horizontal.svg" alt="NovaMail Logo" className="h-8 w-auto" />
             </Link>
           </div>
           <nav className="flex-1 px-4 py-4 space-y-2">

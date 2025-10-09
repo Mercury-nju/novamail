@@ -23,11 +23,35 @@ function LoginForm() {
     setLoading(true)
     
     try {
-      // 简化的登录处理，不使用NextAuth
-      console.log('Email login attempt:', email)
-      alert('Email login is temporarily disabled. Please use Google login.')
-    } catch (error) {
-      alert('Login failed')
+      // 调用邮箱登录API
+      const response = await fetch('https://novamail.world/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      })
+
+      const result = await response.json()
+      
+      if (result.success) {
+        // 存储用户信息到本地存储
+        localStorage.setItem('user-email', email)
+        localStorage.setItem('user-name', result.user.name || email)
+        localStorage.setItem('user-token', result.user.token)
+        localStorage.setItem('user-id', result.user.id)
+        
+        // 重定向到仪表板
+        router.push(callbackUrl)
+      } else {
+        alert(result.error || 'Login failed')
+      }
+    } catch (error: any) {
+      console.error('Login error:', error)
+      alert('Login failed: ' + error.message)
     } finally {
       setLoading(false)
     }
