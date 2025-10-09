@@ -20,9 +20,15 @@ export default function ContactsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // 检查用户订阅等级
   const getUserPlan = () => {
+    if (!mounted) return 'free'
     // 从localStorage获取用户订阅状态
     const subscriptionData = localStorage.getItem('user-subscription');
     if (subscriptionData) {
@@ -37,6 +43,7 @@ export default function ContactsPage() {
   };
 
   const getContactLimit = () => {
+    if (!mounted) return 500
     const subscriptionData = localStorage.getItem('user-subscription');
     if (subscriptionData) {
       try {

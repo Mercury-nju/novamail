@@ -1,12 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function PricingPage() {
   const router = useRouter();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const plans = [
     {
@@ -96,9 +101,11 @@ export default function PricingPage() {
         router.push('/login?redirect=/pricing');
       } else {
         // 已登录用户直接跳转到Creem.io支付页面
-        const customerEmail = localStorage.getItem('user-email') || 
-                             sessionStorage.getItem('user-email') || 
-                             'user@example.com';
+        const customerEmail = mounted ? (
+          localStorage.getItem('user-email') || 
+          sessionStorage.getItem('user-email') || 
+          'user@example.com'
+        ) : 'user@example.com';
         
         // 根据选择的计费周期跳转到对应的支付页面
         const checkoutUrl = billingCycle === 'yearly' 

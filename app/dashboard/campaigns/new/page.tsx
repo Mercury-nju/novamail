@@ -17,6 +17,11 @@ import DOMPurify from 'dompurify'
 
 export default function NewCampaignPage() {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Static export mode: no session check
   // useEffect(() => {
@@ -178,6 +183,7 @@ export default function NewCampaignPage() {
 
     // 检查用户订阅等级和邮件发送限制
     const getUserPlan = () => {
+      if (!mounted) return 'free'
       // 从localStorage获取用户订阅状态
       const subscriptionData = localStorage.getItem('user-subscription');
       if (subscriptionData) {
@@ -192,6 +198,7 @@ export default function NewCampaignPage() {
     };
 
     const getEmailLimit = () => {
+      if (!mounted) return 1000
       const subscriptionData = localStorage.getItem('user-subscription');
       if (subscriptionData) {
         try {

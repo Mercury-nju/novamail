@@ -10,6 +10,11 @@ function PaymentSuccessContent() {
   const [email, setEmail] = useState('');
   const [isActivating, setIsActivating] = useState(true);
   const [activationStatus, setActivationStatus] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const plan = searchParams.get('plan');
@@ -28,9 +33,11 @@ function PaymentSuccessContent() {
       
       // 获取用户邮箱
       const userEmailFromStorage = userEmail || 
-        localStorage.getItem('user-email') || 
-        sessionStorage.getItem('user-email') || 
-        'user@example.com';
+        (mounted ? (
+          localStorage.getItem('user-email') || 
+          sessionStorage.getItem('user-email') || 
+          'user@example.com'
+        ) : 'user@example.com');
 
       // 调用支付成功回调API
       const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/payment/success', {

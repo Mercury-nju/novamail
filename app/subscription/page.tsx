@@ -21,6 +21,11 @@ export default function SubscriptionPage() {
   const [creating, setCreating] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     fetchPlans();
@@ -62,9 +67,11 @@ export default function SubscriptionPage() {
     
     try {
       // 已登录用户，从多种存储方式获取邮箱
-      const customerEmail = localStorage.getItem('user-email') || 
-                           sessionStorage.getItem('user-email') || 
-                           'user@example.com';
+      const customerEmail = mounted ? (
+        localStorage.getItem('user-email') || 
+        sessionStorage.getItem('user-email') || 
+        'user@example.com'
+      ) : 'user@example.com';
 
       const response = await fetch('/api/creem/subscriptions', {
         method: 'POST',
