@@ -881,17 +881,17 @@ async function handleAIGenerateEmail(request, env) {
     // 检查API密钥，如果没有配置则使用模拟AI
     if (!env.DASHSCOPE_API_KEY) {
       // 使用模拟AI生成内容
-      const mockSubject = `🎉 ${campaignData.businessName || '我们'}的特别优惠！`;
+      const mockSubject = `🎉 Special Offer from ${campaignData.businessName || 'Our Company'}!`;
       const mockBody = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>亲爱的朋友，</h2>
-          <p>我们很高兴为您介绍${campaignData.productService || '我们的产品'}！</p>
-          <p>${campaignData.purpose || '这是一个绝佳的机会，让您体验我们的优质服务。'}</p>
+          <h2>Dear Friend,</h2>
+          <p>We're excited to introduce ${campaignData.productService || 'our products'} to you!</p>
+          <p>${campaignData.purpose || 'This is a great opportunity to experience our premium services.'}</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${campaignData.targetUrl || '#'}" style="background: #667eea; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">立即了解</a>
+            <a href="${campaignData.targetUrl || '#'}" style="background: #667eea; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Learn More</a>
           </div>
-          <p>感谢您的关注！</p>
-          <p>${campaignData.businessName || 'NovaMail'} 团队</p>
+          <p>Thank you for your attention!</p>
+          <p>${campaignData.businessName || 'NovaMail'} Team</p>
         </div>
       `;
       
@@ -907,127 +907,200 @@ async function handleAIGenerateEmail(request, env) {
       });
     }
 
+    // 检测用户输入语言（优先英文）
+    const isChineseInput = /[\u4e00-\u9fff]/.test(
+      (campaignData.businessName || '') + 
+      (campaignData.productService || '') + 
+      (campaignData.purpose || '')
+    );
+
     // 构建AI提示词
-    let systemPrompt = "你是一个专业的邮件营销专家，擅长创作吸引人的营销邮件内容。";
+    let systemPrompt = "";
     let userPrompt = "";
 
     if (emailMode === 'professional') {
-      userPrompt = `请为以下业务生成专业的营销邮件：
+      // 专业模板提示词
+      const templateInstructions = {
+        'modern-promo': {
+          style: "modern promotional advertising style with gradients and bold design",
+          tone: "exciting and urgent",
+          structure: "gradient header, prominent headline, key benefits list, strong call-to-action button",
+          goal: "drive immediate action through limited-time offers",
+          colors: "blue to purple gradients, white text on colored backgrounds",
+          elements: "gradient backgrounds, bold headlines, benefit boxes, prominent CTA buttons"
+        },
+        'newsletter': {
+          style: "professional newsletter format with clean sections",
+          tone: "informative and engaging",
+          structure: "header with title, featured content sections, industry insights, read more links",
+          goal: "share valuable information and maintain engagement",
+          colors: "green and blue accents, clean white backgrounds",
+          elements: "sectioned content, article previews, professional layout"
+        },
+        'ecommerce': {
+          style: "product-focused e-commerce design with product showcases",
+          tone: "appealing and persuasive",
+          structure: "product showcase grid, pricing highlights, shopping incentives, discount banners",
+          goal: "increase product awareness and sales conversions",
+          colors: "orange and red gradients, product-focused design",
+          elements: "product grids, discount badges, shopping CTAs, pricing highlights"
+        },
+        'event': {
+          style: "invitation and event-focused design with welcoming elements",
+          tone: "welcoming and excited",
+          structure: "invitation header with emoji, event details box, RSVP buttons, welcoming design",
+          goal: "attract attendance and generate RSVPs",
+          colors: "pink and purple gradients, warm inviting colors",
+          elements: "invitation cards, event detail boxes, RSVP buttons, welcoming emojis"
+        }
+      };
 
-业务名称: ${campaignData.businessName || '我们的公司'}
-产品/服务: ${campaignData.productService || '我们的产品'}
-邮件目的: ${campaignData.purpose || '推广产品'}
-目标链接: ${campaignData.targetUrl || ''}
-语调风格: ${toneStyle || 'friendly'}
-
-请生成包含以下内容的邮件：
-1. 吸引人的主题行
-2. 专业的邮件正文
-3. 清晰的行动号召
-
-邮件应该专业、有说服力，并且符合营销最佳实践。`;
+      const templateInfo = templateInstructions[selectedTemplate] || templateInstructions['modern-promo'];
+      
+      if (isChineseInput) {
+        systemPrompt = `你是一个专业的邮件营销设计师。生成符合${templateInfo.style}的邮件内容。创建能够实现目标：${templateInfo.goal}的邮件。要求：- 生成完整的邮件正文内容（div容器包含内容）- 使用专业的HTML邮件格式和内联CSS - 遵循邮件安全设计实践（最大宽度：600px，网页安全字体）- 使用${templateInfo.tone}的语调 - 结构：${templateInfo.structure} - 包含适当的邮件客户端兼容性 - 使其具有移动响应式设计 - 以<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">开始 - 以</div>结束 - 使用${templateInfo.colors}配色方案 - 包含${templateInfo.elements}指定元素 - 使其视觉吸引人且专业 - 使用现代邮件设计，包含渐变、颜色和视觉元素 - 包含带有适当样式的行动号召按钮生成完整的邮件HTML内容，不要解释或完整的HTML文档。`;
+        
+        userPrompt = `基于以下信息创建自然、吸引人的${templateInfo.style}邮件：活动目的：${campaignData.purpose} 业务名称：${campaignData.businessName || '未指定'} 产品/服务：${campaignData.productService || '通用产品'} 目标URL：${campaignData.targetUrl || '无特定链接'} 模板类型：${selectedTemplate} 重要：- 编写自然、吸引人的邮件内容，流畅良好 - 不要只是列出上述信息，要创造引人入胜的叙述 - 使用活动目的来制作有趣的故事 - 使其听起来专业但对话式 - 包含有关业务和产品的相关细节 - 创建符合上下文的自然行动号召 - 在整个邮件中自然地使用业务名称 - 将产品/服务描述融入内容中 - 使目标URL在行动号召中感觉自然使用提供的目标URL作为行动号召按钮（如果提供）。使其具有适当的样式、颜色和布局的视觉吸引力。`;
+      } else {
+        systemPrompt = `You are an expert email marketing designer. Generate email content in ${templateInfo.style}. Create an email that achieves the goal: ${templateInfo.goal}. Requirements: - Generate ONLY the email body content (div container with content) - Use professional HTML email formatting with inline CSS - Follow email-safe design practices (max-width: 600px, web-safe fonts) - Use ${templateInfo.tone} tone of voice - Structure: ${templateInfo.structure} - Include proper email client compatibility - Make it mobile-responsive with appropriate styling - Start with <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;"> - End with </div> - Use ${templateInfo.colors} for color scheme - Include ${templateInfo.elements} as specified - Make it visually appealing and professional - Use modern email design with gradients, colors, and visual elements - Include call-to-action buttons with proper styling Generate ONLY the email body HTML content, no explanations or full HTML document.`;
+        
+        userPrompt = `Create a natural, engaging ${templateInfo.style} email based on this information: Campaign Purpose: ${campaignData.purpose} Business Name: ${campaignData.businessName || 'Not specified'} Product/Service: ${campaignData.productService || 'General offerings'} Target URL: ${campaignData.targetUrl || 'No specific link'} Template Type: ${selectedTemplate} IMPORTANT: - Write natural, engaging email content that flows well - Don't just list the information above - create a compelling narrative - Use the campaign purpose to craft an interesting story - Make it sound professional but conversational - Include relevant details about the business and offerings - Create a natural call-to-action that fits the context - Use the business name throughout the email naturally - Incorporate the product/service description into the content - Make the target URL feel natural in the call-to-action Use the target URL for call-to-action buttons if provided. Make it visually appealing with proper styling, colors, and layout.`;
+      }
     } else {
-      userPrompt = `请为以下业务生成简洁的营销邮件：
-
-业务名称: ${campaignData.businessName || '我们的公司'}
-产品/服务: ${campaignData.productService || '我们的产品'}
-邮件目的: ${campaignData.purpose || '推广产品'}
-目标链接: ${campaignData.targetUrl || ''}
-语调风格: ${toneStyle || 'friendly'}
-
-请生成包含以下内容的邮件：
-1. 简洁明了的主题行
-2. 简洁的邮件正文
-3. 明确的行动号召
-
-邮件应该简洁、直接、易于理解。`;
+      // 简单邮件提示词
+      if (isChineseInput) {
+        systemPrompt = `你是一个专业的邮件写作专家。创建遵循适当邮件格式的邮件正文内容。要求：- 生成完整的邮件正文内容（div容器包含内容）- 使用适当的邮件结构：问候语、正文段落、结尾、签名 - 使用简洁的HTML邮件格式和内联CSS - 保持简单但专业（最大宽度：600px）- 使用网页安全字体（Arial, sans-serif）- 包含适当的问候语（亲爱的[姓名]，或您好，）- 包含适当的结尾（此致敬礼，真诚地，等）- 使其具有移动响应式 - 以<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">开始 - 以</div>结束 - 无按钮，无行动号召元素，无花哨样式 - 使用<p>标签进行适当的段落分隔 - 只是简洁、简单的文本内容，具有基本格式生成完整的邮件HTML内容，不要解释或完整的HTML文档。`;
+        
+        userPrompt = `基于以下信息编写自然、吸引人的简单邮件：活动目的：${campaignData.purpose} 业务名称：${campaignData.businessName || '未指定'} 产品/服务：${campaignData.productService || '通用产品'} 目标URL：${campaignData.targetUrl || '无特定链接'} 重要：- 遵循适当的邮件格式：问候语、正文段落、结尾、签名 - 以适当的问候语开始（亲爱的[姓名]，或您好，）- 编写自然、吸引人的邮件内容，流畅良好 - 不要只是列出上述信息，要创造引人入胜的叙述 - 使用活动目的来制作有趣的故事 - 使其听起来专业但对话式 - 包含有关业务和产品的相关细节 - 在整个邮件中自然地使用业务名称 - 将产品/服务描述融入内容中 - 以适当的结尾结束（此致敬礼，真诚地，等）和签名 - 无按钮，无行动号召元素，无花哨样式 - 使用<p>标签进行适当的段落分隔 - 只是简洁、简单的文本内容，具有基本格式 - 如果需要提及链接，只需将其作为纯文本包含创建清晰传达${campaignData.purpose}的直截了当的邮件。保持简单且基于文本，具有适当的邮件结构。`;
+      } else {
+        systemPrompt = `You are an expert email writer. Create ONLY the email body content (no DOCTYPE, html, head, or body tags) that follows proper email format. Requirements: - Generate ONLY the email body content (div container with content) - Use proper email structure: greeting, body paragraphs, closing, signature - Use clean HTML email formatting with inline CSS - Keep it simple but professional (max-width: 600px) - Use web-safe fonts (Arial, sans-serif) - Include proper greeting (Dear [Name], or Hello,) - Include proper sign-off (Best regards, Sincerely, etc.) - Make it mobile-responsive - Start with <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;"> - End with </div> - NO buttons, NO call-to-action elements, NO fancy styling - Use proper paragraph breaks with <p> tags - Just clean, simple text content with basic formatting Generate ONLY the email body HTML content, no explanations or full HTML document.`;
+        
+        userPrompt = `Write a natural, engaging simple email based on this information: Campaign Purpose: ${campaignData.purpose} Business Name: ${campaignData.businessName || 'Not specified'} Product/Service: ${campaignData.productService || 'General offerings'} Target URL: ${campaignData.targetUrl || 'No specific link'} IMPORTANT: - Follow proper email format: greeting, body paragraphs, closing, signature - Start with a proper greeting (Dear [Name], or Hello,) - Write natural, engaging email content that flows well - Don't just list the information above - create a compelling narrative - Use the campaign purpose to craft an interesting story - Make it sound professional but conversational - Include relevant details about the business and offerings - Use the business name naturally throughout the email - Incorporate the product/service description into the content naturally - End with proper closing (Best regards, Sincerely, etc.) and signature - NO buttons, NO call-to-action elements, NO fancy styling - Use proper paragraph breaks with <p> tags - Just clean, simple text content with basic formatting - If you need to mention a link, just include it as plain text Create a straightforward email that clearly communicates the ${campaignData.purpose}. Keep it simple and text-based with proper email structure.`;
+      }
     }
 
-    // 调用通义千问API
-    const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
+    // 调用通义千问API生成邮件内容
+    const contentResponse = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + env.DASHSCOPE_API_KEY,
-        'Content-Type': 'application/json'
+        'Authorization': `Bearer ${env.DASHSCOPE_API_KEY}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'qwen-turbo',
+        model: "qwen-turbo",
         input: {
           messages: [
             {
-              role: 'system',
+              role: "system",
               content: systemPrompt
             },
             {
-              role: 'user',
+              role: "user",
               content: userPrompt
             }
           ]
         },
         parameters: {
           temperature: 0.7,
-          max_tokens: 1500
+          max_tokens: 2000
         }
       })
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'AI service error',
-        details: errorText
-      }), {
-        status: 500,
-        headers: corsHeaders
-      });
+    if (!contentResponse.ok) {
+      throw new Error(`Tongyi API error: ${contentResponse.status}`);
     }
 
-    const aiResponse = await response.json();
-    
-    if (aiResponse.output && aiResponse.output.text) {
-      const content = aiResponse.output.text;
-      
-      // 解析AI生成的内容
-      const lines = content.split('\n').filter(line => line.trim());
-      let subject = '';
-      let body = '';
-      
-      // 简单解析：第一行通常是主题，其余是正文
-      if (lines.length > 0) {
-        subject = lines[0].replace(/^[0-9.]*\s*/, '').trim(); // 移除编号
-        body = lines.slice(1).join('\n').trim();
-      }
-      
-      // 如果没有解析到内容，使用原始内容
-      if (!subject && !body) {
-        subject = 'AI Generated Email';
-        body = content;
-      }
+    const contentResult = await contentResponse.json();
+    let generatedContent = contentResult.output?.text;
 
-      return new Response(JSON.stringify({
-        success: true,
-        subject: subject,
-        body: body,
-        template: selectedTemplate || 'ai-generated',
-        timestamp: new Date().toISOString()
-      }), {
-        headers: corsHeaders
-      });
-    } else {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Invalid AI response format'
-      }), {
-        status: 500,
-        headers: corsHeaders
-      });
+    if (!generatedContent) {
+      throw new Error('No content generated from Tongyi');
     }
+
+    // 清理HTML内容，确保只返回body内容
+    generatedContent = generatedContent.trim();
+
+    // 如果包含完整的HTML文档，提取body内容
+    if (generatedContent.includes('<!DOCTYPE') || generatedContent.includes('<html')) {
+      const bodyMatch = generatedContent.match(/<body[^>]*>([\s\S]*?)<\/body>/);
+      if (bodyMatch) {
+        generatedContent = bodyMatch[1].trim();
+      }
+    }
+
+    // 清理不兼容的HTML标签
+    generatedContent = generatedContent
+      .replace(/<h([1-6])[^>]*><font[^>]*>/gi, '<h$1>')
+      .replace(/<\/font><\/h([1-6])>/gi, '</h$1>')
+      .replace(/<font[^>]*>/gi, '<span>')
+      .replace(/<\/font>/gi, '</span>')
+      .replace(/<center[^>]*>/gi, '<div style="text-align: center;">')
+      .replace(/<\/center>/gi, '</div>');
+
+    // 如果内容不是以div开始，包装在div中
+    if (!generatedContent.startsWith('<div')) {
+      generatedContent = `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px;">${generatedContent}</div>`;
+    }
+
+    // 生成主题行
+    const subjectResponse = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.DASHSCOPE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: "qwen-turbo",
+        input: {
+          messages: [
+            {
+              role: "system",
+              content: isChineseInput ? 
+                `你是一个专业的邮件主题行写作专家。生成吸引人、简洁的主题行来提高打开率。创建1个简短、吸引人的主题行（50字符以内）。只返回主题行，不要解释。` :
+                `You are a professional email subject line expert. Generate engaging, concise subject lines to improve open rates. Create 1 short, engaging subject line (under 50 characters). Return only the subject line, no explanations.`
+            },
+            {
+              role: "user",
+              content: isChineseInput ?
+                `为以下邮件写一个吸引人的主题行：邮件目的：${campaignData.purpose} 业务名称：${campaignData.businessName || '普通业务'} 产品服务：${campaignData.productService || '通用服务'} 模板风格：${emailMode === 'professional' ? selectedTemplate : 'simple'} 请根据邮件目的和业务特点，生成一个吸引人、简洁的主题行（50字符以内）。` :
+                `Write an engaging subject line for the following email: Email Purpose: ${campaignData.purpose} Business Name: ${campaignData.businessName || 'General Business'} Product/Service: ${campaignData.productService || 'General Service'} Template Style: ${emailMode === 'professional' ? selectedTemplate : 'simple'} Please generate an engaging, concise subject line (under 50 characters) based on the email purpose and business characteristics.`
+            }
+          ]
+        },
+        parameters: {
+          temperature: 0.8,
+          max_tokens: 100
+        }
+      })
+    });
+
+    if (!subjectResponse.ok) {
+      throw new Error(`Tongyi API error: ${subjectResponse.status}`);
+    }
+
+    const subjectResult = await subjectResponse.json();
+    const generatedSubject = subjectResult.output?.text?.trim() || 
+      (isChineseInput ? `关于${campaignData.purpose}的消息` : `Message about ${campaignData.purpose}`);
+
+    return new Response(JSON.stringify({
+      success: true,
+      subject: generatedSubject,
+      body: generatedContent,
+      template: emailMode === 'professional' ? selectedTemplate : 'simple',
+      generatedBy: '通义千问 qwen-turbo'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
 
   } catch (error) {
+    console.error('AI Generation Error:', error);
     return new Response(JSON.stringify({
       success: false,
-      error: 'Failed to generate email',
+      error: 'Failed to generate email content',
       details: error.message
     }), {
       status: 500,
