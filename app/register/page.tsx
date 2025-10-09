@@ -43,8 +43,8 @@ export default function RegisterPage() {
         return
       }
 
-      // 发送真实验证码
-      const response = await fetch('/api/auth/send-verification', {
+      // 发送真实验证码到Cloudflare Workers
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/send-verification', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,12 +80,35 @@ export default function RegisterPage() {
         return
       }
 
-      // 模拟验证码验证（静态导出不支持API路由）
-      if (verificationCode === '123456') {
-        toast.success('Account created successfully! (Demo mode)')
+      // 验证验证码并创建账户
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/verify-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          code: verificationCode,
+          userData: {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            company: formData.company,
+            password: formData.password
+          }
+        }),
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        toast.success('Account created successfully!')
+        // 存储用户信息到本地存储
+        localStorage.setItem('user-email', formData.email)
+        localStorage.setItem('user-name', `${formData.firstName} ${formData.lastName}`)
+        localStorage.setItem('user-token', result.token)
         router.push('/dashboard')
       } else {
-        toast.error('Invalid verification code. Try 123456 for demo.')
+        toast.error(result.error || 'Invalid verification code')
       }
     } catch (error: any) {
       console.error('Registration error:', error)
@@ -99,7 +122,7 @@ export default function RegisterPage() {
     setIsResending(true)
 
     try {
-      const response = await fetch('/api/auth/send-verification', {
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/send-verification', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -145,6 +168,11 @@ export default function RegisterPage() {
             <p className="mt-2 text-sm text-gray-600">
               We've sent a 6-digit verification code to <strong>{formData.email}</strong>
             </p>
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                <strong>Demo Mode:</strong> For testing, you can use any 6-digit number as the verification code.
+              </p>
+            </div>
           </motion.div>
 
           <motion.div
