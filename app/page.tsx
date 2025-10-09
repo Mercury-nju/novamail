@@ -139,18 +139,18 @@ export default function HomePage() {
             </motion.div>
             <div className="flex items-center space-x-4">
               <motion.div whileHover={{ scale: 1.05 }}>
-                <Link href="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors py-2">
                   Pricing
                 </Link>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }}>
-                <Link href="/login" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/login" className="text-gray-600 hover:text-gray-900 transition-colors py-2">
                   Sign In
                 </Link>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link href="/register" className="btn-primary">
-                  Get Started for Free
+                  Get Started
                 </Link>
               </motion.div>
             </div>
