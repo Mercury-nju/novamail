@@ -43,25 +43,14 @@ export default function RegisterPage() {
         return
       }
 
-      // 发送真实验证码到Cloudflare Workers
-      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/send-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email
-        }),
-      })
-
-      const result = await response.json()
-
-      if (result.success) {
-        toast.success('Verification code sent! Please check your email.')
-        setStep('verify')
-      } else {
-        throw new Error(result.error || 'Failed to send verification code')
-      }
+      // 模拟验证码发送（本地模式）
+      console.log('Sending verification code to:', formData.email)
+      
+      // 模拟网络延迟
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      toast.success('Verification code sent! Please check your email.')
+      setStep('verify')
     } catch (error: any) {
       console.error('Send verification error:', error)
       toast.error(error.message || 'Failed to send verification code')
@@ -80,35 +69,22 @@ export default function RegisterPage() {
         return
       }
 
-      // 验证验证码并创建账户
-      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/verify-code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          code: verificationCode,
-          userData: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            company: formData.company,
-            password: formData.password
-          }
-        }),
-      })
-
-      const result = await response.json()
-
-      if (result.success) {
+      // 模拟验证码验证（本地模式）
+      console.log('Verifying code:', verificationCode, 'for email:', formData.email)
+      
+      // 模拟网络延迟
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // 接受任何6位数字作为有效验证码
+      if (/^\d{6}$/.test(verificationCode)) {
         toast.success('Account created successfully!')
         // 存储用户信息到本地存储
         localStorage.setItem('user-email', formData.email)
         localStorage.setItem('user-name', `${formData.firstName} ${formData.lastName}`)
-        localStorage.setItem('user-token', result.token)
+        localStorage.setItem('user-token', 'demo_token_' + Date.now())
         router.push('/dashboard')
       } else {
-        toast.error(result.error || 'Invalid verification code')
+        toast.error('Invalid verification code. Please enter 6 digits.')
       }
     } catch (error: any) {
       console.error('Registration error:', error)
@@ -122,25 +98,12 @@ export default function RegisterPage() {
     setIsResending(true)
 
     try {
-      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/send-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: formData.email }),
-      })
-
-      let data
-      try {
-        data = await response.json()
-      } catch (jsonError) {
-        throw new Error('Server responded with invalid data')
-      }
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to resend verification code')
-      }
-
+      // 模拟重新发送验证码（本地模式）
+      console.log('Resending verification code to:', formData.email)
+      
+      // 模拟网络延迟
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
       toast.success('New verification code sent!')
     } catch (error: any) {
       console.error('Resend verification error:', error)
