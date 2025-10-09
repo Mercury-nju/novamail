@@ -922,60 +922,48 @@ async function handleAIGenerateEmail(request, env) {
       // 专业模板提示词
       const templateInstructions = {
         'modern-promo': {
-          style: "modern promotional advertising style with gradients and bold design",
+          style: "modern promotional style with bold design and gradients",
           tone: "exciting and urgent",
-          structure: "gradient header, prominent headline, key benefits list, strong call-to-action button",
-          goal: "drive immediate action through limited-time offers",
-          colors: "blue to purple gradients, white text on colored backgrounds",
-          elements: "gradient backgrounds, bold headlines, benefit boxes, prominent CTA buttons"
+          goal: "drive immediate action through offers"
         },
         'newsletter': {
           style: "professional newsletter format with clean sections",
           tone: "informative and engaging",
-          structure: "header with title, featured content sections, industry insights, read more links",
-          goal: "share valuable information and maintain engagement",
-          colors: "green and blue accents, clean white backgrounds",
-          elements: "sectioned content, article previews, professional layout"
+          goal: "share valuable information and maintain engagement"
         },
         'ecommerce': {
-          style: "product-focused e-commerce design with product showcases",
+          style: "product-focused e-commerce design",
           tone: "appealing and persuasive",
-          structure: "product showcase grid, pricing highlights, shopping incentives, discount banners",
-          goal: "increase product awareness and sales conversions",
-          colors: "orange and red gradients, product-focused design",
-          elements: "product grids, discount badges, shopping CTAs, pricing highlights"
+          goal: "increase product awareness and sales"
         },
         'event': {
-          style: "invitation and event-focused design with welcoming elements",
+          style: "invitation and event-focused design",
           tone: "welcoming and excited",
-          structure: "invitation header with emoji, event details box, RSVP buttons, welcoming design",
-          goal: "attract attendance and generate RSVPs",
-          colors: "pink and purple gradients, warm inviting colors",
-          elements: "invitation cards, event detail boxes, RSVP buttons, welcoming emojis"
+          goal: "attract attendance and generate RSVPs"
         }
       };
 
       const templateInfo = templateInstructions[selectedTemplate] || templateInstructions['modern-promo'];
       
       if (isChineseInput) {
-        systemPrompt = `你是一个专业的邮件营销设计师。生成符合${templateInfo.style}的邮件内容。创建能够实现目标：${templateInfo.goal}的邮件。要求：- 生成完整的邮件正文内容（div容器包含内容）- 使用专业的HTML邮件格式和内联CSS - 遵循邮件安全设计实践（最大宽度：600px，网页安全字体）- 使用${templateInfo.tone}的语调 - 结构：${templateInfo.structure} - 包含适当的邮件客户端兼容性 - 使其具有移动响应式设计 - 以<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">开始 - 以</div>结束 - 使用${templateInfo.colors}配色方案 - 包含${templateInfo.elements}指定元素 - 使其视觉吸引人且专业 - 使用现代邮件设计，包含渐变、颜色和视觉元素 - 包含带有适当样式的行动号召按钮生成完整的邮件HTML内容，不要解释或完整的HTML文档。`;
+        systemPrompt = `你是一个专业的邮件营销设计师。生成符合${templateInfo.style}的邮件内容。要求：- 生成完整的邮件正文内容（div容器包含内容）- 使用专业的HTML邮件格式和内联CSS - 遵循邮件安全设计实践（最大宽度：600px，网页安全字体）- 使用${templateInfo.tone}的语调 - 使其具有移动响应式设计 - 以<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">开始 - 以</div>结束 - 使其视觉吸引人且专业 - 包含带有适当样式的行动号召按钮生成完整的邮件HTML内容，不要解释或完整的HTML文档。`;
         
-        userPrompt = `基于以下信息创建自然、吸引人的${templateInfo.style}邮件：活动目的：${campaignData.purpose} 业务名称：${campaignData.businessName || '未指定'} 产品/服务：${campaignData.productService || '通用产品'} 目标URL：${campaignData.targetUrl || '无特定链接'} 模板类型：${selectedTemplate} 重要：- 编写自然、吸引人的邮件内容，流畅良好 - 不要只是列出上述信息，要创造引人入胜的叙述 - 使用活动目的来制作有趣的故事 - 使其听起来专业但对话式 - 包含有关业务和产品的相关细节 - 创建符合上下文的自然行动号召 - 在整个邮件中自然地使用业务名称 - 将产品/服务描述融入内容中 - 使目标URL在行动号召中感觉自然使用提供的目标URL作为行动号召按钮（如果提供）。使其具有适当的样式、颜色和布局的视觉吸引力。`;
+        userPrompt = `基于以下信息创建自然、吸引人的${templateInfo.style}邮件：活动目的：${campaignData.purpose} 业务名称：${campaignData.businessName || '未指定'} 产品/服务：${campaignData.productService || '通用产品'} 目标URL：${campaignData.targetUrl || '无特定链接'} 模板类型：${selectedTemplate} 重要：- 编写自然、吸引人的邮件内容，流畅良好 - 使用活动目的来制作有趣的故事 - 使其听起来专业但对话式 - 包含有关业务和产品的相关细节 - 创建符合上下文的自然行动号召 - 在整个邮件中自然地使用业务名称 - 将产品/服务描述融入内容中 - 使目标URL在行动号召中感觉自然使用提供的目标URL作为行动号召按钮（如果提供）。使其具有适当的样式、颜色和布局的视觉吸引力。`;
       } else {
-        systemPrompt = `You are an expert email marketing designer. Generate email content in ${templateInfo.style}. Create an email that achieves the goal: ${templateInfo.goal}. Requirements: - Generate ONLY the email body content (div container with content) - Use professional HTML email formatting with inline CSS - Follow email-safe design practices (max-width: 600px, web-safe fonts) - Use ${templateInfo.tone} tone of voice - Structure: ${templateInfo.structure} - Include proper email client compatibility - Make it mobile-responsive with appropriate styling - Start with <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;"> - End with </div> - Use ${templateInfo.colors} for color scheme - Include ${templateInfo.elements} as specified - Make it visually appealing and professional - Use modern email design with gradients, colors, and visual elements - Include call-to-action buttons with proper styling Generate ONLY the email body HTML content, no explanations or full HTML document.`;
+        systemPrompt = `You are an expert email marketing designer. Generate email content in ${templateInfo.style}. Create an email that achieves the goal: ${templateInfo.goal}. Requirements: - Generate ONLY the email body content (div container with content) - Use professional HTML email formatting with inline CSS - Follow email-safe design practices (max-width: 600px, web-safe fonts) - Use ${templateInfo.tone} tone of voice - Include proper email client compatibility - Make it mobile-responsive with appropriate styling - Start with <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;"> - End with </div> - Make it visually appealing and professional - Use modern email design with gradients, colors, and visual elements - Include call-to-action buttons with proper styling Generate ONLY the email body HTML content, no explanations or full HTML document.`;
         
-        userPrompt = `Create a natural, engaging ${templateInfo.style} email based on this information: Campaign Purpose: ${campaignData.purpose} Business Name: ${campaignData.businessName || 'Not specified'} Product/Service: ${campaignData.productService || 'General offerings'} Target URL: ${campaignData.targetUrl || 'No specific link'} Template Type: ${selectedTemplate} IMPORTANT: - Write natural, engaging email content that flows well - Don't just list the information above - create a compelling narrative - Use the campaign purpose to craft an interesting story - Make it sound professional but conversational - Include relevant details about the business and offerings - Create a natural call-to-action that fits the context - Use the business name throughout the email naturally - Incorporate the product/service description into the content - Make the target URL feel natural in the call-to-action Use the target URL for call-to-action buttons if provided. Make it visually appealing with proper styling, colors, and layout.`;
+        userPrompt = `Create a natural, engaging ${templateInfo.style} email based on this information: Campaign Purpose: ${campaignData.purpose} Business Name: ${campaignData.businessName || 'Not specified'} Product/Service: ${campaignData.productService || 'General offerings'} Target URL: ${campaignData.targetUrl || 'No specific link'} Template Type: ${selectedTemplate} IMPORTANT: - Write natural, engaging email content that flows well - Use the campaign purpose to craft an interesting story - Make it sound professional but conversational - Include relevant details about the business and offerings - Create a natural call-to-action that fits the context - Use the business name throughout the email naturally - Incorporate the product/service description into the content - Make the target URL feel natural in the call-to-action Use the target URL for call-to-action buttons if provided. Make it visually appealing with proper styling, colors, and layout.`;
       }
     } else {
       // 简单邮件提示词
       if (isChineseInput) {
         systemPrompt = `你是一个专业的邮件写作专家。创建遵循适当邮件格式的邮件正文内容。要求：- 生成完整的邮件正文内容（div容器包含内容）- 使用适当的邮件结构：问候语、正文段落、结尾、签名 - 使用简洁的HTML邮件格式和内联CSS - 保持简单但专业（最大宽度：600px）- 使用网页安全字体（Arial, sans-serif）- 包含适当的问候语（亲爱的[姓名]，或您好，）- 包含适当的结尾（此致敬礼，真诚地，等）- 使其具有移动响应式 - 以<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">开始 - 以</div>结束 - 无按钮，无行动号召元素，无花哨样式 - 使用<p>标签进行适当的段落分隔 - 只是简洁、简单的文本内容，具有基本格式生成完整的邮件HTML内容，不要解释或完整的HTML文档。`;
         
-        userPrompt = `基于以下信息编写自然、吸引人的简单邮件：活动目的：${campaignData.purpose} 业务名称：${campaignData.businessName || '未指定'} 产品/服务：${campaignData.productService || '通用产品'} 目标URL：${campaignData.targetUrl || '无特定链接'} 重要：- 遵循适当的邮件格式：问候语、正文段落、结尾、签名 - 以适当的问候语开始（亲爱的[姓名]，或您好，）- 编写自然、吸引人的邮件内容，流畅良好 - 不要只是列出上述信息，要创造引人入胜的叙述 - 使用活动目的来制作有趣的故事 - 使其听起来专业但对话式 - 包含有关业务和产品的相关细节 - 在整个邮件中自然地使用业务名称 - 将产品/服务描述融入内容中 - 以适当的结尾结束（此致敬礼，真诚地，等）和签名 - 无按钮，无行动号召元素，无花哨样式 - 使用<p>标签进行适当的段落分隔 - 只是简洁、简单的文本内容，具有基本格式 - 如果需要提及链接，只需将其作为纯文本包含创建清晰传达${campaignData.purpose}的直截了当的邮件。保持简单且基于文本，具有适当的邮件结构。`;
+        userPrompt = `基于以下信息编写自然、吸引人的简单邮件：活动目的：${campaignData.purpose} 业务名称：${campaignData.businessName || '未指定'} 产品/服务：${campaignData.productService || '通用产品'} 目标URL：${campaignData.targetUrl || '无特定链接'} 重要：- 遵循适当的邮件格式：问候语、正文段落、结尾、签名 - 以适当的问候语开始（亲爱的[姓名]，或您好，）- 编写自然、吸引人的邮件内容，流畅良好 - 使用活动目的来制作有趣的故事 - 使其听起来专业但对话式 - 包含有关业务和产品的相关细节 - 在整个邮件中自然地使用业务名称 - 将产品/服务描述融入内容中 - 以适当的结尾结束（此致敬礼，真诚地，等）和签名 - 无按钮，无行动号召元素，无花哨样式 - 使用<p>标签进行适当的段落分隔 - 只是简洁、简单的文本内容，具有基本格式 - 如果需要提及链接，只需将其作为纯文本包含创建清晰传达${campaignData.purpose}的直截了当的邮件。保持简单且基于文本，具有适当的邮件结构。`;
       } else {
         systemPrompt = `You are an expert email writer. Create ONLY the email body content (no DOCTYPE, html, head, or body tags) that follows proper email format. Requirements: - Generate ONLY the email body content (div container with content) - Use proper email structure: greeting, body paragraphs, closing, signature - Use clean HTML email formatting with inline CSS - Keep it simple but professional (max-width: 600px) - Use web-safe fonts (Arial, sans-serif) - Include proper greeting (Dear [Name], or Hello,) - Include proper sign-off (Best regards, Sincerely, etc.) - Make it mobile-responsive - Start with <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;"> - End with </div> - NO buttons, NO call-to-action elements, NO fancy styling - Use proper paragraph breaks with <p> tags - Just clean, simple text content with basic formatting Generate ONLY the email body HTML content, no explanations or full HTML document.`;
         
-        userPrompt = `Write a natural, engaging simple email based on this information: Campaign Purpose: ${campaignData.purpose} Business Name: ${campaignData.businessName || 'Not specified'} Product/Service: ${campaignData.productService || 'General offerings'} Target URL: ${campaignData.targetUrl || 'No specific link'} IMPORTANT: - Follow proper email format: greeting, body paragraphs, closing, signature - Start with a proper greeting (Dear [Name], or Hello,) - Write natural, engaging email content that flows well - Don't just list the information above - create a compelling narrative - Use the campaign purpose to craft an interesting story - Make it sound professional but conversational - Include relevant details about the business and offerings - Use the business name naturally throughout the email - Incorporate the product/service description into the content naturally - End with proper closing (Best regards, Sincerely, etc.) and signature - NO buttons, NO call-to-action elements, NO fancy styling - Use proper paragraph breaks with <p> tags - Just clean, simple text content with basic formatting - If you need to mention a link, just include it as plain text Create a straightforward email that clearly communicates the ${campaignData.purpose}. Keep it simple and text-based with proper email structure.`;
+        userPrompt = `Write a natural, engaging simple email based on this information: Campaign Purpose: ${campaignData.purpose} Business Name: ${campaignData.businessName || 'Not specified'} Product/Service: ${campaignData.productService || 'General offerings'} Target URL: ${campaignData.targetUrl || 'No specific link'} IMPORTANT: - Follow proper email format: greeting, body paragraphs, closing, signature - Start with a proper greeting (Dear [Name], or Hello,) - Write natural, engaging email content that flows well - Use the campaign purpose to craft an interesting story - Make it sound professional but conversational - Include relevant details about the business and offerings - Use the business name naturally throughout the email - Incorporate the product/service description into the content naturally - End with proper closing (Best regards, Sincerely, etc.) and signature - NO buttons, NO call-to-action elements, NO fancy styling - Use proper paragraph breaks with <p> tags - Just clean, simple text content with basic formatting - If you need to mention a link, just include it as plain text Create a straightforward email that clearly communicates the ${campaignData.purpose}. Keep it simple and text-based with proper email structure.`;
       }
     }
 
@@ -1012,9 +1000,12 @@ async function handleAIGenerateEmail(request, env) {
     }
 
     const contentResult = await contentResponse.json();
+    console.log('AI Response:', JSON.stringify(contentResult, null, 2));
+    
     let generatedContent = contentResult.output?.text;
 
     if (!generatedContent) {
+      console.error('No content generated from Tongyi:', contentResult);
       throw new Error('No content generated from Tongyi');
     }
 
