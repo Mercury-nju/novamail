@@ -8,6 +8,8 @@ function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const [planId, setPlanId] = useState('');
   const [email, setEmail] = useState('');
+  const [isActivating, setIsActivating] = useState(true);
+  const [activationStatus, setActivationStatus] = useState('');
 
   useEffect(() => {
     const plan = searchParams.get('plan');
@@ -15,7 +17,74 @@ function PaymentSuccessContent() {
     
     if (plan) setPlanId(plan);
     if (emailParam) setEmail(emailParam);
+    
+    // 激活用户权益
+    activateUserSubscription(plan || 'pro', emailParam || '');
   }, [searchParams]);
+
+  const activateUserSubscription = async (plan: string, userEmail: string) => {
+    try {
+      setIsActivating(true);
+      
+      // 获取用户邮箱
+      const userEmailFromStorage = userEmail || 
+        localStorage.getItem('user-email') || 
+        sessionStorage.getItem('user-email') || 
+        'user@example.com';
+
+      // 调用支付成功回调API
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/payment/success', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: userEmailFromStorage,
+          subscriptionId: 'creem_' + Date.now(),
+          planId: plan,
+          amount: 19,
+          currency: 'USD'
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        // 更新本地存储的订阅状态
+        const subscriptionData = {
+          email: userEmailFromStorage,
+          plan: plan,
+          status: 'active',
+          activatedAt: new Date().toISOString(),
+          expiresAt: null, // 买断制，永不过期
+          features: {
+            maxContacts: plan === 'pro' ? -1 : 500, // -1 表示无限制
+            maxEmailsPerMonth: plan === 'pro' ? -1 : 1000,
+            hasAdvancedTemplates: plan === 'pro',
+            hasAITeatures: true,
+            hasAnalytics: true,
+            hasAPIAccess: plan === 'pro',
+            hasWebhookAccess: plan === 'pro',
+            hasCustomBranding: plan === 'pro'
+          }
+        };
+
+        localStorage.setItem('user-subscription', JSON.stringify(subscriptionData));
+        localStorage.setItem('user-plan', plan);
+        localStorage.setItem('subscription-status', 'active');
+        
+        setActivationStatus('success');
+        console.log('Subscription activated successfully:', subscriptionData);
+      } else {
+        throw new Error('Failed to activate subscription');
+      }
+    } catch (error) {
+      console.error('Subscription activation error:', error);
+      setActivationStatus('error');
+    } finally {
+      setIsActivating(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -31,11 +100,16 @@ function PaymentSuccessContent() {
 
         {/* Success Message */}
         <h1 className="text-2xl font-bold text-gray-900 mb-4">
-          🎉 Payment Successful!
+          {isActivating ? '🔄 Activating Subscription...' : activationStatus === 'success' ? '🎉 Payment Successful!' : '❌ Activation Failed'}
         </h1>
         
         <p className="text-gray-600 mb-6">
-          Thank you for your subscription! Your NovaMail {planId} plan has been activated.
+          {isActivating 
+            ? 'Please wait while we activate your subscription...'
+            : activationStatus === 'success'
+            ? `Thank you for your subscription! Your NovaMail ${planId} plan has been activated.`
+            : 'There was an issue activating your subscription. Please contact support.'
+          }
         </p>
 
         {/* Plan Details */}

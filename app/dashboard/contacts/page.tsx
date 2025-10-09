@@ -21,20 +21,34 @@ export default function ContactsPage() {
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
 
-  // 模拟用户订阅等级检查
+  // 检查用户订阅等级
   const getUserPlan = () => {
-    // 在实际应用中，这应该从用户数据中获取
-    return 'free'; // 可以是 'free', 'pro', 'enterprise'
+    // 从localStorage获取用户订阅状态
+    const subscriptionData = localStorage.getItem('user-subscription');
+    if (subscriptionData) {
+      try {
+        const subscription = JSON.parse(subscriptionData);
+        return subscription.status === 'active' ? subscription.plan : 'free';
+      } catch (e) {
+        console.log('Invalid subscription data');
+      }
+    }
+    return 'free';
   };
 
   const getContactLimit = () => {
-    const plan = getUserPlan();
-    switch (plan) {
-      case 'free': return 500;
-      case 'pro': return 10000;
-      case 'enterprise': return -1; // 无限制
-      default: return 500;
+    const subscriptionData = localStorage.getItem('user-subscription');
+    if (subscriptionData) {
+      try {
+        const subscription = JSON.parse(subscriptionData);
+        if (subscription.status === 'active' && subscription.features) {
+          return subscription.features.maxContacts;
+        }
+      } catch (e) {
+        console.log('Invalid subscription data');
+      }
     }
+    return 500; // 默认免费用户限制
   };
 
   const contactLimit = getContactLimit();

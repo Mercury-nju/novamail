@@ -178,18 +178,32 @@ export default function NewCampaignPage() {
 
     // 检查用户订阅等级和邮件发送限制
     const getUserPlan = () => {
-      // 在实际应用中，这应该从用户数据中获取
-      return 'free'; // 可以是 'free', 'pro', 'enterprise'
+      // 从localStorage获取用户订阅状态
+      const subscriptionData = localStorage.getItem('user-subscription');
+      if (subscriptionData) {
+        try {
+          const subscription = JSON.parse(subscriptionData);
+          return subscription.status === 'active' ? subscription.plan : 'free';
+        } catch (e) {
+          console.log('Invalid subscription data');
+        }
+      }
+      return 'free';
     };
 
     const getEmailLimit = () => {
-      const plan = getUserPlan();
-      switch (plan) {
-        case 'free': return 1000;
-        case 'pro': return 50000;
-        case 'enterprise': return -1; // 无限制
-        default: return 1000;
+      const subscriptionData = localStorage.getItem('user-subscription');
+      if (subscriptionData) {
+        try {
+          const subscription = JSON.parse(subscriptionData);
+          if (subscription.status === 'active' && subscription.features) {
+            return subscription.features.maxEmailsPerMonth;
+          }
+        } catch (e) {
+          console.log('Invalid subscription data');
+        }
       }
+      return 1000; // 默认免费用户限制
     };
 
     const emailLimit = getEmailLimit();
