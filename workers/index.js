@@ -33,6 +33,8 @@ export default {
         return await handleCreemPlans(request, env);
       } else if (path.startsWith('/api/creem/subscriptions')) {
         return await handleCreemSubscriptions(request, env);
+      } else if (path.startsWith('/api/user/check-permission')) {
+        return await handleCheckPermission(request, env);
       } else {
         return new Response(JSON.stringify({ 
           error: 'API endpoint not found',
@@ -42,7 +44,8 @@ export default {
             '/api/creem/test',
             '/api/creem/webhook-test',
             '/api/creem/plans',
-            '/api/creem/subscriptions'
+            '/api/creem/subscriptions',
+            '/api/user/check-permission'
           ]
         }), {
           status: 404,
@@ -95,7 +98,7 @@ async function handleSendVerification(request, env) {
   
   // 使用Resend API发送邮件
   const emailData = {
-    from: 'NovaMail <noreply@novamail.com>',
+    from: 'NovaMail <noreply@novamail.world>',
     to: email,
     subject: 'Your NovaMail Verification Code',
     html: `
@@ -213,7 +216,7 @@ async function handleVerifyCode(request, env) {
   
   // 发送欢迎邮件
   const welcomeEmailData = {
-    from: 'NovaMail <welcome@novamail.com>',
+    from: 'NovaMail <welcome@novamail.world>',
     to: email,
     subject: 'Welcome to NovaMail!',
     html: `
@@ -229,7 +232,7 @@ async function handleVerifyCode(request, env) {
           <div style="background: white; border: 2px solid #667eea; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">
             <h3 style="color: #667eea; margin: 0;">Get Started</h3>
             <p style="color: #666; margin: 10px 0;">Start creating your first email campaign</p>
-            <a href="https://novamail.pages.dev/dashboard" style="background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Go to Dashboard</a>
+            <a href="https://novamail.world/dashboard" style="background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Go to Dashboard</a>
           </div>
           <p style="color: #666; font-size: 14px;">
             If you have any questions, please don't hesitate to contact our support team.
@@ -472,4 +475,110 @@ async function handleCreemSubscriptions(request, env) {
   }), {
     headers: corsHeaders
   });
+}
+
+// 检查用户权限处理函数
+async function handleCheckPermission(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    const data = await request.json();
+    const { action, currentCount = 0 } = data;
+    
+    if (!action) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Action is required' 
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    // 模拟用户权限检查
+    // 在实际应用中，这里应该从数据库获取用户信息
+    const mockUserPlan = 'free'; // 可以是 'free', 'pro', 'enterprise'
+    
+    // 根据计划设置限制
+    const limits = {
+      free: {
+        maxEmailsPerMonth: 1000,
+        maxContacts: 500,
+        maxCampaignsPerMonth: 10
+      },
+      pro: {
+        maxEmailsPerMonth: 50000,
+        maxContacts: 10000,
+        maxCampaignsPerMonth: 100
+      },
+      enterprise: {
+        maxEmailsPerMonth: -1, // 无限制
+        maxContacts: -1,
+        maxCampaignsPerMonth: -1
+      }
+    };
+
+    const userLimits = limits[mockUserPlan] || limits.free;
+    
+    // 检查权限
+    let allowed = true;
+    let reason = '';
+    
+    switch (action) {
+      case 'send_email':
+        if (userLimits.maxEmailsPerMonth !== -1 && currentCount >= userLimits.maxEmailsPerMonth) {
+          allowed = false;
+          reason = `Email limit exceeded. Your plan allows up to ${userLimits.maxEmailsPerMonth} emails per month.`;
+        }
+        break;
+      case 'add_contact':
+        if (userLimits.maxContacts !== -1 && currentCount >= userLimits.maxContacts) {
+          allowed = false;
+          reason = `Contact limit exceeded. Your plan allows up to ${userLimits.maxContacts} contacts.`;
+        }
+        break;
+      case 'create_campaign':
+        if (userLimits.maxCampaignsPerMonth !== -1 && currentCount >= userLimits.maxCampaignsPerMonth) {
+          allowed = false;
+          reason = `Campaign limit exceeded. Your plan allows up to ${userLimits.maxCampaignsPerMonth} campaigns per month.`;
+        }
+        break;
+      default:
+        allowed = true;
+    }
+
+    return new Response(JSON.stringify({
+      success: true,
+      allowed: allowed,
+      reason: reason,
+      plan: mockUserPlan,
+      limits: userLimits,
+      currentCount: currentCount,
+      timestamp: new Date().toISOString()
+    }), {
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to check permissions',
+      details: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
 }
