@@ -64,7 +64,12 @@ export default function DashboardLayout({
 
   // 获取用户显示信息（静态导出模式）
   const getUserDisplayName = () => {
-    return 'Demo User'
+    if (typeof window !== 'undefined') {
+      const userName = localStorage.getItem('user-name')
+      const userEmail = localStorage.getItem('user-email')
+      return userName || userEmail || 'Guest User'
+    }
+    return 'Guest User'
   }
 
   const getUserInitials = () => {
