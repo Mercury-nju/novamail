@@ -272,7 +272,8 @@ export default function EmailSettingsPage() {
       }
 
       // 如果 localStorage 中没有，尝试从 API 加载
-      const response = await fetch('/api/user/email-config')
+      const userId = localStorage.getItem('user-id') || userEmail || 'default_user'
+      const response = await fetch(`/api/user/email-config?userId=${encodeURIComponent(userId)}`)
       if (response.ok) {
         const data = await response.json()
         if (data.success && data.config) {
@@ -287,6 +288,19 @@ export default function EmailSettingsPage() {
     } catch (error) {
       console.error('Failed to load email config:', error)
       // 网络错误时不显示错误提示，使用默认配置
+      // 设置默认配置
+      setEmailConfig({
+        provider: 'gmail',
+        email: '',
+        password: '',
+        accessToken: '',
+        refreshToken: '',
+        smtpHost: 'smtp.gmail.com',
+        smtpPort: '587',
+        isSecure: true,
+        isConfigured: false
+      })
+      setIsConfigured(false)
     }
   }
 
@@ -363,6 +377,7 @@ export default function EmailSettingsPage() {
     setIsLoading(true)
 
     try {
+      const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email') || 'default_user'
       const response = await fetch('/api/user/email-config', {
         method: 'POST',
         headers: {
@@ -370,7 +385,8 @@ export default function EmailSettingsPage() {
         },
         body: JSON.stringify({
           ...emailConfig,
-          isConfigured: true
+          isConfigured: true,
+          userId: userId
         }),
       })
 
