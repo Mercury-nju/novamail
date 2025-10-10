@@ -36,7 +36,7 @@ export default function CampaignsPage() {
       const params = new URLSearchParams()
       if (selectedStatus !== 'all') params.append('status', selectedStatus)
       
-      const response = await fetch(`https://novamail-api.lihongyangnju.workers.dev/api/campaigns?${params}`)
+      const response = await fetch(`https://novamail.world/api/campaigns?${params}`)
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)

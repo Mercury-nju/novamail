@@ -47,6 +47,8 @@ export default {
         return await handleEmailConfig(request, env);
       } else if (path.startsWith('/api/user/test-email')) {
         return await handleTestEmail(request, env);
+      } else if (path.startsWith('/api/campaigns')) {
+        return await handleCampaigns(request, env);
       } else {
         return new Response(JSON.stringify({ 
           error: 'API endpoint not found',
@@ -63,7 +65,8 @@ export default {
             '/api/user/update-usage',
             '/api/ai/generate-email',
             '/api/user/email-config',
-            '/api/user/test-email'
+            '/api/user/test-email',
+            '/api/campaigns'
           ]
         }), {
           status: 404,
@@ -850,6 +853,37 @@ async function handleCampaignSend(request, env) {
       }
     }
 
+    // 创建 campaign 记录
+    const campaignRecord = {
+      id: campaignId,
+      name: campaignData.subject || 'Email Campaign',
+      subject: campaignData.subject || 'Email Campaign',
+      status: 'sent',
+      recipients: recipients.length,
+      sent: sentEmails.filter(email => email.status === 'sent').length,
+      opened: 0,
+      clicked: 0,
+      openRate: 0,
+      clickRate: 0,
+      createdAt: new Date().toISOString(),
+      sentAt: new Date().toISOString(),
+      businessName: campaignData.businessName,
+      sendingMethod: userEmailConfig?.isConfigured ? 'user_smtp' : 'novamail_default'
+    };
+
+    // 保存 campaign 到 KV 存储
+    try {
+      if (env.CAMPAIGNS_KV) {
+        const storedCampaigns = await env.CAMPAIGNS_KV.get(`campaigns_${userId || 'default_user'}`);
+        let campaigns = storedCampaigns ? JSON.parse(storedCampaigns) : [];
+        campaigns.push(campaignRecord);
+        await env.CAMPAIGNS_KV.put(`campaigns_${userId || 'default_user'}`, JSON.stringify(campaigns));
+        console.log('Campaign record saved:', campaignId);
+      }
+    } catch (error) {
+      console.error('Failed to save campaign record:', error);
+    }
+
     return new Response(JSON.stringify({
       success: true,
       message: 'Campaign sent successfully',
@@ -858,6 +892,7 @@ async function handleCampaignSend(request, env) {
       totalSent: sentEmails.filter(email => email.status === 'sent').length,
       totalFailed: sentEmails.filter(email => email.status === 'failed').length,
       sendingMethod: userEmailConfig?.isConfigured ? 'user_smtp' : 'novamail_default',
+      campaign: campaignRecord,
       timestamp: new Date().toISOString()
     }), {
       headers: corsHeaders
@@ -1578,6 +1613,155 @@ async function handleTestEmail(request, env) {
     return new Response(JSON.stringify({
       success: false,
       error: 'Failed to test SMTP connection',
+      details: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// Campaigns 管理处理函数
+async function handleCampaigns(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  try {
+    if (request.method === 'GET') {
+      // 获取用户的所有 campaigns
+      const url = new URL(request.url);
+      const status = url.searchParams.get('status') || 'all';
+      const userId = url.searchParams.get('userId') || 'default_user';
+      
+      // 从 KV 存储获取 campaigns
+      let campaigns = [];
+      try {
+        if (env.CAMPAIGNS_KV) {
+          const storedCampaigns = await env.CAMPAIGNS_KV.get(`campaigns_${userId}`);
+          if (storedCampaigns) {
+            campaigns = JSON.parse(storedCampaigns);
+          }
+        }
+      } catch (error) {
+        console.log('Failed to load campaigns from storage:', error);
+      }
+
+      // 如果没有存储的 campaigns，返回空数组
+      if (!campaigns || campaigns.length === 0) {
+        return new Response(JSON.stringify({
+          success: true,
+          data: {
+            campaigns: [],
+            total: 0,
+            stats: {
+              total: 0,
+              sent: 0,
+              scheduled: 0,
+              draft: 0,
+              avgOpenRate: 0
+            }
+          },
+          timestamp: new Date().toISOString()
+        }), {
+          headers: corsHeaders
+        });
+      }
+
+      // 过滤 campaigns
+      const filteredCampaigns = status === 'all' 
+        ? campaigns 
+        : campaigns.filter(campaign => campaign.status === status);
+
+      // 计算统计信息
+      const stats = {
+        total: campaigns.length,
+        sent: campaigns.filter(c => c.status === 'sent').length,
+        scheduled: campaigns.filter(c => c.status === 'scheduled').length,
+        draft: campaigns.filter(c => c.status === 'draft').length,
+        avgOpenRate: campaigns.length > 0 
+          ? Math.round(campaigns.reduce((acc, c) => acc + (c.openRate || 0), 0) / campaigns.length)
+          : 0
+      };
+
+      return new Response(JSON.stringify({
+        success: true,
+        data: {
+          campaigns: filteredCampaigns,
+          total: filteredCampaigns.length,
+          stats: stats
+        },
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+
+    } else if (request.method === 'POST') {
+      // 创建新的 campaign
+      const data = await request.json();
+      const { name, subject, status = 'draft', recipients = [], userId } = data;
+      
+      if (!name || !subject) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Campaign name and subject are required'
+        }), {
+          status: 400,
+          headers: corsHeaders
+        });
+      }
+
+      const campaign = {
+        id: 'campaign_' + Date.now(),
+        name: name,
+        subject: subject,
+        status: status,
+        recipients: recipients.length,
+        sent: 0,
+        opened: 0,
+        clicked: 0,
+        openRate: 0,
+        clickRate: 0,
+        createdAt: new Date().toISOString(),
+        scheduledAt: status === 'scheduled' ? new Date().toISOString() : null,
+        sentAt: null
+      };
+
+      // 保存到 KV 存储
+      try {
+        if (env.CAMPAIGNS_KV) {
+          const storedCampaigns = await env.CAMPAIGNS_KV.get(`campaigns_${userId || 'default_user'}`);
+          let campaigns = storedCampaigns ? JSON.parse(storedCampaigns) : [];
+          campaigns.push(campaign);
+          await env.CAMPAIGNS_KV.put(`campaigns_${userId || 'default_user'}`, JSON.stringify(campaigns));
+        }
+      } catch (error) {
+        console.error('Failed to save campaign:', error);
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Campaign created successfully',
+        campaign: campaign,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+
+    } else {
+      return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+        status: 405,
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to handle campaigns request',
       details: error.message
     }), {
       status: 500,
