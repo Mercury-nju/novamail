@@ -10,9 +10,6 @@ interface Campaign {
   subject: string
   status: 'draft' | 'scheduled' | 'sent' | 'paused'
   recipients: number
-  sent: number
-  opened: number
-  clicked: number
   createdAt: string
   scheduledAt?: string
   sentAt?: string
@@ -72,15 +69,6 @@ export default function CampaignsPage() {
     }
   }
 
-  const getOpenRate = (campaign: Campaign) => {
-    if (campaign.sent === 0) return 0
-    return Math.round((campaign.opened / campaign.sent) * 100)
-  }
-
-  const getClickRate = (campaign: Campaign) => {
-    if (campaign.sent === 0) return 0
-    return Math.round((campaign.clicked / campaign.sent) * 100)
-  }
 
   if (loading) {
     return (
@@ -107,7 +95,7 @@ export default function CampaignsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -149,22 +137,6 @@ export default function CampaignsPage() {
               <p className="text-sm font-medium text-gray-600">Scheduled</p>
               <p className="text-2xl font-bold text-gray-900">
                 {campaigns.filter(c => c.status === 'scheduled').length}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Avg Open Rate</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {Math.round(campaigns.filter(c => c.status === 'sent').reduce((acc, c) => acc + getOpenRate(c), 0) / campaigns.filter(c => c.status === 'sent').length)}%
               </p>
             </div>
           </div>
@@ -212,12 +184,6 @@ export default function CampaignsPage() {
                   Recipients
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Open Rate
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Click Rate
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Created
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -241,12 +207,6 @@ export default function CampaignsPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {campaign.recipients.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {getOpenRate(campaign)}%
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {getClickRate(campaign)}%
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {new Date(campaign.createdAt).toLocaleDateString()}
