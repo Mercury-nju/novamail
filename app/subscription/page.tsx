@@ -40,7 +40,7 @@ export default function SubscriptionPage() {
 
   const fetchPlans = async () => {
     try {
-      const response = await fetch('https://novamail-api.zhuanz.workers.dev/api/creem/plans');
+      const response = await fetch('https://novamail.world/api/creem/plans');
       const data = await response.json();
       
       if (data.success) {
@@ -73,7 +73,7 @@ export default function SubscriptionPage() {
         'user@example.com'
       ) : 'user@example.com';
 
-      const response = await fetch('https://novamail-api.zhuanz.workers.dev/api/creem/subscriptions', {
+      const response = await fetch('https://novamail.world/api/creem/subscriptions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

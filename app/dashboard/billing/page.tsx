@@ -34,7 +34,7 @@ export default function BillingPage() {
       setLoading(true)
       
       // 从Creem API获取真实的用户订阅数据
-      const response = await fetch('https://novamail-api.zhuanz.workers.dev/api/creem/subscriptions')
+      const response = await fetch('https://novamail.world/api/creem/subscriptions')
       
       if (response.ok) {
         const data = await response.json()
@@ -49,7 +49,7 @@ export default function BillingPage() {
             status: subscription.status
           })
           // 获取发票历史
-          const invoicesResponse = await fetch('https://novamail-api.zhuanz.workers.dev/api/creem/invoices')
+          const invoicesResponse = await fetch('https://novamail.world/api/creem/invoices')
           if (invoicesResponse.ok) {
             const invoicesData = await invoicesResponse.json()
             setInvoices(invoicesData.data || [])
