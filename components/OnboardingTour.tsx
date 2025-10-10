@@ -88,7 +88,13 @@ interface OnboardingTourProps {
 export default function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [targetElement, setTargetElement] = useState<HTMLElement | null>(null)
-  const [tooltipPosition, setTooltipPosition] = useState({ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' })
+  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({
+    position: 'fixed',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    zIndex: 9999
+  })
 
   useEffect(() => {
     if (isOpen) {
@@ -124,14 +130,26 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
               className: el.className
             })))
             setTargetElement(null)
-            setTooltipPosition({ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' })
+            setTooltipStyle({
+              position: 'fixed',
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 9999
+            })
           }
         }, 300)
         
         return () => clearTimeout(timer)
       } else {
         setTargetElement(null)
-        setTooltipPosition({ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' })
+        setTooltipStyle({
+          position: 'fixed',
+          left: '50%',
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 9999
+        })
       }
     }
   }, [isOpen, currentStep])
@@ -182,7 +200,13 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
 
     console.log('Final position:', { left, top, transform })
 
-    setTooltipPosition({ left, top, transform })
+    setTooltipStyle({
+      position: 'fixed',
+      left,
+      top,
+      transform,
+      zIndex: 9999
+    })
   }
 
   const handleNext = () => {
@@ -245,20 +269,15 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="fixed z-50 bg-white rounded-lg shadow-xl p-6 max-w-sm border-2 border-blue-500"
-            style={{
-              left: tooltipPosition.left,
-              top: tooltipPosition.top,
-              transform: tooltipPosition.transform
-            }}
+            className="bg-white rounded-lg shadow-xl p-6 max-w-sm border-2 border-blue-500"
+            style={tooltipStyle}
           >
             {/* 调试信息 */}
             <div className="mb-2 p-2 bg-yellow-100 rounded text-xs">
               <div>Step: {currentStep + 1}/{onboardingSteps.length}</div>
               <div>Target: {onboardingSteps[currentStep].target || 'none'}</div>
               <div>Position: {onboardingSteps[currentStep].position}</div>
-              <div>Tooltip: {tooltipPosition.left}, {tooltipPosition.top}</div>
-              <div>Transform: {tooltipPosition.transform}</div>
+              <div>Style: {JSON.stringify(tooltipStyle)}</div>
             </div>
             {/* 步骤指示器 */}
             <div className="flex items-center justify-between mb-4">
