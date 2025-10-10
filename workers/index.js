@@ -3347,5 +3347,4 @@ async function handleDashboardStats(request, env) {
     status: 405,
     headers: corsHeaders
   });
-}
 };
