@@ -47,9 +47,9 @@ export default function EmailSettingsPage() {
       port: '587',
       secure: true,
       instructions: '使用 Gmail 应用密码发送邮件',
-      description: '推荐使用 Gmail 应用密码，配置简单',
+      description: '推荐使用 Gmail，配置简单且稳定',
       tutorial: {
-        title: 'Gmail 应用密码配置教程',
+        title: 'Gmail SMTP 配置教程',
         steps: [
           '登录您的 Gmail 账户',
           '进入 Google 账户设置 (https://myaccount.google.com)',
@@ -58,7 +58,9 @@ export default function EmailSettingsPage() {
           '在"应用密码"部分生成新密码',
           '选择"邮件"作为应用类型',
           '复制生成的应用密码',
-          '在此处输入您的 Gmail 地址和应用密码'
+          '在此处输入您的 Gmail 地址和应用密码',
+          'SMTP 服务器：smtp.gmail.com',
+          '端口：587（TLS）'
         ]
       }
     },
@@ -277,7 +279,7 @@ export default function EmailSettingsPage() {
                 <li>确保邮件送达率</li>
               </ul>
               <p className="mt-3 font-medium">
-                我们支持 Gmail、Outlook、Yahoo 等主流邮箱服务商，推荐使用 Gmail 应用密码获得最佳体验。
+                我们支持 Gmail、Outlook、Yahoo 等主流邮箱服务商，推荐使用 Gmail SMTP 配置获得最佳体验。
               </p>
             </div>
           </div>
@@ -323,7 +325,8 @@ export default function EmailSettingsPage() {
                  <div>
                    <h4 className="text-sm font-medium text-yellow-800 mb-1">重要提示</h4>
                    <p className="text-sm text-yellow-700">
-                     使用 Gmail 应用密码比 API 更简单，无需复杂的 OAuth 配置。
+                     使用 Gmail SMTP 配置比 API 更简单，无需复杂的 OAuth 配置。
+                     SMTP 服务器：smtp.gmail.com，端口：587（TLS）。
                      应用密码有效期为永久，除非您主动撤销。
                    </p>
                  </div>
@@ -381,7 +384,35 @@ export default function EmailSettingsPage() {
           </div>
 
 
-          {/* Password field for all providers */}
+          {/* SMTP Settings */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                SMTP 服务器
+              </label>
+              <input
+                type="text"
+                value={emailConfig.host}
+                onChange={(e) => setEmailConfig(prev => ({ ...prev, host: e.target.value }))}
+                placeholder="smtp.gmail.com"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                端口
+              </label>
+              <input
+                type="text"
+                value={emailConfig.port}
+                onChange={(e) => setEmailConfig(prev => ({ ...prev, port: e.target.value }))}
+                placeholder="587"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          {/* Password field */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               密码 / 应用密码
@@ -415,37 +446,6 @@ export default function EmailSettingsPage() {
             </p>
           </div>
 
-          {/* SMTP Settings (for custom provider) */}
-          {emailConfig.provider === 'custom' && (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    SMTP Host
-                  </label>
-                  <input
-                    type="text"
-                    value={emailConfig.smtpHost}
-                    onChange={(e) => setEmailConfig(prev => ({ ...prev, smtpHost: e.target.value }))}
-                    placeholder="smtp.example.com"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    SMTP Port
-                  </label>
-                  <input
-                    type="number"
-                    value={emailConfig.smtpPort}
-                    onChange={(e) => setEmailConfig(prev => ({ ...prev, smtpPort: e.target.value }))}
-                    placeholder="587"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-            </>
-          )}
         </div>
 
         {/* Test Connection */}
