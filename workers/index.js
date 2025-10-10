@@ -882,6 +882,7 @@ async function handleAIGenerateEmail(request, env) {
     // if (!env.DASHSCOPE_API_KEY) {
 
     // 使用增强的模拟内容替代 AI 生成
+    console.log('Using template-based content instead of AI generation');
     const mockSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
     
     // 根据模板类型生成不同的内容
