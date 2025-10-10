@@ -250,6 +250,7 @@ export default function NewCampaignPage() {
     
     try {
       // Call email sending API
+      const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email') || 'default_user'
       const response = await fetch('https://novamail.world/api/campaigns/send', {
         method: 'POST',
         headers: {
@@ -257,7 +258,8 @@ export default function NewCampaignPage() {
         },
         body: JSON.stringify({
           campaignData,
-          recipients: campaignData.recipients
+          recipients: campaignData.recipients,
+          userId: userId
         }),
       })
 
@@ -319,7 +321,7 @@ export default function NewCampaignPage() {
       
       const data = await response.json()
       if (data.success) {
-        setAvailableContacts(data.contacts || [])
+        setAvailableContacts(data.data.contacts || [])
       }
     } catch (error) {
       console.error('Failed to fetch contacts:', error)
@@ -368,7 +370,7 @@ export default function NewCampaignPage() {
         const formData = new FormData()
         formData.append('csvFile', file)
 
-        const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/contacts/import', {
+        const response = await fetch('https://novamail.world/api/contacts/import', {
           method: 'POST',
           body: formData
         })
