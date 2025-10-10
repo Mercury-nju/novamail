@@ -13,7 +13,15 @@ import {
   InformationCircleIcon,
   QuestionMarkCircleIcon,
   ArrowTopRightOnSquareIcon,
-  ClipboardDocumentIcon
+  ClipboardDocumentIcon,
+  PlayIcon,
+  XMarkIcon,
+  ChevronRightIcon,
+  ChevronDownIcon,
+  DevicePhoneMobileIcon,
+  ComputerDesktopIcon,
+  ShieldCheckIcon,
+  KeyIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 
@@ -38,6 +46,7 @@ export default function EmailSettingsPage() {
     message: string
   } | null>(null)
   const [showTutorial, setShowTutorial] = useState(false)
+  const [expandedProvider, setExpandedProvider] = useState<string | null>(null)
 
   const emailProviders = [
     {
@@ -46,21 +55,46 @@ export default function EmailSettingsPage() {
       smtpHost: 'smtp.gmail.com',
       smtpPort: '587',
       secure: true,
-      instructions: '使用 Gmail 应用密码发送邮件',
-      description: '推荐使用 Gmail，配置简单且稳定',
+      instructions: 'Use Gmail App Password to send emails',
+      description: 'Recommended Gmail with simple and stable configuration',
       tutorial: {
-        title: 'Gmail SMTP 配置教程',
+        title: 'Gmail App Password Setup',
         steps: [
-          '登录您的 Gmail 账户',
-          '进入 Google 账户设置 (https://myaccount.google.com)',
-          '点击"安全性"选项卡',
-          '启用两步验证（如果尚未启用）',
-          '在"应用密码"部分生成新密码',
-          '选择"邮件"作为应用类型',
-          '复制生成的应用密码',
-          '在此处输入您的 Gmail 地址和应用密码',
-          'SMTP 服务器：smtp.gmail.com',
-          '端口：587（TLS）或 465（SSL）'
+          {
+            title: 'Enable 2-Step Verification',
+            description: 'First, you need to enable 2-step verification on your Google account',
+            details: [
+              'Go to your Google Account settings',
+              'Navigate to Security → 2-Step Verification',
+              'Follow the setup process to enable 2-step verification',
+              'This is required before you can generate app passwords'
+            ],
+            icon: ShieldCheckIcon
+          },
+          {
+            title: 'Generate App Password',
+            description: 'Create a dedicated app password for NovaMail',
+            details: [
+              'Go to Google Account → Security → App passwords',
+              'Select "Mail" as the app type',
+              'Select "Other" as the device and enter "NovaMail"',
+              'Click "Generate" and copy the 16-character password',
+              'Use this password (not your regular Gmail password) in NovaMail'
+            ],
+            icon: KeyIcon
+          },
+          {
+            title: 'Configure SMTP Settings',
+            description: 'Enter your Gmail details in NovaMail',
+            details: [
+              'Email: Your Gmail address (e.g., yourname@gmail.com)',
+              'Password: The 16-character app password (not your login password)',
+              'SMTP Server: smtp.gmail.com',
+              'Port: 587 (TLS) or 465 (SSL)',
+              'Security: Enable TLS/SSL encryption'
+            ],
+            icon: ComputerDesktopIcon
+          }
         ]
       }
     },
@@ -70,17 +104,46 @@ export default function EmailSettingsPage() {
       smtpHost: 'smtp-mail.outlook.com',
       smtpPort: '587',
       secure: true,
-      instructions: '使用您的 Outlook 应用密码',
-      description: '需要生成 Microsoft 应用密码',
+      instructions: 'Use your Outlook App Password',
+      description: 'Microsoft email service with enterprise support',
       tutorial: {
-        title: 'Outlook 配置教程',
+        title: 'Outlook App Password Setup',
         steps: [
-          '确保您的 Microsoft 账户已启用两步验证',
-          '访问 Microsoft 账户安全设置',
-          '生成应用密码',
-          '使用应用密码而非账户密码',
-          'SMTP 服务器：smtp-mail.outlook.com',
-          '端口：587（TLS）'
+          {
+            title: 'Enable 2-Step Verification',
+            description: 'Enable two-step verification on your Microsoft account',
+            details: [
+              'Go to account.microsoft.com',
+              'Navigate to Security → Advanced security options',
+              'Turn on two-step verification',
+              'Complete the verification process'
+            ],
+            icon: ShieldCheckIcon
+          },
+          {
+            title: 'Create App Password',
+            description: 'Generate an app password for NovaMail',
+            details: [
+              'Go to Security → Advanced security options',
+              'Click "Create a new app password"',
+              'Enter "NovaMail" as the app name',
+              'Copy the generated password',
+              'Use this password in NovaMail configuration'
+            ],
+            icon: KeyIcon
+          },
+          {
+            title: 'Configure SMTP Settings',
+            description: 'Set up Outlook SMTP in NovaMail',
+            details: [
+              'Email: Your Outlook/Hotmail address',
+              'Password: The generated app password',
+              'SMTP Server: smtp-mail.outlook.com',
+              'Port: 587',
+              'Security: Enable TLS encryption'
+            ],
+            icon: ComputerDesktopIcon
+          }
         ]
       }
     },
@@ -90,22 +153,46 @@ export default function EmailSettingsPage() {
       smtpHost: 'smtp.mail.yahoo.com',
       smtpPort: '465',
       secure: true,
-      instructions: '使用您的 Yahoo 应用密码',
-      description: '需要生成 Yahoo 应用密码',
+      instructions: 'Use Yahoo App Password',
+      description: 'Yahoo email service with app password support',
       tutorial: {
-        title: 'Yahoo 配置教程',
+        title: 'Yahoo App Password Setup',
         steps: [
-          '1. 访问：https://mail.yahoo.com',
-          '2. 登录您的 Yahoo 账户',
-          '3. 点击右上角头像，选择"账户信息"',
-          '4. 进入"账户安全"',
-          '5. 启用两步验证（如果尚未启用）',
-          '6. 点击"生成应用密码"',
-          '7. 选择"其他应用"并输入名称（如 NovaMail）',
-          '8. 复制生成的 16 位应用密码',
-          '9. 在此处输入您的 Yahoo 邮箱地址和应用密码',
-          'SMTP 服务器：smtp.mail.yahoo.com',
-          '端口：465（SSL）或 587（TLS）'
+          {
+            title: 'Enable 2-Step Verification',
+            description: 'Set up two-step verification on Yahoo',
+            details: [
+              'Go to Yahoo Account Security',
+              'Navigate to Two-step verification',
+              'Enable two-step verification',
+              'Verify your phone number or email'
+            ],
+            icon: ShieldCheckIcon
+          },
+          {
+            title: 'Generate App Password',
+            description: 'Create an app password for NovaMail',
+            details: [
+              'Go to Account Security → App passwords',
+              'Click "Generate app password"',
+              'Enter "NovaMail" as the app name',
+              'Copy the generated password',
+              'Use this password in NovaMail'
+            ],
+            icon: KeyIcon
+          },
+          {
+            title: 'Configure SMTP Settings',
+            description: 'Configure Yahoo SMTP in NovaMail',
+            details: [
+              'Email: Your Yahoo email address',
+              'Password: The generated app password',
+              'SMTP Server: smtp.mail.yahoo.com',
+              'Port: 465 (SSL) or 587 (TLS)',
+              'Security: Enable SSL/TLS encryption'
+            ],
+            icon: ComputerDesktopIcon
+          }
         ]
       }
     },
@@ -115,20 +202,48 @@ export default function EmailSettingsPage() {
       smtpHost: '',
       smtpPort: '25',
       secure: false,
-      instructions: '使用您的邮箱应用密码',
-      description: '适用于企业邮箱或其他邮件服务商，通常需要应用密码',
+      instructions: 'Custom SMTP Server Configuration',
+      description: 'Other email providers or enterprise email servers',
       tutorial: {
-        title: '自定义 SMTP 配置教程',
+        title: 'Custom SMTP Configuration',
         steps: [
-          '1. 联系您的邮件服务商获取 SMTP 设置',
-          '2. 确认 SMTP 服务器地址和端口',
-          '3. 确认是否需要 SSL/TLS 加密',
-          '4. 检查是否启用了两步验证',
-          '5. 如果启用了两步验证，需要生成应用密码',
-          '6. 获取邮箱用户名和应用密码（非登录密码）',
-          '7. 在此处输入完整的 SMTP 配置信息',
-          '8. 测试连接确保设置正确',
-          '常见端口：25（无加密）、587（TLS）、465（SSL）'
+          {
+            title: 'Get SMTP Details',
+            description: 'Obtain SMTP settings from your email provider',
+            details: [
+              'Contact your email provider or IT department',
+              'Ask for SMTP server details:',
+              '• SMTP server address',
+              '• Port number (usually 25, 587, or 465)',
+              '• Security settings (TLS/SSL)',
+              '• Authentication requirements'
+            ],
+            icon: InformationCircleIcon
+          },
+          {
+            title: 'Check App Password Requirements',
+            description: 'Determine if app passwords are needed',
+            details: [
+              'Many providers require app passwords for SMTP',
+              'Check your provider\'s documentation',
+              'Enable 2FA if required',
+              'Generate app password if needed',
+              'Use app password instead of login password'
+            ],
+            icon: KeyIcon
+          },
+          {
+            title: 'Configure in NovaMail',
+            description: 'Enter your custom SMTP settings',
+            details: [
+              'Email: Your email address',
+              'Password: App password or SMTP password',
+              'SMTP Server: Your provider\'s SMTP server',
+              'Port: Your provider\'s SMTP port',
+              'Security: Enable if your provider supports TLS/SSL'
+            ],
+            icon: ComputerDesktopIcon
+          }
         ]
       }
     }
@@ -170,7 +285,7 @@ export default function EmailSettingsPage() {
 
   const handleTestConnection = async () => {
     if (!emailConfig.email || !emailConfig.password) {
-      toast.error('请输入邮箱地址和密码')
+      toast.error('Please enter your email address and password')
       return
     }
 
@@ -198,16 +313,16 @@ export default function EmailSettingsPage() {
       setTestResult(result)
 
       if (result.success) {
-        toast.success('SMTP 连接测试成功！')
+        toast.success('SMTP connection test successful!')
       } else {
-        toast.error(result.error || 'SMTP 连接测试失败')
+        toast.error(result.error || 'SMTP connection test failed')
       }
     } catch (error) {
       setTestResult({
         success: false,
-        message: '网络错误，请重试'
+        message: 'Network error, please try again'
       })
-      toast.error('网络错误，请重试')
+      toast.error('Network error, please try again')
     } finally {
       setIsTesting(false)
     }
@@ -216,12 +331,12 @@ export default function EmailSettingsPage() {
   const handleSaveConfig = async () => {
     // 验证必填字段
     if (!emailConfig.email) {
-      toast.error('请输入邮箱地址')
+      toast.error('Please enter your email address')
       return
     }
 
     if (!emailConfig.password) {
-      toast.error('请输入邮箱密码或应用密码')
+      toast.error('Please enter your email password or app password')
       return
     }
 
@@ -259,13 +374,13 @@ export default function EmailSettingsPage() {
           }))
         }
         
-        toast.success('SMTP 配置已保存')
+        toast.success('SMTP configuration saved successfully')
         router.push('/dashboard')
       } else {
-        toast.error(result.error || '保存失败')
+        toast.error(result.error || 'Save failed')
       }
     } catch (error) {
-      toast.error('保存失败，请重试')
+      toast.error('Save failed, please try again')
     } finally {
       setIsLoading(false)
     }
@@ -280,9 +395,9 @@ export default function EmailSettingsPage() {
             <ArrowLeftIcon className="h-5 w-5 text-gray-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">邮箱配置</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Email Configuration</h1>
             <p className="mt-1 text-sm text-gray-600">
-              配置您的邮箱账户以发送营销邮件
+              Configure your email account to send marketing emails
             </p>
           </div>
         </div>
@@ -291,7 +406,7 @@ export default function EmailSettingsPage() {
           className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
         >
           <QuestionMarkCircleIcon className="h-4 w-4" />
-          <span>{showTutorial ? '隐藏教程' : '查看教程'}</span>
+          <span>{showTutorial ? 'Hide Tutorial' : 'View Tutorial'}</span>
         </button>
       </div>
 
@@ -303,20 +418,20 @@ export default function EmailSettingsPage() {
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-blue-900 mb-2">
-              为什么需要配置邮箱？
+              Why configure email?
             </h3>
             <div className="text-sm text-blue-800 space-y-2">
               <p>
-                NovaMail 需要您的邮箱账户来发送营销邮件。配置邮箱后，您可以：
+                NovaMail needs your email account to send marketing emails. After configuring your email, you can:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>发送 AI 生成的营销邮件</li>
-                <li>管理邮件活动</li>
-                <li>跟踪邮件发送效果</li>
-                <li>确保邮件送达率</li>
+                <li>Send AI-generated marketing emails</li>
+                <li>Manage email campaigns</li>
+                <li>Track email sending performance</li>
+                <li>Ensure email deliverability</li>
               </ul>
               <p className="mt-3 font-medium">
-                我们支持 Gmail、Outlook、Yahoo 等主流邮箱服务商，推荐使用 Gmail SMTP 配置获得最佳体验。
+                We support mainstream email providers like Gmail, Outlook, Yahoo, and recommend using Gmail SMTP configuration for the best experience.
               </p>
             </div>
           </div>
@@ -331,37 +446,37 @@ export default function EmailSettingsPage() {
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-green-900 mb-2">
-              什么是应用密码？为什么需要它？
+              What is an App Password? Why is it needed?
             </h3>
             <div className="text-sm text-green-800 space-y-3">
               <div>
-                <h4 className="font-medium mb-1">🔐 应用密码的作用：</h4>
+                <h4 className="font-medium mb-1">🔐 Purpose of App Password:</h4>
                 <ul className="list-disc list-inside space-y-1 ml-4">
-                  <li>专门用于第三方应用（如 NovaMail）访问您的邮箱</li>
-                  <li>比登录密码更安全，可以单独撤销</li>
-                  <li>不会影响您的正常邮箱登录</li>
-                  <li>有效期为永久，除非您主动删除</li>
+                  <li>Specifically for third-party applications (like NovaMail) to access your email</li>
+                  <li>More secure than login password, can be revoked separately</li>
+                  <li>Will not affect your normal email login</li>
+                  <li>Valid permanently, unless you actively delete it</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium mb-1">⚠️ 为什么不能使用登录密码：</h4>
+                <h4 className="font-medium mb-1">⚠️ Why login password cannot be used:</h4>
                 <ul className="list-disc list-inside space-y-1 ml-4">
-                  <li>现代邮箱服务商（Gmail、Outlook、Yahoo）出于安全考虑</li>
-                  <li>防止第三方应用获取您的完整账户权限</li>
-                  <li>即使应用密码泄露，也不会影响您的邮箱安全</li>
-                  <li>符合行业安全标准和最佳实践</li>
+                  <li>Modern email providers (Gmail, Outlook, Yahoo) for security reasons</li>
+                  <li>Prevent third-party applications from obtaining your full account permissions</li>
+                  <li>Even if app password is leaked, it will not affect your email security</li>
+                  <li>Complies with industry security standards and best practices</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium mb-1">📱 如何生成应用密码：</h4>
-                <p>每个邮箱服务商的操作略有不同，请参考上方的详细教程。基本步骤都是：启用两步验证 → 生成应用密码 → 复制密码使用。</p>
+                <h4 className="font-medium mb-1">📱 How to generate App Password:</h4>
+                <p>The operation for each email provider is slightly different, please refer to the detailed tutorial above. The basic steps are: Enable two-step verification → Generate app password → Copy and use the password.</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Tutorial Section */}
+      {/* Interactive Tutorial Section */}
       {showTutorial && selectedProvider && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
@@ -369,26 +484,62 @@ export default function EmailSettingsPage() {
           exit={{ opacity: 0, height: 0 }}
           className="bg-white border border-gray-200 rounded-xl p-6"
         >
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-              <QuestionMarkCircleIcon className="h-5 w-5 mr-2 text-blue-600" />
+              <PlayIcon className="h-5 w-5 mr-2 text-blue-600" />
               {selectedProvider.tutorial.title}
             </h3>
             <button
               onClick={() => setShowTutorial(false)}
               className="text-gray-400 hover:text-gray-600"
             >
-              <ArrowLeftIcon className="h-5 w-5" />
+              <XMarkIcon className="h-5 w-5" />
             </button>
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-4">
             {selectedProvider.tutorial.steps.map((step, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
-                  {index + 1}
-                </div>
-                <p className="text-sm text-gray-700">{step}</p>
+              <div key={index} className="border border-gray-200 rounded-lg p-4">
+                <button
+                  onClick={() => setExpandedProvider(expandedProvider === `${selectedProvider.id}-${index}` ? null : `${selectedProvider.id}-${index}`)}
+                  className="w-full flex items-center justify-between text-left"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">{step.title}</h4>
+                      <p className="text-sm text-gray-600">{step.description}</p>
+                    </div>
+                  </div>
+                  {expandedProvider === `${selectedProvider.id}-${index}` ? (
+                    <ChevronDownIcon className="h-5 w-5 text-gray-400" />
+                  ) : (
+                    <ChevronRightIcon className="h-5 w-5 text-gray-400" />
+                  )}
+                </button>
+                
+                {expandedProvider === `${selectedProvider.id}-${index}` && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-4 pl-11"
+                  >
+                    <div className="flex items-start space-x-3">
+                      <step.icon className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <div className="space-y-2">
+                        {step.details.map((detail, detailIndex) => (
+                          <div key={detailIndex} className="flex items-start space-x-2">
+                            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                            <p className="text-sm text-gray-700">{detail}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             ))}
           </div>
@@ -398,34 +549,34 @@ export default function EmailSettingsPage() {
                <div className="flex items-start space-x-3">
                  <ExclamationTriangleIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                  <div>
-                   <h4 className="text-sm font-medium text-red-800 mb-1">⚠️ 重要：不能使用登录密码</h4>
+                   <h4 className="text-sm font-medium text-red-800 mb-1">⚠️ Important: Cannot use login password</h4>
                    <div className="text-sm text-red-700 space-y-2">
-                     <p><strong>{selectedProvider.name} 必须使用应用密码，不能使用登录密码！</strong></p>
+                     <p><strong>{selectedProvider.name} must use app password, not login password!</strong></p>
                      {selectedProvider.id === 'gmail' && (
                        <>
-                         <p>1. 访问 <a href="https://myaccount.google.com" target="_blank" className="underline">Google 账户设置</a></p>
-                         <p>2. 启用两步验证</p>
-                         <p>3. 生成应用密码（选择"邮件"）</p>
-                         <p>4. 使用生成的 16 位应用密码</p>
-                         <p className="text-xs text-red-600">应用密码格式：abcd efgh ijkl mnop</p>
+                         <p>1. Visit <a href="https://myaccount.google.com" target="_blank" className="underline">Google Account Settings</a></p>
+                         <p>2. Enable two-step verification</p>
+                         <p>3. Generate app password (select "Mail")</p>
+                         <p>4. Use the generated 16-character app password</p>
+                         <p className="text-xs text-red-600">App password format: abcd efgh ijkl mnop</p>
                        </>
                      )}
                      {selectedProvider.id === 'outlook' && (
                        <>
-                         <p>1. 访问 <a href="https://account.microsoft.com" target="_blank" className="underline">Microsoft 账户设置</a></p>
-                         <p>2. 启用两步验证</p>
-                         <p>3. 生成应用密码（选择"邮件"）</p>
-                         <p>4. 使用生成的 16 位应用密码</p>
-                         <p className="text-xs text-red-600">应用密码格式：abcd efgh ijkl mnop</p>
+                         <p>1. Visit <a href="https://account.microsoft.com" target="_blank" className="underline">Microsoft Account Settings</a></p>
+                         <p>2. Enable two-step verification</p>
+                         <p>3. Generate app password (select "Mail")</p>
+                         <p>4. Use the generated 16-character app password</p>
+                         <p className="text-xs text-red-600">App password format: abcd efgh ijkl mnop</p>
                        </>
                      )}
                      {selectedProvider.id === 'yahoo' && (
                        <>
-                         <p>1. 访问 <a href="https://mail.yahoo.com" target="_blank" className="underline">Yahoo 账户设置</a></p>
-                         <p>2. 启用两步验证</p>
-                         <p>3. 生成应用密码（选择"其他应用"）</p>
-                         <p>4. 使用生成的 16 位应用密码</p>
-                         <p className="text-xs text-red-600">应用密码格式：abcd efgh ijkl mnop</p>
+                         <p>1. Visit <a href="https://mail.yahoo.com" target="_blank" className="underline">Yahoo Account Settings</a></p>
+                         <p>2. Enable two-step verification</p>
+                         <p>3. Generate app password (select "Other app")</p>
+                         <p>4. Use the generated 16-character app password</p>
+                         <p className="text-xs text-red-600">App password format: abcd efgh ijkl mnop</p>
                        </>
                      )}
                    </div>
@@ -440,7 +591,7 @@ export default function EmailSettingsPage() {
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <EnvelopeIcon className="h-5 w-5 mr-2 text-blue-600" />
-          邮箱服务商
+          Email Providers
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -458,7 +609,7 @@ export default function EmailSettingsPage() {
                 <div className="font-semibold text-gray-900">{provider.name}</div>
                 {provider.id === 'gmail' && (
                   <span className="px-2 py-1 text-xs font-medium text-green-600 bg-green-100 rounded-full">
-                    推荐
+                    Recommended
                   </span>
                 )}
               </div>
@@ -472,7 +623,7 @@ export default function EmailSettingsPage() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              电子邮件地址
+              Email Address
             </label>
             <input
               type="email"
@@ -488,7 +639,7 @@ export default function EmailSettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                SMTP 服务器
+                SMTP Server
               </label>
               <input
                 type="text"
@@ -500,7 +651,7 @@ export default function EmailSettingsPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                端口
+                Port
               </label>
               <input
                 type="text"
@@ -515,7 +666,7 @@ export default function EmailSettingsPage() {
           {/* Password field */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              密码 / 应用密码
+              Password / App Password
             </label>
             <div className="relative">
               <input
@@ -524,14 +675,14 @@ export default function EmailSettingsPage() {
                 onChange={(e) => setEmailConfig(prev => ({ ...prev, password: e.target.value }))}
                 placeholder={
                   emailConfig.provider === 'gmail' 
-                    ? '输入 Gmail 应用密码（不是登录密码）' 
+                    ? 'Enter Gmail app password (not login password)' 
                     : emailConfig.provider === 'outlook'
-                    ? '输入 Outlook 应用密码（不是登录密码）'
+                    ? 'Enter Outlook app password (not login password)'
                     : emailConfig.provider === 'yahoo'
-                    ? '输入 Yahoo 应用密码（不是登录密码）'
+                    ? 'Enter Yahoo app password (not login password)'
                     : emailConfig.provider === 'custom'
-                    ? '输入应用密码（如果启用了两步验证）'
-                    : '输入您的邮箱密码或应用密码'
+                    ? 'Enter app password (if 2FA is enabled)'
+                    : 'Enter your email password or app password'
                 }
                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -558,8 +709,8 @@ export default function EmailSettingsPage() {
         <div className="mt-6 pt-6 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-sm font-medium text-gray-900">测试连接</h4>
-              <p className="text-sm text-gray-600">真实测试您的 SMTP 连接</p>
+              <h4 className="text-sm font-medium text-gray-900">Test Connection</h4>
+              <p className="text-sm text-gray-600">Test your SMTP connection in real-time</p>
             </div>
             <button
               onClick={handleTestConnection}
@@ -569,10 +720,10 @@ export default function EmailSettingsPage() {
               {isTesting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>测试中...</span>
+                  <span>Testing...</span>
                 </>
               ) : (
-                <span>测试连接</span>
+                <span>Test Connection</span>
               )}
             </button>
           </div>
@@ -582,8 +733,8 @@ export default function EmailSettingsPage() {
             <div className="flex items-start space-x-2">
               <InformationCircleIcon className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
               <div className="text-xs text-blue-700">
-                <p className="font-medium mb-1">注意：</p>
-                <p>此测试会真实连接到您的 SMTP 服务器并发送测试邮件。实际发送邮件时会使用您配置的 SMTP 服务器。</p>
+                <p className="font-medium mb-1">Note:</p>
+                <p>This test will connect to your SMTP server in real-time and send a test email. Actual email sending will use your configured SMTP server.</p>
               </div>
             </div>
           </div>
@@ -627,10 +778,10 @@ export default function EmailSettingsPage() {
           {isLoading ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              <span>保存中...</span>
+              <span>Saving...</span>
             </>
           ) : (
-            <span>保存配置</span>
+            <span>Save Configuration</span>
           )}
         </button>
       </div>
