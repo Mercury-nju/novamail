@@ -8,8 +8,6 @@ import {
   UserGroupIcon,
   ChartBarIcon,
   PlusIcon,
-  ArrowUpIcon,
-  ArrowDownIcon,
   ExclamationTriangleIcon,
   Cog6ToothIcon,
   XMarkIcon
@@ -20,30 +18,12 @@ export default function DashboardPage() {
     {
       name: 'Total Contacts',
       value: '0',
-      change: '0%',
-      changeType: 'neutral',
       icon: UserGroupIcon,
     },
     {
       name: 'Emails Sent',
       value: '0',
-      change: '0%',
-      changeType: 'neutral',
       icon: EnvelopeIcon,
-    },
-    {
-      name: 'Delivery Rate',
-      value: '0%',
-      change: '0%',
-      changeType: 'neutral',
-      icon: ChartBarIcon,
-    },
-    {
-      name: 'Reply Rate',
-      value: '0%',
-      change: '0%',
-      changeType: 'neutral',
-      icon: ChartBarIcon,
     },
   ])
   const [recentCampaigns, setRecentCampaigns] = useState<any[]>([])
@@ -118,30 +98,12 @@ export default function DashboardPage() {
           {
             name: 'Total Contacts',
             value: data.stats.totalContacts.toLocaleString(),
-            change: '0%',
-            changeType: 'neutral',
             icon: UserGroupIcon,
           },
           {
             name: 'Emails Sent',
             value: data.stats.totalEmailsSent.toLocaleString(),
-            change: '0%',
-            changeType: 'neutral',
             icon: EnvelopeIcon,
-          },
-          {
-            name: 'Delivery Rate',
-            value: data.stats.deliveryRate > 0 ? `${data.stats.deliveryRate}%` : '0%',
-            change: '0%',
-            changeType: 'neutral',
-            icon: ChartBarIcon,
-          },
-          {
-            name: 'Reply Rate',
-            value: data.stats.replyRate > 0 ? `${data.stats.replyRate}%` : '0%',
-            change: '0%',
-            changeType: 'neutral',
-            icon: ChartBarIcon,
           },
         ])
         setRecentCampaigns(data.recentCampaigns || [])
@@ -276,7 +238,7 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.name}
@@ -294,25 +256,10 @@ export default function DashboardPage() {
                   <dt className="text-sm font-medium text-gray-500 truncate">
                     {stat.name}
                   </dt>
-                  <dd className="flex items-baseline">
+                  <dd>
                     <div className="text-2xl font-semibold text-gray-900">
                       {stat.value}
                     </div>
-                    {stat.changeType !== 'neutral' && (
-                      <div className={`ml-2 flex items-baseline text-sm font-semibold ${
-                        stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {stat.changeType === 'positive' ? (
-                          <ArrowUpIcon className="h-4 w-4 flex-shrink-0 self-center" />
-                        ) : (
-                          <ArrowDownIcon className="h-4 w-4 flex-shrink-0 self-center" />
-                        )}
-                        <span className="sr-only">
-                          {stat.changeType === 'positive' ? 'Increased' : 'Decreased'} by
-                        </span>
-                        {stat.change}
-                      </div>
-                    )}
                   </dd>
                 </dl>
               </div>
@@ -382,23 +329,20 @@ export default function DashboardPage() {
                     Recipients
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Delivery Rate
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Reply Rate
+                    Created
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
                       Loading...
                     </td>
                   </tr>
                 ) : recentCampaigns.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
                       No campaigns yet. <Link href="/dashboard/campaigns/new" className="text-primary-600 hover:text-primary-500">Create your first campaign</Link>
                     </td>
                   </tr>
@@ -425,13 +369,10 @@ export default function DashboardPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {campaign.recipients.toLocaleString()}
+                        {campaign.recipients ? campaign.recipients.toLocaleString() : '0'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {campaign.deliveryRate > 0 ? `${campaign.deliveryRate}%` : '-'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {campaign.replyRate > 0 ? `${campaign.replyRate}%` : '-'}
+                        {campaign.createdAt ? new Date(campaign.createdAt).toLocaleDateString() : '-'}
                       </td>
                     </tr>
                   ))
