@@ -56,14 +56,15 @@ export default function DashboardLayout({
           setIsAuthenticated(true)
           console.log('User authenticated:', userEmail)
           
-        // 检查是否需要显示用户引导
-        const hasSeenOnboarding = localStorage.getItem('has-seen-onboarding')
-        console.log('Onboarding check:', { hasSeenOnboarding, userEmail })
+        // 检查是否需要显示用户引导（按用户ID区分）
+        const userId = localStorage.getItem('user-id') || userEmail
+        const hasSeenOnboarding = localStorage.getItem(`has-seen-onboarding-${userId}`)
+        console.log('Onboarding check:', { hasSeenOnboarding, userEmail, userId })
         if (!hasSeenOnboarding) {
-          console.log('Showing onboarding tour')
+          console.log('Showing onboarding tour for user:', userId)
           setShowOnboarding(true)
         } else {
-          console.log('Onboarding already seen, skipping')
+          console.log('Onboarding already seen for user:', userId)
         }
         } else {
           setIsAuthenticated(false)
@@ -80,13 +81,21 @@ export default function DashboardLayout({
   // 处理用户引导完成
   const handleOnboardingComplete = () => {
     setShowOnboarding(false)
-    localStorage.setItem('has-seen-onboarding', 'true')
+    const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email')
+    if (userId) {
+      localStorage.setItem(`has-seen-onboarding-${userId}`, 'true')
+      console.log('Onboarding completed for user:', userId)
+    }
   }
 
   // 手动触发用户引导（用于测试）
   const triggerOnboarding = () => {
-    localStorage.removeItem('has-seen-onboarding')
-    setShowOnboarding(true)
+    const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email')
+    if (userId) {
+      localStorage.removeItem(`has-seen-onboarding-${userId}`)
+      console.log('Manually triggering onboarding for user:', userId)
+      setShowOnboarding(true)
+    }
   }
 
   // 显示加载状态
