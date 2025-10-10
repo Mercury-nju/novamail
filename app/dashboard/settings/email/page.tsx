@@ -533,8 +533,8 @@ export default function EmailSettingsPage() {
         <div className="mt-6 pt-6 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-sm font-medium text-gray-900">测试连接</h4>
-              <p className="text-sm text-gray-600">验证您的邮件设置是否正常工作</p>
+              <h4 className="text-sm font-medium text-gray-900">验证配置</h4>
+              <p className="text-sm text-gray-600">验证您的 SMTP 配置格式是否正确</p>
             </div>
             <button
               onClick={handleTestConnection}
@@ -544,12 +544,23 @@ export default function EmailSettingsPage() {
               {isTesting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>测试中...</span>
+                  <span>验证中...</span>
                 </>
               ) : (
-                <span>测试连接</span>
+                <span>验证配置</span>
               )}
             </button>
+          </div>
+
+          {/* Notice */}
+          <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-start space-x-2">
+              <InformationCircleIcon className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
+              <div className="text-xs text-blue-700">
+                <p className="font-medium mb-1">注意：</p>
+                <p>此验证仅检查配置格式，不进行真实的 SMTP 连接测试。实际发送邮件时会使用您配置的 SMTP 服务器。</p>
+              </div>
+            </div>
           </div>
 
           {/* Test Result */}
