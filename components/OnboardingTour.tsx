@@ -18,7 +18,7 @@ interface OnboardingStep {
   description: string
   icon: React.ComponentType<any>
   target: string
-  position: 'top' | 'bottom' | 'left' | 'right'
+  position: 'top' | 'bottom' | 'left' | 'right' | 'center'
   action?: {
     text: string
     href: string
@@ -31,8 +31,8 @@ const onboardingSteps: OnboardingStep[] = [
     title: '欢迎使用 NovaMail！',
     description: '让我们快速了解一下如何开始使用我们的AI邮件营销平台。',
     icon: EnvelopeIcon,
-    target: 'body',
-    position: 'top'
+    target: '',
+    position: 'center'
   },
   {
     id: 'smtp-config',
@@ -92,8 +92,13 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
 
   useEffect(() => {
     if (isOpen) {
-      const target = document.querySelector(onboardingSteps[currentStep].target) as HTMLElement
-      setTargetElement(target)
+      const step = onboardingSteps[currentStep]
+      if (step.target) {
+        const target = document.querySelector(step.target) as HTMLElement
+        setTargetElement(target)
+      } else {
+        setTargetElement(null)
+      }
     }
   }, [isOpen, currentStep])
 
@@ -159,15 +164,15 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
             exit={{ opacity: 0, scale: 0.8 }}
             className="fixed z-50 bg-white rounded-lg shadow-xl p-6 max-w-sm"
             style={{
-              left: targetElement ? 
+              left: targetElement && currentStepData.position !== 'center' ? 
                 (currentStepData.position === 'right' ? targetElement.offsetLeft + targetElement.offsetWidth + 20 : 
                  currentStepData.position === 'left' ? targetElement.offsetLeft - 320 : 
                  targetElement.offsetLeft) : '50%',
-              top: targetElement ? 
+              top: targetElement && currentStepData.position !== 'center' ? 
                 (currentStepData.position === 'bottom' ? targetElement.offsetTop + targetElement.offsetHeight + 20 : 
                  currentStepData.position === 'top' ? targetElement.offsetTop - 200 : 
                  targetElement.offsetTop) : '50%',
-              transform: targetElement ? 'none' : 'translate(-50%, -50%)'
+              transform: (targetElement && currentStepData.position !== 'center') ? 'none' : 'translate(-50%, -50%)'
             }}
           >
             {/* 步骤指示器 */}
