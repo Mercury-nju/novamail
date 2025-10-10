@@ -167,6 +167,7 @@ export default function DashboardLayout({
                 <Link
                   key={item.name}
                   href={item.href}
+                  id={`nav-link-${item.name.toLowerCase()}`}
                   className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                     isActive
                       ? 'bg-primary-100 text-primary-700'
@@ -207,6 +208,7 @@ export default function DashboardLayout({
                 <Link
                   key={item.name}
                   href={item.href}
+                  id={`nav-link-${item.name.toLowerCase()}`}
                   className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                     isActive
                       ? 'bg-primary-100 text-primary-700'

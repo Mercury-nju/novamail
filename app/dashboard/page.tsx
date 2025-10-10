@@ -240,6 +240,7 @@ export default function DashboardPage() {
             >
               <Link
                 href={action.href}
+                id={`quick-action-${action.name.toLowerCase().replace(/\s+/g, '-')}`}
                 className="card hover:shadow-md transition-shadow duration-200 block"
               >
                 <div className="flex items-center">

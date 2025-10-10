@@ -39,7 +39,7 @@ const onboardingSteps: OnboardingStep[] = [
     title: '配置您的邮箱',
     description: '首先，您需要配置SMTP设置才能发送邮件。这是使用NovaMail的必要步骤。',
     icon: Cog6ToothIcon,
-    target: '[href="/dashboard/settings"]',
+    target: '#nav-link-settings',
     position: 'right',
     action: {
       text: '去配置',
@@ -51,7 +51,7 @@ const onboardingSteps: OnboardingStep[] = [
     title: '管理联系人',
     description: '添加或导入您的联系人列表，这是发送邮件的基础。',
     icon: UserGroupIcon,
-    target: '[href="/dashboard/contacts"]',
+    target: '#nav-link-contacts',
     position: 'right',
     action: {
       text: '添加联系人',
@@ -63,11 +63,11 @@ const onboardingSteps: OnboardingStep[] = [
     title: '创建邮件活动',
     description: '使用AI生成邮件内容，创建您的第一个邮件营销活动。',
     icon: EnvelopeIcon,
-    target: '[href="/dashboard/campaigns"]',
+    target: '#quick-action-create-campaign',
     position: 'right',
     action: {
       text: '创建活动',
-      href: '/dashboard/campaigns'
+      href: '/dashboard/campaigns/new'
     }
   },
   {
@@ -75,7 +75,7 @@ const onboardingSteps: OnboardingStep[] = [
     title: '查看分析数据',
     description: '跟踪您的邮件发送效果，了解收件人的参与度。',
     icon: ChartBarIcon,
-    target: '[href="/dashboard/analytics"]',
+    target: '#nav-link-analytics',
     position: 'right'
   }
 ]
@@ -165,13 +165,13 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
             className="fixed z-50 bg-white rounded-lg shadow-xl p-6 max-w-sm"
             style={{
               left: targetElement && currentStepData.position !== 'center' ? 
-                (currentStepData.position === 'right' ? targetElement.offsetLeft + targetElement.offsetWidth + 20 : 
-                 currentStepData.position === 'left' ? targetElement.offsetLeft - 320 : 
-                 targetElement.offsetLeft) : '50%',
+                (currentStepData.position === 'right' ? Math.min(targetElement.getBoundingClientRect().right + 20, window.innerWidth - 320) : 
+                 currentStepData.position === 'left' ? Math.max(targetElement.getBoundingClientRect().left - 320, 20) : 
+                 targetElement.getBoundingClientRect().left) : '50%',
               top: targetElement && currentStepData.position !== 'center' ? 
-                (currentStepData.position === 'bottom' ? targetElement.offsetTop + targetElement.offsetHeight + 20 : 
-                 currentStepData.position === 'top' ? targetElement.offsetTop - 200 : 
-                 targetElement.offsetTop) : '50%',
+                (currentStepData.position === 'bottom' ? Math.min(targetElement.getBoundingClientRect().bottom + 20, window.innerHeight - 200) : 
+                 currentStepData.position === 'top' ? Math.max(targetElement.getBoundingClientRect().top - 200, 20) : 
+                 targetElement.getBoundingClientRect().top) : '50%',
               transform: (targetElement && currentStepData.position !== 'center') ? 'none' : 'translate(-50%, -50%)'
             }}
           >
