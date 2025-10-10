@@ -95,11 +95,15 @@ export default function EmailSettingsPage() {
       tutorial: {
         title: 'Yahoo 配置教程',
         steps: [
-          '登录 Yahoo 账户',
-          '进入账户安全设置',
-          '启用两步验证',
-          '生成应用密码',
-          '使用应用密码而非账户密码',
+          '1. 访问：https://mail.yahoo.com',
+          '2. 登录您的 Yahoo 账户',
+          '3. 点击右上角头像，选择"账户信息"',
+          '4. 进入"账户安全"',
+          '5. 启用两步验证（如果尚未启用）',
+          '6. 点击"生成应用密码"',
+          '7. 选择"其他应用"并输入名称（如 NovaMail）',
+          '8. 复制生成的 16 位应用密码',
+          '9. 在此处输入您的 Yahoo 邮箱地址和应用密码',
           'SMTP 服务器：smtp.mail.yahoo.com',
           '端口：465（SSL）或 587（TLS）'
         ]
@@ -111,16 +115,19 @@ export default function EmailSettingsPage() {
       smtpHost: '',
       smtpPort: '25',
       secure: false,
-      instructions: '输入您的自定义 SMTP 设置',
-      description: '适用于企业邮箱或其他邮件服务商',
+      instructions: '使用您的邮箱应用密码',
+      description: '适用于企业邮箱或其他邮件服务商，通常需要应用密码',
       tutorial: {
         title: '自定义 SMTP 配置教程',
         steps: [
-          '联系您的邮件服务商获取 SMTP 设置',
-          '确认 SMTP 服务器地址和端口',
-          '确认是否需要 SSL/TLS 加密',
-          '获取邮箱用户名和密码',
-          '测试连接确保设置正确',
+          '1. 联系您的邮件服务商获取 SMTP 设置',
+          '2. 确认 SMTP 服务器地址和端口',
+          '3. 确认是否需要 SSL/TLS 加密',
+          '4. 检查是否启用了两步验证',
+          '5. 如果启用了两步验证，需要生成应用密码',
+          '6. 获取邮箱用户名和应用密码（非登录密码）',
+          '7. 在此处输入完整的 SMTP 配置信息',
+          '8. 测试连接确保设置正确',
           '常见端口：25（无加密）、587（TLS）、465（SSL）'
         ]
       }
@@ -291,6 +298,44 @@ export default function EmailSettingsPage() {
         </div>
       </div>
 
+      {/* App Password Explanation Section */}
+      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
+        <div className="flex items-start space-x-4">
+          <div className="flex-shrink-0">
+            <QuestionMarkCircleIcon className="h-6 w-6 text-green-600" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-green-900 mb-2">
+              什么是应用密码？为什么需要它？
+            </h3>
+            <div className="text-sm text-green-800 space-y-3">
+              <div>
+                <h4 className="font-medium mb-1">🔐 应用密码的作用：</h4>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>专门用于第三方应用（如 NovaMail）访问您的邮箱</li>
+                  <li>比登录密码更安全，可以单独撤销</li>
+                  <li>不会影响您的正常邮箱登录</li>
+                  <li>有效期为永久，除非您主动删除</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-medium mb-1">⚠️ 为什么不能使用登录密码：</h4>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>现代邮箱服务商（Gmail、Outlook、Yahoo）出于安全考虑</li>
+                  <li>防止第三方应用获取您的完整账户权限</li>
+                  <li>即使应用密码泄露，也不会影响您的邮箱安全</li>
+                  <li>符合行业安全标准和最佳实践</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-medium mb-1">📱 如何生成应用密码：</h4>
+                <p>每个邮箱服务商的操作略有不同，请参考上方的详细教程。基本步骤都是：启用两步验证 → 生成应用密码 → 复制密码使用。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Tutorial Section */}
       {showTutorial && selectedProvider && (
         <motion.div
@@ -323,7 +368,7 @@ export default function EmailSettingsPage() {
             ))}
           </div>
 
-           {(selectedProvider.id === 'gmail' || selectedProvider.id === 'outlook') && (
+           {(selectedProvider.id === 'gmail' || selectedProvider.id === 'outlook' || selectedProvider.id === 'yahoo') && (
              <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                <div className="flex items-start space-x-3">
                  <ExclamationTriangleIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -345,6 +390,15 @@ export default function EmailSettingsPage() {
                          <p>1. 访问 <a href="https://account.microsoft.com" target="_blank" className="underline">Microsoft 账户设置</a></p>
                          <p>2. 启用两步验证</p>
                          <p>3. 生成应用密码（选择"邮件"）</p>
+                         <p>4. 使用生成的 16 位应用密码</p>
+                         <p className="text-xs text-red-600">应用密码格式：abcd efgh ijkl mnop</p>
+                       </>
+                     )}
+                     {selectedProvider.id === 'yahoo' && (
+                       <>
+                         <p>1. 访问 <a href="https://mail.yahoo.com" target="_blank" className="underline">Yahoo 账户设置</a></p>
+                         <p>2. 启用两步验证</p>
+                         <p>3. 生成应用密码（选择"其他应用"）</p>
                          <p>4. 使用生成的 16 位应用密码</p>
                          <p className="text-xs text-red-600">应用密码格式：abcd efgh ijkl mnop</p>
                        </>
@@ -448,6 +502,10 @@ export default function EmailSettingsPage() {
                     ? '输入 Gmail 应用密码（不是登录密码）' 
                     : emailConfig.provider === 'outlook'
                     ? '输入 Outlook 应用密码（不是登录密码）'
+                    : emailConfig.provider === 'yahoo'
+                    ? '输入 Yahoo 应用密码（不是登录密码）'
+                    : emailConfig.provider === 'custom'
+                    ? '输入应用密码（如果启用了两步验证）'
                     : '输入您的邮箱密码或应用密码'
                 }
                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
