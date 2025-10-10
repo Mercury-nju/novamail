@@ -221,7 +221,7 @@ export default function NewCampaignPage() {
 
     // Check if user can send emails
     try {
-      const response = await fetch('/api/user/check-permission', {
+      const response = await fetch('https://novamail.world/api/user/check-permission', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -250,7 +250,7 @@ export default function NewCampaignPage() {
     
     try {
       // Call email sending API
-      const response = await fetch('/api/campaigns/send', {
+      const response = await fetch('https://novamail.world/api/campaigns/send', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -270,7 +270,7 @@ export default function NewCampaignPage() {
       if (result.success) {
         // Update usage counter
         try {
-          await fetch('/api/user/update-usage', {
+          await fetch('https://novamail.world/api/user/update-usage', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -311,7 +311,7 @@ export default function NewCampaignPage() {
 
   const fetchAvailableContacts = async () => {
     try {
-      const response = await fetch('/api/contacts')
+      const response = await fetch('https://novamail.world/api/contacts')
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
