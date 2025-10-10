@@ -124,7 +124,7 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
               id: el.id, 
               tagName: el.tagName, 
               className: el.className,
-              visible: el.offsetParent !== null
+              visible: (el as HTMLElement).offsetParent !== null
             })))
             setTargetElement(null)
             setTooltipPosition({ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' })
