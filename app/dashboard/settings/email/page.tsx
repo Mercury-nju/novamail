@@ -12,7 +12,7 @@ import {
   EyeSlashIcon,
   InformationCircleIcon,
   QuestionMarkCircleIcon,
-  ExternalLinkIcon,
+  ArrowTopRightOnSquareIcon,
   ClipboardDocumentIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
@@ -424,7 +424,7 @@ export default function EmailSettingsPage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center text-xs text-blue-600 hover:text-blue-800 transition-colors"
                   >
-                    <ExternalLinkIcon className="h-3 w-3 mr-1" />
+                    <ArrowTopRightOnSquareIcon className="h-3 w-3 mr-1" />
                     打开 OAuth 2.0 Playground
                   </a>
                 </div>
