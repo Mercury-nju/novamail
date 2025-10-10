@@ -24,6 +24,14 @@ export default function ContactsPage() {
   const [mounted, setMounted] = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
   const [importing, setImporting] = useState(false)
+  const [showAddContactModal, setShowAddContactModal] = useState(false)
+  const [adding, setAdding] = useState(false)
+  const [newContact, setNewContact] = useState({
+    name: '',
+    email: '',
+    tags: [] as string[],
+    customFields: {} as Record<string, string>
+  })
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -237,6 +245,95 @@ export default function ContactsPage() {
     fileInputRef.current?.click()
   }
 
+  // 打开添加联系人模态框
+  const handleAddContactClick = () => {
+    if (isAtLimit) {
+      toast.error('Contact limit reached. Upgrade to add more contacts.')
+      return
+    }
+    setShowAddContactModal(true)
+  }
+
+  // 处理添加联系人表单提交
+  const handleAddContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!newContact.name.trim() || !newContact.email.trim()) {
+      toast.error('Name and email are required')
+      return
+    }
+
+    // 验证邮箱格式
+    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
+    if (!emailRegex.test(newContact.email)) {
+      toast.error('Please enter a valid email address')
+      return
+    }
+
+    try {
+      setAdding(true)
+      
+      const response = await fetch('https://novamail.world/api/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: newContact.name.trim(),
+          email: newContact.email.toLowerCase().trim(),
+          tags: newContact.tags,
+          customFields: newContact.customFields
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      if (data.success) {
+        // 添加新联系人到列表
+        const contact: Contact = {
+          id: data.data.id,
+          name: data.data.name,
+          email: data.data.email,
+          status: data.data.status || 'active',
+          tags: data.data.tags || [],
+          lastContact: data.data.lastContact || new Date().toISOString(),
+          totalEmails: data.data.totalEmails || 0,
+          openRate: data.data.openRate || 0
+        }
+        
+        setContacts(prev => [...prev, contact])
+        toast.success('Contact added successfully')
+        
+        // 重置表单
+        setNewContact({
+          name: '',
+          email: '',
+          tags: [],
+          customFields: {}
+        })
+        setShowAddContactModal(false)
+      } else {
+        throw new Error(data.error || 'Failed to add contact')
+      }
+    } catch (error) {
+      console.error('Add contact failed:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to add contact')
+    } finally {
+      setAdding(false)
+    }
+  }
+
+  // 处理表单输入变化
+  const handleInputChange = (field: string, value: string) => {
+    setNewContact(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -261,8 +358,12 @@ export default function ContactsPage() {
           >
             {importing ? 'Importing...' : 'Import Contacts'}
           </button>
-          <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-            Add Contact
+          <button 
+            onClick={handleAddContactClick}
+            disabled={adding}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {adding ? 'Adding...' : 'Add Contact'}
           </button>
         </div>
       </div>
@@ -457,9 +558,12 @@ export default function ContactsPage() {
           <h3 className="mt-2 text-sm font-medium text-gray-900">No contacts found</h3>
           <p className="mt-1 text-sm text-gray-500">Get started by adding your first contact.</p>
           <div className="mt-6">
-            <button className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
-                Add Contact
-              </button>
+            <button 
+              onClick={handleAddContactClick}
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
+            >
+              Add Contact
+            </button>
           </div>
         </div>
       )}
@@ -495,6 +599,76 @@ export default function ContactsPage() {
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 添加联系人模态框 */}
+      {showAddContactModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Add New Contact</h3>
+            <form onSubmit={handleAddContactSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  value={newContact.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  placeholder="Enter contact name"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  value={newContact.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  placeholder="Enter email address"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tags (optional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter tags separated by commas"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  onChange={(e) => {
+                    const tags = e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag)
+                    setNewContact(prev => ({ ...prev, tags }))
+                  }}
+                />
+              </div>
+
+              <div className="flex space-x-3 pt-4">
+                <button
+                  type="submit"
+                  disabled={adding}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {adding ? 'Adding...' : 'Add Contact'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowAddContactModal(false)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
