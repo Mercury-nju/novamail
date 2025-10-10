@@ -14,4 +14,4 @@ compatibility_flags = ["nodejs_compat"]
 CREEM_API_KEY = "creem_22oMcuzUH4TeWyWVAVjTes"
 CREEM_BASE_URL = "https://api.creem.io/v1"
 CREEM_WEBHOOK_SECRET = "whsec_5uvCq8f1gQMsqz5rqwdVgZ"
-RESEND_API_KEY = "re_1234567890abcdef"  # 请替换为真实的Resend API密钥
+RESEND_API_KEY = "re_PCbEHboB..."  # Resend API密钥
