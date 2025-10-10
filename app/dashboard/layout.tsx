@@ -56,11 +56,15 @@ export default function DashboardLayout({
           setIsAuthenticated(true)
           console.log('User authenticated:', userEmail)
           
-          // 检查是否需要显示用户引导
-          const hasSeenOnboarding = localStorage.getItem('has-seen-onboarding')
-          if (!hasSeenOnboarding) {
-            setShowOnboarding(true)
-          }
+        // 检查是否需要显示用户引导
+        const hasSeenOnboarding = localStorage.getItem('has-seen-onboarding')
+        console.log('Onboarding check:', { hasSeenOnboarding, userEmail })
+        if (!hasSeenOnboarding) {
+          console.log('Showing onboarding tour')
+          setShowOnboarding(true)
+        } else {
+          console.log('Onboarding already seen, skipping')
+        }
         } else {
           setIsAuthenticated(false)
           console.log('User not authenticated, redirecting to login')
@@ -77,6 +81,12 @@ export default function DashboardLayout({
   const handleOnboardingComplete = () => {
     setShowOnboarding(false)
     localStorage.setItem('has-seen-onboarding', 'true')
+  }
+
+  // 手动触发用户引导（用于测试）
+  const triggerOnboarding = () => {
+    localStorage.removeItem('has-seen-onboarding')
+    setShowOnboarding(true)
   }
 
   // 显示加载状态
@@ -254,6 +264,13 @@ export default function DashboardLayout({
                   <span className="text-sm font-medium text-primary-700">{getUserInitials()}</span>
                 </div>
                 <span className="hidden lg:block text-sm font-medium text-gray-700">{getUserDisplayName()}</span>
+                <button
+                  onClick={triggerOnboarding}
+                  className="text-blue-400 hover:text-blue-600 text-xs px-2 py-1 rounded ml-2"
+                  title="重新显示用户引导"
+                >
+                  引导
+                </button>
               </div>
             </div>
           </div>
