@@ -178,17 +178,18 @@ export default function EmailSettingsPage() {
     setTestResult(null)
 
     try {
-      // 使用新的 SMTP 服务器进行真实连接测试
-      const response = await fetch('https://novamail-smtp-server.railway.app/api/smtp/test', {
+      // 使用 Workers 后端进行 SMTP 连接测试
+      const response = await fetch('/api/user/test-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          provider: emailConfig.provider,
           email: emailConfig.email,
+          password: emailConfig.password,
           smtpHost: emailConfig.smtpHost,
           smtpPort: emailConfig.smtpPort,
-          password: emailConfig.password,
           isSecure: emailConfig.isSecure
         }),
       })

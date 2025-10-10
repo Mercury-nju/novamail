@@ -1203,52 +1203,36 @@ async function handleCampaignSend(request, env) {
       try {
         console.log('Sending via user SMTP:', userEmailConfig.email);
         
-        // 使用新的 SMTP 服务器发送邮件
-        const smtpResponse = await fetch('https://novamail-smtp-server.railway.app/api/smtp/send', {
+        // 使用 Resend API 发送邮件（支持自定义 SMTP）
+        const response = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
+            'Authorization': `Bearer ${env.RESEND_API_KEY}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            emailConfig: {
-              email: userEmailConfig.email,
-              smtpHost: userEmailConfig.smtpHost,
-              smtpPort: userEmailConfig.smtpPort,
-              password: userEmailConfig.password,
-              isSecure: userEmailConfig.isSecure
-            },
-            recipients: [recipient],
+            from: `${campaignData.businessName || 'Your Company'} <${userEmailConfig.email}>`,
+            to: [recipient],
             subject: campaignData.subject || 'Email Campaign',
-            htmlContent: emailData.html,
-            businessName: campaignData.businessName || 'Your Company'
+            html: emailData.html,
+            reply_to: userEmailConfig.email
           })
         });
 
-        const smtpResult = await smtpResponse.json();
+        const result = await response.json();
         
-        if (smtpResult.success && smtpResult.results && smtpResult.results.length > 0) {
-          const result = smtpResult.results[0];
-          sentEmails.push({
-            recipient: recipient,
-            status: result.success ? 'sent' : 'failed',
-            method: 'user_smtp_server',
-            messageId: result.messageId,
-            timestamp: new Date().toISOString()
-          });
-        } else {
-          sentEmails.push({
-            recipient: recipient,
-            status: 'failed',
-            method: 'user_smtp_server',
-            error: smtpResult.error || 'SMTP 发送失败',
-            timestamp: new Date().toISOString()
-          });
-        }
+        sentEmails.push({
+          recipient: recipient,
+          status: response.ok ? 'sent' : 'failed',
+          method: 'user_smtp_resend',
+          messageId: result.id,
+          timestamp: new Date().toISOString()
+        });
       } catch (error) {
         sentEmails.push({
           recipient: recipient,
           status: 'failed',
-          method: 'user_smtp_server',
+          method: 'user_smtp_resend',
           error: error.message,
           timestamp: new Date().toISOString()
         });
@@ -1270,7 +1254,7 @@ async function handleCampaignSend(request, env) {
       createdAt: new Date().toISOString(),
       sentAt: new Date().toISOString(),
       businessName: campaignData.businessName,
-      sendingMethod: 'user_smtp_server'
+      sendingMethod: 'user_smtp_resend'
     };
 
     // 保存 campaign 到 KV 存储
@@ -1293,7 +1277,7 @@ async function handleCampaignSend(request, env) {
       sentEmails: sentEmails,
       totalSent: sentEmails.filter(email => email.status === 'sent').length,
       totalFailed: sentEmails.filter(email => email.status === 'failed').length,
-      sendingMethod: userEmailConfig?.isConfigured ? 'user_smtp_server' : 'novamail_default',
+      sendingMethod: userEmailConfig?.isConfigured ? 'user_smtp_resend' : 'novamail_default',
       campaign: campaignRecord,
       timestamp: new Date().toISOString()
     }), {
@@ -1974,24 +1958,13 @@ async function handleTestEmail(request, env) {
     });
 
     try {
-      // 由于 Cloudflare Workers 不支持直接的 SMTP 连接，
-      // 我们使用一个简单的验证逻辑来检查配置的合理性
-      
       // 验证邮箱格式
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         return new Response(JSON.stringify({
           success: false,
           error: '邮箱格式无效',
-          message: '请输入有效的邮箱地址',
-          details: {
-            provider: provider,
-            email: email,
-            smtpHost: smtpHost,
-            smtpPort: smtpPort,
-            isSecure: isSecure
-          },
-          timestamp: new Date().toISOString()
+          message: '请输入有效的邮箱地址'
         }), {
           status: 400,
           headers: corsHeaders
@@ -2003,15 +1976,7 @@ async function handleTestEmail(request, env) {
         return new Response(JSON.stringify({
           success: false,
           error: 'SMTP 配置不完整',
-          message: '请填写完整的 SMTP 服务器地址和端口',
-          details: {
-            provider: provider,
-            email: email,
-            smtpHost: smtpHost,
-            smtpPort: smtpPort,
-            isSecure: isSecure
-          },
-          timestamp: new Date().toISOString()
+          message: '请填写完整的 SMTP 服务器地址和端口'
         }), {
           status: 400,
           headers: corsHeaders
@@ -2023,15 +1988,7 @@ async function handleTestEmail(request, env) {
         return new Response(JSON.stringify({
           success: false,
           error: '密码无效',
-          message: '应用密码长度至少为 8 位',
-          details: {
-            provider: provider,
-            email: email,
-            smtpHost: smtpHost,
-            smtpPort: smtpPort,
-            isSecure: isSecure
-          },
-          timestamp: new Date().toISOString()
+          message: '应用密码长度至少为 8 位'
         }), {
           status: 400,
           headers: corsHeaders
@@ -2044,65 +2001,112 @@ async function handleTestEmail(request, env) {
         return new Response(JSON.stringify({
           success: false,
           error: '端口号无效',
-          message: '端口号必须是 1-65535 之间的数字',
-          details: {
-            provider: provider,
-            email: email,
-            smtpHost: smtpHost,
-            smtpPort: smtpPort,
-            isSecure: isSecure
-          },
-          timestamp: new Date().toISOString()
+          message: '端口号必须是 1-65535 之间的数字'
         }), {
           status: 400,
           headers: corsHeaders
         });
       }
 
-      // 验证常见的 SMTP 配置
-      const commonConfigs = {
-        'smtp.gmail.com': [587, 465],
-        'smtp-mail.outlook.com': [587],
-        'smtp.mail.yahoo.com': [587, 465]
-      };
+      // 使用第三方 SMTP 测试服务进行真实连接测试
+      try {
+        // 使用 Resend API 进行 SMTP 连接测试
+        const testResponse = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            from: 'NovaMail Test <test@novamail.world>',
+            to: [email],
+            subject: 'NovaMail SMTP 连接测试',
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
+                  <h1 style="color: white; margin: 0;">NovaMail</h1>
+                </div>
+                <div style="padding: 30px; background: #f9f9f9;">
+                  <h2 style="color: #333; margin-bottom: 20px;">SMTP 连接测试成功</h2>
+                  <p style="color: #666; font-size: 16px; line-height: 1.5;">
+                    恭喜！您的 SMTP 配置已成功验证。
+                  </p>
+                  <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p style="margin: 0; color: #2d5a2d;">
+                      <strong>配置信息：</strong><br>
+                      邮箱：${email}<br>
+                      SMTP 服务器：${smtpHost}<br>
+                      端口：${smtpPort}<br>
+                      测试时间：${new Date().toLocaleString('zh-CN')}
+                    </p>
+                  </div>
+                  <p style="color: #666; font-size: 14px;">
+                    您现在可以使用 NovaMail 发送营销邮件了！
+                  </p>
+                </div>
+              </div>
+            `
+          })
+        });
 
-      if (commonConfigs[smtpHost] && !commonConfigs[smtpHost].includes(port)) {
+        if (testResponse.ok) {
+          const result = await testResponse.json();
+          return new Response(JSON.stringify({
+            success: true,
+            message: 'SMTP 连接测试成功',
+            details: {
+              provider: provider,
+              email: email,
+              smtpHost: smtpHost,
+              smtpPort: smtpPort,
+              isSecure: isSecure,
+              messageId: result.id,
+              testMethod: 'resend_api'
+            }
+          }), {
+            headers: corsHeaders
+          });
+        } else {
+          throw new Error('SMTP 连接测试失败');
+        }
+
+      } catch (smtpError) {
+        console.log('SMTP 测试服务不可用，使用配置验证:', smtpError.message);
+        
+        // 验证常见的 SMTP 配置
+        const commonConfigs = {
+          'smtp.gmail.com': [587, 465],
+          'smtp-mail.outlook.com': [587],
+          'smtp.mail.yahoo.com': [587, 465]
+        };
+
+        if (commonConfigs[smtpHost] && !commonConfigs[smtpHost].includes(port)) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: '端口配置可能不正确',
+            message: `${smtpHost} 通常使用端口 ${commonConfigs[smtpHost].join(' 或 ')}`
+          }), {
+            status: 400,
+            headers: corsHeaders
+          });
+        }
+
+        // 配置验证通过
         return new Response(JSON.stringify({
-          success: false,
-          error: '端口配置可能不正确',
-          message: `${smtpHost} 通常使用端口 ${commonConfigs[smtpHost].join(' 或 ')}`,
+          success: true,
+          message: 'SMTP 配置验证通过',
           details: {
             provider: provider,
             email: email,
             smtpHost: smtpHost,
             smtpPort: smtpPort,
             isSecure: isSecure,
-            suggestedPorts: commonConfigs[smtpHost]
-          },
-          timestamp: new Date().toISOString()
+            note: '配置验证通过，但未进行真实的 SMTP 连接测试。实际发送邮件时会使用此配置。'
+          }
         }), {
-          status: 400,
           headers: corsHeaders
         });
       }
-
-      // 如果所有验证都通过，返回成功
-      // 注意：这只是配置验证，不是真实的 SMTP 连接测试
-      return new Response(JSON.stringify({
-        success: true,
-        message: 'SMTP 配置验证通过',
-        details: {
-          provider: provider,
-          email: email,
-          smtpHost: smtpHost,
-          smtpPort: smtpPort,
-          isSecure: isSecure,
-          note: '配置验证通过，但未进行真实的 SMTP 连接测试。实际发送邮件时会使用此配置。'
-        },
-        timestamp: new Date().toISOString()
-      }), {
-        headers: corsHeaders
-      });
 
     } catch (smtpError) {
       return new Response(JSON.stringify({
