@@ -70,8 +70,8 @@ export default function EmailSettingsPage() {
       smtpHost: 'smtp-mail.outlook.com',
       smtpPort: '587',
       secure: true,
-      instructions: '使用您的 Outlook 密码',
-      description: '使用您的 Microsoft 账户密码',
+      instructions: '使用您的 Outlook 应用密码',
+      description: '需要生成 Microsoft 应用密码',
       tutorial: {
         title: 'Outlook 配置教程',
         steps: [
@@ -323,19 +323,32 @@ export default function EmailSettingsPage() {
             ))}
           </div>
 
-           {selectedProvider.id === 'gmail' && (
+           {(selectedProvider.id === 'gmail' || selectedProvider.id === 'outlook') && (
              <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                <div className="flex items-start space-x-3">
                  <ExclamationTriangleIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                  <div>
                    <h4 className="text-sm font-medium text-red-800 mb-1">⚠️ 重要：不能使用登录密码</h4>
                    <div className="text-sm text-red-700 space-y-2">
-                     <p><strong>Gmail 必须使用应用密码，不能使用登录密码！</strong></p>
-                     <p>1. 访问 <a href="https://myaccount.google.com" target="_blank" className="underline">Google 账户设置</a></p>
-                     <p>2. 启用两步验证</p>
-                     <p>3. 生成应用密码（选择"邮件"）</p>
-                     <p>4. 使用生成的 16 位应用密码</p>
-                     <p className="text-xs text-red-600">应用密码格式：abcd efgh ijkl mnop</p>
+                     <p><strong>{selectedProvider.name} 必须使用应用密码，不能使用登录密码！</strong></p>
+                     {selectedProvider.id === 'gmail' && (
+                       <>
+                         <p>1. 访问 <a href="https://myaccount.google.com" target="_blank" className="underline">Google 账户设置</a></p>
+                         <p>2. 启用两步验证</p>
+                         <p>3. 生成应用密码（选择"邮件"）</p>
+                         <p>4. 使用生成的 16 位应用密码</p>
+                         <p className="text-xs text-red-600">应用密码格式：abcd efgh ijkl mnop</p>
+                       </>
+                     )}
+                     {selectedProvider.id === 'outlook' && (
+                       <>
+                         <p>1. 访问 <a href="https://account.microsoft.com" target="_blank" className="underline">Microsoft 账户设置</a></p>
+                         <p>2. 启用两步验证</p>
+                         <p>3. 生成应用密码（选择"邮件"）</p>
+                         <p>4. 使用生成的 16 位应用密码</p>
+                         <p className="text-xs text-red-600">应用密码格式：abcd efgh ijkl mnop</p>
+                       </>
+                     )}
                    </div>
                  </div>
                </div>
@@ -433,6 +446,8 @@ export default function EmailSettingsPage() {
                 placeholder={
                   emailConfig.provider === 'gmail' 
                     ? '输入 Gmail 应用密码（不是登录密码）' 
+                    : emailConfig.provider === 'outlook'
+                    ? '输入 Outlook 应用密码（不是登录密码）'
                     : '输入您的邮箱密码或应用密码'
                 }
                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
