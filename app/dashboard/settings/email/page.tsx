@@ -46,19 +46,19 @@ export default function EmailSettingsPage() {
       host: 'smtp.gmail.com',
       port: '587',
       secure: true,
-      instructions: '使用 Gmail API 访问令牌发送邮件',
-      description: '推荐使用 Gmail API，更安全且发送限制更高',
+      instructions: '使用 Gmail 应用密码发送邮件',
+      description: '推荐使用 Gmail 应用密码，配置简单',
       tutorial: {
-        title: 'Gmail API 配置教程',
+        title: 'Gmail 应用密码配置教程',
         steps: [
-          '访问 Google Cloud Console (https://console.cloud.google.com)',
-          '创建新项目或选择现有项目',
-          '启用 Gmail API',
-          '创建 OAuth 2.0 凭据',
-          '访问 OAuth 2.0 Playground (https://developers.google.com/oauthplayground)',
-          '选择 Gmail API v1 > https://www.googleapis.com/auth/gmail.send',
-          '获取 Authorization Code',
-          '换取 Access Token 和 Refresh Token'
+          '登录您的 Gmail 账户',
+          '进入 Google 账户设置 (https://myaccount.google.com)',
+          '点击"安全性"选项卡',
+          '启用两步验证（如果尚未启用）',
+          '在"应用密码"部分生成新密码',
+          '选择"邮件"作为应用类型',
+          '复制生成的应用密码',
+          '在此处输入您的 Gmail 地址和应用密码'
         ]
       }
     },
@@ -194,20 +194,13 @@ export default function EmailSettingsPage() {
   const handleSaveConfig = async () => {
     // 验证必填字段
     if (!emailConfig.email) {
-      toast.error('Please enter your email address')
+      toast.error('请输入邮箱地址')
       return
     }
 
-    if (emailConfig.provider === 'gmail') {
-      if (!emailConfig.accessToken) {
-        toast.error('Please enter your Gmail API access token')
-        return
-      }
-    } else {
-      if (!emailConfig.password) {
-        toast.error('Please enter your email password')
-        return
-      }
+    if (!emailConfig.password) {
+      toast.error('请输入邮箱密码或应用密码')
+      return
     }
 
     setIsLoading(true)
@@ -227,13 +220,13 @@ export default function EmailSettingsPage() {
       const result = await response.json()
 
       if (result.success) {
-        toast.success('Email configuration saved successfully!')
+        toast.success('SMTP 配置已保存')
         router.push('/dashboard')
       } else {
-        toast.error(result.error || 'Failed to save email configuration')
+        toast.error(result.error || '保存失败')
       }
     } catch (error) {
-      toast.error('Failed to save email configuration')
+      toast.error('保存失败，请重试')
     } finally {
       setIsLoading(false)
     }
@@ -284,7 +277,7 @@ export default function EmailSettingsPage() {
                 <li>确保邮件送达率</li>
               </ul>
               <p className="mt-3 font-medium">
-                我们支持 Gmail、Outlook、Yahoo 等主流邮箱服务商，推荐使用 Gmail API 获得最佳体验。
+                我们支持 Gmail、Outlook、Yahoo 等主流邮箱服务商，推荐使用 Gmail 应用密码获得最佳体验。
               </p>
             </div>
           </div>
@@ -323,20 +316,20 @@ export default function EmailSettingsPage() {
             ))}
           </div>
 
-          {selectedProvider.id === 'gmail' && (
-            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <div className="flex items-start space-x-3">
-                <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-sm font-medium text-yellow-800 mb-1">重要提示</h4>
-                  <p className="text-sm text-yellow-700">
-                    Gmail API 访问令牌有效期为 1 小时，建议同时配置刷新令牌以实现自动续期。
-                    如果遇到权限问题，请确保在 Google Cloud Console 中将应用状态设置为"已发布"。
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
+           {selectedProvider.id === 'gmail' && (
+             <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+               <div className="flex items-start space-x-3">
+                 <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                 <div>
+                   <h4 className="text-sm font-medium text-yellow-800 mb-1">重要提示</h4>
+                   <p className="text-sm text-yellow-700">
+                     使用 Gmail 应用密码比 API 更简单，无需复杂的 OAuth 配置。
+                     应用密码有效期为永久，除非您主动撤销。
+                   </p>
+                 </div>
+               </div>
+             </div>
+           )}
         </motion.div>
       )}
 
@@ -387,111 +380,40 @@ export default function EmailSettingsPage() {
             />
           </div>
 
-          {/* Gmail API Token Fields */}
-          {emailConfig.provider === 'gmail' && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Gmail API Access Token
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={emailConfig.accessToken}
-                    onChange={(e) => setEmailConfig(prev => ({ ...prev, accessToken: e.target.value }))}
-                    placeholder="ya29.a0AfH6SMC..."
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? (
-                      <EyeSlashIcon className="h-5 w-5" />
-                    ) : (
-                      <EyeIcon className="h-5 w-5" />
-                    )}
-                  </button>
-                </div>
-                <div className="mt-2 space-y-1">
-                  <p className="text-xs text-gray-500">
-                    从 Google OAuth 2.0 Playground 获取您的访问令牌
-                  </p>
-                  <a
-                    href="https://developers.google.com/oauthplayground"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-xs text-blue-600 hover:text-blue-800 transition-colors"
-                  >
-                    <ArrowTopRightOnSquareIcon className="h-3 w-3 mr-1" />
-                    打开 OAuth 2.0 Playground
-                  </a>
-                </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Gmail API Refresh Token (Optional)
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={emailConfig.refreshToken}
-                    onChange={(e) => setEmailConfig(prev => ({ ...prev, refreshToken: e.target.value }))}
-                    placeholder="1//04..."
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? (
-                      <EyeSlashIcon className="h-5 w-5" />
-                    ) : (
-                      <EyeIcon className="h-5 w-5" />
-                    )}
-                  </button>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  用于自动令牌刷新（推荐）
-                </p>
-              </div>
-            </>
-          )}
-
-          {/* Other providers password field */}
-          {emailConfig.provider !== 'gmail' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                密码 / 应用密码
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={emailConfig.password}
-                  onChange={(e) => setEmailConfig(prev => ({ ...prev, password: e.target.value }))}
-                  placeholder="输入您的邮箱密码或应用密码"
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? (
-                    <EyeSlashIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {selectedProvider?.instructions}
-              </p>
+          {/* Password field for all providers */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              密码 / 应用密码
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={emailConfig.password}
+                onChange={(e) => setEmailConfig(prev => ({ ...prev, password: e.target.value }))}
+                placeholder={
+                  emailConfig.provider === 'gmail' 
+                    ? '输入您的 Gmail 应用密码' 
+                    : '输入您的邮箱密码或应用密码'
+                }
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="h-5 w-5" />
+                ) : (
+                  <EyeIcon className="h-5 w-5" />
+                )}
+              </button>
             </div>
-          )}
+            <p className="text-xs text-gray-500 mt-1">
+              {selectedProvider?.instructions}
+            </p>
+          </div>
 
           {/* SMTP Settings (for custom provider) */}
           {emailConfig.provider === 'custom' && (
