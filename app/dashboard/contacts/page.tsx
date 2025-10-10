@@ -12,7 +12,6 @@ interface Contact {
   tags: string[]
   lastContact: string
   totalEmails: number
-  openRate: number
 }
 
 export default function ContactsPage() {
@@ -88,7 +87,7 @@ export default function ContactsPage() {
       params.append('page', '1')
       params.append('limit', '100')
       
-      const response = await fetch(`https://novamail-api.lihongyangnju.workers.dev/api/contacts?${params}`)
+      const response = await fetch(`https://novamail.world/api/contacts?${params}`)
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -193,8 +192,7 @@ export default function ContactsPage() {
               status: 'active',
               tags: [],
               lastContact: new Date().toISOString(),
-              totalEmails: 0,
-              openRate: 0
+              totalEmails: 0
             }
           })
 
@@ -300,8 +298,7 @@ export default function ContactsPage() {
           status: data.data.status || 'active',
           tags: data.data.tags || [],
           lastContact: data.data.lastContact || new Date().toISOString(),
-          totalEmails: data.data.totalEmails || 0,
-          openRate: data.data.openRate || 0
+          totalEmails: data.data.totalEmails || 0
         }
         
         setContacts(prev => [...prev, contact])
@@ -369,7 +366,7 @@ export default function ContactsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -419,22 +416,6 @@ export default function ContactsPage() {
               <p className="text-sm font-medium text-gray-600">Inactive</p>
               <p className="text-2xl font-bold text-gray-900">
                 {contacts.filter(c => c.status === 'inactive').length}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Avg Open Rate</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {Math.round(contacts.reduce((acc, c) => acc + c.openRate, 0) / contacts.length)}%
               </p>
             </div>
           </div>
@@ -496,9 +477,6 @@ export default function ContactsPage() {
                   Emails Sent
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Open Rate
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -535,9 +513,6 @@ export default function ContactsPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {contact.totalEmails}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {contact.openRate}%
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button className="text-primary-600 hover:text-primary-900 mr-3">Edit</button>
