@@ -3348,3 +3348,4 @@ async function handleDashboardStats(request, env) {
     headers: corsHeaders
   });
 }
+};
