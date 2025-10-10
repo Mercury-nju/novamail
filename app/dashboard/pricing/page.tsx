@@ -225,9 +225,9 @@ export default function PricingPage() {
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Is there a free trial?</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Can I cancel anytime?</h3>
             <p className="text-gray-600">
-              Yes, we offer a 14-day free trial for all plans. No credit card required to start your trial.
+              Yes, you can cancel your subscription at any time. You'll continue to have access until the end of your billing period.
             </p>
           </div>
         </div>

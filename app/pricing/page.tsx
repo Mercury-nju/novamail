@@ -53,7 +53,7 @@ export default function PricingPage() {
         'Email scheduling',
         'Custom branding'
       ],
-      cta: 'Start Pro Trial',
+      cta: 'Get Started',
       popular: true
     },
     {
@@ -254,10 +254,10 @@ export default function PricingPage() {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Is there a free trial?
+                Can I cancel anytime?
               </h3>
               <p className="text-gray-600">
-                Yes, all paid plans come with a 14-day free trial. No credit card required.
+                Yes, you can cancel your subscription at any time. You'll continue to have access until the end of your billing period.
               </p>
             </div>
           </div>
