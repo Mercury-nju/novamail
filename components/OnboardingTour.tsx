@@ -109,20 +109,27 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
             // 临时高亮目标元素，便于调试
             target.style.outline = '3px solid red'
             target.style.outlineOffset = '2px'
+            target.style.backgroundColor = 'rgba(255, 0, 0, 0.1)'
             setTimeout(() => {
               target.style.outline = ''
               target.style.outlineOffset = ''
-            }, 3000)
+              target.style.backgroundColor = ''
+            }, 5000)
             
             setTargetElement(target)
             updateTooltipPosition(target, step.position)
           } else {
             console.warn(`Target element not found: ${step.target}`)
-            console.log('Available elements with IDs:', Array.from(document.querySelectorAll('[id]')).map(el => ({ id: el.id, tagName: el.tagName, className: el.className })))
+            console.log('Available elements with IDs:', Array.from(document.querySelectorAll('[id]')).map(el => ({ 
+              id: el.id, 
+              tagName: el.tagName, 
+              className: el.className,
+              visible: el.offsetParent !== null
+            })))
             setTargetElement(null)
             setTooltipPosition({ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' })
           }
-        }, 100)
+        }, 200)
         
         return () => clearTimeout(timer)
       } else {
@@ -149,56 +156,60 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
     let top = '50%'
     let transform = 'translate(-50%, -50%)'
 
-    // 确保元素在视口内
+    // 计算元素中心点
     const elementCenterX = rect.left + rect.width / 2
     const elementCenterY = rect.top + rect.height / 2
 
     switch (position) {
       case 'right':
-        // 右侧：如果空间不够，显示在元素下方
-        if (rect.right + margin + tooltipWidth > window.innerWidth) {
-          left = `${Math.max(elementCenterX - tooltipWidth / 2, margin)}px`
-          top = `${rect.bottom + margin}px`
-          transform = 'translateX(-50%)'
-        } else {
+        // 右侧：优先显示在右侧，空间不够时显示在下方
+        const rightSpace = window.innerWidth - rect.right
+        if (rightSpace >= tooltipWidth + margin) {
           left = `${rect.right + margin}px`
           top = `${elementCenterY}px`
           transform = 'translateY(-50%)'
+        } else {
+          left = `${elementCenterX}px`
+          top = `${rect.bottom + margin}px`
+          transform = 'translateX(-50%)'
         }
         break
       case 'left':
-        // 左侧：如果空间不够，显示在元素下方
-        if (rect.left - margin - tooltipWidth < 0) {
-          left = `${Math.max(elementCenterX - tooltipWidth / 2, margin)}px`
-          top = `${rect.bottom + margin}px`
-          transform = 'translateX(-50%)'
-        } else {
+        // 左侧：优先显示在左侧，空间不够时显示在下方
+        const leftSpace = rect.left
+        if (leftSpace >= tooltipWidth + margin) {
           left = `${rect.left - tooltipWidth - margin}px`
           top = `${elementCenterY}px`
           transform = 'translateY(-50%)'
-        }
-        break
-      case 'top':
-        // 上方：如果空间不够，显示在元素下方
-        if (rect.top - margin - tooltipHeight < 0) {
+        } else {
           left = `${elementCenterX}px`
           top = `${rect.bottom + margin}px`
           transform = 'translateX(-50%)'
-        } else {
+        }
+        break
+      case 'top':
+        // 上方：优先显示在上方，空间不够时显示在下方
+        const topSpace = rect.top
+        if (topSpace >= tooltipHeight + margin) {
           left = `${elementCenterX}px`
           top = `${rect.top - tooltipHeight - margin}px`
+          transform = 'translateX(-50%)'
+        } else {
+          left = `${elementCenterX}px`
+          top = `${rect.bottom + margin}px`
           transform = 'translateX(-50%)'
         }
         break
       case 'bottom':
-        // 下方：如果空间不够，显示在元素上方
-        if (rect.bottom + margin + tooltipHeight > window.innerHeight) {
+        // 下方：优先显示在下方，空间不够时显示在上方
+        const bottomSpace = window.innerHeight - rect.bottom
+        if (bottomSpace >= tooltipHeight + margin) {
           left = `${elementCenterX}px`
-          top = `${rect.top - tooltipHeight - margin}px`
+          top = `${rect.bottom + margin}px`
           transform = 'translateX(-50%)'
         } else {
           left = `${elementCenterX}px`
-          top = `${rect.bottom + margin}px`
+          top = `${rect.top - tooltipHeight - margin}px`
           transform = 'translateX(-50%)'
         }
         break
@@ -210,19 +221,25 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
         break
     }
 
-    // 边界检查，确保tooltip不会超出视口
-    const finalLeft = typeof left === 'string' && left.includes('px') 
-      ? Math.max(parseInt(left), margin) 
-      : left
-    const finalTop = typeof top === 'string' && top.includes('px') 
-      ? Math.max(parseInt(top), margin) 
-      : top
+    // 最终边界检查
+    let finalLeft = left
+    let finalTop = top
+
+    if (typeof left === 'string' && left.includes('px')) {
+      const leftValue = parseInt(left)
+      finalLeft = `${Math.max(Math.min(leftValue, window.innerWidth - tooltipWidth - margin), margin)}px`
+    }
+
+    if (typeof top === 'string' && top.includes('px')) {
+      const topValue = parseInt(top)
+      finalTop = `${Math.max(Math.min(topValue, window.innerHeight - tooltipHeight - margin), margin)}px`
+    }
 
     console.log('Final position:', { left: finalLeft, top: finalTop, transform })
 
     setTooltipPosition({ 
-      left: typeof finalLeft === 'number' ? `${finalLeft}px` : finalLeft, 
-      top: typeof finalTop === 'number' ? `${finalTop}px` : finalTop, 
+      left: finalLeft, 
+      top: finalTop, 
       transform 
     })
   }
