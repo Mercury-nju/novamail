@@ -157,6 +157,7 @@ export default function DashboardPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
+                  id="quick-action-create-campaign"
                   href="/dashboard/campaigns/new"
                   className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-primary-700 bg-white hover:bg-gray-50 transition-colors duration-200 shadow-sm"
                 >

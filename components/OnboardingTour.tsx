@@ -98,11 +98,15 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
         // 等待DOM更新后再查找元素
         const timer = setTimeout(() => {
           const target = document.querySelector(step.target!) as HTMLElement
+          console.log('Looking for target element:', step.target)
+          console.log('Found element:', target)
           if (target) {
+            console.log('Target element found, updating position')
             setTargetElement(target)
             updateTooltipPosition(target, step.position)
           } else {
             console.warn(`Target element not found: ${step.target}`)
+            console.log('Available elements with IDs:', Array.from(document.querySelectorAll('[id]')).map(el => el.id))
             setTargetElement(null)
             setTooltipPosition({ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' })
           }
@@ -121,6 +125,13 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
     const tooltipWidth = 320 // max-w-sm = 24rem = 384px, 使用320px作为安全宽度
     const tooltipHeight = 200 // 估算高度
     const margin = 20
+
+    console.log('Position calculation:', {
+      elementRect: rect,
+      position,
+      windowSize: { width: window.innerWidth, height: window.innerHeight },
+      tooltipSize: { width: tooltipWidth, height: tooltipHeight }
+    })
 
     let left = '50%'
     let top = '50%'
@@ -154,6 +165,8 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
         transform = 'translate(-50%, -50%)'
         break
     }
+
+    console.log('Final position:', { left, top, transform })
 
     setTooltipPosition({ left, top, transform })
   }
