@@ -4,21 +4,12 @@ import { useState, useEffect } from 'react'
 
 interface AnalyticsData {
   totalEmails: number
-  totalOpens: number
-  totalClicks: number
-  openRate: number
-  clickRate: number
-  unsubscribeRate: number
-  bounceRate: number
-  deliveryRate: number
-  spamRate: number
+  totalContacts: number
 }
 
 interface ChartData {
   date: string
   emails: number
-  opens: number
-  clicks: number
 }
 
 export default function AnalyticsPage() {
@@ -35,7 +26,7 @@ export default function AnalyticsPage() {
     try {
       setLoading(true)
       
-      const response = await fetch(`https://novamail-api.lihongyangnju.workers.dev/api/analytics?timeRange=${timeRange}`)
+      const response = await fetch(`https://novamail.world/api/analytics?timeRange=${timeRange}`)
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -50,17 +41,10 @@ export default function AnalyticsPage() {
       }
     } catch (error) {
       console.error('Failed to fetch analytics:', error)
-      // 如果API失败，设置为空数据而不是模拟数据
+      // 如果API失败，设置为空数据
       setAnalytics({
         totalEmails: 0,
-        totalOpens: 0,
-        totalClicks: 0,
-        openRate: 0,
-        clickRate: 0,
-        unsubscribeRate: 0,
-        bounceRate: 0,
-        deliveryRate: 0,
-        spamRate: 0
+        totalContacts: 0
       })
       setChartData([])
     } finally {
@@ -134,7 +118,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -144,7 +128,7 @@ export default function AnalyticsPage() {
             </div>
             <div className="ml-4">
               <div className="flex items-center">
-                <p className="text-sm font-medium text-gray-600">Total Emails</p>
+                <p className="text-sm font-medium text-gray-600">Total Emails Sent</p>
                 <InfoTooltip title="Total number of emails sent through all campaigns" />
               </div>
               <p className="text-2xl font-bold text-gray-900">{analytics.totalEmails.toLocaleString()}</p>
@@ -156,169 +140,53 @@ export default function AnalyticsPage() {
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg">
               <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
             <div className="ml-4">
               <div className="flex items-center">
-                <p className="text-sm font-medium text-gray-600">Open Rate</p>
-                <InfoTooltip title="Percentage of recipients who opened your emails" />
+                <p className="text-sm font-medium text-gray-600">Total Contacts</p>
+                <InfoTooltip title="Total number of contacts in your database" />
               </div>
-              <p className="text-2xl font-bold text-gray-900">{analytics.openRate}%</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <div className="flex items-center">
-                <p className="text-sm font-medium text-gray-600">Click Rate</p>
-                <InfoTooltip title="Percentage of recipients who clicked links in your emails" />
-              </div>
-              <p className="text-2xl font-bold text-gray-900">{analytics.clickRate}%</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <div className="flex items-center">
-                <p className="text-sm font-medium text-gray-600">Delivery Rate</p>
-                <InfoTooltip title="Percentage of emails successfully delivered to recipients' inboxes" />
-              </div>
-              <p className="text-2xl font-bold text-gray-900">{analytics.deliveryRate}%</p>
+              <p className="text-2xl font-bold text-gray-900">{analytics.totalContacts.toLocaleString()}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Performance Chart */}
+      {/* Simple Chart */}
       <div className="bg-white p-6 rounded-lg shadow-sm border">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">Email Performance</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Email Activity</h2>
           <div className="flex space-x-4">
             <div className="flex items-center">
               <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
               <span className="text-sm text-gray-600">Emails Sent</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-              <span className="text-sm text-gray-600">Opens</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
-              <span className="text-sm text-gray-600">Clicks</span>
             </div>
           </div>
         </div>
         
         {/* Simple Chart Representation */}
         <div className="h-64 flex items-end justify-between space-x-2">
-          {chartData.map((data, index) => (
-            <div key={index} className="flex-1 flex flex-col items-center">
-              <div className="w-full flex flex-col items-center space-y-1">
-                <div 
-                  className="w-full bg-blue-200 rounded-t"
-                  style={{ height: `${(data.emails / 1500) * 200}px` }}
-                ></div>
-                <div 
-                  className="w-full bg-green-200 rounded-t"
-                  style={{ height: `${(data.opens / 1500) * 200}px` }}
-                ></div>
-                <div 
-                  className="w-full bg-purple-200 rounded-t"
-                  style={{ height: `${(data.clicks / 1500) * 200}px` }}
-                ></div>
+          {chartData.length > 0 ? (
+            chartData.map((data, index) => (
+              <div key={index} className="flex-1 flex flex-col items-center">
+                <div className="w-full flex flex-col items-center space-y-1">
+                  <div 
+                    className="w-full bg-blue-200 rounded-t"
+                    style={{ height: `${Math.max((data.emails / Math.max(...chartData.map(d => d.emails), 1)) * 200, 10)}px` }}
+                  ></div>
+                </div>
+                <span className="text-xs text-gray-500 mt-2">
+                  {new Date(data.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                </span>
               </div>
-              <span className="text-xs text-gray-500 mt-2">
-                {new Date(data.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-              </span>
+            ))
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-500">
+              No data available yet
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Detailed Metrics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Engagement Metrics</h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <span className="text-sm text-gray-600">Total Opens</span>
-                <InfoTooltip title="Total number of email opens across all campaigns" />
-              </div>
-              <span className="font-semibold">{analytics.totalOpens.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <span className="text-sm text-gray-600">Total Clicks</span>
-                <InfoTooltip title="Total number of link clicks across all campaigns" />
-              </div>
-              <span className="font-semibold">{analytics.totalClicks.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <span className="text-sm text-gray-600">Unsubscribe Rate</span>
-                <InfoTooltip title="Percentage of recipients who unsubscribed from your emails" />
-              </div>
-              <span className="font-semibold">{analytics.unsubscribeRate}%</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <span className="text-sm text-gray-600">Bounce Rate</span>
-                <InfoTooltip title="Percentage of emails that bounced (could not be delivered)" />
-              </div>
-              <span className="font-semibold">{analytics.bounceRate}%</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Delivery Metrics</h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <span className="text-sm text-gray-600">Delivery Rate</span>
-                <InfoTooltip title="Percentage of emails successfully delivered to recipients' inboxes" />
-              </div>
-              <span className="font-semibold">{analytics.deliveryRate}%</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <span className="text-sm text-gray-600">Spam Rate</span>
-                <InfoTooltip title="Percentage of emails marked as spam by recipients" />
-              </div>
-              <span className="font-semibold">{analytics.spamRate}%</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <span className="text-sm text-gray-600">Avg Open Rate</span>
-                <InfoTooltip title="Average open rate across all campaigns" />
-              </div>
-              <span className="font-semibold">{analytics.openRate}%</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <span className="text-sm text-gray-600">Avg Click Rate</span>
-                <InfoTooltip title="Average click rate across all campaigns" />
-              </div>
-              <span className="font-semibold">{analytics.clickRate}%</span>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -348,31 +216,9 @@ export default function AnalyticsPage() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  Black Friday Sale
+                <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                  No campaign data available yet. Start by creating your first campaign.
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3,480</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">40.0%</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10.0%</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">95.2%</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  Welcome Series - Part 1
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1,245</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">45.0%</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7.0%</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">98.1%</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  Product Launch Announcement
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2,100</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">38.0%</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">6.5%</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">97.8%</td>
               </tr>
             </tbody>
           </table>

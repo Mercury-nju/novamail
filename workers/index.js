@@ -99,6 +99,10 @@ export default {
         return await handleContactsImport(request, env);
       } else if (path.startsWith('/api/contacts')) {
         return await handleContacts(request, env);
+      } else if (path.startsWith('/api/analytics')) {
+        return await handleAnalytics(request, env);
+      } else if (path.startsWith('/api/dashboard/stats')) {
+        return await handleDashboardStats(request, env);
       } else {
         return new Response(JSON.stringify({ 
           error: 'API endpoint not found',
@@ -3037,6 +3041,220 @@ async function handleContacts(request, env) {
       return new Response(JSON.stringify({
         success: false,
         error: 'Failed to create contact',
+        details: error.message
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+  }
+
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405,
+    headers: corsHeaders
+  });
+}
+
+// 处理分析数据请求
+async function handleAnalytics(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (request.method === 'GET') {
+    try {
+      const url = new URL(request.url);
+      const timeRange = url.searchParams.get('timeRange') || '30d';
+      
+      // 获取所有活动数据
+      let totalEmails = 0;
+      let totalContacts = 0;
+      let chartData = [];
+
+      // 计算时间范围
+      const now = new Date();
+      let startDate;
+      switch (timeRange) {
+        case '7d':
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case '30d':
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        case '90d':
+          startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+          break;
+        case '1y':
+          startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+          break;
+        default:
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      }
+
+      // 获取联系人总数
+      if (env.CONTACTS_KV) {
+        const contactsList = await env.CONTACTS_KV.list();
+        totalContacts = contactsList.keys.length;
+      }
+
+      // 获取活动数据
+      if (env.CAMPAIGNS_KV) {
+        const campaignsList = await env.CAMPAIGNS_KV.list();
+        
+        // 计算总邮件数
+        for (const key of campaignsList.keys) {
+          const campaignData = await env.CAMPAIGNS_KV.get(key.name);
+          if (campaignData) {
+            const campaign = JSON.parse(campaignData);
+            if (campaign.status === 'sent' && campaign.recipients) {
+              totalEmails += campaign.recipients;
+            }
+          }
+        }
+
+        // 生成图表数据（按日期分组）
+        const dailyData = {};
+        for (const key of campaignsList.keys) {
+          const campaignData = await env.CAMPAIGNS_KV.get(key.name);
+          if (campaignData) {
+            const campaign = JSON.parse(campaignData);
+            if (campaign.status === 'sent' && campaign.sentAt) {
+              const sentDate = new Date(campaign.sentAt).toISOString().split('T')[0];
+              if (new Date(sentDate) >= startDate) {
+                if (!dailyData[sentDate]) {
+                  dailyData[sentDate] = 0;
+                }
+                dailyData[sentDate] += campaign.recipients || 0;
+              }
+            }
+          }
+        }
+
+        // 转换为图表数据格式
+        chartData = Object.entries(dailyData)
+          .map(([date, emails]) => ({ date, emails }))
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        data: {
+          analytics: {
+            totalEmails,
+            totalContacts
+          },
+          chartData
+        }
+      }), {
+        headers: corsHeaders
+      });
+
+    } catch (error) {
+      console.error('Analytics error:', error);
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Failed to fetch analytics data',
+        details: error.message
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+  }
+
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405,
+    headers: corsHeaders
+  });
+}
+
+// 处理仪表板统计数据请求
+async function handleDashboardStats(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (request.method === 'GET') {
+    try {
+      // 获取统计数据
+      let totalContacts = 0;
+      let totalEmailsSent = 0;
+      let recentCampaigns = [];
+
+      // 获取联系人总数
+      if (env.CONTACTS_KV) {
+        const contactsList = await env.CONTACTS_KV.list();
+        totalContacts = contactsList.keys.length;
+      }
+
+      // 获取活动数据
+      if (env.CAMPAIGNS_KV) {
+        const campaignsList = await env.CAMPAIGNS_KV.list();
+        
+        // 计算总邮件数
+        for (const key of campaignsList.keys) {
+          const campaignData = await env.CAMPAIGNS_KV.get(key.name);
+          if (campaignData) {
+            const campaign = JSON.parse(campaignData);
+            if (campaign.status === 'sent' && campaign.recipients) {
+              totalEmailsSent += campaign.recipients;
+            }
+          }
+        }
+
+        // 获取最近的活动（最多5个）
+        const campaigns = [];
+        for (const key of campaignsList.keys) {
+          const campaignData = await env.CAMPAIGNS_KV.get(key.name);
+          if (campaignData) {
+            const campaign = JSON.parse(campaignData);
+            campaigns.push({
+              id: campaign.id,
+              name: campaign.name,
+              status: campaign.status,
+              recipients: campaign.recipients || 0,
+              createdAt: campaign.createdAt,
+              sentAt: campaign.sentAt
+            });
+          }
+        }
+
+        // 按创建时间排序，取最近5个
+        recentCampaigns = campaigns
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 5);
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        stats: {
+          totalContacts,
+          totalEmailsSent
+        },
+        recentCampaigns
+      }), {
+        headers: corsHeaders
+      });
+
+    } catch (error) {
+      console.error('Dashboard stats error:', error);
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Failed to fetch dashboard stats',
         details: error.message
       }), {
         status: 500,
