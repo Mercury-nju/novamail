@@ -140,7 +140,7 @@ export default function DashboardLayout({
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
           <div className="flex h-16 items-center px-4">
             <Link href="/dashboard" className="flex items-center">
-              <span className="text-xl font-bold text-gray-900">NovaMail</span>
+              <span className="text-xl font-bold text-blue-600">NovaMail</span>
             </Link>
           </div>
           <nav className="flex-1 px-4 py-4 space-y-2">

@@ -134,7 +134,7 @@ export default function HomePage() {
               className="flex items-center"
             >
               <Link href="/" className="flex items-center">
-                <span className="text-2xl font-bold text-gray-900">NovaMail</span>
+                <span className="text-2xl font-bold text-blue-600">NovaMail</span>
               </Link>
             </motion.div>
             <div className="flex items-center space-x-4">
