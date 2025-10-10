@@ -47,6 +47,7 @@ export default function EmailSettingsPage() {
   } | null>(null)
   const [showTutorial, setShowTutorial] = useState(false)
   const [expandedProvider, setExpandedProvider] = useState<string | null>(null)
+  const [isConfigured, setIsConfigured] = useState(false)
 
   const emailProviders = [
     {
@@ -258,15 +259,34 @@ export default function EmailSettingsPage() {
 
   const loadEmailConfig = async () => {
     try {
+      // 首先尝试从 localStorage 加载配置
+      const userEmail = localStorage.getItem('user-email')
+      if (userEmail) {
+        const savedConfig = localStorage.getItem(`email_config_${userEmail}`)
+        if (savedConfig) {
+          const config = JSON.parse(savedConfig)
+          setEmailConfig(config)
+          setIsConfigured(config.isConfigured || false)
+          return
+        }
+      }
+
+      // 如果 localStorage 中没有，尝试从 API 加载
       const response = await fetch('/api/user/email-config')
       if (response.ok) {
         const data = await response.json()
         if (data.success && data.config) {
           setEmailConfig(data.config)
+          setIsConfigured(data.config.isConfigured || false)
+          // 同时保存到 localStorage
+          if (userEmail) {
+            localStorage.setItem(`email_config_${userEmail}`, JSON.stringify(data.config))
+          }
         }
       }
     } catch (error) {
       console.error('Failed to load email config:', error)
+      // 网络错误时不显示错误提示，使用默认配置
     }
   }
 
@@ -375,7 +395,11 @@ export default function EmailSettingsPage() {
         }
         
         toast.success('SMTP configuration saved successfully')
-        router.push('/dashboard')
+        setIsConfigured(true)
+        // 延迟跳转，让用户看到成功状态
+        setTimeout(() => {
+          router.push('/dashboard')
+        }, 1500)
       } else {
         toast.error(result.error || 'Save failed')
       }
@@ -395,9 +419,20 @@ export default function EmailSettingsPage() {
             <ArrowLeftIcon className="h-5 w-5 text-gray-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Email Configuration</h1>
+            <div className="flex items-center space-x-3">
+              <h1 className="text-2xl font-bold text-gray-900">Email Configuration</h1>
+              {isConfigured && (
+                <div className="flex items-center space-x-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                  <CheckCircleIcon className="h-4 w-4" />
+                  <span>Configured</span>
+                </div>
+              )}
+            </div>
             <p className="mt-1 text-sm text-gray-600">
-              Configure your email account to send marketing emails
+              {isConfigured 
+                ? 'Your email is configured and ready to send marketing emails'
+                : 'Configure your email account to send marketing emails'
+              }
             </p>
           </div>
         </div>
@@ -410,33 +445,62 @@ export default function EmailSettingsPage() {
         </button>
       </div>
 
-      {/* Why Configure Email Section */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
-        <div className="flex items-start space-x-4">
-          <div className="flex-shrink-0">
-            <InformationCircleIcon className="h-6 w-6 text-blue-600" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-blue-900 mb-2">
-              Why configure email?
-            </h3>
-            <div className="text-sm text-blue-800 space-y-2">
-              <p>
-                NovaMail needs your email account to send marketing emails. After configuring your email, you can:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Send AI-generated marketing emails</li>
-                <li>Manage email campaigns</li>
-                <li>Track email sending performance</li>
-                <li>Ensure email deliverability</li>
-              </ul>
-              <p className="mt-3 font-medium">
-                We support mainstream email providers like Gmail, Outlook, Yahoo, and recommend using Gmail SMTP configuration for the best experience.
-              </p>
+      {/* Status Section */}
+      {isConfigured ? (
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0">
+              <CheckCircleIcon className="h-6 w-6 text-green-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-green-900 mb-2">
+                Email Configuration Complete
+              </h3>
+              <div className="text-sm text-green-800 space-y-2">
+                <p>
+                  Your email is successfully configured and ready to send marketing emails. You can now:
+                </p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>Create and send email campaigns</li>
+                  <li>Import and manage contacts</li>
+                  <li>Track email performance</li>
+                  <li>Use AI-powered email generation</li>
+                </ul>
+                <p className="mt-3 font-medium">
+                  Your SMTP settings are secure and ready to use. You can always come back here to update your configuration.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0">
+              <InformationCircleIcon className="h-6 w-6 text-blue-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-blue-900 mb-2">
+                Why configure email?
+              </h3>
+              <div className="text-sm text-blue-800 space-y-2">
+                <p>
+                  NovaMail needs your email account to send marketing emails. After configuring your email, you can:
+                </p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>Send AI-generated marketing emails</li>
+                  <li>Manage email campaigns</li>
+                  <li>Track email sending performance</li>
+                  <li>Ensure email deliverability</li>
+                </ul>
+                <p className="mt-3 font-medium">
+                  We support mainstream email providers like Gmail, Outlook, Yahoo, and recommend using Gmail SMTP configuration for the best experience.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* App Password Explanation Section */}
       <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
@@ -773,7 +837,11 @@ export default function EmailSettingsPage() {
         <button
           onClick={handleSaveConfig}
           disabled={isLoading || !emailConfig.email || !emailConfig.password}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
+          className={`px-6 py-3 text-white rounded-lg disabled:cursor-not-allowed transition-colors flex items-center space-x-2 ${
+            isConfigured 
+              ? 'bg-green-600 hover:bg-green-700 disabled:bg-gray-400' 
+              : 'bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400'
+          }`}
         >
           {isLoading ? (
             <>
@@ -781,7 +849,16 @@ export default function EmailSettingsPage() {
               <span>Saving...</span>
             </>
           ) : (
-            <span>Save Configuration</span>
+            <>
+              {isConfigured ? (
+                <>
+                  <CheckCircleIcon className="h-4 w-4" />
+                  <span>Update Configuration</span>
+                </>
+              ) : (
+                <span>Save Configuration</span>
+              )}
+            </>
           )}
         </button>
       </div>
