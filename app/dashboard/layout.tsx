@@ -14,7 +14,8 @@ import {
   Bars3Icon,
   XMarkIcon,
   ArrowRightOnRectangleIcon,
-  CreditCardIcon
+  CreditCardIcon,
+  CurrencyDollarIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 
@@ -25,7 +26,7 @@ const navigation = [
   { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
   { name: 'Billing', href: '/dashboard/billing', icon: CreditCardIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
-  { name: 'Pricing', href: '/pricing', icon: Cog6ToothIcon },
+  { name: 'Pricing', href: '/pricing', icon: CurrencyDollarIcon },
 ]
 
 export default function DashboardLayout({
