@@ -105,7 +105,7 @@ export default function DashboardPage() {
   const fetchDashboardData = async () => {
     try {
       // 从真实API获取数据
-      const response = await fetch('/api/dashboard/stats')
+      const response = await fetch('https://novamail-api.zhuanz.workers.dev/api/dashboard/stats')
       
       if (!response.ok) {
         throw new Error('Failed to fetch dashboard data')

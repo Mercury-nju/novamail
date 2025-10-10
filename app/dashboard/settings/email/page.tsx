@@ -273,7 +273,7 @@ export default function EmailSettingsPage() {
 
       // 如果 localStorage 中没有，尝试从 API 加载
       const userId = localStorage.getItem('user-id') || userEmail || 'default_user'
-      const response = await fetch(`/api/user/email-config?userId=${encodeURIComponent(userId)}`)
+      const response = await fetch(`https://novamail-api.zhuanz.workers.dev/api/user/email-config?userId=${encodeURIComponent(userId)}`)
       if (response.ok) {
         const data = await response.json()
         if (data.success && data.config) {
@@ -328,7 +328,7 @@ export default function EmailSettingsPage() {
 
     try {
       // 使用 Workers 后端进行 SMTP 连接测试
-      const response = await fetch('/api/user/test-email', {
+      const response = await fetch('https://novamail-api.zhuanz.workers.dev/api/user/test-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -378,7 +378,7 @@ export default function EmailSettingsPage() {
 
     try {
       const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email') || 'default_user'
-      const response = await fetch('/api/user/email-config', {
+      const response = await fetch('https://novamail-api.zhuanz.workers.dev/api/user/email-config', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

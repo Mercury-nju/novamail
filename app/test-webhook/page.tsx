@@ -32,7 +32,7 @@ export default function WebhookTestPage() {
         }
       }
 
-      const response = await fetch('/api/creem/webhook-test', {
+      const response = await fetch('https://novamail-api.zhuanz.workers.dev/api/creem/webhook-test', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export default function WebhookTestPage() {
   const testAPI = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/api/creem/test')
+      const response = await fetch('https://novamail-api.zhuanz.workers.dev/api/creem/test')
       const result = await response.json()
       setTestResult(result)
     } catch (error) {
