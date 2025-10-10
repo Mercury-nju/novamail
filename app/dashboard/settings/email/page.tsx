@@ -60,7 +60,7 @@ export default function EmailSettingsPage() {
           '复制生成的应用密码',
           '在此处输入您的 Gmail 地址和应用密码',
           'SMTP 服务器：smtp.gmail.com',
-          '端口：587（TLS）'
+          '端口：587（TLS）或 465（SSL）'
         ]
       }
     },
@@ -78,7 +78,9 @@ export default function EmailSettingsPage() {
           '确保您的 Microsoft 账户已启用两步验证',
           '访问 Microsoft 账户安全设置',
           '生成应用密码',
-          '使用应用密码而非账户密码'
+          '使用应用密码而非账户密码',
+          'SMTP 服务器：smtp-mail.outlook.com',
+          '端口：587（TLS）'
         ]
       }
     },
@@ -97,7 +99,9 @@ export default function EmailSettingsPage() {
           '进入账户安全设置',
           '启用两步验证',
           '生成应用密码',
-          '使用应用密码而非账户密码'
+          '使用应用密码而非账户密码',
+          'SMTP 服务器：smtp.mail.yahoo.com',
+          '端口：587（TLS）或 465（SSL）'
         ]
       }
     },
@@ -326,7 +330,7 @@ export default function EmailSettingsPage() {
                    <h4 className="text-sm font-medium text-yellow-800 mb-1">重要提示</h4>
                    <p className="text-sm text-yellow-700">
                      使用 Gmail SMTP 配置比 API 更简单，无需复杂的 OAuth 配置。
-                     SMTP 服务器：smtp.gmail.com，端口：587（TLS）。
+                     SMTP 服务器：smtp.gmail.com，端口：587（TLS）或 465（SSL）。
                      应用密码有效期为永久，除非您主动撤销。
                    </p>
                  </div>
@@ -406,7 +410,7 @@ export default function EmailSettingsPage() {
                 type="text"
                 value={emailConfig.smtpPort}
                 onChange={(e) => setEmailConfig(prev => ({ ...prev, smtpPort: e.target.value }))}
-                placeholder="587"
+                placeholder="587 (TLS) 或 465 (SSL)"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
