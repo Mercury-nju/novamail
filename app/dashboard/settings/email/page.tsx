@@ -9,7 +9,11 @@ import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
   EyeIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
+  InformationCircleIcon,
+  QuestionMarkCircleIcon,
+  ExternalLinkIcon,
+  ClipboardDocumentIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 
@@ -33,6 +37,7 @@ export default function EmailSettingsPage() {
     success: boolean
     message: string
   } | null>(null)
+  const [showTutorial, setShowTutorial] = useState(false)
 
   const emailProviders = [
     {
@@ -41,7 +46,21 @@ export default function EmailSettingsPage() {
       host: 'smtp.gmail.com',
       port: '587',
       secure: true,
-      instructions: 'Use Gmail API access token for sending emails'
+      instructions: '使用 Gmail API 访问令牌发送邮件',
+      description: '推荐使用 Gmail API，更安全且发送限制更高',
+      tutorial: {
+        title: 'Gmail API 配置教程',
+        steps: [
+          '访问 Google Cloud Console (https://console.cloud.google.com)',
+          '创建新项目或选择现有项目',
+          '启用 Gmail API',
+          '创建 OAuth 2.0 凭据',
+          '访问 OAuth 2.0 Playground (https://developers.google.com/oauthplayground)',
+          '选择 Gmail API v1 > https://www.googleapis.com/auth/gmail.send',
+          '获取 Authorization Code',
+          '换取 Access Token 和 Refresh Token'
+        ]
+      }
     },
     {
       id: 'outlook',
@@ -49,7 +68,17 @@ export default function EmailSettingsPage() {
       host: 'smtp-mail.outlook.com',
       port: '587',
       secure: true,
-      instructions: 'Use your Outlook password'
+      instructions: '使用您的 Outlook 密码',
+      description: '使用您的 Microsoft 账户密码',
+      tutorial: {
+        title: 'Outlook 配置教程',
+        steps: [
+          '确保您的 Microsoft 账户已启用两步验证',
+          '访问 Microsoft 账户安全设置',
+          '生成应用密码',
+          '使用应用密码而非账户密码'
+        ]
+      }
     },
     {
       id: 'yahoo',
@@ -57,7 +86,18 @@ export default function EmailSettingsPage() {
       host: 'smtp.mail.yahoo.com',
       port: '587',
       secure: true,
-      instructions: 'Use your Yahoo app password'
+      instructions: '使用您的 Yahoo 应用密码',
+      description: '需要生成 Yahoo 应用密码',
+      tutorial: {
+        title: 'Yahoo 配置教程',
+        steps: [
+          '登录 Yahoo 账户',
+          '进入账户安全设置',
+          '启用两步验证',
+          '生成应用密码',
+          '使用应用密码而非账户密码'
+        ]
+      }
     },
     {
       id: 'custom',
@@ -65,7 +105,18 @@ export default function EmailSettingsPage() {
       host: '',
       port: '587',
       secure: true,
-      instructions: 'Enter your custom SMTP settings'
+      instructions: '输入您的自定义 SMTP 设置',
+      description: '适用于企业邮箱或其他邮件服务商',
+      tutorial: {
+        title: '自定义 SMTP 配置教程',
+        steps: [
+          '联系您的邮件服务商获取 SMTP 设置',
+          '确认 SMTP 服务器地址和端口',
+          '确认是否需要 SSL/TLS 加密',
+          '获取邮箱用户名和密码',
+          '测试连接确保设置正确'
+        ]
+      }
     }
   ]
 
@@ -197,19 +248,103 @@ export default function EmailSettingsPage() {
             <ArrowLeftIcon className="h-5 w-5 text-gray-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Email Settings</h1>
+            <h1 className="text-2xl font-bold text-gray-900">邮箱配置</h1>
             <p className="mt-1 text-sm text-gray-600">
-              Configure your email account for sending marketing emails
+              配置您的邮箱账户以发送营销邮件
             </p>
           </div>
         </div>
+        <button
+          onClick={() => setShowTutorial(!showTutorial)}
+          className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+        >
+          <QuestionMarkCircleIcon className="h-4 w-4" />
+          <span>{showTutorial ? '隐藏教程' : '查看教程'}</span>
+        </button>
       </div>
+
+      {/* Why Configure Email Section */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+        <div className="flex items-start space-x-4">
+          <div className="flex-shrink-0">
+            <InformationCircleIcon className="h-6 w-6 text-blue-600" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-blue-900 mb-2">
+              为什么需要配置邮箱？
+            </h3>
+            <div className="text-sm text-blue-800 space-y-2">
+              <p>
+                NovaMail 需要您的邮箱账户来发送营销邮件。配置邮箱后，您可以：
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>发送 AI 生成的营销邮件</li>
+                <li>管理邮件活动</li>
+                <li>跟踪邮件发送效果</li>
+                <li>确保邮件送达率</li>
+              </ul>
+              <p className="mt-3 font-medium">
+                我们支持 Gmail、Outlook、Yahoo 等主流邮箱服务商，推荐使用 Gmail API 获得最佳体验。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tutorial Section */}
+      {showTutorial && selectedProvider && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          className="bg-white border border-gray-200 rounded-xl p-6"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+              <QuestionMarkCircleIcon className="h-5 w-5 mr-2 text-blue-600" />
+              {selectedProvider.tutorial.title}
+            </h3>
+            <button
+              onClick={() => setShowTutorial(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <ArrowLeftIcon className="h-5 w-5" />
+            </button>
+          </div>
+          
+          <div className="space-y-3">
+            {selectedProvider.tutorial.steps.map((step, index) => (
+              <div key={index} className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                  {index + 1}
+                </div>
+                <p className="text-sm text-gray-700">{step}</p>
+              </div>
+            ))}
+          </div>
+
+          {selectedProvider.id === 'gmail' && (
+            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-start space-x-3">
+                <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-sm font-medium text-yellow-800 mb-1">重要提示</h4>
+                  <p className="text-sm text-yellow-700">
+                    Gmail API 访问令牌有效期为 1 小时，建议同时配置刷新令牌以实现自动续期。
+                    如果遇到权限问题，请确保在 Google Cloud Console 中将应用状态设置为"已发布"。
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </motion.div>
+      )}
 
       {/* Email Provider Selection */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <EnvelopeIcon className="h-5 w-5 mr-2 text-blue-600" />
-          Email Provider
+          邮箱服务商
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -223,8 +358,16 @@ export default function EmailSettingsPage() {
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              <div className="font-semibold text-gray-900 mb-1">{provider.name}</div>
-              <div className="text-sm text-gray-600">{provider.instructions}</div>
+              <div className="flex items-center justify-between mb-2">
+                <div className="font-semibold text-gray-900">{provider.name}</div>
+                {provider.id === 'gmail' && (
+                  <span className="px-2 py-1 text-xs font-medium text-green-600 bg-green-100 rounded-full">
+                    推荐
+                  </span>
+                )}
+              </div>
+              <div className="text-sm text-gray-600 mb-1">{provider.instructions}</div>
+              <div className="text-xs text-gray-500">{provider.description}</div>
             </button>
           ))}
         </div>
@@ -233,7 +376,7 @@ export default function EmailSettingsPage() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
+              电子邮件地址
             </label>
             <input
               type="email"
@@ -271,9 +414,20 @@ export default function EmailSettingsPage() {
                     )}
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Get your access token from Google OAuth 2.0 Playground
-                </p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-xs text-gray-500">
+                    从 Google OAuth 2.0 Playground 获取您的访问令牌
+                  </p>
+                  <a
+                    href="https://developers.google.com/oauthplayground"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-xs text-blue-600 hover:text-blue-800 transition-colors"
+                  >
+                    <ExternalLinkIcon className="h-3 w-3 mr-1" />
+                    打开 OAuth 2.0 Playground
+                  </a>
+                </div>
               </div>
 
               <div>
@@ -301,7 +455,7 @@ export default function EmailSettingsPage() {
                   </button>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  For automatic token refresh (recommended)
+                  用于自动令牌刷新（推荐）
                 </p>
               </div>
             </>
@@ -311,14 +465,14 @@ export default function EmailSettingsPage() {
           {emailConfig.provider !== 'gmail' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password / App Password
+                密码 / 应用密码
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={emailConfig.password}
                   onChange={(e) => setEmailConfig(prev => ({ ...prev, password: e.target.value }))}
-                  placeholder="Enter your email password or app password"
+                  placeholder="输入您的邮箱密码或应用密码"
                   className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <button
@@ -376,8 +530,8 @@ export default function EmailSettingsPage() {
         <div className="mt-6 pt-6 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-sm font-medium text-gray-900">Test Connection</h4>
-              <p className="text-sm text-gray-600">Verify your email settings work correctly</p>
+              <h4 className="text-sm font-medium text-gray-900">测试连接</h4>
+              <p className="text-sm text-gray-600">验证您的邮件设置是否正常工作</p>
             </div>
             <button
               onClick={handleTestConnection}
@@ -387,10 +541,10 @@ export default function EmailSettingsPage() {
               {isTesting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>Testing...</span>
+                  <span>测试中...</span>
                 </>
               ) : (
-                <span>Test Connection</span>
+                <span>测试连接</span>
               )}
             </button>
           </div>
@@ -411,7 +565,7 @@ export default function EmailSettingsPage() {
                 <div className={`text-sm font-medium ${
                   testResult.success ? 'text-green-800' : 'text-red-800'
                 }`}>
-                  {testResult.success ? 'Connection Successful' : 'Connection Failed'}
+                  {testResult.success ? '连接成功' : '连接失败'}
                 </div>
                 <div className={`text-sm ${
                   testResult.success ? 'text-green-600' : 'text-red-600'
@@ -434,10 +588,10 @@ export default function EmailSettingsPage() {
           {isLoading ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              <span>Saving...</span>
+              <span>保存中...</span>
             </>
           ) : (
-            <span>Save Configuration</span>
+            <span>保存配置</span>
           )}
         </button>
       </div>
