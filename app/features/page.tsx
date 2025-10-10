@@ -194,6 +194,105 @@ export default function FeaturesPage() {
         </div>
       </section>
 
+      {/* Templates Preview Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">Professional Email Templates</h3>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Choose from our collection of professionally designed email templates
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                name: 'Modern Promo',
+                category: 'Marketing',
+                description: 'Modern design suitable for product promotion and sales activities',
+                features: ['Responsive Design', 'CTA Button', 'Product Display', 'Social Media Links'],
+                isPro: true
+              },
+              {
+                name: 'Newsletter',
+                category: 'Content Marketing',
+                description: 'Professional newsletter template, suitable for regular content delivery',
+                features: ['Multi-column Layout', 'Article Summary', 'Subscription Management', 'Sharing Features'],
+                isPro: true
+              },
+              {
+                name: 'E-commerce',
+                category: 'E-commerce Marketing',
+                description: 'Email template designed specifically for e-commerce, highlighting product features',
+                features: ['Product Grid', 'Price Display', 'Shopping Cart Reminder', 'Product Recommendations'],
+                isPro: true
+              }
+            ].map((template, index) => (
+              <motion.div
+                key={template.name}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="bg-gray-50 rounded-2xl p-6 hover:shadow-lg transition-shadow"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                    {template.category}
+                  </span>
+                  {template.isPro && (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      <SparklesIcon className="w-3 h-3 mr-1" />
+                      Pro
+                    </span>
+                  )}
+                </div>
+                
+                <h4 className="text-xl font-semibold text-gray-900 mb-3">{template.name}</h4>
+                <p className="text-gray-600 mb-4">{template.description}</p>
+                
+                <div className="space-y-2 mb-6">
+                  {template.features.map((feature, featIndex) => (
+                    <div key={featIndex} className="flex items-center text-sm text-gray-700">
+                      <CheckIcon className="w-4 h-4 text-green-500 mr-2" />
+                      {feature}
+                    </div>
+                  ))}
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center"
+                >
+                  <span>View Template</span>
+                  <ArrowRightIcon className="w-4 h-4 ml-2" />
+                </motion.button>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-center mt-12"
+          >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-8 rounded-lg transition-colors"
+            >
+              View All Templates
+            </motion.button>
+          </motion.div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-primary-500 to-blue-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
