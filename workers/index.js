@@ -969,6 +969,81 @@ async function handleAIGenerateEmail(request, env) {
             </div>
           `;
           break;
+        case 'ecommerce':
+          mockBody = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <div style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; padding: 20px; text-align: center; border-radius: 8px;">
+                <h1 style="margin: 0; font-size: 24px;">${campaignData.businessName || 'Shop Now'}</h1>
+                <p style="margin: 5px 0 0 0; font-size: 14px;">Exclusive Offers Inside</p>
+              </div>
+              
+              <div style="padding: 30px 0;">
+                <h2 style="color: #333; margin-bottom: 20px;">${campaignData.purpose}</h2>
+                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                  Discover ${campaignData.productService || 'our amazing products'} and enjoy special offers just for you!
+                </p>
+                
+                <div style="background: #fff5f5; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #FF6B6B;">
+                  <h3 style="color: #FF6B6B; margin-top: 0;">Special Offer</h3>
+                  <p style="color: #666; line-height: 1.6;">
+                    Shop now and get exclusive discounts on your favorite items. Limited time only!
+                  </p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">Shop Now</a>
+                </div>
+              </div>
+              
+              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                <p>Best regards,<br>
+                <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
+              </div>
+            </div>
+          `;
+          break;
+        case 'event':
+          mockBody = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <div style="background: linear-gradient(135deg, #F093FB 0%, #F5576C 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                <h1 style="margin: 0; font-size: 28px;">🎉 ${campaignData.purpose}</h1>
+                <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">You're Invited!</p>
+              </div>
+              
+              <div style="padding: 30px 0;">
+                <p style="color: #666; line-height: 1.6; font-size: 16px; margin-bottom: 20px;">
+                  Hi [First Name],
+                </p>
+                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                  We're excited to invite you to an exclusive event hosted by <strong>${campaignData.businessName || 'our team'}</strong>. ${campaignData.productService || 'Join us for an unforgettable experience'}!
+                </p>
+                
+                <div style="background: #fff0f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                  <h3 style="color: #F5576C; margin-top: 0;">Event Highlights</h3>
+                  <ul style="color: #666; line-height: 1.8; margin: 10px 0;">
+                    <li>Exclusive networking opportunities</li>
+                    <li>Special presentations and demos</li>
+                    <li>Refreshments and entertainment</li>
+                    <li>Limited seats available</li>
+                  </ul>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #F093FB 0%, #F5576C 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">RSVP Now</a>
+                </div>
+                
+                <p style="color: #666; line-height: 1.6;">
+                  Don't miss this opportunity to connect and celebrate with us. We look forward to seeing you there!
+                </p>
+              </div>
+              
+              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                <p>Best regards,<br>
+                <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
+              </div>
+            </div>
+          `;
+          break;
         default:
           mockBody = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
