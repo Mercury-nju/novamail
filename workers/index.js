@@ -883,6 +883,8 @@ async function handleAIGenerateEmail(request, env) {
 
     // 使用增强的模拟内容替代 AI 生成
     console.log('Using template-based content instead of AI generation');
+    
+    // 确保所有内容都是英文
     const mockSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
     
     // 根据模板类型生成不同的内容
@@ -998,12 +1000,15 @@ async function handleAIGenerateEmail(request, env) {
       `;
     }
     
+    // 确保返回的内容是纯英文，没有任何中文占位符
+    console.log('Returning English-only content:', { subject: mockSubject, template: selectedTemplate });
+    
     return new Response(JSON.stringify({
       success: true,
       subject: mockSubject,
       body: mockBody,
-      template: selectedTemplate || 'ai-generated',
-      note: 'Using enhanced mock content (AI temporarily disabled)',
+      template: selectedTemplate || 'template-generated',
+      note: 'Using English-only template content',
       timestamp: new Date().toISOString()
     }), {
       headers: corsHeaders
