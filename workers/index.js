@@ -1785,6 +1785,8 @@ async function handleAIGenerateEmail(request, env) {
       
       The email should be engaging, professional, and suitable for ${emailMode} communication.`;
 
+      console.log('Sending request to DashScope API with key:', env.DASHSCOPE_API_KEY ? 'Key present' : 'Key missing');
+      
       const aiResponse = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
         method: 'POST',
         headers: {
@@ -1808,14 +1810,20 @@ async function handleAIGenerateEmail(request, env) {
         })
       });
 
+      console.log('DashScope API response status:', aiResponse.status);
+      
       if (!aiResponse.ok) {
-        throw new Error(`AI API request failed: ${aiResponse.status}`);
+        const errorText = await aiResponse.text();
+        console.error('DashScope API error response:', errorText);
+        throw new Error(`AI API request failed: ${aiResponse.status} - ${errorText}`);
       }
 
       const aiData = await aiResponse.json();
+      console.log('DashScope API response data:', JSON.stringify(aiData, null, 2));
       
       if (!aiData.output || !aiData.output.choices || aiData.output.choices.length === 0) {
-        throw new Error('AI API returned invalid response');
+        console.error('Invalid AI response structure:', aiData);
+        throw new Error('AI API returned invalid response structure');
       }
 
       const aiContent = aiData.output.choices[0].message.content;
@@ -1841,10 +1849,14 @@ async function handleAIGenerateEmail(request, env) {
 
   } catch (error) {
     console.error('AI Generation Error:', error);
+    console.error('Error stack:', error.stack);
+    
+    // 返回更详细的错误信息用于调试
     return new Response(JSON.stringify({
       success: false,
-      error: 'Failed to generate email content',
-      details: error.message
+      error: 'AI generation failed, please try again later',
+      details: error.message,
+      timestamp: new Date().toISOString()
     }), {
       status: 500,
       headers: corsHeaders
