@@ -19,9 +19,12 @@ export default function EmailSettingsPage() {
     provider: 'gmail',
     email: '',
     password: '',
+    accessToken: '',
+    refreshToken: '',
     smtpHost: 'smtp.gmail.com',
     smtpPort: '587',
-    isSecure: true
+    isSecure: true,
+    isConfigured: false
   })
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -38,7 +41,7 @@ export default function EmailSettingsPage() {
       host: 'smtp.gmail.com',
       port: '587',
       secure: true,
-      instructions: 'Use your Gmail app password (not your regular password)'
+      instructions: 'Use Gmail API access token for sending emails'
     },
     {
       id: 'outlook',
@@ -138,9 +141,22 @@ export default function EmailSettingsPage() {
   }
 
   const handleSaveConfig = async () => {
-    if (!emailConfig.email || !emailConfig.password) {
-      toast.error('Please enter your email and password')
+    // 验证必填字段
+    if (!emailConfig.email) {
+      toast.error('Please enter your email address')
       return
+    }
+
+    if (emailConfig.provider === 'gmail') {
+      if (!emailConfig.accessToken) {
+        toast.error('Please enter your Gmail API access token')
+        return
+      }
+    } else {
+      if (!emailConfig.password) {
+        toast.error('Please enter your email password')
+        return
+      }
     }
 
     setIsLoading(true)
@@ -151,7 +167,10 @@ export default function EmailSettingsPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(emailConfig),
+        body: JSON.stringify({
+          ...emailConfig,
+          isConfigured: true
+        }),
       })
 
       const result = await response.json()
@@ -225,34 +244,100 @@ export default function EmailSettingsPage() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password / App Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={emailConfig.password}
-                onChange={(e) => setEmailConfig(prev => ({ ...prev, password: e.target.value }))}
-                placeholder="Enter your email password or app password"
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                {showPassword ? (
-                  <EyeSlashIcon className="h-5 w-5" />
-                ) : (
-                  <EyeIcon className="h-5 w-5" />
-                )}
-              </button>
+          {/* Gmail API Token Fields */}
+          {emailConfig.provider === 'gmail' && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Gmail API Access Token
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={emailConfig.accessToken}
+                    onChange={(e) => setEmailConfig(prev => ({ ...prev, accessToken: e.target.value }))}
+                    placeholder="ya29.a0AfH6SMC..."
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <EyeSlashIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Get your access token from Google OAuth 2.0 Playground
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Gmail API Refresh Token (Optional)
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={emailConfig.refreshToken}
+                    onChange={(e) => setEmailConfig(prev => ({ ...prev, refreshToken: e.target.value }))}
+                    placeholder="1//04..."
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <EyeSlashIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  For automatic token refresh (recommended)
+                </p>
+              </div>
+            </>
+          )}
+
+          {/* Other providers password field */}
+          {emailConfig.provider !== 'gmail' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password / App Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={emailConfig.password}
+                  onChange={(e) => setEmailConfig(prev => ({ ...prev, password: e.target.value }))}
+                  placeholder="Enter your email password or app password"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? (
+                    <EyeSlashIcon className="h-5 w-5" />
+                  ) : (
+                    <EyeIcon className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                {selectedProvider?.instructions}
+              </p>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              {selectedProvider?.instructions}
-            </p>
-          </div>
+          )}
 
           {/* SMTP Settings (for custom provider) */}
           {emailConfig.provider === 'custom' && (

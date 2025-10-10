@@ -1117,7 +1117,7 @@ async function handleCampaignSend(request, env) {
       });
     }
 
-    // 检查用户是否配置了 SMTP
+    // 强制检查用户 SMTP 配置
     let userEmailConfig = null;
     try {
       // 从 Cloudflare KV 存储中获取用户的 SMTP 配置
@@ -1133,29 +1133,30 @@ async function handleCampaignSend(request, env) {
         }
       }
       
-      // 如果没有找到配置，使用默认设置
-      if (!userEmailConfig) {
-        userEmailConfig = {
-          provider: 'gmail',
-          email: '',
-          smtpHost: 'smtp.gmail.com',
-          smtpPort: '587',
-          isSecure: true,
-          isConfigured: false
-        };
-        console.log('No SMTP configuration found, using default sending');
+      // 如果没有找到配置或配置不完整，拒绝发送
+      if (!userEmailConfig || !userEmailConfig.isConfigured || !userEmailConfig.email || !userEmailConfig.password) {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'SMTP configuration required',
+          message: 'Please configure your SMTP settings before sending emails. Go to Settings > Email Configuration to set up your email account.',
+          code: 'SMTP_NOT_CONFIGURED'
+        }), {
+          status: 400,
+          headers: corsHeaders
+        });
       }
       
     } catch (error) {
-      console.log('Failed to load SMTP configuration, using default sending:', error);
-      userEmailConfig = {
-        provider: 'gmail',
-        email: '',
-        smtpHost: 'smtp.gmail.com',
-        smtpPort: '587',
-        isSecure: true,
-        isConfigured: false
-      };
+      console.log('Failed to load SMTP configuration:', error);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'SMTP configuration required',
+        message: 'Please configure your SMTP settings before sending emails. Go to Settings > Email Configuration to set up your email account.',
+        code: 'SMTP_NOT_CONFIGURED'
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
     }
 
     // 发送邮件活动
@@ -1198,60 +1199,47 @@ async function handleCampaignSend(request, env) {
         `
       };
 
-      // 根据用户配置选择发送方式
+      // 使用用户 SMTP 配置发送邮件
       try {
-        let response;
+        console.log('Sending via user SMTP:', userEmailConfig.email);
         
-        if (userEmailConfig?.isConfigured) {
-          // 使用用户 SMTP 配置发送
-          console.log('Sending via user SMTP:', userEmailConfig.email);
-          
-          // 这里应该实现真正的 SMTP 发送
-          // 为了演示，我们模拟发送成功
-          response = {
-            ok: true,
-            status: 200
-          };
-          
-          // 在实际应用中，这里应该使用 nodemailer 或其他 SMTP 库
-          // const transporter = nodemailer.createTransporter({
-          //   host: userEmailConfig.smtpHost,
-          //   port: parseInt(userEmailConfig.smtpPort),
-          //   secure: userEmailConfig.isSecure,
-          //   auth: {
-          //     user: userEmailConfig.email,
-          //     pass: userEmailConfig.password
-          //   }
-          // });
-          // 
-          // const result = await transporter.sendMail(emailData);
-          // response = { ok: true, status: 200 };
-          
-        } else {
-          // 使用默认 Resend API 发送
-          console.log('Sending via NovaMail default service');
-          
-          response = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              'Authorization': 'Bearer ' + env.RESEND_API_KEY,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(emailData)
-          });
-        }
+        // 使用 Gmail API 发送邮件（因为 Cloudflare Workers 不支持直接 SMTP）
+        const emailMessage = [
+          `From: ${campaignData.businessName || 'Your Company'} <${userEmailConfig.email}>`,
+          `To: ${recipient}`,
+          `Subject: ${campaignData.subject || 'Email Campaign'}`,
+          `MIME-Version: 1.0`,
+          `Content-Type: text/html; charset=UTF-8`,
+          ``,
+          emailData.html
+        ].join('\r\n');
+
+        // Base64编码邮件内容
+        const encodedMessage = btoa(emailMessage).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+        // 使用 Gmail API 发送邮件
+        const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/send`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userEmailConfig.accessToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            raw: encodedMessage
+          })
+        });
 
         sentEmails.push({
           recipient: recipient,
           status: response.ok ? 'sent' : 'failed',
-          method: userEmailConfig?.isConfigured ? 'user_smtp' : 'novamail_default',
+          method: 'user_gmail_api',
           timestamp: new Date().toISOString()
         });
       } catch (error) {
         sentEmails.push({
           recipient: recipient,
           status: 'failed',
-          method: userEmailConfig?.isConfigured ? 'user_smtp' : 'novamail_default',
+          method: 'user_gmail_api',
           error: error.message,
           timestamp: new Date().toISOString()
         });
@@ -1273,7 +1261,7 @@ async function handleCampaignSend(request, env) {
       createdAt: new Date().toISOString(),
       sentAt: new Date().toISOString(),
       businessName: campaignData.businessName,
-      sendingMethod: userEmailConfig?.isConfigured ? 'user_smtp' : 'novamail_default'
+      sendingMethod: 'user_gmail_api'
     };
 
     // 保存 campaign 到 KV 存储

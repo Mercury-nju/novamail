@@ -18,6 +18,7 @@ import {
   CurrencyDollarIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import OnboardingTour from '@/components/OnboardingTour'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
@@ -41,6 +42,9 @@ export default function DashboardLayout({
   // 认证状态检查
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  
+  // 用户引导状态
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
   useEffect(() => {
     const checkAuth = () => {
@@ -51,6 +55,12 @@ export default function DashboardLayout({
         if (userToken && userEmail) {
           setIsAuthenticated(true)
           console.log('User authenticated:', userEmail)
+          
+          // 检查是否需要显示用户引导
+          const hasSeenOnboarding = localStorage.getItem('has-seen-onboarding')
+          if (!hasSeenOnboarding) {
+            setShowOnboarding(true)
+          }
         } else {
           setIsAuthenticated(false)
           console.log('User not authenticated, redirecting to login')
@@ -62,6 +72,12 @@ export default function DashboardLayout({
 
     checkAuth()
   }, [router])
+
+  // 处理用户引导完成
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false)
+    localStorage.setItem('has-seen-onboarding', 'true')
+  }
 
   // 显示加载状态
   if (isLoading) {
@@ -248,6 +264,13 @@ export default function DashboardLayout({
           </div>
         </main>
       </div>
+
+      {/* 用户引导 */}
+      <OnboardingTour
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        onComplete={handleOnboardingComplete}
+      />
     </div>
   )
 }
