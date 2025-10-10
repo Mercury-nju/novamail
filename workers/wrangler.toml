@@ -8,4 +8,27 @@ compatibility_flags = ["nodejs_compat"]
 CREEM_API_KEY = "creem_22oMcuzUH4TeWyWVAVjTes"
 CREEM_BASE_URL = "https://api.creem.io/v1"
 CREEM_WEBHOOK_SECRET = "whsec_5uvCq8f1gQMsqz5rqwdVgZ"
-RESEND_API_KEY = "re_PCbEHboB..."  # Resend API密钥
+RESEND_API_KEY = "re_PCbEHboB..."  # Resend API密钥 (用于campaign营销邮件)
+
+# Gmail SMTP 配置 (用于注册验证码)
+GMAIL_SMTP_USER = "your-email@gmail.com"  # 请替换为你的Gmail邮箱
+GMAIL_SMTP_PASSWORD = "your-app-password"  # 请替换为Gmail应用专用密码
+GMAIL_SMTP_HOST = "smtp.gmail.com"
+GMAIL_SMTP_PORT = "587"
+
+# KV 存储配置 - 临时使用模拟存储
+# 注意：生产环境需要在Cloudflare Dashboard中创建真实的KV命名空间
+# [[kv_namespaces]]
+# binding = "USERS_KV"
+# id = "your-users-kv-id"
+# preview_id = "your-users-kv-preview-id"
+
+# [[kv_namespaces]]
+# binding = "EMAIL_CONFIG_KV"
+# id = "your-email-config-kv-id"
+# preview_id = "your-email-config-kv-preview-id"
+
+# [[kv_namespaces]]
+# binding = "CAMPAIGNS_KV"
+# id = "your-campaigns-kv-id"
+# preview_id = "your-campaigns-kv-preview-id"

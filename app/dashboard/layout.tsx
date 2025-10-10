@@ -37,28 +37,68 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const router = useRouter()
   
-  // 静态导出模式：不检查session，直接显示dashboard
+  // 认证状态检查
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
   useEffect(() => {
-    console.log('DashboardLayout - Static export mode, rendering dashboard')
+    const checkAuth = () => {
+      if (typeof window !== 'undefined') {
+        const userToken = localStorage.getItem('user-token')
+        const userEmail = localStorage.getItem('user-email')
+        
+        if (userToken && userEmail) {
+          setIsAuthenticated(true)
+          console.log('User authenticated:', userEmail)
+        } else {
+          setIsAuthenticated(false)
+          console.log('User not authenticated, redirecting to login')
+          router.push('/login')
+        }
+      }
+      setIsLoading(false)
+    }
+
+    checkAuth()
   }, [router])
 
-  // 静态导出模式：直接显示dashboard，不检查加载状态
+  // 显示加载状态
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Checking authentication...</p>
+        </div>
+      </div>
+    )
+  }
 
-  // 临时禁用认证检查，直接显示dashboard
-  // if (status === 'unauthenticated') {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center">
-  //       <div className="text-center">
-  //         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-  //         <p className="mt-4 text-gray-600">Redirecting to login...</p>
-  //       </div>
-  //     </div>
-  //   )
-  // }
+  // 未认证用户重定向
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Redirecting to login...</p>
+        </div>
+      </div>
+    )
+  }
 
   const handleLogout = () => {
+    // 清理所有认证数据
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('user-token')
+      localStorage.removeItem('user-email')
+      localStorage.removeItem('user-name')
+      localStorage.removeItem('user-id')
+      localStorage.removeItem('user-picture')
+      localStorage.removeItem('auth-provider')
+    }
+    
     toast.success('Logged out successfully')
-    // In a real app, you would clear the auth token and redirect
+    setIsAuthenticated(false)
     router.push('/')
   }
 
