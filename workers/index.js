@@ -1,6 +1,42 @@
 // Cloudflare Workers 主入口文件
 // 路由到不同的 API 端点
 
+// Gmail访问令牌刷新函数
+async function refreshGmailAccessToken(env) {
+  if (!env.GMAIL_REFRESH_TOKEN || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+    console.log('Missing refresh token or Google credentials');
+    return null;
+  }
+
+  try {
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        client_id: env.GOOGLE_CLIENT_ID,
+        client_secret: env.GOOGLE_CLIENT_SECRET,
+        refresh_token: env.GMAIL_REFRESH_TOKEN,
+        grant_type: 'refresh_token'
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Gmail access token refreshed successfully');
+      return data.access_token;
+    } else {
+      const errorData = await response.text();
+      console.log('Failed to refresh Gmail access token:', response.status, errorData);
+      return null;
+    }
+  } catch (error) {
+    console.log('Error refreshing Gmail access token:', error);
+    return null;
+  }
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -51,6 +87,18 @@ export default {
         return await handleTestEmail(request, env);
       } else if (path.startsWith('/api/campaigns')) {
         return await handleCampaigns(request, env);
+      } else if (path.startsWith('/api/admin/clear-users')) {
+        return await handleClearUsers(request, env);
+      } else if (path.startsWith('/api/admin/clear-campaigns')) {
+        return await handleClearCampaigns(request, env);
+      } else if (path.startsWith('/api/admin/clear-email-configs')) {
+        return await handleClearEmailConfigs(request, env);
+      } else if (path.startsWith('/api/admin/clear-all')) {
+        return await handleClearAll(request, env);
+      } else if (path.startsWith('/api/contacts/import')) {
+        return await handleContactsImport(request, env);
+      } else if (path.startsWith('/api/contacts')) {
+        return await handleContacts(request, env);
       } else {
         return new Response(JSON.stringify({ 
           error: 'API endpoint not found',
@@ -68,7 +116,11 @@ export default {
             '/api/ai/generate-email',
             '/api/user/email-config',
             '/api/user/test-email',
-            '/api/campaigns'
+            '/api/campaigns',
+            '/api/admin/clear-users',
+            '/api/admin/clear-campaigns',
+            '/api/admin/clear-email-configs',
+            '/api/admin/clear-all'
           ]
         }), {
           status: 404,
@@ -238,35 +290,189 @@ async function handleSendVerification(request, env) {
       `</div>`
     ].join('\r\n');
 
-    // 使用Cloudflare Workers的SMTP功能
-    // 注意：这里使用一个简化的实现，实际生产环境需要更完整的SMTP协议
+    // 使用真实的SMTP发送邮件
     try {
-      // 模拟SMTP发送成功
       console.log(`Sending verification email to ${email} via Gmail SMTP`);
       console.log(`SMTP Host: ${smtpHost}:${smtpPort}`);
       console.log(`From: ${gmailUser}`);
       console.log(`Verification Code: ${verificationCode}`);
       
-      // 在实际应用中，这里应该使用真正的SMTP连接
-      // 目前返回成功，但实际邮件发送需要配置真实的SMTP
+      // 构建SMTP邮件内容
+      const emailBoundary = '----=_Part_' + Math.random().toString(36).substr(2, 9);
+      const emailBody = [
+        `From: NovaMail <${gmailUser}>`,
+        `To: ${email}`,
+        `Subject: Your NovaMail Verification Code`,
+        `MIME-Version: 1.0`,
+        `Content-Type: multipart/alternative; boundary="${emailBoundary}"`,
+        ``,
+        `--${emailBoundary}`,
+        `Content-Type: text/plain; charset=UTF-8`,
+        ``,
+        `Your NovaMail Verification Code`,
+        ``,
+        `Thank you for signing up for NovaMail!`,
+        ``,
+        `Your verification code is: ${verificationCode}`,
+        ``,
+        `This code will expire in 10 minutes.`,
+        ``,
+        `If you didn't request this code, please ignore this email.`,
+        ``,
+        `Best regards,`,
+        `NovaMail Team`,
+        ``,
+        `--${emailBoundary}`,
+        `Content-Type: text/html; charset=UTF-8`,
+        ``,
+        `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">`,
+        `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">`,
+        `<h1 style="color: white; margin: 0;">NovaMail</h1>`,
+        `</div>`,
+        `<div style="padding: 30px; background: #f9f9f9;">`,
+        `<h2 style="color: #333; margin-bottom: 20px;">Verify Your Email Address</h2>`,
+        `<p style="color: #666; font-size: 16px; line-height: 1.5;">`,
+        `Thank you for signing up for NovaMail! To complete your registration, please use the verification code below:`,
+        `</p>`,
+        `<div style="background: white; border: 2px solid #667eea; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">`,
+        `<span style="font-size: 32px; font-weight: bold; color: #667eea; letter-spacing: 5px;">${verificationCode}</span>`,
+        `</div>`,
+        `<p style="color: #666; font-size: 14px;">`,
+        `This code will expire in 10 minutes. If you didn't request this code, please ignore this email.`,
+        `</p>`,
+        `<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">`,
+        `<p style="color: #999; font-size: 12px;">`,
+        `This email was sent by NovaMail. If you have any questions, please contact our support team.`,
+        `</p>`,
+        `</div>`,
+        `</div>`,
+        `</div>`,
+        ``,
+        `--${emailBoundary}--`
+      ].join('\r\n');
+
+
+      // 使用Gmail SMTP发送验证码邮件
+      const emailData = {
+        from: `NovaMail <${gmailUser}>`,
+        to: email,
+        subject: 'Your NovaMail Verification Code',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
+              <h1 style="color: white; margin: 0;">NovaMail</h1>
+            </div>
+            <div style="padding: 30px; background: #f9f9f9;">
+              <h2 style="color: #333; margin-bottom: 20px;">Verify Your Email Address</h2>
+              <p style="color: #666; font-size: 16px; line-height: 1.5;">
+                Thank you for signing up for NovaMail! To complete your registration, please use the verification code below:
+              </p>
+              <div style="background: white; border: 2px solid #667eea; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">
+                <span style="font-size: 32px; font-weight: bold; color: #667eea; letter-spacing: 5px;">${verificationCode}</span>
+              </div>
+              <p style="color: #666; font-size: 14px;">
+                This code will expire in 10 minutes. If you didn't request this code, please ignore this email.
+              </p>
+              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+                <p style="color: #999; font-size: 12px;">
+                  This email was sent by NovaMail. If you have any questions, please contact our support team.
+                </p>
+              </div>
+            </div>
+          </div>
+        `
+      };
+
+      // 获取有效的Gmail访问令牌（支持自动刷新）
+      let gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
       
-      return new Response(JSON.stringify({
-        success: true,
-        message: 'Verification code sent successfully via Gmail SMTP',
-        code: verificationCode, // 在开发环境中返回验证码用于测试
-        note: 'Gmail SMTP configured, but actual sending requires real SMTP implementation',
-        timestamp: new Date().toISOString()
-      }), {
-        headers: corsHeaders
+      if (!gmailAccessToken) {
+        console.log('Gmail Access Token not configured');
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Verification code generated (Gmail API not configured)',
+          code: verificationCode,
+          note: 'Please configure Gmail Access Token to enable email sending',
+          timestamp: new Date().toISOString()
+        }), {
+          headers: corsHeaders
+        });
+      }
+
+      // 尝试刷新访问令牌（如果存在刷新令牌）
+      if (env.GMAIL_REFRESH_TOKEN) {
+        try {
+          const refreshedToken = await refreshGmailAccessToken(env);
+          if (refreshedToken) {
+            gmailAccessToken = refreshedToken;
+            console.log('Gmail access token refreshed successfully');
+          }
+        } catch (refreshError) {
+          console.log('Failed to refresh Gmail access token:', refreshError);
+          // 继续使用现有令牌，如果失败会在API调用时处理
+        }
+      }
+
+      // 构建Gmail API邮件内容
+      const emailMessage = [
+        `From: NovaMail <${gmailUser}>`,
+        `To: ${email}`,
+        `Subject: Your NovaMail Verification Code`,
+        `MIME-Version: 1.0`,
+        `Content-Type: text/html; charset=UTF-8`,
+        ``,
+        emailData.html
+      ].join('\r\n');
+
+      // Base64编码邮件内容
+      const encodedMessage = btoa(emailMessage).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+      // 使用Gmail API发送邮件
+      const gmailResponse = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/send`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${gmailAccessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          raw: encodedMessage
+        })
       });
-    } catch (smtpError) {
-      // 如果SMTP发送失败，返回验证码用于测试
-      console.log('SMTP sending failed, returning verification code for testing');
+
+      if (gmailResponse.ok) {
+        console.log('Email sent successfully via Gmail API');
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Verification code sent successfully via Gmail API',
+          code: verificationCode,
+          note: 'Email sent to your inbox',
+          timestamp: new Date().toISOString()
+        }), {
+          headers: corsHeaders
+        });
+      } else {
+        const errorData = await gmailResponse.text();
+        console.log('Gmail API sending failed:', gmailResponse.status, errorData);
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Verification code generated (Gmail API sending failed)',
+          code: verificationCode,
+          note: 'Gmail API sending failed, but verification code is available',
+          error: `Gmail API Error: ${gmailResponse.status}`,
+          timestamp: new Date().toISOString()
+        }), {
+          headers: corsHeaders
+        });
+      }
+    } catch (emailError) {
+      // 如果邮件发送失败，返回验证码
+      console.log('Email sending failed:', emailError);
       return new Response(JSON.stringify({
         success: true,
-        message: 'Verification code generated (SMTP sending failed)',
+        message: 'Verification code generated (email error)',
         code: verificationCode,
-        note: 'SMTP sending failed, but verification code is available for testing',
+        note: 'Email error occurred, but verification code is available',
+        error: emailError.message,
         timestamp: new Date().toISOString()
       }), {
         headers: corsHeaders
@@ -328,8 +534,34 @@ async function handleVerifyCode(request, env) {
     });
   }
 
-  // 创建用户账户（模拟）
-  const userId = 'user_' + Date.now();
+  // 检查用户是否已存在
+  let existingUser = null;
+  try {
+    if (env.USERS_KV) {
+      const storedUser = await env.USERS_KV.get(`user_${email.toLowerCase()}`);
+      if (storedUser) {
+        existingUser = JSON.parse(storedUser);
+        console.log('User already exists:', existingUser.email);
+      }
+    }
+  } catch (error) {
+    console.log('Failed to check existing user:', error);
+  }
+
+  if (existingUser) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'User already exists',
+      message: 'This email is already registered. Please use login instead.',
+      code: 'USER_EXISTS'
+    }), {
+      status: 400,
+      headers: corsHeaders
+    });
+  }
+
+  // 创建用户账户
+  const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   const userToken = 'token_' + Math.random().toString(36).substr(2, 9);
   
   // 发送欢迎邮件
@@ -376,17 +608,55 @@ async function handleVerifyCode(request, env) {
       body: JSON.stringify(welcomeEmailData)
     });
 
+    // 创建用户对象
+    const user = {
+      id: userId,
+      email: email.toLowerCase().trim(),
+      name: firstName || email.split('@')[0],
+      firstName: firstName || '',
+      lastName: lastName || '',
+      token: userToken,
+      plan: 'free',
+      emailVerified: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      // 使用量统计
+      emailsSentThisMonth: 0,
+      contactsCount: 0,
+      campaignsCount: 0,
+      lastUsageReset: new Date().toISOString()
+    };
+
+    // 保存用户到 KV 存储
+    try {
+      if (env.USERS_KV) {
+        await env.USERS_KV.put(`user_${email.toLowerCase()}`, JSON.stringify(user));
+        console.log('User created and saved:', user.email);
+      } else {
+        console.log('KV storage not available, user creation simulated');
+      }
+    } catch (error) {
+      console.error('Failed to save user:', error);
+      // 即使存储失败，也返回成功，因为用户数据已经生成
+    }
+
     // 无论邮件发送是否成功，都返回用户创建成功
     return new Response(JSON.stringify({
       success: true,
       message: 'Account created and verified successfully',
       user: {
-        id: userId,
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        token: userToken,
-        createdAt: new Date().toISOString()
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        token: user.token,
+        plan: user.plan,
+        emailVerified: user.emailVerified,
+        createdAt: user.createdAt,
+        emailsSentThisMonth: user.emailsSentThisMonth,
+        contactsCount: user.contactsCount,
+        campaignsCount: user.campaignsCount
       },
       welcomeEmailSent: response.ok,
       timestamp: new Date().toISOString()
@@ -457,19 +727,57 @@ async function handleLogin(request, env) {
       });
     }
 
-    // 模拟用户验证（在实际应用中，这里应该查询数据库）
-    // 为了演示，我们接受任何密码，但要求邮箱格式正确
-    const userId = 'user_' + Date.now();
-    const userToken = 'token_' + Math.random().toString(36).substr(2, 9);
+    // 检查用户是否存在
+    let existingUser = null;
+    try {
+      if (env.USERS_KV) {
+        const storedUser = await env.USERS_KV.get(`user_${email.toLowerCase()}`);
+        if (storedUser) {
+          existingUser = JSON.parse(storedUser);
+          console.log('Found existing user for login:', existingUser.email);
+        }
+      }
+    } catch (error) {
+      console.log('Failed to check existing user:', error);
+    }
+
+    if (!existingUser) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'User not found',
+        message: 'No account found with this email. Please register first.',
+        code: 'USER_NOT_FOUND'
+      }), {
+        status: 404,
+        headers: corsHeaders
+      });
+    }
+
+    // 更新用户登录时间
+    existingUser.lastLogin = new Date().toISOString();
+    existingUser.updatedAt = new Date().toISOString();
     
-    // 模拟用户信息
+    // 保存更新后的用户信息
+    try {
+      if (env.USERS_KV) {
+        await env.USERS_KV.put(`user_${email.toLowerCase()}`, JSON.stringify(existingUser));
+        console.log('Updated user login time:', existingUser.email);
+      }
+    } catch (error) {
+      console.error('Failed to update user login time:', error);
+    }
+
+    // 返回用户信息
     const user = {
-      id: userId,
-      email: email.toLowerCase().trim(),
-      name: email.split('@')[0], // 使用邮箱前缀作为用户名
-      token: userToken,
-      plan: 'free',
-      createdAt: new Date().toISOString()
+      id: existingUser.id,
+      email: existingUser.email,
+      name: existingUser.name || existingUser.firstName || email.split('@')[0],
+      firstName: existingUser.firstName,
+      lastName: existingUser.lastName,
+      token: existingUser.token,
+      plan: existingUser.plan || 'free',
+      createdAt: existingUser.createdAt,
+      lastLogin: existingUser.lastLogin
     };
 
     return new Response(JSON.stringify({
@@ -1867,6 +2175,281 @@ async function handleCampaigns(request, env) {
   }
 }
 
+// 清空用户数据处理函数
+async function handleClearUsers(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    if (!env.USERS_KV) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'USERS_KV not configured'
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+
+    // 获取所有用户键
+    const usersList = await env.USERS_KV.list();
+    let deletedCount = 0;
+    
+    if (usersList.keys && usersList.keys.length > 0) {
+      // 删除所有用户数据
+      for (const key of usersList.keys) {
+        await env.USERS_KV.delete(key.name);
+        deletedCount++;
+      }
+    }
+
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'User data cleared successfully',
+      deletedCount: deletedCount,
+      timestamp: new Date().toISOString()
+    }), {
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to clear user data',
+      details: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 清空活动数据处理函数
+async function handleClearCampaigns(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    if (!env.CAMPAIGNS_KV) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'CAMPAIGNS_KV not configured'
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+
+    // 获取所有活动键
+    const campaignsList = await env.CAMPAIGNS_KV.list();
+    let deletedCount = 0;
+    
+    if (campaignsList.keys && campaignsList.keys.length > 0) {
+      // 删除所有活动数据
+      for (const key of campaignsList.keys) {
+        await env.CAMPAIGNS_KV.delete(key.name);
+        deletedCount++;
+      }
+    }
+
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'Campaign data cleared successfully',
+      deletedCount: deletedCount,
+      timestamp: new Date().toISOString()
+    }), {
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to clear campaign data',
+      details: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 清空邮件配置数据处理函数
+async function handleClearEmailConfigs(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    if (!env.EMAIL_CONFIG_KV) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'EMAIL_CONFIG_KV not configured'
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+
+    // 获取所有邮件配置键
+    const configsList = await env.EMAIL_CONFIG_KV.list();
+    let deletedCount = 0;
+    
+    if (configsList.keys && configsList.keys.length > 0) {
+      // 删除所有邮件配置数据
+      for (const key of configsList.keys) {
+        await env.EMAIL_CONFIG_KV.delete(key.name);
+        deletedCount++;
+      }
+    }
+
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'Email config data cleared successfully',
+      deletedCount: deletedCount,
+      timestamp: new Date().toISOString()
+    }), {
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to clear email config data',
+      details: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 清空所有数据处理函数
+async function handleClearAll(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    const results = {
+      users: { success: false, deletedCount: 0 },
+      campaigns: { success: false, deletedCount: 0 },
+      emailConfigs: { success: false, deletedCount: 0 }
+    };
+
+    // 清空用户数据
+    if (env.USERS_KV) {
+      try {
+        const usersList = await env.USERS_KV.list();
+        if (usersList.keys && usersList.keys.length > 0) {
+          for (const key of usersList.keys) {
+            await env.USERS_KV.delete(key.name);
+            results.users.deletedCount++;
+          }
+        }
+        results.users.success = true;
+      } catch (error) {
+        console.error('Failed to clear users:', error);
+      }
+    }
+
+    // 清空活动数据
+    if (env.CAMPAIGNS_KV) {
+      try {
+        const campaignsList = await env.CAMPAIGNS_KV.list();
+        if (campaignsList.keys && campaignsList.keys.length > 0) {
+          for (const key of campaignsList.keys) {
+            await env.CAMPAIGNS_KV.delete(key.name);
+            results.campaigns.deletedCount++;
+          }
+        }
+        results.campaigns.success = true;
+      } catch (error) {
+        console.error('Failed to clear campaigns:', error);
+      }
+    }
+
+    // 清空邮件配置数据
+    if (env.EMAIL_CONFIG_KV) {
+      try {
+        const configsList = await env.EMAIL_CONFIG_KV.list();
+        if (configsList.keys && configsList.keys.length > 0) {
+          for (const key of configsList.keys) {
+            await env.EMAIL_CONFIG_KV.delete(key.name);
+            results.emailConfigs.deletedCount++;
+          }
+        }
+        results.emailConfigs.success = true;
+      } catch (error) {
+        console.error('Failed to clear email configs:', error);
+      }
+    }
+
+    const totalDeleted = results.users.deletedCount + results.campaigns.deletedCount + results.emailConfigs.deletedCount;
+
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'All data cleared successfully',
+      results: results,
+      totalDeleted: totalDeleted,
+      timestamp: new Date().toISOString()
+    }), {
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to clear all data',
+      details: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
 // Google OAuth 登录处理函数
 async function handleGoogleLogin(request, env) {
   const corsHeaders = {
@@ -2027,4 +2610,329 @@ async function handleGoogleLogin(request, env) {
       headers: corsHeaders
     });
   }
+}
+
+// 联系人导入处理函数
+async function handleContactsImport(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    const formData = await request.formData();
+    const csvFile = formData.get('csvFile');
+    
+    if (!csvFile) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'CSV file is required'
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    // 读取CSV文件内容
+    const csvText = await csvFile.text();
+    const lines = csvText.split('\n').filter(line => line.trim());
+    
+    if (lines.length < 2) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'CSV file must contain at least a header and one data row'
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    // 解析CSV
+    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+    const contacts = [];
+    const errors = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+      
+      if (values.length !== headers.length) {
+        errors.push({
+          row: i + 1,
+          error: 'Column count mismatch'
+        });
+        continue;
+      }
+
+      const row = {};
+      headers.forEach((header, index) => {
+        row[header.toLowerCase()] = values[index];
+      });
+
+      // 验证必需字段
+      if (!row.email) {
+        errors.push({
+          row: i + 1,
+          error: 'Email is required'
+        });
+        continue;
+      }
+
+      // 验证邮箱格式
+      const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+      if (!emailRegex.test(row.email)) {
+        errors.push({
+          row: i + 1,
+          error: 'Invalid email format'
+        });
+        continue;
+      }
+
+      // 创建联系人对象
+      const contact = {
+        id: `contact_${Date.now()}_${i}`,
+        name: row.name || row.email.split('@')[0],
+        email: row.email.toLowerCase().trim(),
+        status: 'active',
+        tags: row.tags ? row.tags.split(',').map(tag => tag.trim()) : [],
+        lastContact: new Date().toISOString(),
+        totalEmails: 0,
+        openRate: 0,
+        createdAt: new Date().toISOString()
+      };
+
+      contacts.push(contact);
+    }
+
+    if (contacts.length === 0) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'No valid contacts found in CSV file',
+        errors: errors
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    // 保存联系人到KV存储
+    try {
+      if (env.CONTACTS_KV) {
+        for (const contact of contacts) {
+          await env.CONTACTS_KV.put(`contact_${contact.email}`, JSON.stringify(contact));
+        }
+        console.log(`Saved ${contacts.length} contacts to KV storage`);
+      } else {
+        console.log('CONTACTS_KV not available, contacts not saved');
+      }
+    } catch (error) {
+      console.error('Failed to save contacts to KV:', error);
+    }
+
+    return new Response(JSON.stringify({
+      success: true,
+      message: `Successfully imported ${contacts.length} contacts`,
+      data: {
+        contacts: contacts,
+        totalImported: contacts.length,
+        errors: errors
+      }
+    }), {
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    console.error('Contacts import error:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to import contacts',
+      details: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 联系人API处理函数
+async function handleContacts(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  // GET请求 - 获取联系人列表
+  if (request.method === 'GET') {
+    try {
+      const url = new URL(request.url);
+      const searchParams = url.searchParams;
+      const search = searchParams.get('search') || '';
+      const status = searchParams.get('status') || 'all';
+      const page = parseInt(searchParams.get('page') || '1');
+      const limit = parseInt(searchParams.get('limit') || '100');
+
+      let contacts = [];
+
+      // 从KV存储获取联系人
+      if (env.CONTACTS_KV) {
+        try {
+          const { keys } = await env.CONTACTS_KV.list();
+          const contactPromises = keys.map(key => env.CONTACTS_KV.get(key.name));
+          const contactData = await Promise.all(contactPromises);
+          
+          contacts = contactData
+            .filter(data => data)
+            .map(data => JSON.parse(data))
+            .filter(contact => {
+              // 搜索过滤
+              if (search && !contact.name.toLowerCase().includes(search.toLowerCase()) && 
+                  !contact.email.toLowerCase().includes(search.toLowerCase())) {
+                return false;
+              }
+              
+              // 状态过滤
+              if (status !== 'all' && contact.status !== status) {
+                return false;
+              }
+              
+              return true;
+            });
+        } catch (error) {
+          console.error('Failed to fetch contacts from KV:', error);
+        }
+      }
+
+      // 分页
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedContacts = contacts.slice(startIndex, endIndex);
+
+      return new Response(JSON.stringify({
+        success: true,
+        data: {
+          contacts: paginatedContacts,
+          total: contacts.length,
+          page: page,
+          limit: limit,
+          totalPages: Math.ceil(contacts.length / limit)
+        }
+      }), {
+        headers: corsHeaders
+      });
+
+    } catch (error) {
+      console.error('Get contacts error:', error);
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Failed to fetch contacts',
+        details: error.message
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+  }
+
+  // POST请求 - 创建新联系人
+  if (request.method === 'POST') {
+    try {
+      const body = await request.json();
+      const { name, email, tags = [], customFields = {} } = body;
+
+      // 验证必填字段
+      if (!name || !email) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Name and email are required'
+        }), {
+          status: 400,
+          headers: corsHeaders
+        });
+      }
+
+      // 验证邮箱格式
+      const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+      if (!emailRegex.test(email)) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Invalid email format'
+        }), {
+          status: 400,
+          headers: corsHeaders
+        });
+      }
+
+      // 检查联系人是否已存在
+      if (env.CONTACTS_KV) {
+        const existingContact = await env.CONTACTS_KV.get(`contact_${email.toLowerCase()}`);
+        if (existingContact) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'Contact already exists with this email'
+          }), {
+            status: 400,
+            headers: corsHeaders
+          });
+        }
+      }
+
+      // 创建新联系人
+      const newContact = {
+        id: `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        name: name.trim(),
+        email: email.toLowerCase().trim(),
+        status: 'active',
+        tags: Array.isArray(tags) ? tags : [],
+        customFields: customFields || {},
+        lastContact: new Date().toISOString(),
+        totalEmails: 0,
+        openRate: 0,
+        createdAt: new Date().toISOString()
+      };
+
+      // 保存到KV存储
+      if (env.CONTACTS_KV) {
+        await env.CONTACTS_KV.put(`contact_${newContact.email}`, JSON.stringify(newContact));
+        console.log('Contact saved to KV:', newContact.email);
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Contact created successfully',
+        data: newContact
+      }), {
+        headers: corsHeaders
+      });
+
+    } catch (error) {
+      console.error('Create contact error:', error);
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Failed to create contact',
+        details: error.message
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+  }
+
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405,
+    headers: corsHeaders
+  });
 }

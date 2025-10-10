@@ -15,3 +15,9 @@ CREEM_API_KEY = "creem_22oMcuzUH4TeWyWVAVjTes"
 CREEM_BASE_URL = "https://api.creem.io/v1"
 CREEM_WEBHOOK_SECRET = "whsec_5uvCq8f1gQMsqz5rqwdVgZ"
 RESEND_API_KEY = "re_PCbEHboB..."  # Resend API密钥
+
+# Gmail SMTP 配置 (用于注册验证码)
+GMAIL_SMTP_USER = "lihongyangnju@gmail.com"  # Gmail邮箱
+GMAIL_SMTP_PASSWORD = "zjhk rkmy ysoz dhyi"  # Gmail应用专用密码
+GMAIL_SMTP_HOST = "smtp.gmail.com"
+GMAIL_SMTP_PORT = "587"

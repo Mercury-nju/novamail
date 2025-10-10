@@ -10,25 +10,34 @@ CREEM_BASE_URL = "https://api.creem.io/v1"
 CREEM_WEBHOOK_SECRET = "whsec_5uvCq8f1gQMsqz5rqwdVgZ"
 RESEND_API_KEY = "re_PCbEHboB..."  # Resend API密钥 (用于campaign营销邮件)
 
-# Gmail SMTP 配置 (用于注册验证码)
-GMAIL_SMTP_USER = "your-email@gmail.com"  # 请替换为你的Gmail邮箱
-GMAIL_SMTP_PASSWORD = "your-app-password"  # 请替换为Gmail应用专用密码
+# Gmail API 配置 (用于注册验证码)
+GMAIL_SMTP_USER = "lihongyangnju@gmail.com"  # Gmail邮箱
+GMAIL_SMTP_PASSWORD = "zjhk rkmy ysoz dhyi"  # Gmail应用专用密码
 GMAIL_SMTP_HOST = "smtp.gmail.com"
 GMAIL_SMTP_PORT = "587"
+GMAIL_ACCESS_TOKEN = "your-gmail-access-token"  # Gmail API访问令牌
+GMAIL_REFRESH_TOKEN = "your-gmail-refresh-token"  # Gmail API刷新令牌
+GOOGLE_CLIENT_ID = "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9"  # Google OAuth客户端ID
+GOOGLE_CLIENT_SECRET = "your-google-client-secret"  # Google OAuth客户端密钥
 
-# KV 存储配置 - 临时使用模拟存储
-# 注意：生产环境需要在Cloudflare Dashboard中创建真实的KV命名空间
-# [[kv_namespaces]]
-# binding = "USERS_KV"
-# id = "your-users-kv-id"
-# preview_id = "your-users-kv-preview-id"
+# KV 存储配置
+# 已配置真实的KV命名空间ID
+[[kv_namespaces]]
+binding = "USERS_KV"
+id = "41bca314c98c4db580f450fb2e2c37bd"  # NovaMail-Users
+preview_id = "41bca314c98c4db580f450fb2e2c37bd"
 
-# [[kv_namespaces]]
-# binding = "EMAIL_CONFIG_KV"
-# id = "your-email-config-kv-id"
-# preview_id = "your-email-config-kv-preview-id"
+[[kv_namespaces]]
+binding = "EMAIL_CONFIG_KV"
+id = "4a0baebc9760468f86460c891aaece66"  # NovaMail-EmailConfig
+preview_id = "4a0baebc9760468f86460c891aaece66"
 
-# [[kv_namespaces]]
-# binding = "CAMPAIGNS_KV"
-# id = "your-campaigns-kv-id"
-# preview_id = "your-campaigns-kv-preview-id"
+[[kv_namespaces]]
+binding = "CAMPAIGNS_KV"
+id = "4a0baebc9760468f86460c891aaece66"  # NovaMail-Campaigns
+preview_id = "4a0baebc9760468f86460c891aaece66"
+
+[[kv_namespaces]]
+binding = "CONTACTS_KV"
+id = "4a0baebc9760468f86460c891aaece66"  # NovaMail-Contacts (使用相同ID)
+preview_id = "4a0baebc9760468f86460c891aaece66"
