@@ -88,7 +88,7 @@ export default function EmailSettingsPage() {
       id: 'yahoo',
       name: 'Yahoo Mail',
       smtpHost: 'smtp.mail.yahoo.com',
-      smtpPort: '587',
+      smtpPort: '465',
       secure: true,
       instructions: '使用您的 Yahoo 应用密码',
       description: '需要生成 Yahoo 应用密码',
@@ -101,7 +101,7 @@ export default function EmailSettingsPage() {
           '生成应用密码',
           '使用应用密码而非账户密码',
           'SMTP 服务器：smtp.mail.yahoo.com',
-          '端口：587（TLS）或 465（SSL）'
+          '端口：465（SSL）或 587（TLS）'
         ]
       }
     },
@@ -109,8 +109,8 @@ export default function EmailSettingsPage() {
       id: 'custom',
       name: 'Custom SMTP',
       smtpHost: '',
-      smtpPort: '587',
-      secure: true,
+      smtpPort: '25',
+      secure: false,
       instructions: '输入您的自定义 SMTP 设置',
       description: '适用于企业邮箱或其他邮件服务商',
       tutorial: {
@@ -120,7 +120,8 @@ export default function EmailSettingsPage() {
           '确认 SMTP 服务器地址和端口',
           '确认是否需要 SSL/TLS 加密',
           '获取邮箱用户名和密码',
-          '测试连接确保设置正确'
+          '测试连接确保设置正确',
+          '常见端口：25（无加密）、587（TLS）、465（SSL）'
         ]
       }
     }
@@ -410,7 +411,7 @@ export default function EmailSettingsPage() {
                 type="text"
                 value={emailConfig.smtpPort}
                 onChange={(e) => setEmailConfig(prev => ({ ...prev, smtpPort: e.target.value }))}
-                placeholder="587 (TLS) 或 465 (SSL)"
+                placeholder="587 (TLS), 465 (SSL), 25 (无加密)"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
