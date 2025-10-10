@@ -39,7 +39,7 @@ const onboardingSteps: OnboardingStep[] = [
     description: '首先，您需要配置SMTP设置才能发送邮件。这是使用NovaMail的必要步骤。',
     icon: Cog6ToothIcon,
     target: '#nav-link-settings',
-    position: 'right',
+    position: 'bottom',
     action: {
       text: '去配置',
       href: '/dashboard/settings'
@@ -51,7 +51,7 @@ const onboardingSteps: OnboardingStep[] = [
     description: '添加或导入您的联系人列表，这是发送邮件的基础。',
     icon: UserGroupIcon,
     target: '#nav-link-contacts',
-    position: 'right',
+    position: 'bottom',
     action: {
       text: '添加联系人',
       href: '/dashboard/contacts'
@@ -63,7 +63,7 @@ const onboardingSteps: OnboardingStep[] = [
     description: '使用AI生成邮件内容，创建您的第一个邮件营销活动。',
     icon: EnvelopeIcon,
     target: '#quick-action-create-campaign',
-    position: 'right',
+    position: 'top',
     action: {
       text: '创建活动',
       href: '/dashboard/campaigns/new'
@@ -75,7 +75,7 @@ const onboardingSteps: OnboardingStep[] = [
     description: '跟踪您的邮件发送效果，了解收件人的参与度。',
     icon: ChartBarIcon,
     target: '#nav-link-analytics',
-    position: 'right'
+    position: 'bottom'
   }
 ]
 
@@ -122,9 +122,9 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
 
   const updateTooltipPosition = (element: HTMLElement, position: string) => {
     const rect = element.getBoundingClientRect()
-    const tooltipWidth = 320 // max-w-sm = 24rem = 384px, 使用320px作为安全宽度
-    const tooltipHeight = 200 // 估算高度
-    const margin = 20
+    const tooltipWidth = 320
+    const tooltipHeight = 200
+    const margin = 16
 
     console.log('Position calculation:', {
       elementRect: rect,
@@ -137,26 +137,58 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
     let top = '50%'
     let transform = 'translate(-50%, -50%)'
 
+    // 确保元素在视口内
+    const elementCenterX = rect.left + rect.width / 2
+    const elementCenterY = rect.top + rect.height / 2
+
     switch (position) {
       case 'right':
-        left = `${Math.min(rect.right + margin, window.innerWidth - tooltipWidth - margin)}px`
-        top = `${rect.top + rect.height / 2}px`
-        transform = 'translateY(-50%)'
+        // 右侧：如果空间不够，显示在元素下方
+        if (rect.right + margin + tooltipWidth > window.innerWidth) {
+          left = `${Math.max(elementCenterX - tooltipWidth / 2, margin)}px`
+          top = `${rect.bottom + margin}px`
+          transform = 'translateX(-50%)'
+        } else {
+          left = `${rect.right + margin}px`
+          top = `${elementCenterY}px`
+          transform = 'translateY(-50%)'
+        }
         break
       case 'left':
-        left = `${Math.max(rect.left - tooltipWidth - margin, margin)}px`
-        top = `${rect.top + rect.height / 2}px`
-        transform = 'translateY(-50%)'
+        // 左侧：如果空间不够，显示在元素下方
+        if (rect.left - margin - tooltipWidth < 0) {
+          left = `${Math.max(elementCenterX - tooltipWidth / 2, margin)}px`
+          top = `${rect.bottom + margin}px`
+          transform = 'translateX(-50%)'
+        } else {
+          left = `${rect.left - tooltipWidth - margin}px`
+          top = `${elementCenterY}px`
+          transform = 'translateY(-50%)'
+        }
         break
       case 'top':
-        left = `${rect.left + rect.width / 2}px`
-        top = `${Math.max(rect.top - tooltipHeight - margin, margin)}px`
-        transform = 'translateX(-50%)'
+        // 上方：如果空间不够，显示在元素下方
+        if (rect.top - margin - tooltipHeight < 0) {
+          left = `${elementCenterX}px`
+          top = `${rect.bottom + margin}px`
+          transform = 'translateX(-50%)'
+        } else {
+          left = `${elementCenterX}px`
+          top = `${rect.top - tooltipHeight - margin}px`
+          transform = 'translateX(-50%)'
+        }
         break
       case 'bottom':
-        left = `${rect.left + rect.width / 2}px`
-        top = `${Math.min(rect.bottom + margin, window.innerHeight - tooltipHeight - margin)}px`
-        transform = 'translateX(-50%)'
+        // 下方：如果空间不够，显示在元素上方
+        if (rect.bottom + margin + tooltipHeight > window.innerHeight) {
+          left = `${elementCenterX}px`
+          top = `${rect.top - tooltipHeight - margin}px`
+          transform = 'translateX(-50%)'
+        } else {
+          left = `${elementCenterX}px`
+          top = `${rect.bottom + margin}px`
+          transform = 'translateX(-50%)'
+        }
         break
       case 'center':
       default:
@@ -166,9 +198,21 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
         break
     }
 
-    console.log('Final position:', { left, top, transform })
+    // 边界检查，确保tooltip不会超出视口
+    const finalLeft = typeof left === 'string' && left.includes('px') 
+      ? Math.max(parseInt(left), margin) 
+      : left
+    const finalTop = typeof top === 'string' && top.includes('px') 
+      ? Math.max(parseInt(top), margin) 
+      : top
 
-    setTooltipPosition({ left, top, transform })
+    console.log('Final position:', { left: finalLeft, top: finalTop, transform })
+
+    setTooltipPosition({ 
+      left: typeof finalLeft === 'number' ? `${finalLeft}px` : finalLeft, 
+      top: typeof finalTop === 'number' ? `${finalTop}px` : finalTop, 
+      transform 
+    })
   }
 
   const handleNext = () => {
