@@ -9,7 +9,10 @@ import {
   ChartBarIcon,
   PlusIcon,
   ArrowUpIcon,
-  ArrowDownIcon
+  ArrowDownIcon,
+  ExclamationTriangleIcon,
+  Cog6ToothIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 
 export default function DashboardPage() {
@@ -45,11 +48,59 @@ export default function DashboardPage() {
   ])
   const [recentCampaigns, setRecentCampaigns] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [showSmtpAlert, setShowSmtpAlert] = useState(false)
+  const [smtpConfigured, setSmtpConfigured] = useState(false)
 
   useEffect(() => {
     // 静态导出模式：使用模拟数据
     fetchDashboardData()
+    checkSmtpConfiguration()
+
+    // 监听localStorage变化，当SMTP配置更新时重新检查
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key && e.key.startsWith('email_config_')) {
+        checkSmtpConfiguration()
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    
+    // 定期检查SMTP配置状态
+    const interval = setInterval(checkSmtpConfiguration, 5000)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      clearInterval(interval)
+    }
   }, [])
+
+  const checkSmtpConfiguration = () => {
+    try {
+      const userEmail = localStorage.getItem('user-email')
+      if (userEmail) {
+        // 检查用户是否已配置SMTP
+        const emailConfig = localStorage.getItem(`email_config_${userEmail}`)
+        if (emailConfig) {
+          const config = JSON.parse(emailConfig)
+          if (config.isConfigured && config.email && config.password) {
+            setSmtpConfigured(true)
+            setShowSmtpAlert(false)
+            return
+          }
+        }
+        // 如果没有配置，显示提醒
+        setSmtpConfigured(false)
+        setShowSmtpAlert(true)
+      }
+    } catch (error) {
+      console.error('Failed to check SMTP configuration:', error)
+      setShowSmtpAlert(true)
+    }
+  }
+
+  const handleDismissAlert = () => {
+    setShowSmtpAlert(false)
+  }
 
   const fetchDashboardData = async () => {
     try {
@@ -130,6 +181,48 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {/* SMTP Configuration Alert */}
+      {showSmtpAlert && !smtpConfigured && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 shadow-sm"
+        >
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <ExclamationTriangleIcon className="h-6 w-6 text-amber-600" />
+            </div>
+            <div className="ml-3 flex-1">
+              <h3 className="text-sm font-medium text-amber-800">
+                需要配置SMTP设置
+              </h3>
+              <div className="mt-1 text-sm text-amber-700">
+                <p>
+                  您需要先配置SMTP设置才能发送邮件。这是使用NovaMail的必要步骤。
+                </p>
+              </div>
+              <div className="mt-3 flex space-x-3">
+                <Link
+                  href="/dashboard/settings/email"
+                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-amber-800 bg-amber-100 rounded-lg hover:bg-amber-200 transition-colors"
+                >
+                  <Cog6ToothIcon className="h-4 w-4 mr-2" />
+                  立即配置
+                </Link>
+                <button
+                  onClick={handleDismissAlert}
+                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-amber-600 hover:text-amber-800 transition-colors"
+                >
+                  <XMarkIcon className="h-4 w-4 mr-1" />
+                  稍后提醒
+                </button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
