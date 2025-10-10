@@ -1203,43 +1203,52 @@ async function handleCampaignSend(request, env) {
       try {
         console.log('Sending via user SMTP:', userEmailConfig.email);
         
-        // 使用 Gmail API 发送邮件（因为 Cloudflare Workers 不支持直接 SMTP）
-        const emailMessage = [
-          `From: ${campaignData.businessName || 'Your Company'} <${userEmailConfig.email}>`,
-          `To: ${recipient}`,
-          `Subject: ${campaignData.subject || 'Email Campaign'}`,
-          `MIME-Version: 1.0`,
-          `Content-Type: text/html; charset=UTF-8`,
-          ``,
-          emailData.html
-        ].join('\r\n');
-
-        // Base64编码邮件内容
-        const encodedMessage = btoa(emailMessage).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-
-        // 使用 Gmail API 发送邮件
-        const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/send`, {
+        // 使用新的 SMTP 服务器发送邮件
+        const smtpResponse = await fetch('https://novamail-smtp-server.railway.app/api/smtp/send', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${userEmailConfig.accessToken}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            raw: encodedMessage
+            emailConfig: {
+              email: userEmailConfig.email,
+              smtpHost: userEmailConfig.smtpHost,
+              smtpPort: userEmailConfig.smtpPort,
+              password: userEmailConfig.password,
+              isSecure: userEmailConfig.isSecure
+            },
+            recipients: [recipient],
+            subject: campaignData.subject || 'Email Campaign',
+            htmlContent: emailData.html,
+            businessName: campaignData.businessName || 'Your Company'
           })
         });
 
-        sentEmails.push({
-          recipient: recipient,
-          status: response.ok ? 'sent' : 'failed',
-          method: 'user_gmail_api',
-          timestamp: new Date().toISOString()
-        });
+        const smtpResult = await smtpResponse.json();
+        
+        if (smtpResult.success && smtpResult.results && smtpResult.results.length > 0) {
+          const result = smtpResult.results[0];
+          sentEmails.push({
+            recipient: recipient,
+            status: result.success ? 'sent' : 'failed',
+            method: 'user_smtp_server',
+            messageId: result.messageId,
+            timestamp: new Date().toISOString()
+          });
+        } else {
+          sentEmails.push({
+            recipient: recipient,
+            status: 'failed',
+            method: 'user_smtp_server',
+            error: smtpResult.error || 'SMTP 发送失败',
+            timestamp: new Date().toISOString()
+          });
+        }
       } catch (error) {
         sentEmails.push({
           recipient: recipient,
           status: 'failed',
-          method: 'user_gmail_api',
+          method: 'user_smtp_server',
           error: error.message,
           timestamp: new Date().toISOString()
         });
@@ -1261,7 +1270,7 @@ async function handleCampaignSend(request, env) {
       createdAt: new Date().toISOString(),
       sentAt: new Date().toISOString(),
       businessName: campaignData.businessName,
-      sendingMethod: 'user_gmail_api'
+      sendingMethod: 'user_smtp_server'
     };
 
     // 保存 campaign 到 KV 存储
@@ -1284,7 +1293,7 @@ async function handleCampaignSend(request, env) {
       sentEmails: sentEmails,
       totalSent: sentEmails.filter(email => email.status === 'sent').length,
       totalFailed: sentEmails.filter(email => email.status === 'failed').length,
-      sendingMethod: userEmailConfig?.isConfigured ? 'user_smtp' : 'novamail_default',
+      sendingMethod: userEmailConfig?.isConfigured ? 'user_smtp_server' : 'novamail_default',
       campaign: campaignRecord,
       timestamp: new Date().toISOString()
     }), {

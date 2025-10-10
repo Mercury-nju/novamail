@@ -170,7 +170,7 @@ export default function EmailSettingsPage() {
 
   const handleTestConnection = async () => {
     if (!emailConfig.email || !emailConfig.password) {
-      toast.error('Please enter your email and password')
+      toast.error('请输入邮箱地址和密码')
       return
     }
 
@@ -178,28 +178,35 @@ export default function EmailSettingsPage() {
     setTestResult(null)
 
     try {
-      const response = await fetch('/api/user/test-email', {
+      // 使用新的 SMTP 服务器进行真实连接测试
+      const response = await fetch('https://novamail-smtp-server.railway.app/api/smtp/test', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(emailConfig),
+        body: JSON.stringify({
+          email: emailConfig.email,
+          smtpHost: emailConfig.smtpHost,
+          smtpPort: emailConfig.smtpPort,
+          password: emailConfig.password,
+          isSecure: emailConfig.isSecure
+        }),
       })
 
       const result = await response.json()
       setTestResult(result)
 
       if (result.success) {
-        toast.success('Email connection successful!')
+        toast.success('SMTP 连接测试成功！')
       } else {
-        toast.error(result.error || 'Email connection failed')
+        toast.error(result.error || 'SMTP 连接测试失败')
       }
     } catch (error) {
       setTestResult({
         success: false,
-        message: 'Failed to test email connection'
+        message: '网络错误，请重试'
       })
-      toast.error('Failed to test email connection')
+      toast.error('网络错误，请重试')
     } finally {
       setIsTesting(false)
     }
@@ -533,8 +540,8 @@ export default function EmailSettingsPage() {
         <div className="mt-6 pt-6 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-sm font-medium text-gray-900">验证配置</h4>
-              <p className="text-sm text-gray-600">验证您的 SMTP 配置格式是否正确</p>
+              <h4 className="text-sm font-medium text-gray-900">测试连接</h4>
+              <p className="text-sm text-gray-600">真实测试您的 SMTP 连接</p>
             </div>
             <button
               onClick={handleTestConnection}
@@ -544,10 +551,10 @@ export default function EmailSettingsPage() {
               {isTesting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>验证中...</span>
+                  <span>测试中...</span>
                 </>
               ) : (
-                <span>验证配置</span>
+                <span>测试连接</span>
               )}
             </button>
           </div>
@@ -558,7 +565,7 @@ export default function EmailSettingsPage() {
               <InformationCircleIcon className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
               <div className="text-xs text-blue-700">
                 <p className="font-medium mb-1">注意：</p>
-                <p>此验证仅检查配置格式，不进行真实的 SMTP 连接测试。实际发送邮件时会使用您配置的 SMTP 服务器。</p>
+                <p>此测试会真实连接到您的 SMTP 服务器并发送测试邮件。实际发送邮件时会使用您配置的 SMTP 服务器。</p>
               </div>
             </div>
           </div>
