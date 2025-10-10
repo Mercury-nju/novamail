@@ -1393,8 +1393,8 @@ async function handleAIGenerateEmail(request, env) {
     // 检查是否有 AI API 密钥
     if (!env.DASHSCOPE_API_KEY) {
       console.log('No AI API key found, using template-based content');
-    
-    // 确保所有内容都是英文
+      
+      // 确保所有内容都是英文
     const mockSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
     
     // 根据模板类型生成不同的内容
@@ -1753,19 +1753,19 @@ async function handleAIGenerateEmail(request, env) {
       `;
     }
     
-    // 确保返回的内容是纯英文，没有任何中文占位符
-    console.log('Returning English-only content:', { subject: mockSubject, template: selectedTemplate });
-    
-    return new Response(JSON.stringify({
-      success: true,
-      subject: mockSubject,
-      body: mockBody,
-      template: selectedTemplate || 'template-generated',
-      note: 'Using English-only template content',
-      timestamp: new Date().toISOString()
-    }), {
-      headers: corsHeaders
-    });
+      // 确保返回的内容是纯英文，没有任何中文占位符
+      console.log('Returning English-only content:', { subject: mockSubject, template: selectedTemplate });
+      
+      return new Response(JSON.stringify({
+        success: true,
+        subject: mockSubject,
+        body: mockBody,
+        template: selectedTemplate || 'template-generated',
+        note: 'Using English-only template content',
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
     } else {
       // 使用 AI 生成内容
       console.log('Using AI generation with DashScope API');
