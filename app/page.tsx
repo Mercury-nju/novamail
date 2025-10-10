@@ -134,7 +134,7 @@ export default function HomePage() {
               className="flex items-center"
             >
               <Link href="/" className="flex items-center">
-                <img src="/logo-horizontal.svg" alt="NovaMail Logo" className="h-8 w-auto" />
+                <span className="text-2xl font-bold text-gray-900">NovaMail</span>
               </Link>
             </motion.div>
             <div className="flex items-center space-x-4">
