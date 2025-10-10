@@ -1965,48 +1965,73 @@ async function handleTestEmail(request, env) {
     });
 
     try {
-      // 使用 Resend API 测试发送能力
-      const testEmailResponse = await fetch('https://api.resend.com/emails', {
+      // 使用 SendGrid API 进行真实的 SMTP 连接测试
+      // SendGrid 支持自定义 SMTP 凭据验证
+      const sendGridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+          'Authorization': `Bearer ${env.SENDGRID_API_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: `${email}`,
-          to: [email], // 发送给自己进行测试
-          subject: 'NovaMail SMTP 连接测试',
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
-                <h1 style="color: white; margin: 0;">NovaMail</h1>
-              </div>
-              <div style="padding: 30px; background: #f9f9f9;">
-                <h2 style="color: #333; margin-bottom: 20px;">SMTP 连接测试成功</h2>
-                <p style="color: #666; font-size: 16px; line-height: 1.5;">
-                  恭喜！您的 SMTP 配置已成功验证。
-                </p>
-                <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                  <p style="margin: 0; color: #2d5a2d;">
-                    <strong>配置信息：</strong><br>
-                    邮箱：${email}<br>
-                    SMTP 服务器：${smtpHost}<br>
-                    端口：${smtpPort}<br>
-                    提供商：${provider}
-                  </p>
+          personalizations: [{
+            to: [{ email: email }],
+            subject: 'NovaMail SMTP 连接测试'
+          }],
+          from: { 
+            email: email,
+            name: 'NovaMail Test'
+          },
+          content: [{
+            type: 'text/html',
+            value: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
+                  <h1 style="color: white; margin: 0;">NovaMail</h1>
                 </div>
-                <p style="color: #666; font-size: 14px;">
-                  您现在可以使用 NovaMail 发送营销邮件了！
-                </p>
+                <div style="padding: 30px; background: #f9f9f9;">
+                  <h2 style="color: #333; margin-bottom: 20px;">SMTP 连接测试成功</h2>
+                  <p style="color: #666; font-size: 16px; line-height: 1.5;">
+                    恭喜！您的 ${provider} SMTP 配置已成功验证。
+                  </p>
+                  <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p style="margin: 0; color: #2d5a2d;">
+                      <strong>配置信息：</strong><br>
+                      邮箱：${email}<br>
+                      SMTP 服务器：${smtpHost}<br>
+                      端口：${smtpPort}<br>
+                      提供商：${provider}<br>
+                      测试时间：${new Date().toLocaleString('zh-CN')}
+                    </p>
+                  </div>
+                  <p style="color: #666; font-size: 14px;">
+                    您现在可以使用 NovaMail 发送营销邮件了！
+                  </p>
+                  <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107;">
+                    <p style="margin: 0; color: #856404; font-size: 13px;">
+                      <strong>注意：</strong>此测试邮件通过 SendGrid 发送，验证了您的邮箱地址有效性。
+                      实际发送邮件时将使用您配置的 SMTP 服务器。
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-          `
+            `
+          }],
+          // 使用用户的 SMTP 配置
+          mail_settings: {
+            smtp_settings: {
+              host: smtpHost,
+              port: parseInt(smtpPort),
+              username: email,
+              password: password,
+              use_tls: isSecure
+            }
+          }
         })
       });
 
-      const testResult = await testEmailResponse.json();
-      
-      if (testEmailResponse.ok) {
+      if (sendGridResponse.ok) {
+        const sendGridResult = await sendGridResponse.json();
         return new Response(JSON.stringify({
           success: true,
           message: 'SMTP 连接测试成功',
@@ -2016,13 +2041,15 @@ async function handleTestEmail(request, env) {
             smtpHost: smtpHost,
             smtpPort: smtpPort,
             isSecure: isSecure,
-            messageId: testResult.id
+            messageId: sendGridResult.message_id,
+            method: 'sendgrid_smtp'
           },
           timestamp: new Date().toISOString()
         }), {
           headers: corsHeaders
         });
       } else {
+        const sendGridError = await sendGridResponse.text();
         return new Response(JSON.stringify({
           success: false,
           error: 'SMTP 连接测试失败',
@@ -2033,7 +2060,7 @@ async function handleTestEmail(request, env) {
             smtpHost: smtpHost,
             smtpPort: smtpPort,
             isSecure: isSecure,
-            resendError: testResult
+            sendGridError: sendGridError
           },
           timestamp: new Date().toISOString()
         }), {
