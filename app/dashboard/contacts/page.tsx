@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { toast } from 'react-toastify'
+import * as XLSX from 'xlsx'
 
 interface Contact {
   id: string
@@ -21,6 +22,9 @@ export default function ContactsPage() {
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [mounted, setMounted] = useState(false)
+  const [showImportModal, setShowImportModal] = useState(false)
+  const [importing, setImporting] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -110,6 +114,129 @@ export default function ContactsPage() {
 
   const allTags = Array.from(new Set(contacts.flatMap(contact => contact.tags)))
 
+  // 处理文件上传
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const fileName = file.name.toLowerCase()
+    const isCSV = fileName.endsWith('.csv')
+    const isExcel = fileName.endsWith('.xlsx') || fileName.endsWith('.xls')
+
+    if (!isCSV && !isExcel) {
+      toast.error('Please upload CSV or Excel format file')
+      return
+    }
+
+    try {
+      setImporting(true)
+      let contactsData: any[] = []
+
+      if (isCSV) {
+        // 处理CSV文件
+        const formData = new FormData()
+        formData.append('csvFile', file)
+
+        const response = await fetch('https://novamail.world/api/contacts/import', {
+          method: 'POST',
+          body: formData
+        })
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        const data = await response.json()
+        if (data.success) {
+          contactsData = data.data.contacts || []
+          toast.success(`Successfully imported ${contactsData.length} contacts from CSV`)
+        } else {
+          throw new Error(data.message || 'Failed to import contacts')
+        }
+      } else if (isExcel) {
+        // 处理Excel文件
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          const data = new Uint8Array(e.target?.result as ArrayBuffer)
+          const workbook = XLSX.read(data, { type: 'array' })
+          const sheetName = workbook.SheetNames[0]
+          const worksheet = workbook.Sheets[sheetName]
+          const jsonData = XLSX.utils.sheet_to_json(worksheet)
+
+          // 验证和格式化数据
+          contactsData = jsonData.map((row: any, index: number) => {
+            const email = row.email || row.Email || row.EMAIL
+            const name = row.name || row.Name || row.NAME || email?.split('@')[0] || `Contact ${index + 1}`
+            
+            if (!email) {
+              throw new Error(`Row ${index + 1}: Email is required`)
+            }
+
+            // 验证邮箱格式
+            const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
+            if (!emailRegex.test(email)) {
+              throw new Error(`Row ${index + 1}: Invalid email format`)
+            }
+
+            return {
+              id: `contact_${Date.now()}_${index}`,
+              name: name.toString().trim(),
+              email: email.toString().toLowerCase().trim(),
+              status: 'active',
+              tags: [],
+              lastContact: new Date().toISOString(),
+              totalEmails: 0,
+              openRate: 0
+            }
+          })
+
+          // 批量保存联系人
+          saveContacts(contactsData)
+        }
+        reader.readAsArrayBuffer(file)
+        return
+      }
+
+      // 保存联系人数据
+      if (contactsData.length > 0) {
+        await saveContacts(contactsData)
+      }
+
+    } catch (error) {
+      console.error('Import failed:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to import contacts')
+    } finally {
+      setImporting(false)
+      setShowImportModal(false)
+      // 清空文件输入
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  // 保存联系人到后端
+  const saveContacts = async (contactsData: Contact[]) => {
+    try {
+      // 这里可以调用后端API保存联系人
+      // 暂时直接更新本地状态
+      setContacts(prev => [...prev, ...contactsData])
+      toast.success(`Successfully imported ${contactsData.length} contacts`)
+    } catch (error) {
+      console.error('Failed to save contacts:', error)
+      toast.error('Failed to save contacts')
+    }
+  }
+
+  // 打开文件选择器
+  const handleImportClick = () => {
+    if (isAtLimit) {
+      toast.error('Contact limit reached. Upgrade to add more contacts.')
+      return
+    }
+    fileInputRef.current?.click()
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -127,8 +254,12 @@ export default function ContactsPage() {
           <p className="text-gray-600">Manage your email contacts and lists</p>
         </div>
         <div className="flex space-x-3">
-          <button className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-            Import Contacts
+          <button 
+            onClick={handleImportClick}
+            disabled={importing}
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {importing ? 'Importing...' : 'Import Contacts'}
           </button>
           <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
             Add Contact
@@ -329,6 +460,41 @@ export default function ContactsPage() {
             <button className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
                 Add Contact
               </button>
+          </div>
+        </div>
+      )}
+
+      {/* 隐藏的文件输入 */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv,.xlsx,.xls"
+        onChange={handleFileUpload}
+        style={{ display: 'none' }}
+      />
+
+      {/* 导入模态框 */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Import Contacts</h3>
+            <p className="text-gray-600 mb-4">
+              Upload a CSV or Excel file to import contacts. The file should contain columns for name and email.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                Choose File
+              </button>
+              <button
+                onClick={() => setShowImportModal(false)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
