@@ -10,6 +10,15 @@ interface UserSettings {
   company: string
 }
 
+interface EmailConfig {
+  provider: string
+  email: string
+  smtpHost: string
+  smtpPort: string
+  isSecure: boolean
+  isConfigured: boolean
+}
+
 export default function SettingsPage() {
   const router = useRouter()
   const [settings, setSettings] = useState<UserSettings>({
@@ -17,11 +26,25 @@ export default function SettingsPage() {
     email: '',
     company: ''
   })
+  const [emailConfig, setEmailConfig] = useState<EmailConfig | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     fetchSettings()
+    
+    // 监听邮件配置变化
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key?.startsWith('email_config_')) {
+        fetchSettings()
+      }
+    }
+    
+    window.addEventListener('storage', handleStorageChange)
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+    }
   }, [])
 
   const fetchSettings = async () => {
@@ -36,6 +59,23 @@ export default function SettingsPage() {
           email: user.email || '',
           company: user.company || ''
         })
+      }
+
+      // 从localStorage获取邮件配置
+      const userEmail = localStorage.getItem('user-email')
+      if (userEmail) {
+        const savedConfig = localStorage.getItem(`email_config_${userEmail}`)
+        if (savedConfig) {
+          const config = JSON.parse(savedConfig)
+          setEmailConfig({
+            provider: config.provider || 'gmail',
+            email: config.email || '',
+            smtpHost: config.smtpHost || '',
+            smtpPort: config.smtpPort || '',
+            isSecure: config.isSecure || false,
+            isConfigured: config.isConfigured || false
+          })
+        }
       }
     } catch (error) {
       console.error('Failed to fetch settings:', error)
@@ -168,15 +208,56 @@ export default function SettingsPage() {
             onClick={() => router.push('/dashboard/settings/email')}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
-            Configure Email
+            {emailConfig?.isConfigured ? 'Update Configuration' : 'Configure Email'}
           </button>
         </div>
         
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">
-            Set up your SMTP configuration to send emails from your own domain and email address.
-          </p>
-        </div>
+        {emailConfig?.isConfigured ? (
+          <div className="space-y-4">
+            {/* 配置状态 */}
+            <div className="flex items-center space-x-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-sm font-medium text-green-800">Email Configuration Active</span>
+            </div>
+
+            {/* 配置详情 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">Provider</label>
+                  <p className="text-sm text-gray-900 capitalize">{emailConfig.provider}</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">Email Address</label>
+                  <p className="text-sm text-gray-900">{emailConfig.email}</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">SMTP Server</label>
+                  <p className="text-sm text-gray-900">{emailConfig.smtpHost}</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">Port</label>
+                  <p className="text-sm text-gray-900">{emailConfig.smtpPort} ({emailConfig.isSecure ? 'TLS/SSL' : 'Unencrypted'})</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 操作说明 */}
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <p className="text-sm text-blue-800">
+                <strong>Ready to send emails!</strong> Your SMTP configuration is active and ready to use for sending marketing emails.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <p className="text-sm text-gray-600">
+              Set up your SMTP configuration to send emails from your own domain and email address.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )
