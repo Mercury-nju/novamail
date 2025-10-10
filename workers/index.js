@@ -878,34 +878,8 @@ async function handleAIGenerateEmail(request, env) {
       });
     }
 
-    // 检查API密钥，如果没有配置则使用模拟AI
-    if (!env.DASHSCOPE_API_KEY) {
-      // 使用模拟AI生成内容
-      const mockSubject = `🎉 Special Offer from ${campaignData.businessName || 'Our Company'}!`;
-      const mockBody = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>Dear Friend,</h2>
-          <p>We're excited to introduce ${campaignData.productService || 'our products'} to you!</p>
-          <p>${campaignData.purpose || 'This is a great opportunity to experience our premium services.'}</p>
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${campaignData.targetUrl || '#'}" style="background: #667eea; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Learn More</a>
-          </div>
-          <p>Thank you for your attention!</p>
-          <p>${campaignData.businessName || 'NovaMail'} Team</p>
-        </div>
-      `;
-      
-      return new Response(JSON.stringify({
-        success: true,
-        subject: mockSubject,
-        body: mockBody,
-        template: selectedTemplate || 'ai-generated',
-        note: 'Generated using mock AI (DASHSCOPE_API_KEY not configured)',
-        timestamp: new Date().toISOString()
-      }), {
-        headers: corsHeaders
-      });
-    }
+    // 强制使用模板化内容，禁用 AI 生成
+    // if (!env.DASHSCOPE_API_KEY) {
 
     // 使用增强的模拟内容替代 AI 生成
     const mockSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
