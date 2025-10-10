@@ -100,13 +100,25 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
           const target = document.querySelector(step.target!) as HTMLElement
           console.log('Looking for target element:', step.target)
           console.log('Found element:', target)
+          
           if (target) {
             console.log('Target element found, updating position')
+            console.log('Target element rect:', target.getBoundingClientRect())
+            console.log('Target element computed style:', window.getComputedStyle(target))
+            
+            // 临时高亮目标元素，便于调试
+            target.style.outline = '3px solid red'
+            target.style.outlineOffset = '2px'
+            setTimeout(() => {
+              target.style.outline = ''
+              target.style.outlineOffset = ''
+            }, 3000)
+            
             setTargetElement(target)
             updateTooltipPosition(target, step.position)
           } else {
             console.warn(`Target element not found: ${step.target}`)
-            console.log('Available elements with IDs:', Array.from(document.querySelectorAll('[id]')).map(el => el.id))
+            console.log('Available elements with IDs:', Array.from(document.querySelectorAll('[id]')).map(el => ({ id: el.id, tagName: el.tagName, className: el.className })))
             setTargetElement(null)
             setTooltipPosition({ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' })
           }
@@ -275,13 +287,21 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="fixed z-50 bg-white rounded-lg shadow-xl p-6 max-w-sm"
+            className="fixed z-50 bg-white rounded-lg shadow-xl p-6 max-w-sm border-2 border-blue-500"
             style={{
               left: tooltipPosition.left,
               top: tooltipPosition.top,
               transform: tooltipPosition.transform
             }}
           >
+            {/* 调试信息 */}
+            <div className="mb-2 p-2 bg-yellow-100 rounded text-xs">
+              <div>Step: {currentStep + 1}/{onboardingSteps.length}</div>
+              <div>Target: {onboardingSteps[currentStep].target || 'none'}</div>
+              <div>Position: {onboardingSteps[currentStep].position}</div>
+              <div>Tooltip: {tooltipPosition.left}, {tooltipPosition.top}</div>
+              <div>Transform: {tooltipPosition.transform}</div>
+            </div>
             {/* 步骤指示器 */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
