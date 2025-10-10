@@ -1390,11 +1390,9 @@ async function handleAIGenerateEmail(request, env) {
       });
     }
 
-    // 强制使用模板化内容，禁用 AI 生成
-    // if (!env.DASHSCOPE_API_KEY) {
-
-    // 使用增强的模拟内容替代 AI 生成
-    console.log('Using template-based content instead of AI generation');
+    // 检查是否有 AI API 密钥
+    if (!env.DASHSCOPE_API_KEY) {
+      console.log('No AI API key found, using template-based content');
     
     // 确保所有内容都是英文
     const mockSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
@@ -1768,8 +1766,78 @@ async function handleAIGenerateEmail(request, env) {
     }), {
       headers: corsHeaders
     });
+    } else {
+      // 使用 AI 生成内容
+      console.log('Using AI generation with DashScope API');
+      
+      const aiPrompt = `Generate a professional email with the following requirements:
+      
+      Purpose: ${campaignData.purpose}
+      Business Name: ${campaignData.businessName || 'Our Company'}
+      Product/Service: ${campaignData.productService || 'our services'}
+      Target URL: ${campaignData.targetUrl || 'our website'}
+      Tone Style: ${toneStyle || 'professional'}
+      Template Type: ${selectedTemplate || 'general'}
+      
+      Please generate:
+      1. A compelling subject line (in English)
+      2. A professional email body in HTML format (in English)
+      
+      The email should be engaging, professional, and suitable for ${emailMode} communication.`;
 
-    // AI 生成功能已禁用，使用模板化内容
+      const aiResponse = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.DASHSCOPE_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'qwen-turbo',
+          input: {
+            messages: [
+              {
+                role: 'user',
+                content: aiPrompt
+              }
+            ]
+          },
+          parameters: {
+            temperature: 0.7,
+            max_tokens: 2000
+          }
+        })
+      });
+
+      if (!aiResponse.ok) {
+        throw new Error(`AI API request failed: ${aiResponse.status}`);
+      }
+
+      const aiData = await aiResponse.json();
+      
+      if (!aiData.output || !aiData.output.choices || aiData.output.choices.length === 0) {
+        throw new Error('AI API returned invalid response');
+      }
+
+      const aiContent = aiData.output.choices[0].message.content;
+      
+      // 解析 AI 生成的内容，提取主题和正文
+      const subjectMatch = aiContent.match(/Subject[:\s]*(.+?)(?:\n|$)/i);
+      const bodyMatch = aiContent.match(/Body[:\s]*(.+)/is);
+      
+      const aiSubject = subjectMatch ? subjectMatch[1].trim() : `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
+      const aiBody = bodyMatch ? bodyMatch[1].trim() : aiContent;
+
+      return new Response(JSON.stringify({
+        success: true,
+        subject: aiSubject,
+        body: aiBody,
+        template: 'ai-generated',
+        note: 'Generated using AI',
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    }
 
   } catch (error) {
     console.error('AI Generation Error:', error);

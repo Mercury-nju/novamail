@@ -313,6 +313,7 @@ export default function NewCampaignPage() {
 
   const fetchAvailableContacts = async () => {
     try {
+      console.log('Fetching contacts from API...')
       const response = await fetch('https://novamail.world/api/contacts')
       
       if (!response.ok) {
@@ -320,8 +321,14 @@ export default function NewCampaignPage() {
       }
       
       const data = await response.json()
+      console.log('Contacts API response:', data)
+      
       if (data.success) {
-        setAvailableContacts(data.data.contacts || [])
+        const contacts = data.data.contacts || []
+        console.log('Setting available contacts:', contacts)
+        setAvailableContacts(contacts)
+      } else {
+        console.error('API returned success: false', data.error)
       }
     } catch (error) {
       console.error('Failed to fetch contacts:', error)
