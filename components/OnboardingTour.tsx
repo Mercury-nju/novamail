@@ -113,101 +113,141 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
             onClick={handleSkip}
           />
 
-          {/* 引导卡片 - 居中显示 */}
+          {/* 引导卡片 - 现代化设计 */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.8, y: 50 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 50 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto">
-              {/* 步骤指示器 */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-2">
-                  <IconComponent className="w-6 h-6 text-blue-600" />
-                  <span className="text-sm font-medium text-gray-600">
-                    步骤 {currentStep + 1} / {onboardingSteps.length}
-                  </span>
-                </div>
-                <button
-                  onClick={handleSkip}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <XMarkIcon className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* 进度条 */}
-              <div className="mb-6">
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${((currentStep + 1) / onboardingSteps.length) * 100}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* 内容 */}
-              <div className="mb-6 text-center">
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                  {currentStepData.title}
-                </h3>
-                <p className="text-gray-600 text-base leading-relaxed">
-                  {currentStepData.description}
-                </p>
-              </div>
-
-              {/* 操作按钮 */}
-              <div className="flex justify-between items-center">
-                <div className="flex space-x-2">
-                  {currentStep > 0 && (
-                    <button
-                      onClick={handlePrevious}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                    >
-                      上一步
-                    </button>
-                  )}
-                  
-                  {currentStepData.action && (
-                    <a
-                      href={currentStepData.action.href}
-                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-                      onClick={() => {
-                        // 延迟关闭引导，让用户有时间看到跳转
-                        setTimeout(() => onComplete(), 500)
-                      }}
-                    >
-                      {currentStepData.action.text}
-                    </a>
-                  )}
+            <div className="relative bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl p-8 max-w-lg w-full mx-auto border border-gray-100">
+              {/* 装饰性背景 */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50 rounded-2xl"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full -translate-y-16 translate-x-16"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-green-400/20 to-blue-400/20 rounded-full translate-y-12 -translate-x-12"></div>
+              
+              {/* 内容容器 */}
+              <div className="relative z-10">
+                {/* 步骤指示器 */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="relative">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <IconComponent className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-500">步骤 {currentStep + 1}</span>
+                      <div className="text-xs text-gray-400">共 {onboardingSteps.length} 步</div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleSkip}
+                    className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg"
+                  >
+                    <XMarkIcon className="w-5 h-5" />
+                  </button>
                 </div>
 
-                <button
-                  onClick={handleNext}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-                >
-                  {currentStep === onboardingSteps.length - 1 ? (
-                    <>
-                      完成 <CheckIcon className="w-4 h-4 ml-2" />
-                    </>
-                  ) : (
-                    <>
-                      下一步 <ArrowRightIcon className="w-4 h-4 ml-2" />
-                    </>
-                  )}
-                </button>
-              </div>
+                {/* 进度条 */}
+                <div className="mb-8">
+                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                    <motion.div
+                      className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${((currentStep + 1) / onboardingSteps.length) * 100}%` }}
+                      transition={{ duration: 0.5, ease: "easeOut" }}
+                    />
+                  </div>
+                </div>
 
-              {/* 跳过按钮 */}
-              {currentStep < onboardingSteps.length - 1 && (
-                <button
-                  onClick={handleSkip}
-                  className="mt-4 w-full text-center text-sm text-gray-500 hover:text-gray-700 transition-colors"
-                >
-                  跳过引导
-                </button>
-              )}
+                {/* 内容 */}
+                <div className="mb-8 text-center">
+                  <motion.h3 
+                    key={currentStep}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-2xl font-bold text-gray-900 mb-4"
+                  >
+                    {currentStepData.title}
+                  </motion.h3>
+                  <motion.p 
+                    key={currentStep}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
+                    className="text-gray-600 text-lg leading-relaxed"
+                  >
+                    {currentStepData.description}
+                  </motion.p>
+                </div>
+
+                {/* 操作按钮 */}
+                <div className="flex justify-between items-center">
+                  <div className="flex space-x-3">
+                    {currentStep > 0 && (
+                      <motion.button
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3 }}
+                        onClick={handlePrevious}
+                        className="px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all duration-200 shadow-sm hover:shadow-md"
+                      >
+                        上一步
+                      </motion.button>
+                    )}
+                    
+                    {currentStepData.action && (
+                      <motion.a
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: 0.1 }}
+                        href={currentStepData.action.href}
+                        className="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                        onClick={() => {
+                          setTimeout(() => onComplete(), 500)
+                        }}
+                      >
+                        {currentStepData.action.text}
+                      </motion.a>
+                    )}
+                  </div>
+
+                  <motion.button
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.2 }}
+                    onClick={handleNext}
+                    className="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-blue-600 rounded-xl hover:from-green-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center"
+                  >
+                    {currentStep === onboardingSteps.length - 1 ? (
+                      <>
+                        完成 <CheckIcon className="w-4 h-4 ml-2" />
+                      </>
+                    ) : (
+                      <>
+                        下一步 <ArrowRightIcon className="w-4 h-4 ml-2" />
+                      </>
+                    )}
+                  </motion.button>
+                </div>
+
+                {/* 跳过按钮 */}
+                {currentStep < onboardingSteps.length - 1 && (
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.3 }}
+                    onClick={handleSkip}
+                    className="mt-6 w-full text-center text-sm text-gray-500 hover:text-gray-700 transition-colors py-2 hover:bg-gray-50 rounded-lg"
+                  >
+                    跳过引导
+                  </motion.button>
+                )}
+              </div>
             </div>
           </motion.div>
         </>
