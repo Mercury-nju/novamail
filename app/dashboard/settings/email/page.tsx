@@ -242,6 +242,23 @@ export default function EmailSettingsPage() {
       const result = await response.json()
 
       if (result.success) {
+        // 保存到 localStorage
+        const userEmail = localStorage.getItem('user-email')
+        if (userEmail) {
+          const configToSave = {
+            ...emailConfig,
+            isConfigured: true
+          }
+          localStorage.setItem(`email_config_${userEmail}`, JSON.stringify(configToSave))
+          
+          // 触发 storage 事件，通知其他页面更新
+          window.dispatchEvent(new StorageEvent('storage', {
+            key: `email_config_${userEmail}`,
+            newValue: JSON.stringify(configToSave),
+            storageArea: localStorage
+          }))
+        }
+        
         toast.success('SMTP 配置已保存')
         router.push('/dashboard')
       } else {
