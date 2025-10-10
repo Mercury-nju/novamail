@@ -43,8 +43,8 @@ export default function EmailSettingsPage() {
     {
       id: 'gmail',
       name: 'Gmail',
-      host: 'smtp.gmail.com',
-      port: '587',
+      smtpHost: 'smtp.gmail.com',
+      smtpPort: '587',
       secure: true,
       instructions: '使用 Gmail 应用密码发送邮件',
       description: '推荐使用 Gmail，配置简单且稳定',
@@ -67,8 +67,8 @@ export default function EmailSettingsPage() {
     {
       id: 'outlook',
       name: 'Outlook/Hotmail',
-      host: 'smtp-mail.outlook.com',
-      port: '587',
+      smtpHost: 'smtp-mail.outlook.com',
+      smtpPort: '587',
       secure: true,
       instructions: '使用您的 Outlook 密码',
       description: '使用您的 Microsoft 账户密码',
@@ -85,8 +85,8 @@ export default function EmailSettingsPage() {
     {
       id: 'yahoo',
       name: 'Yahoo Mail',
-      host: 'smtp.mail.yahoo.com',
-      port: '587',
+      smtpHost: 'smtp.mail.yahoo.com',
+      smtpPort: '587',
       secure: true,
       instructions: '使用您的 Yahoo 应用密码',
       description: '需要生成 Yahoo 应用密码',
@@ -104,8 +104,8 @@ export default function EmailSettingsPage() {
     {
       id: 'custom',
       name: 'Custom SMTP',
-      host: '',
-      port: '587',
+      smtpHost: '',
+      smtpPort: '587',
       secure: true,
       instructions: '输入您的自定义 SMTP 设置',
       description: '适用于企业邮箱或其他邮件服务商',
@@ -149,8 +149,8 @@ export default function EmailSettingsPage() {
       setEmailConfig(prev => ({
         ...prev,
         provider: providerId,
-        smtpHost: provider.host,
-        smtpPort: provider.port,
+        smtpHost: provider.smtpHost,
+        smtpPort: provider.smtpPort,
         isSecure: provider.secure
       }))
     }
@@ -392,8 +392,8 @@ export default function EmailSettingsPage() {
               </label>
               <input
                 type="text"
-                value={emailConfig.host}
-                onChange={(e) => setEmailConfig(prev => ({ ...prev, host: e.target.value }))}
+                value={emailConfig.smtpHost}
+                onChange={(e) => setEmailConfig(prev => ({ ...prev, smtpHost: e.target.value }))}
                 placeholder="smtp.gmail.com"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -404,8 +404,8 @@ export default function EmailSettingsPage() {
               </label>
               <input
                 type="text"
-                value={emailConfig.port}
-                onChange={(e) => setEmailConfig(prev => ({ ...prev, port: e.target.value }))}
+                value={emailConfig.smtpPort}
+                onChange={(e) => setEmailConfig(prev => ({ ...prev, smtpPort: e.target.value }))}
                 placeholder="587"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
