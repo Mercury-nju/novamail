@@ -22,7 +22,7 @@ export default function PricingPage() {
       yearlyPrice: 0,
       features: [
         'Up to 500 contacts',
-        'Up to 1,000 emails per month',
+        'Up to 1,000 AI email generations per month',
         'Basic email templates',
         'AI email generation',
         'Basic analytics',
@@ -41,7 +41,7 @@ export default function PricingPage() {
       yearlyPrice: 190,
       features: [
         'Up to 10,000 contacts',
-        'Up to 50,000 emails per month',
+        'Up to 50,000 AI email generations per month',
         'Advanced email templates',
         'AI email generation',
         'Advanced analytics',
@@ -250,6 +250,14 @@ export default function PricingPage() {
               </h3>
               <p className="text-gray-600">
                 We accept all major credit cards and process payments securely through Creem.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                What does "AI email generations" mean?
+              </h3>
+              <p className="text-gray-600">
+                AI email generations refer to the number of times you can use our AI to generate email content. Each time you click "Generate Email" or create a new campaign, it counts as one generation. The generated emails can be sent to unlimited recipients.
               </p>
             </div>
             <div>

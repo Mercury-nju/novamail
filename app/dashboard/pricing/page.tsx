@@ -23,7 +23,7 @@ export default function PricingPage() {
       emails: 1000,
       features: [
         'Up to 500 contacts',
-        'Up to 1,000 emails per month',
+        'Up to 1,000 AI email generations per month',
         'Basic email templates',
         'AI email generation',
         'Basic analytics',
@@ -40,7 +40,7 @@ export default function PricingPage() {
       emails: 50000,
       features: [
         'Up to 10,000 contacts',
-        'Up to 50,000 emails per month',
+        'Up to 50,000 AI email generations per month',
         'Advanced email templates',
         'AI email generation',
         'Advanced analytics',
@@ -158,7 +158,7 @@ export default function PricingPage() {
                 )}
               </div>
               <p className="text-gray-600 mt-2">
-                {plan.emails === -1 ? 'Unlimited' : plan.emails.toLocaleString()} emails per month
+                {plan.emails === -1 ? 'Unlimited' : plan.emails.toLocaleString()} AI email generations per month
               </p>
             </div>
 
@@ -221,6 +221,13 @@ export default function PricingPage() {
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Do you offer refunds?</h3>
             <p className="text-gray-600">
               We offer a 30-day money-back guarantee for all plans. If you're not satisfied, contact our support team for a full refund.
+            </p>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">What does "AI email generations" mean?</h3>
+            <p className="text-gray-600">
+              AI email generations refer to the number of times you can use our AI to generate email content. Each time you click "Generate Email" or create a new campaign, it counts as one generation. The generated emails can be sent to unlimited recipients.
             </p>
           </div>
           
