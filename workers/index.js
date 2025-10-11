@@ -126,6 +126,7 @@ export default {
             '/api/campaigns/send',
             '/api/user/update-usage',
             '/api/ai/generate-email',
+            '/api/test',
             '/api/user/email-config',
             '/api/user/test-email',
             '/api/campaigns',
