@@ -1828,12 +1828,9 @@ async function handleAIGenerateEmail(request, env) {
 
       const aiContent = aiData.output.choices[0].message.content;
       
-      // 解析 AI 生成的内容，提取主题和正文
-      const subjectMatch = aiContent.match(/Subject[:\s]*(.+?)(?:\n|$)/i);
-      const bodyMatch = aiContent.match(/Body[:\s]*(.+)/is);
-      
-      const aiSubject = subjectMatch ? subjectMatch[1].trim() : `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
-      const aiBody = bodyMatch ? bodyMatch[1].trim() : aiContent;
+      // 简化处理：直接使用AI生成的内容
+      const aiSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
+      const aiBody = aiContent;
 
       return new Response(JSON.stringify({
         success: true,
