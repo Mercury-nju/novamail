@@ -81,6 +81,14 @@ export default {
         return await handleUpdateUsage(request, env);
       } else if (path.startsWith('/api/ai/generate-email')) {
         return await handleAIGenerateEmail(request, env);
+      } else if (path.startsWith('/api/test')) {
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Test endpoint working',
+          timestamp: new Date().toISOString()
+        }), {
+          headers: corsHeaders
+        });
       } else if (path.startsWith('/api/user/email-config')) {
         return await handleEmailConfig(request, env);
       } else if (path.startsWith('/api/user/test-email')) {
