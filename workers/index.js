@@ -1790,11 +1790,13 @@ async function handleAIGenerateEmail(request, env) {
 
 Email Details:
 - Purpose: ${campaignData.purpose}
-- Business: ${campaignData.businessName || 'Our Company'}
-- Product/Service: ${campaignData.productService || 'our services'}
-- Target URL: ${campaignData.targetUrl || 'our website'}
+- Business: ${campaignData.businessName || ''}
+- Product/Service: ${campaignData.productService || ''}
+- Target URL: ${campaignData.targetUrl || ''}
 - Tone: ${toneStyle || 'professional'}
 - Template Style: ${selectedTemplate || 'general'}
+
+IMPORTANT: Only include content for fields that have actual values. Do not create placeholder or example content.
 
 ${selectedTemplate === 'modern-promo' ? `Create a MODERN PROMOTIONAL email with this EXACT structure:
 - Gradient header with business name and tagline
@@ -1863,6 +1865,13 @@ Use rose-pink gradients and warm design.` : ''}
 Generate ONLY:
 1. Subject line (clean text, no markdown)
 2. Email body (clean HTML, no markdown symbols)
+
+CRITICAL REQUIREMENTS:
+- Use ONLY the actual data provided above
+- Do NOT create any placeholder content, example products, or fake information
+- If a field is empty, do NOT include that section in the email
+- Do NOT add any virtual buttons, links, or content
+- Only include real, actionable content based on the provided data
 
 Format your response as:
 SUBJECT: [subject line here]
@@ -2035,13 +2044,13 @@ function getFallbackTemplate(templateType, campaignData) {
         body: `
           <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
-              <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700;">${campaignData.businessName || 'Our Company'}</h1>
+              ${campaignData.businessName ? `<h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700;">${campaignData.businessName}</h1>` : ''}
               <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">${campaignData.purpose}</p>
             </div>
             
             <div style="padding: 40px 30px;">
-              <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">Introducing ${campaignData.productService || 'Our New Product'}</h2>
-              <p style="color: #6b7280; line-height: 1.6; margin: 0 0 30px 0; font-size: 16px;">We're excited to share ${campaignData.purpose.toLowerCase()} with you. This is a great opportunity to experience our premium services and discover what makes us different.</p>
+              <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">${campaignData.purpose}</h2>
+              <p style="color: #6b7280; line-height: 1.6; margin: 0 0 30px 0; font-size: 16px;">We're excited to share ${campaignData.purpose.toLowerCase()} with you.</p>
               
               ${campaignData.productService ? `
               <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -2080,8 +2089,8 @@ function getFallbackTemplate(templateType, campaignData) {
         body: `
           <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
             <div style="background: #4CAF50; color: white; padding: 20px; text-align: center;">
-              <h1 style="margin: 0; font-size: 24px;">${campaignData.businessName || 'Newsletter'}</h1>
-              <p style="margin: 5px 0 0 0; font-size: 14px;">Professional Newsletter</p>
+              ${campaignData.businessName ? `<h1 style="margin: 0; font-size: 24px;">${campaignData.businessName}</h1>` : ''}
+              <p style="margin: 5px 0 0 0; font-size: 14px;">Newsletter</p>
             </div>
             
             <div style="padding: 30px 0;">
@@ -2125,11 +2134,11 @@ function getFallbackTemplate(templateType, campaignData) {
         body: `
           <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
             <div style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; padding: 20px; text-align: center;">
-              <h1 style="margin: 0; font-size: 24px;">${campaignData.businessName || 'Shop Now'}</h1>
+              ${campaignData.businessName ? `<h1 style="margin: 0; font-size: 24px;">${campaignData.businessName}</h1>` : ''}
             </div>
             <div style="padding: 30px;">
               <h2 style="color: #333; margin-bottom: 20px;">${campaignData.purpose}</h2>
-              <p style="color: #666; line-height: 1.6;">${campaignData.productService ? `Discover ${campaignData.productService} and enjoy special offers.` : 'Discover our latest products and enjoy special offers.'}</p>
+              <p style="color: #666; line-height: 1.6;">${campaignData.productService ? `Discover ${campaignData.productService} and enjoy special offers.` : 'We have exciting offers for you.'}</p>
               ${campaignData.targetUrl ? `
               <div style="text-align: center; margin: 30px 0;">
                 <a href="${campaignData.targetUrl}" style="background: #FF6B6B; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Shop Now</a>
