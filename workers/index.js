@@ -1815,12 +1815,11 @@ ${selectedTemplate === 'newsletter' ? `Create a NEWSLETTER email with this EXACT
 Use green-blue accents and clean professional layout.` : ''}
 
 ${selectedTemplate === 'ecommerce' ? `Create an E-COMMERCE email with this EXACT structure:
-- Product showcase grid layout
-- Product images and descriptions
-- Pricing highlights with discount badges
-- Shopping cart reminders
-- "Shop Now" CTAs
-Use orange-red gradients and product-focused design.` : ''}
+- Clean header with business name
+- Product/service description (text only, no images)
+- Call-to-action button (only if target URL provided)
+- Professional footer
+Use orange-red gradients and product-focused design. NO IMAGES OR PLACEHOLDERS.` : ''}
 
 ${selectedTemplate === 'event' ? `Create an EVENT INVITATION email with this EXACT structure:
 - Celebration header with party elements
@@ -1841,10 +1840,10 @@ Use indigo-blue colors and formal layout.` : ''}
 ${selectedTemplate === 'welcome' ? `Create a WELCOME email with this EXACT structure:
 - Warm welcome header
 - Personalized greeting
-- Feature introduction with icons
-- Quick start guide
-- Help and support links
-Use yellow-orange gradients and friendly tone.` : ''}
+- Service description (text only, no images or features)
+- Help link (only if target URL provided)
+- Warm closing
+Use yellow-orange gradients and friendly tone. NO IMAGES OR FEATURE PLACEHOLDERS.` : ''}
 
 ${selectedTemplate === 'survey' ? `Create a SURVEY email with this EXACT structure:
 - Survey introduction header
@@ -1869,9 +1868,12 @@ Generate ONLY:
 CRITICAL REQUIREMENTS:
 - Use ONLY the actual data provided above
 - Do NOT create any placeholder content, example products, or fake information
-- If a field is empty, do NOT include that section in the email
+- Do NOT include any images, image placeholders, or broken image references
 - Do NOT add any virtual buttons, links, or content
+- Do NOT create empty sections or blank areas
+- If a field is empty, do NOT include that section in the email
 - Only include real, actionable content based on the provided data
+- Keep the email compact and focused on actual content
 
 Format your response as:
 SUBJECT: [subject line here]
@@ -2065,9 +2067,11 @@ function getFallbackTemplate(templateType, campaignData) {
               </div>
               ` : ''}
               
+              ${campaignData.businessName ? `
               <p style="color: #666; line-height: 1.6;">
-                Don't miss this opportunity to transform your business. Our team is here to help you succeed.
+                Thank you for your interest. ${campaignData.businessName} is here to help you succeed.
               </p>
+              ` : ''}
             </div>
             
             <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
@@ -2118,11 +2122,6 @@ function getFallbackTemplate(templateType, campaignData) {
             <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
               <p>Best regards,<br>
               <strong>${campaignData.businessName || 'Our Team'}</strong></p>
-              ${campaignData.businessName ? `
-              <p style="margin-top: 20px; font-size: 12px;">
-                Newsletter from ${campaignData.businessName}
-              </p>
-              ` : ''}
             </div>
           </div>
         `
