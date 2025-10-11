@@ -1185,26 +1185,39 @@ export default function NewCampaignPage() {
                           <h6 className="font-semibold text-gray-900 mb-1 text-sm">{template.name}</h6>
                           <p className="text-xs text-gray-600 leading-relaxed mb-3">{template.desc}</p>
                           
-                          {/* Simple Preview */}
-                          <div className="border border-gray-200 rounded p-2 bg-white">
-                            <div className="flex items-center justify-between mb-1">
-                              <div className="text-xs text-gray-500">Preview:</div>
+                          {/* Enhanced Preview */}
+                          <div className="border border-gray-200 rounded-lg p-3 bg-white hover:shadow-sm transition-shadow">
+                            <div className="text-xs text-gray-500 mb-2">Preview</div>
+                            <div 
+                              className={`h-14 bg-gradient-to-r ${template.gradient} rounded-lg flex items-center justify-center relative overflow-hidden cursor-pointer group`}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setPreviewTemplate(template.id)
+                                setShowPreview(true)
+                              }}
+                            >
+                              <div className="absolute inset-0 bg-black bg-opacity-10 rounded-lg group-hover:bg-opacity-20 transition-all"></div>
+                              <div className="text-xs text-gray-700 relative z-10 font-semibold">
+                                {template.name}
+                              </div>
+                              <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg className="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                  <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                                </svg>
+                              </div>
+                            </div>
+                            <div className="text-center mt-2">
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   setPreviewTemplate(template.id)
                                   setShowPreview(true)
                                 }}
-                                className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                                className="text-xs text-blue-600 hover:text-blue-700 font-medium hover:underline"
                               >
-                                View
+                                View Full Preview
                               </button>
-                            </div>
-                            <div className={`h-12 bg-gradient-to-r ${template.gradient} rounded flex items-center justify-center relative overflow-hidden`}>
-                              <div className="absolute inset-0 bg-black bg-opacity-10 rounded"></div>
-                              <div className="text-xs text-gray-600 relative z-10 font-medium">
-                                {template.name}
-                              </div>
                             </div>
                           </div>
                         </button>
