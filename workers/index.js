@@ -1405,6 +1405,7 @@ async function handleAIGenerateEmail(request, env) {
     console.log('Extracted parameters:', { emailMode, selectedTemplate, toneStyle, campaignData });
 
     // 检查是否有 AI API 密钥
+    console.log('Checking AI API key:', env.DASHSCOPE_API_KEY ? 'Key present' : 'Key missing');
     if (!env.DASHSCOPE_API_KEY) {
       console.log('No AI API key found, using template-based content');
       
@@ -1835,12 +1836,18 @@ async function handleAIGenerateEmail(request, env) {
       const aiData = await aiResponse.json();
       console.log('DashScope API response data:', JSON.stringify(aiData, null, 2));
       
-      if (!aiData.output || !aiData.output.choices || aiData.output.choices.length === 0) {
+      // 检查不同的响应结构
+      let aiContent = '';
+      if (aiData.output && aiData.output.choices && aiData.output.choices.length > 0) {
+        aiContent = aiData.output.choices[0].message.content;
+      } else if (aiData.output && aiData.output.text) {
+        aiContent = aiData.output.text;
+      } else if (aiData.text) {
+        aiContent = aiData.text;
+      } else {
         console.error('Invalid AI response structure:', aiData);
         throw new Error('AI API returned invalid response structure');
       }
-
-      const aiContent = aiData.output.choices[0].message.content;
       
       // 简化处理：直接使用AI生成的内容
       const aiSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
