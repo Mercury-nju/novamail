@@ -1978,13 +1978,21 @@ Do not include any instructions, explanations, or markdown formatting. Only prov
       console.log('Final cleaned body preview:', aiBody.substring(0, 300) + '...');
       console.log('Final body length:', aiBody.length);
 
-      // 验证生成的内容
-      if (!aiBody || aiBody.length < 50) {
-        console.log('AI generated content too short, using fallback template');
+      // 验证生成的内容是否符合专业模板要求
+      const isProfessionalTemplate = aiBody.includes('gradient') || 
+                                   aiBody.includes('linear-gradient') || 
+                                   aiBody.includes('background:') ||
+                                   aiBody.includes('style=');
+      
+      if (!aiBody || aiBody.length < 50 || !isProfessionalTemplate) {
+        console.log('AI generated content does not match professional template requirements, using fallback template');
         // 使用预设的专业模板作为备用
         const fallbackTemplate = getFallbackTemplate(selectedTemplate, campaignData);
         aiSubject = fallbackTemplate.subject;
         aiBody = fallbackTemplate.body;
+        console.log('Using fallback template for:', selectedTemplate);
+      } else {
+        console.log('AI generated content meets professional template requirements');
       }
 
       return new Response(JSON.stringify({
@@ -1992,7 +2000,7 @@ Do not include any instructions, explanations, or markdown formatting. Only prov
         subject: aiSubject,
         body: aiBody,
         template: selectedTemplate || 'ai-generated',
-        note: 'Generated using AI',
+        note: 'Generated using AI with professional template',
         timestamp: new Date().toISOString()
       }), {
         headers: corsHeaders
@@ -2025,17 +2033,42 @@ function getFallbackTemplate(templateType, campaignData) {
       return {
         subject: baseSubject,
         body: `
-          <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+          <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
-              <h1 style="color: white; margin: 0; font-size: 28px;">${campaignData.businessName || 'Our Company'}</h1>
+              <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700;">${campaignData.businessName || 'Our Company'}</h1>
               <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">${campaignData.purpose}</p>
             </div>
+            
             <div style="padding: 40px 30px;">
-              <h2 style="color: #1f2937; margin: 0 0 20px 0;">Introducing ${campaignData.productService || 'Our New Product'}</h2>
-              <p style="color: #6b7280; line-height: 1.6; margin: 0 0 30px 0;">We're excited to share ${campaignData.purpose.toLowerCase()} with you.</p>
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">Get Started Now</a>
+              <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">Introducing ${campaignData.productService || 'Our New Product'}</h2>
+              <p style="color: #6b7280; line-height: 1.6; margin: 0 0 30px 0; font-size: 16px;">We're excited to share ${campaignData.purpose.toLowerCase()} with you. This is a great opportunity to experience our premium services and discover what makes us different.</p>
+              
+              <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="color: #333; margin-top: 0;">Key Benefits:</h3>
+                <ul style="color: #666; line-height: 1.6;">
+                  <li>Professional quality and service</li>
+                  <li>Easy to use and implement</li>
+                  <li>Comprehensive support</li>
+                  <li>Proven results</li>
+                </ul>
               </div>
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; font-size: 16px;">Get Started Now</a>
+              </div>
+              
+              <p style="color: #666; line-height: 1.6;">
+                Don't miss this opportunity to transform your business. Our team is here to help you succeed.
+              </p>
+            </div>
+            
+            <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+              <p>Best regards,<br>
+              <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
+              <p style="margin-top: 20px;">
+                <a href="#" style="color: #667eea; text-decoration: none;">Unsubscribe</a> | 
+                <a href="#" style="color: #667eea; text-decoration: none;">Contact Us</a>
+              </p>
             </div>
           </div>
         `
@@ -2045,16 +2078,33 @@ function getFallbackTemplate(templateType, campaignData) {
       return {
         subject: baseSubject,
         body: `
-          <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+          <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
             <div style="background: #4CAF50; color: white; padding: 20px; text-align: center;">
               <h1 style="margin: 0; font-size: 24px;">${campaignData.businessName || 'Newsletter'}</h1>
+              <p style="margin: 5px 0 0 0; font-size: 14px;">Professional Newsletter</p>
             </div>
-            <div style="padding: 30px;">
+            
+            <div style="padding: 30px 0;">
               <h2 style="color: #333; margin-bottom: 20px;">${campaignData.purpose}</h2>
-              <p style="color: #666; line-height: 1.6;">Welcome to our latest newsletter! We're excited to share ${campaignData.purpose.toLowerCase()} with you.</p>
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${campaignData.targetUrl || '#'}" style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Read More</a>
+              <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                Welcome to our latest newsletter! We're excited to share ${campaignData.purpose.toLowerCase()} with you.
+              </p>
+              
+              <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="color: #2e7d32; margin-top: 0;">Featured Content</h3>
+                <p style="color: #666; line-height: 1.6;">
+                  Discover ${campaignData.productService || 'our latest offerings'} and learn how they can benefit your business.
+                </p>
               </div>
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${campaignData.targetUrl || '#'}" style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">Read More</a>
+              </div>
+            </div>
+            
+            <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+              <p>Best regards,<br>
+              <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
             </div>
           </div>
         `
