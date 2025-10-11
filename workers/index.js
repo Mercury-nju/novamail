@@ -1796,15 +1796,69 @@ Email Details:
 - Tone: ${toneStyle || 'professional'}
 - Template Style: ${selectedTemplate || 'general'}
 
-Template Requirements:
-${selectedTemplate === 'modern-promo' ? 'Create a modern promotional email with gradient headers, bold CTAs, and sleek design. Use blue-purple gradients and modern styling.' : ''}
-${selectedTemplate === 'newsletter' ? 'Create a clean newsletter format with multi-column layout, article previews, and professional structure. Use green-blue accents.' : ''}
-${selectedTemplate === 'ecommerce' ? 'Create a product-focused e-commerce email with product grids, pricing highlights, and shopping CTAs. Use orange-red gradients.' : ''}
-${selectedTemplate === 'event' ? 'Create a party/event themed email with celebration elements, RSVP buttons, and festive design. Use pink-purple gradients.' : ''}
-${selectedTemplate === 'announcement' ? 'Create a formal announcement email with clear headlines, professional layout, and structured information. Use indigo-blue colors.' : ''}
-${selectedTemplate === 'welcome' ? 'Create a warm welcome email with friendly tone, onboarding elements, and welcoming design. Use yellow-orange gradients.' : ''}
-${selectedTemplate === 'survey' ? 'Create a survey/feedback email with form elements, data collection focus, and analytical design. Use teal-cyan colors.' : ''}
-${selectedTemplate === 'thank-you' ? 'Create a gratitude email with appreciation message, follow-up elements, and warm design. Use rose-pink gradients.' : ''}
+${selectedTemplate === 'modern-promo' ? `Create a MODERN PROMOTIONAL email with this EXACT structure:
+- Gradient header with business name and tagline
+- Main headline section
+- Key benefits list in styled boxes
+- Prominent CTA button with gradient background
+- Professional footer
+Use blue-purple gradients, modern fonts, and sleek styling.` : ''}
+
+${selectedTemplate === 'newsletter' ? `Create a NEWSLETTER email with this EXACT structure:
+- Header with newsletter title
+- Featured content sections with article previews
+- Multi-column layout for different topics
+- "Read More" links
+- Subscription management footer
+Use green-blue accents and clean professional layout.` : ''}
+
+${selectedTemplate === 'ecommerce' ? `Create an E-COMMERCE email with this EXACT structure:
+- Product showcase grid layout
+- Product images and descriptions
+- Pricing highlights with discount badges
+- Shopping cart reminders
+- "Shop Now" CTAs
+Use orange-red gradients and product-focused design.` : ''}
+
+${selectedTemplate === 'event' ? `Create an EVENT INVITATION email with this EXACT structure:
+- Celebration header with party elements
+- Event details (date, time, location)
+- RSVP button prominently displayed
+- Event highlights and agenda
+- Festive footer with contact info
+Use pink-purple gradients and celebration theme.` : ''}
+
+${selectedTemplate === 'announcement' ? `Create an ANNOUNCEMENT email with this EXACT structure:
+- Formal header with clear title
+- Structured announcement content
+- Key points in organized sections
+- Call-to-action for more information
+- Professional signature
+Use indigo-blue colors and formal layout.` : ''}
+
+${selectedTemplate === 'welcome' ? `Create a WELCOME email with this EXACT structure:
+- Warm welcome header
+- Personalized greeting
+- Feature introduction with icons
+- Quick start guide
+- Help and support links
+Use yellow-orange gradients and friendly tone.` : ''}
+
+${selectedTemplate === 'survey' ? `Create a SURVEY email with this EXACT structure:
+- Survey introduction header
+- Survey questions or form elements
+- Data collection focus
+- Incentives for participation
+- Analytics and feedback footer
+Use teal-cyan colors and analytical design.` : ''}
+
+${selectedTemplate === 'thank-you' ? `Create a THANK YOU email with this EXACT structure:
+- Gratitude header with appreciation message
+- Thank you content with personal touch
+- Follow-up information
+- Additional resources or offers
+- Warm closing with contact info
+Use rose-pink gradients and warm design.` : ''}
 
 Generate ONLY:
 1. Subject line (clean text, no markdown)
@@ -1817,6 +1871,8 @@ BODY: [HTML email body here]
 Do not include any instructions, explanations, or markdown formatting. Only provide the subject and body content.`;
 
       console.log('Sending request to DashScope API with key:', env.DASHSCOPE_API_KEY ? 'Key present' : 'Key missing');
+      console.log('AI Prompt for template:', selectedTemplate);
+      console.log('Full AI Prompt:', aiPrompt);
       
       const aiResponse = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
         method: 'POST',
