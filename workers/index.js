@@ -1387,9 +1387,12 @@ async function handleAIGenerateEmail(request, env) {
 
   try {
     const data = await request.json();
+    console.log('AI generation request data:', JSON.stringify(data, null, 2));
+    
     const { emailMode, selectedTemplate, toneStyle, campaignData } = data;
     
     if (!campaignData) {
+      console.log('Missing campaignData in request');
       return new Response(JSON.stringify({ 
         success: false, 
         error: 'Campaign data is required' 
@@ -1398,6 +1401,8 @@ async function handleAIGenerateEmail(request, env) {
         headers: corsHeaders
       });
     }
+    
+    console.log('Extracted parameters:', { emailMode, selectedTemplate, toneStyle, campaignData });
 
     // 检查是否有 AI API 密钥
     if (!env.DASHSCOPE_API_KEY) {
@@ -1861,95 +1866,6 @@ async function handleAIGenerateEmail(request, env) {
     return new Response(JSON.stringify({
       success: false,
       error: 'AI generation failed, please try again later',
-      details: error.message,
-      timestamp: new Date().toISOString()
-    }), {
-      status: 500,
-      headers: corsHeaders
-    });
-  }
-}
-
-// AI测试处理函数
-async function handleTestAI(request, env) {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json'
-  };
-
-  try {
-    console.log('Testing DashScope API...');
-    console.log('API Key present:', env.DASHSCOPE_API_KEY ? 'Yes' : 'No');
-    
-    if (!env.DASHSCOPE_API_KEY) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'No DashScope API key found',
-        timestamp: new Date().toISOString()
-      }), {
-        status: 400,
-        headers: corsHeaders
-      });
-    }
-
-    const testResponse = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${env.DASHSCOPE_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'qwen-turbo',
-        input: {
-          messages: [
-            {
-              role: 'user',
-              content: 'Hello, please respond with "AI is working"'
-            }
-          ]
-        },
-        parameters: {
-          temperature: 0.7,
-          max_tokens: 100
-        }
-      })
-    });
-
-    console.log('DashScope test response status:', testResponse.status);
-    
-    if (!testResponse.ok) {
-      const errorText = await testResponse.text();
-      console.error('DashScope test error:', errorText);
-      return new Response(JSON.stringify({
-        success: false,
-        error: `DashScope API error: ${testResponse.status}`,
-        details: errorText,
-        timestamp: new Date().toISOString()
-      }), {
-        status: 500,
-        headers: corsHeaders
-      });
-    }
-
-    const testData = await testResponse.json();
-    console.log('DashScope test response:', JSON.stringify(testData, null, 2));
-
-    return new Response(JSON.stringify({
-      success: true,
-      message: 'DashScope API test successful',
-      response: testData,
-      timestamp: new Date().toISOString()
-    }), {
-      headers: corsHeaders
-    });
-
-  } catch (error) {
-    console.error('AI test error:', error);
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'AI test failed',
       details: error.message,
       timestamp: new Date().toISOString()
     }), {
