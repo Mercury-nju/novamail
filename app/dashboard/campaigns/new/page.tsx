@@ -1108,192 +1108,106 @@ export default function NewCampaignPage() {
                 
                 {/* Professional Template Styles */}
                 {emailMode === 'professional' && (
-                  <div className="mt-8">
-                    <div className="text-center mb-8">
-                      <h5 className="text-xl font-bold text-gray-900 mb-2">Choose Template Style</h5>
+                  <div className="mt-6">
+                    <div className="text-center mb-6">
+                      <h5 className="text-lg font-semibold text-gray-900 mb-1">Choose Template Style</h5>
                       <p className="text-sm text-gray-600">Select from our professional email templates</p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {[
                         { 
                           id: 'modern-promo', 
                           name: 'Modern Promo', 
                           icon: '🚀', 
                           desc: 'Sleek promotional design',
-                          gradient: 'from-blue-500 to-purple-600',
-                          previewGradient: 'from-blue-50 to-purple-50',
-                          accentColor: 'blue',
-                          features: ['Gradient Headers', 'CTA Buttons', 'Modern Layout']
+                          gradient: 'from-blue-50 to-purple-50'
                         },
                         { 
                           id: 'newsletter', 
                           name: 'Newsletter',
                           icon: '📰', 
                           desc: 'Clean newsletter layout',
-                          gradient: 'from-green-500 to-blue-600',
-                          previewGradient: 'from-green-50 to-blue-50',
-                          accentColor: 'green',
-                          features: ['Multi-column', 'Article Preview', 'Clean Design']
+                          gradient: 'from-green-50 to-blue-50'
                         },
                         { 
                           id: 'ecommerce', 
                           name: 'E-commerce', 
                           icon: '🛒', 
                           desc: 'Product-focused design',
-                          gradient: 'from-orange-500 to-red-600',
-                          previewGradient: 'from-orange-50 to-red-50',
-                          accentColor: 'orange',
-                          features: ['Product Grid', 'Price Display', 'Shopping CTA']
+                          gradient: 'from-orange-50 to-red-50'
                         },
                         { 
                           id: 'event', 
                           name: 'Event Invite', 
                           icon: '🎉', 
                           desc: 'Party and event themed',
-                          gradient: 'from-pink-500 to-purple-600',
-                          previewGradient: 'from-pink-50 to-purple-50',
-                          accentColor: 'pink',
-                          features: ['Event Details', 'RSVP Button', 'Party Theme']
+                          gradient: 'from-pink-50 to-purple-50'
                         },
                         { 
                           id: 'announcement', 
                           name: 'Announcement', 
                           icon: '📢', 
                           desc: 'Formal announcement style',
-                          gradient: 'from-indigo-500 to-blue-600',
-                          previewGradient: 'from-indigo-50 to-blue-50',
-                          accentColor: 'indigo',
-                          features: ['Formal Layout', 'Clear Headlines', 'Professional']
+                          gradient: 'from-indigo-50 to-blue-50'
                         },
                         { 
                           id: 'welcome', 
                           name: 'Welcome', 
                           icon: '👋', 
                           desc: 'Warm welcome message',
-                          gradient: 'from-yellow-500 to-orange-600',
-                          previewGradient: 'from-yellow-50 to-orange-50',
-                          accentColor: 'yellow',
-                          features: ['Friendly Tone', 'Welcome Message', 'Onboarding']
+                          gradient: 'from-yellow-50 to-orange-50'
                         },
                         { 
                           id: 'survey', 
                           name: 'Survey', 
                           icon: '📊', 
                           desc: 'Feedback collection',
-                          gradient: 'from-teal-500 to-cyan-600',
-                          previewGradient: 'from-teal-50 to-cyan-50',
-                          accentColor: 'teal',
-                          features: ['Survey Forms', 'Data Collection', 'Analytics']
+                          gradient: 'from-teal-50 to-cyan-50'
                         },
                         { 
                           id: 'thank-you', 
                           name: 'Thank You', 
                           icon: '🙏', 
                           desc: 'Gratitude and appreciation',
-                          gradient: 'from-rose-500 to-pink-600',
-                          previewGradient: 'from-rose-50 to-pink-50',
-                          accentColor: 'rose',
-                          features: ['Gratitude Message', 'Appreciation', 'Follow-up']
+                          gradient: 'from-rose-50 to-pink-50'
                         }
                       ].map((template) => (
-                        <div
+                        <button
                           key={template.id}
-                          className={`group relative overflow-hidden rounded-xl border-2 transition-all duration-300 hover:shadow-lg ${
+                          onClick={() => setSelectedTemplate(template.id)}
+                          className={`p-4 border-2 rounded-lg text-center transition-all duration-200 hover:shadow-md ${
                             selectedTemplate === template.id
-                              ? 'border-blue-500 bg-blue-50 shadow-lg scale-105'
-                              : 'border-gray-200 hover:border-gray-300 bg-white hover:scale-102'
+                              ? 'border-blue-500 bg-blue-50 shadow-md'
+                              : 'border-gray-200 hover:border-gray-300 bg-white'
                           }`}
                         >
-                          <button
-                            onClick={() => setSelectedTemplate(template.id)}
-                            className="w-full p-6 text-left"
-                          >
-                            {/* Template Header */}
-                            <div className="flex items-center justify-between mb-4">
-                              <div className="text-3xl">{template.icon}</div>
-                              {selectedTemplate === template.id && (
-                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                  </svg>
-                                </div>
-                              )}
+                          <div className="text-2xl mb-2">{template.icon}</div>
+                          <h6 className="font-semibold text-gray-900 mb-1 text-sm">{template.name}</h6>
+                          <p className="text-xs text-gray-600 leading-relaxed mb-3">{template.desc}</p>
+                          
+                          {/* Simple Preview */}
+                          <div className="border border-gray-200 rounded p-2 bg-white">
+                            <div className="flex items-center justify-between mb-1">
+                              <div className="text-xs text-gray-500">Preview:</div>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setPreviewTemplate(template.id)
+                                  setShowPreview(true)
+                                }}
+                                className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                              >
+                                View
+                              </button>
                             </div>
-
-                            {/* Template Info */}
-                            <h6 className="font-bold text-gray-900 mb-2 text-base">{template.name}</h6>
-                            <p className="text-sm text-gray-600 leading-relaxed mb-4">{template.desc}</p>
-                            
-                            {/* Features */}
-                            <div className="mb-4">
-                              <div className="flex flex-wrap gap-1">
-                                {template.features.map((feature, idx) => (
-                                  <span 
-                                    key={idx}
-                                    className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700"
-                                  >
-                                    {feature}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          </button>
-
-                          {/* Enhanced Preview Section */}
-                          <div className="px-6 pb-6">
-                            <div className="border border-gray-200 rounded-lg p-3 bg-white shadow-sm">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="text-xs font-medium text-gray-500">{template.name} Preview:</div>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setPreviewTemplate(template.id)
-                                    setShowPreview(true)
-                                  }}
-                                  className="text-xs text-blue-600 hover:text-blue-700 font-medium hover:underline"
-                                >
-                                  View Full Preview
-                                </button>
-                              </div>
-                              <div className={`h-20 bg-gradient-to-r ${template.previewGradient} rounded-lg flex items-center justify-center relative overflow-hidden cursor-pointer group-hover:shadow-md transition-shadow`}>
-                                <div className="absolute inset-0 bg-black bg-opacity-5 rounded-lg"></div>
-                                <div className="text-sm text-gray-700 relative z-10 font-semibold">
-                                  {template.name}
-                                </div>
-                                {/* Enhanced decorative elements */}
-                                {template.id === 'modern-promo' && (
-                                  <div className="absolute top-2 right-2 text-lg opacity-60">⚡</div>
-                                )}
-                                {template.id === 'newsletter' && (
-                                  <div className="absolute bottom-2 left-2 text-lg opacity-60">📄</div>
-                                )}
-                                {template.id === 'ecommerce' && (
-                                  <div className="absolute top-2 left-2 text-lg opacity-60">💰</div>
-                                )}
-                                {template.id === 'event' && (
-                                  <div className="absolute bottom-2 right-2 text-lg opacity-60">🎊</div>
-                                )}
-                                {template.id === 'announcement' && (
-                                  <div className="absolute top-2 right-2 text-lg opacity-60">📢</div>
-                                )}
-                                {template.id === 'welcome' && (
-                                  <div className="absolute bottom-2 left-2 text-lg opacity-60">👋</div>
-                                )}
-                                {template.id === 'survey' && (
-                                  <div className="absolute top-2 left-2 text-lg opacity-60">📊</div>
-                                )}
-                                {template.id === 'thank-you' && (
-                                  <div className="absolute bottom-2 right-2 text-lg opacity-60">🙏</div>
-                                )}
+                            <div className={`h-12 bg-gradient-to-r ${template.gradient} rounded flex items-center justify-center relative overflow-hidden`}>
+                              <div className="absolute inset-0 bg-black bg-opacity-10 rounded"></div>
+                              <div className="text-xs text-gray-600 relative z-10 font-medium">
+                                {template.name}
                               </div>
                             </div>
                           </div>
-
-                          {/* Selection Indicator */}
-                          {selectedTemplate === template.id && (
-                            <div className="absolute top-0 right-0 w-0 h-0 border-l-[20px] border-l-transparent border-t-[20px] border-t-blue-500"></div>
-                          )}
-                        </div>
+                        </button>
                       ))}
                     </div>
                   </div>
