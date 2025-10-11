@@ -1403,6 +1403,7 @@ async function handleAIGenerateEmail(request, env) {
     }
     
     console.log('Extracted parameters:', { emailMode, selectedTemplate, toneStyle, campaignData });
+    console.log('Selected template for AI generation:', selectedTemplate);
 
     // 检查是否有 AI API 密钥
     console.log('Checking AI API key:', env.DASHSCOPE_API_KEY ? 'Key present' : 'Key missing');
@@ -1793,6 +1794,17 @@ Email Details:
 - Product/Service: ${campaignData.productService || 'our services'}
 - Target URL: ${campaignData.targetUrl || 'our website'}
 - Tone: ${toneStyle || 'professional'}
+- Template Style: ${selectedTemplate || 'general'}
+
+Template Requirements:
+${selectedTemplate === 'modern-promo' ? 'Create a modern promotional email with gradient headers, bold CTAs, and sleek design. Use blue-purple gradients and modern styling.' : ''}
+${selectedTemplate === 'newsletter' ? 'Create a clean newsletter format with multi-column layout, article previews, and professional structure. Use green-blue accents.' : ''}
+${selectedTemplate === 'ecommerce' ? 'Create a product-focused e-commerce email with product grids, pricing highlights, and shopping CTAs. Use orange-red gradients.' : ''}
+${selectedTemplate === 'event' ? 'Create a party/event themed email with celebration elements, RSVP buttons, and festive design. Use pink-purple gradients.' : ''}
+${selectedTemplate === 'announcement' ? 'Create a formal announcement email with clear headlines, professional layout, and structured information. Use indigo-blue colors.' : ''}
+${selectedTemplate === 'welcome' ? 'Create a warm welcome email with friendly tone, onboarding elements, and welcoming design. Use yellow-orange gradients.' : ''}
+${selectedTemplate === 'survey' ? 'Create a survey/feedback email with form elements, data collection focus, and analytical design. Use teal-cyan colors.' : ''}
+${selectedTemplate === 'thank-you' ? 'Create a gratitude email with appreciation message, follow-up elements, and warm design. Use rose-pink gradients.' : ''}
 
 Generate ONLY:
 1. Subject line (clean text, no markdown)
