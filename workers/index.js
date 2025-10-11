@@ -1785,20 +1785,24 @@ async function handleAIGenerateEmail(request, env) {
       // 使用 AI 生成内容
       console.log('Using AI generation with DashScope API');
       
-      const aiPrompt = `Generate a professional email with the following requirements:
-      
-      Purpose: ${campaignData.purpose}
-      Business Name: ${campaignData.businessName || 'Our Company'}
-      Product/Service: ${campaignData.productService || 'our services'}
-      Target URL: ${campaignData.targetUrl || 'our website'}
-      Tone Style: ${toneStyle || 'professional'}
-      Template Type: ${selectedTemplate || 'general'}
-      
-      Please generate:
-      1. A compelling subject line (in English)
-      2. A professional email body in HTML format (in English)
-      
-      The email should be engaging, professional, and suitable for ${emailMode} communication.`;
+      const aiPrompt = `You are an expert email marketing writer. Generate ONLY the email content, no instructions or explanations.
+
+Email Details:
+- Purpose: ${campaignData.purpose}
+- Business: ${campaignData.businessName || 'Our Company'}
+- Product/Service: ${campaignData.productService || 'our services'}
+- Target URL: ${campaignData.targetUrl || 'our website'}
+- Tone: ${toneStyle || 'professional'}
+
+Generate ONLY:
+1. Subject line (clean text, no markdown)
+2. Email body (clean HTML, no markdown symbols)
+
+Format your response as:
+SUBJECT: [subject line here]
+BODY: [HTML email body here]
+
+Do not include any instructions, explanations, or markdown formatting. Only provide the subject and body content.`;
 
       console.log('Sending request to DashScope API with key:', env.DASHSCOPE_API_KEY ? 'Key present' : 'Key missing');
       
@@ -1849,9 +1853,41 @@ async function handleAIGenerateEmail(request, env) {
         throw new Error('AI API returned invalid response structure');
       }
       
-      // 简化处理：直接使用AI生成的内容
-      const aiSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
-      const aiBody = aiContent;
+      console.log('Raw AI content:', aiContent);
+      
+      // 解析AI生成的内容
+      let aiSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
+      let aiBody = '';
+      
+      // 尝试解析格式化的响应
+      const subjectMatch = aiContent.match(/SUBJECT:\s*(.+?)(?:\n|$)/i);
+      const bodyMatch = aiContent.match(/BODY:\s*([\s\S]+)/i);
+      
+      if (subjectMatch && bodyMatch) {
+        aiSubject = subjectMatch[1].trim();
+        aiBody = bodyMatch[1].trim();
+        console.log('Parsed subject:', aiSubject);
+        console.log('Parsed body length:', aiBody.length);
+      } else {
+        // 如果没有找到格式化内容，使用原始内容作为正文
+        aiBody = aiContent;
+        console.log('Using raw content as body');
+      }
+      
+      // 清理内容：移除markdown符号和无关信息
+      aiSubject = aiSubject.replace(/\*\*/g, '').replace(/\*/g, '').replace(/```/g, '').trim();
+      aiBody = aiBody
+        .replace(/\*\*/g, '')  // 移除粗体markdown
+        .replace(/\*/g, '')    // 移除斜体markdown
+        .replace(/```html/g, '')  // 移除代码块标记
+        .replace(/```/g, '')   // 移除代码块标记
+        .replace(/---/g, '')   // 移除分隔线
+        .replace(/^\d+\.\s*/gm, '') // 移除编号列表
+        .replace(/^\*\s*/gm, '')    // 移除项目符号
+        .trim();
+      
+      console.log('Cleaned subject:', aiSubject);
+      console.log('Cleaned body preview:', aiBody.substring(0, 200) + '...');
 
       return new Response(JSON.stringify({
         success: true,
