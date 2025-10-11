@@ -1922,6 +1922,7 @@ Do not include any instructions, explanations, or markdown formatting. Only prov
       }
       
       console.log('Raw AI content:', aiContent);
+      console.log('AI content length:', aiContent.length);
       
       // 解析AI生成的内容
       let aiSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
@@ -1937,9 +1938,28 @@ Do not include any instructions, explanations, or markdown formatting. Only prov
         console.log('Parsed subject:', aiSubject);
         console.log('Parsed body length:', aiBody.length);
       } else {
-        // 如果没有找到格式化内容，使用原始内容作为正文
-        aiBody = aiContent;
-        console.log('Using raw content as body');
+        // 如果没有找到格式化内容，尝试其他解析方式
+        const lines = aiContent.split('\n');
+        let foundSubject = false;
+        let foundBody = false;
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (line.toLowerCase().startsWith('subject:')) {
+            aiSubject = line.substring(8).trim();
+            foundSubject = true;
+          } else if (line.toLowerCase().startsWith('body:')) {
+            aiBody = lines.slice(i + 1).join('\n').trim();
+            foundBody = true;
+            break;
+          }
+        }
+        
+        if (!foundSubject || !foundBody) {
+          // 如果还是没找到，使用原始内容作为正文
+          aiBody = aiContent;
+          console.log('Using raw content as body - no structured format found');
+        }
       }
       
       // 清理内容：移除markdown符号和无关信息
@@ -1954,14 +1974,24 @@ Do not include any instructions, explanations, or markdown formatting. Only prov
         .replace(/^\*\s*/gm, '')    // 移除项目符号
         .trim();
       
-      console.log('Cleaned subject:', aiSubject);
-      console.log('Cleaned body preview:', aiBody.substring(0, 200) + '...');
+      console.log('Final cleaned subject:', aiSubject);
+      console.log('Final cleaned body preview:', aiBody.substring(0, 300) + '...');
+      console.log('Final body length:', aiBody.length);
+
+      // 验证生成的内容
+      if (!aiBody || aiBody.length < 50) {
+        console.log('AI generated content too short, using fallback template');
+        // 使用预设的专业模板作为备用
+        const fallbackTemplate = getFallbackTemplate(selectedTemplate, campaignData);
+        aiSubject = fallbackTemplate.subject;
+        aiBody = fallbackTemplate.body;
+      }
 
       return new Response(JSON.stringify({
         success: true,
         subject: aiSubject,
         body: aiBody,
-        template: 'ai-generated',
+        template: selectedTemplate || 'ai-generated',
         note: 'Generated using AI',
         timestamp: new Date().toISOString()
       }), {
@@ -1983,6 +2013,86 @@ Do not include any instructions, explanations, or markdown formatting. Only prov
       status: 500,
       headers: corsHeaders
     });
+  }
+}
+
+// 获取备用模板函数
+function getFallbackTemplate(templateType, campaignData) {
+  const baseSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
+  
+  switch (templateType) {
+    case 'modern-promo':
+      return {
+        subject: baseSubject,
+        body: `
+          <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 28px;">${campaignData.businessName || 'Our Company'}</h1>
+              <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">${campaignData.purpose}</p>
+            </div>
+            <div style="padding: 40px 30px;">
+              <h2 style="color: #1f2937; margin: 0 0 20px 0;">Introducing ${campaignData.productService || 'Our New Product'}</h2>
+              <p style="color: #6b7280; line-height: 1.6; margin: 0 0 30px 0;">We're excited to share ${campaignData.purpose.toLowerCase()} with you.</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">Get Started Now</a>
+              </div>
+            </div>
+          </div>
+        `
+      };
+    
+    case 'newsletter':
+      return {
+        subject: baseSubject,
+        body: `
+          <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+            <div style="background: #4CAF50; color: white; padding: 20px; text-align: center;">
+              <h1 style="margin: 0; font-size: 24px;">${campaignData.businessName || 'Newsletter'}</h1>
+            </div>
+            <div style="padding: 30px;">
+              <h2 style="color: #333; margin-bottom: 20px;">${campaignData.purpose}</h2>
+              <p style="color: #666; line-height: 1.6;">Welcome to our latest newsletter! We're excited to share ${campaignData.purpose.toLowerCase()} with you.</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${campaignData.targetUrl || '#'}" style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Read More</a>
+              </div>
+            </div>
+          </div>
+        `
+      };
+    
+    case 'ecommerce':
+      return {
+        subject: baseSubject,
+        body: `
+          <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+            <div style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; padding: 20px; text-align: center;">
+              <h1 style="margin: 0; font-size: 24px;">${campaignData.businessName || 'Shop Now'}</h1>
+            </div>
+            <div style="padding: 30px;">
+              <h2 style="color: #333; margin-bottom: 20px;">${campaignData.purpose}</h2>
+              <p style="color: #666; line-height: 1.6;">Discover ${campaignData.productService || 'our latest products'} and enjoy special offers.</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${campaignData.targetUrl || '#'}" style="background: #FF6B6B; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Shop Now</a>
+              </div>
+            </div>
+          </div>
+        `
+      };
+    
+    default:
+      return {
+        subject: baseSubject,
+        body: `
+          <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; padding: 20px;">
+            <h2 style="color: #333;">${campaignData.purpose}</h2>
+            <p style="color: #666; line-height: 1.6;">We're excited to share ${campaignData.purpose.toLowerCase()} with you.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${campaignData.targetUrl || '#'}" style="background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Learn More</a>
+            </div>
+            <p style="color: #666;">Best regards,<br>${campaignData.businessName || 'Our Team'}</p>
+          </div>
+        `
+      };
   }
 }
 
