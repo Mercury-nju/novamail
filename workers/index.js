@@ -2043,19 +2043,18 @@ function getFallbackTemplate(templateType, campaignData) {
               <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">Introducing ${campaignData.productService || 'Our New Product'}</h2>
               <p style="color: #6b7280; line-height: 1.6; margin: 0 0 30px 0; font-size: 16px;">We're excited to share ${campaignData.purpose.toLowerCase()} with you. This is a great opportunity to experience our premium services and discover what makes us different.</p>
               
+              ${campaignData.productService ? `
               <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="color: #333; margin-top: 0;">Key Benefits:</h3>
-                <ul style="color: #666; line-height: 1.6;">
-                  <li>Professional quality and service</li>
-                  <li>Easy to use and implement</li>
-                  <li>Comprehensive support</li>
-                  <li>Proven results</li>
-                </ul>
+                <h3 style="color: #333; margin-top: 0;">About ${campaignData.productService}:</h3>
+                <p style="color: #666; line-height: 1.6; margin: 0;">${campaignData.productService} offers professional quality and comprehensive support to help you achieve your goals.</p>
               </div>
+              ` : ''}
               
+              ${campaignData.targetUrl ? `
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; font-size: 16px;">Get Started Now</a>
+                <a href="${campaignData.targetUrl}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; font-size: 16px;">Learn More</a>
               </div>
+              ` : ''}
               
               <p style="color: #666; line-height: 1.6;">
                 Don't miss this opportunity to transform your business. Our team is here to help you succeed.
@@ -2064,11 +2063,12 @@ function getFallbackTemplate(templateType, campaignData) {
             
             <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
               <p>Best regards,<br>
-              <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
-              <p style="margin-top: 20px;">
-                <a href="#" style="color: #667eea; text-decoration: none;">Unsubscribe</a> | 
-                <a href="#" style="color: #667eea; text-decoration: none;">Contact Us</a>
+              <strong>${campaignData.businessName || 'Our Team'}</strong></p>
+              ${campaignData.businessName ? `
+              <p style="margin-top: 20px; font-size: 12px;">
+                This email was sent by ${campaignData.businessName}
               </p>
+              ` : ''}
             </div>
           </div>
         `
@@ -2090,21 +2090,30 @@ function getFallbackTemplate(templateType, campaignData) {
                 Welcome to our latest newsletter! We're excited to share ${campaignData.purpose.toLowerCase()} with you.
               </p>
               
+              ${campaignData.productService ? `
               <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="color: #2e7d32; margin-top: 0;">Featured Content</h3>
+                <h3 style="color: #2e7d32; margin-top: 0;">Featured: ${campaignData.productService}</h3>
                 <p style="color: #666; line-height: 1.6;">
-                  Discover ${campaignData.productService || 'our latest offerings'} and learn how they can benefit your business.
+                  Learn more about ${campaignData.productService} and how it can benefit your business.
                 </p>
               </div>
+              ` : ''}
               
+              ${campaignData.targetUrl ? `
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${campaignData.targetUrl || '#'}" style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">Read More</a>
+                <a href="${campaignData.targetUrl}" style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">Read More</a>
               </div>
+              ` : ''}
             </div>
             
             <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
               <p>Best regards,<br>
-              <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
+              <strong>${campaignData.businessName || 'Our Team'}</strong></p>
+              ${campaignData.businessName ? `
+              <p style="margin-top: 20px; font-size: 12px;">
+                Newsletter from ${campaignData.businessName}
+              </p>
+              ` : ''}
             </div>
           </div>
         `
@@ -2120,10 +2129,12 @@ function getFallbackTemplate(templateType, campaignData) {
             </div>
             <div style="padding: 30px;">
               <h2 style="color: #333; margin-bottom: 20px;">${campaignData.purpose}</h2>
-              <p style="color: #666; line-height: 1.6;">Discover ${campaignData.productService || 'our latest products'} and enjoy special offers.</p>
+              <p style="color: #666; line-height: 1.6;">${campaignData.productService ? `Discover ${campaignData.productService} and enjoy special offers.` : 'Discover our latest products and enjoy special offers.'}</p>
+              ${campaignData.targetUrl ? `
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${campaignData.targetUrl || '#'}" style="background: #FF6B6B; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Shop Now</a>
+                <a href="${campaignData.targetUrl}" style="background: #FF6B6B; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Shop Now</a>
               </div>
+              ` : ''}
             </div>
           </div>
         `
@@ -2136,9 +2147,17 @@ function getFallbackTemplate(templateType, campaignData) {
           <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; padding: 20px;">
             <h2 style="color: #333;">${campaignData.purpose}</h2>
             <p style="color: #666; line-height: 1.6;">We're excited to share ${campaignData.purpose.toLowerCase()} with you.</p>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${campaignData.targetUrl || '#'}" style="background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Learn More</a>
+            ${campaignData.productService ? `
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <h3 style="color: #333; margin-top: 0;">About ${campaignData.productService}</h3>
+              <p style="color: #666; margin: 0;">${campaignData.productService} provides professional solutions for your needs.</p>
             </div>
+            ` : ''}
+            ${campaignData.targetUrl ? `
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${campaignData.targetUrl}" style="background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Learn More</a>
+            </div>
+            ` : ''}
             <p style="color: #666;">Best regards,<br>${campaignData.businessName || 'Our Team'}</p>
           </div>
         `
