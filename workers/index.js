@@ -1798,28 +1798,29 @@ Email Details:
 
 IMPORTANT: Only include content for fields that have actual values. Do not create placeholder or example content.
 
-${selectedTemplate === 'modern-promo' ? `Create a MODERN PROMOTIONAL email with this EXACT structure:
-- Gradient header with business name and tagline
-- Main headline section
-- Key benefits list in styled boxes
-- Prominent CTA button with gradient background
-- Professional footer
+${selectedTemplate === 'modern-promo' ? `Create a MODERN PROMOTIONAL email:
+- If business name provided: gradient header with business name and purpose
+- If product/service provided: detailed product section with benefits
+- If target URL provided: prominent CTA button
+- Always include: professional footer
+- Adapt complexity based on available information
 Use blue-purple gradients, modern fonts, and sleek styling.` : ''}
 
-${selectedTemplate === 'newsletter' ? `Create a NEWSLETTER email with this EXACT structure:
-- Header with newsletter title
-- Featured content sections with article previews
-- Multi-column layout for different topics
-- "Read More" links
-- Subscription management footer
+${selectedTemplate === 'newsletter' ? `Create a NEWSLETTER email:
+- If business name provided: header with business name
+- If product/service provided: featured content section
+- If target URL provided: "Read More" link
+- Always include: clean professional layout
+- Adapt content based on available information
 Use green-blue accents and clean professional layout.` : ''}
 
-${selectedTemplate === 'ecommerce' ? `Create an E-COMMERCE email with this EXACT structure:
-- Clean header with business name
-- Product/service description (text only, no images)
-- Call-to-action button (only if target URL provided)
-- Professional footer
-Use orange-red gradients and product-focused design. NO IMAGES OR PLACEHOLDERS.` : ''}
+${selectedTemplate === 'ecommerce' ? `Create an E-COMMERCE email:
+- If business name provided: header with business name
+- If product/service provided: detailed product description
+- If target URL provided: "Shop Now" button
+- Always include: product-focused design
+- Adapt content richness based on available information
+Use orange-red gradients and product-focused design.` : ''}
 
 ${selectedTemplate === 'event' ? `Create an EVENT INVITATION email with this EXACT structure:
 - Celebration header with party elements
@@ -1867,13 +1868,17 @@ Generate ONLY:
 
 CRITICAL REQUIREMENTS:
 - Use ONLY the actual data provided above
-- Do NOT create any placeholder content, example products, or fake information
+- Adapt the template complexity based on available information
+- If user provides detailed information, create rich content
+- If user provides minimal information, create simple, clean content
+- Do NOT create placeholder content, example products, or fake information
 - Do NOT include any images, image placeholders, or broken image references
 - Do NOT add any virtual buttons, links, or content
 - Do NOT create empty sections or blank areas
 - If a field is empty, do NOT include that section in the email
 - Only include real, actionable content based on the provided data
 - Keep the email compact and focused on actual content
+- Be flexible and adaptive to the amount of information provided
 
 Format your response as:
 SUBJECT: [subject line here]
@@ -2056,7 +2061,7 @@ function getFallbackTemplate(templateType, campaignData) {
               
               ${campaignData.productService ? `
               <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="color: #333; margin-top: 0;">About ${campaignData.productService}:</h3>
+                <h3 style="color: #333; margin-top: 0;">About ${campaignData.productService}</h3>
                 <p style="color: #666; line-height: 1.6; margin: 0;">${campaignData.productService} offers professional quality and comprehensive support to help you achieve your goals.</p>
               </div>
               ` : ''}
