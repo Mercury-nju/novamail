@@ -1786,105 +1786,47 @@ async function handleAIGenerateEmail(request, env) {
       // 使用 AI 生成内容
       console.log('Using AI generation with DashScope API');
       
-      const aiPrompt = `You are an expert email marketing writer. Generate ONLY the email content, no instructions or explanations.
+      const aiPrompt = `You are an expert email marketing writer with deep understanding of professional email design. Create a sophisticated, intelligent email that adapts perfectly to the available information.
 
-Email Details:
+Available Information:
 - Purpose: ${campaignData.purpose}
-- Business: ${campaignData.businessName || ''}
-- Product/Service: ${campaignData.productService || ''}
-- Target URL: ${campaignData.targetUrl || ''}
-- Tone: ${toneStyle || 'professional'}
+- Business Name: ${campaignData.businessName || 'Not provided'}
+- Product/Service: ${campaignData.productService || 'Not provided'}
+- Target URL: ${campaignData.targetUrl || 'Not provided'}
+- Tone Style: ${toneStyle || 'professional'}
 - Template Style: ${selectedTemplate || 'general'}
 
-IMPORTANT: Only include content for fields that have actual values. Do not create placeholder or example content.
+INTELLIGENT ADAPTATION RULES:
+1. Analyze what information is available and create content accordingly
+2. If information is rich, create a comprehensive, detailed email
+3. If information is minimal, create a clean, focused email
+4. Use the template style as a design guide, not a rigid structure
+5. Be creative and professional in your approach
+6. Make every element meaningful and purposeful
 
-${selectedTemplate === 'modern-promo' ? `Create a MODERN PROMOTIONAL email:
-- If business name provided: gradient header with business name and purpose
-- If product/service provided: detailed product section with benefits
-- If target URL provided: prominent CTA button
-- Always include: professional footer
-- Adapt complexity based on available information
-Use blue-purple gradients, modern fonts, and sleek styling.` : ''}
+DESIGN INTELLIGENCE:
+- For ${selectedTemplate}: Use appropriate color schemes, layouts, and styling
+- Create engaging subject lines that match the purpose
+- Design HTML that looks professional and modern
+- Ensure responsive design principles
+- Use gradients, shadows, and modern CSS where appropriate
 
-${selectedTemplate === 'newsletter' ? `Create a NEWSLETTER email:
-- If business name provided: header with business name
-- If product/service provided: featured content section
-- If target URL provided: "Read More" link
-- Always include: clean professional layout
-- Adapt content based on available information
-Use green-blue accents and clean professional layout.` : ''}
-
-${selectedTemplate === 'ecommerce' ? `Create an E-COMMERCE email:
-- If business name provided: header with business name
-- If product/service provided: detailed product description
-- If target URL provided: "Shop Now" button
-- Always include: product-focused design
-- Adapt content richness based on available information
-Use orange-red gradients and product-focused design.` : ''}
-
-${selectedTemplate === 'event' ? `Create an EVENT INVITATION email with this EXACT structure:
-- Celebration header with party elements
-- Event details (date, time, location)
-- RSVP button prominently displayed
-- Event highlights and agenda
-- Festive footer with contact info
-Use pink-purple gradients and celebration theme.` : ''}
-
-${selectedTemplate === 'announcement' ? `Create an ANNOUNCEMENT email with this EXACT structure:
-- Formal header with clear title
-- Structured announcement content
-- Key points in organized sections
-- Call-to-action for more information
-- Professional signature
-Use indigo-blue colors and formal layout.` : ''}
-
-${selectedTemplate === 'welcome' ? `Create a WELCOME email with this EXACT structure:
-- Warm welcome header
-- Personalized greeting
-- Service description (text only, no images or features)
-- Help link (only if target URL provided)
-- Warm closing
-Use yellow-orange gradients and friendly tone. NO IMAGES OR FEATURE PLACEHOLDERS.` : ''}
-
-${selectedTemplate === 'survey' ? `Create a SURVEY email with this EXACT structure:
-- Survey introduction header
-- Survey questions or form elements
-- Data collection focus
-- Incentives for participation
-- Analytics and feedback footer
-Use teal-cyan colors and analytical design.` : ''}
-
-${selectedTemplate === 'thank-you' ? `Create a THANK YOU email with this EXACT structure:
-- Gratitude header with appreciation message
-- Thank you content with personal touch
-- Follow-up information
-- Additional resources or offers
-- Warm closing with contact info
-Use rose-pink gradients and warm design.` : ''}
+CONTENT INTELLIGENCE:
+- Write compelling copy that serves the purpose
+- Create natural, engaging language
+- Include relevant calls-to-action when appropriate
+- Make the email feel personal and authentic
+- Ensure all content is actionable and valuable
 
 Generate ONLY:
-1. Subject line (clean text, no markdown)
-2. Email body (clean HTML, no markdown symbols)
-
-CRITICAL REQUIREMENTS:
-- Use ONLY the actual data provided above
-- Adapt the template complexity based on available information
-- If user provides detailed information, create rich content
-- If user provides minimal information, create simple, clean content
-- Do NOT create placeholder content, example products, or fake information
-- Do NOT include any images, image placeholders, or broken image references
-- Do NOT add any virtual buttons, links, or content
-- Do NOT create empty sections or blank areas
-- If a field is empty, do NOT include that section in the email
-- Only include real, actionable content based on the provided data
-- Keep the email compact and focused on actual content
-- Be flexible and adaptive to the amount of information provided
+1. Subject line (compelling and relevant)
+2. Email body (professional HTML with modern styling)
 
 Format your response as:
 SUBJECT: [subject line here]
 BODY: [HTML email body here]
 
-Do not include any instructions, explanations, or markdown formatting. Only provide the subject and body content.`;
+Be intelligent, creative, and professional. Create an email that truly serves its purpose.`;
 
       console.log('Sending request to DashScope API with key:', env.DASHSCOPE_API_KEY ? 'Key present' : 'Key missing');
       console.log('AI Prompt for template:', selectedTemplate);
@@ -2042,51 +1984,75 @@ Do not include any instructions, explanations, or markdown formatting. Only prov
 
 // 获取备用模板函数
 function getFallbackTemplate(templateType, campaignData) {
-  const baseSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
+  // 智能分析可用信息
+  const hasBusinessName = campaignData.businessName && campaignData.businessName.trim() !== '';
+  const hasProductService = campaignData.productService && campaignData.productService.trim() !== '';
+  const hasTargetUrl = campaignData.targetUrl && campaignData.targetUrl.trim() !== '';
+  const hasPurpose = campaignData.purpose && campaignData.purpose.trim() !== '';
+  
+  // 根据信息丰富度决定模板复杂度
+  const isRichContent = hasBusinessName && hasProductService && hasTargetUrl;
+  const isMinimalContent = !hasBusinessName && !hasProductService && !hasTargetUrl;
+  
+  const baseSubject = hasPurpose ? campaignData.purpose : 'Important Update';
   
   switch (templateType) {
     case 'modern-promo':
       return {
         subject: baseSubject,
         body: `
-          <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
-              ${campaignData.businessName ? `<h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700;">${campaignData.businessName}</h1>` : ''}
-              <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">${campaignData.purpose}</p>
+          <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: ${isRichContent ? '40px' : '30px'}; text-align: center;">
+              ${hasBusinessName ? `<h1 style="margin: 0; font-size: ${isRichContent ? '32px' : '28px'}; font-weight: 300;">${campaignData.businessName}</h1>` : ''}
+              ${hasPurpose ? `<p style="margin: ${hasBusinessName ? '15px' : '0'} 0 0 0; font-size: ${isRichContent ? '18px' : '16px'}; opacity: 0.9;">${campaignData.purpose}</p>` : ''}
             </div>
             
-            <div style="padding: 40px 30px;">
-              <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">${campaignData.purpose}</h2>
-              <p style="color: #6b7280; line-height: 1.6; margin: 0 0 30px 0; font-size: 16px;">We're excited to share ${campaignData.purpose.toLowerCase()} with you.</p>
+            <div style="padding: ${isRichContent ? '50px' : '40px'} ${isRichContent ? '40px' : '30px'};">
+              ${hasPurpose ? `<h2 style="color: #333; margin-bottom: 20px; font-size: ${isRichContent ? '28px' : '24px'};">${campaignData.purpose}</h2>` : ''}
               
-              ${campaignData.productService ? `
-              <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="color: #333; margin-top: 0;">About ${campaignData.productService}</h3>
-                <p style="color: #666; line-height: 1.6; margin: 0;">${campaignData.productService} offers professional quality and comprehensive support to help you achieve your goals.</p>
+              ${isRichContent ? `
+              <p style="color: #666; line-height: 1.6; font-size: 16px; margin-bottom: 30px;">
+                We're excited to share ${campaignData.purpose.toLowerCase()} with you. This comprehensive update includes everything you need to know.
+              </p>
+              ` : hasPurpose ? `
+              <p style="color: #666; line-height: 1.6; font-size: 16px; margin-bottom: 30px;">
+                ${campaignData.purpose}
+              </p>
+              ` : ''}
+              
+              ${hasProductService ? `
+              <div style="background: #f8f9ff; border-left: 4px solid #667eea; padding: ${isRichContent ? '25px' : '20px'}; margin: 30px 0;">
+                <h3 style="color: #333; margin-top: 0; font-size: ${isRichContent ? '22px' : '20px'};">${campaignData.productService}</h3>
+                <p style="color: #666; line-height: 1.6; margin: 0;">
+                  ${isRichContent ? `${campaignData.productService} provides comprehensive professional solutions tailored to your specific needs.` : `${campaignData.productService} provides professional solutions for your needs.`}
+                </p>
               </div>
               ` : ''}
               
-              ${campaignData.targetUrl ? `
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${campaignData.targetUrl}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; font-size: 16px;">Learn More</a>
+              ${hasTargetUrl ? `
+              <div style="text-align: center; margin: ${isRichContent ? '50px' : '40px'} 0;">
+                <a href="${campaignData.targetUrl}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: ${isRichContent ? '18px 36px' : '15px 30px'}; text-decoration: none; border-radius: 8px; font-weight: 500; display: inline-block; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); font-size: ${isRichContent ? '16px' : '14px'};">${isRichContent ? 'Explore Now' : 'Learn More'}</a>
               </div>
               ` : ''}
               
-              ${campaignData.businessName ? `
-              <p style="color: #666; line-height: 1.6;">
-                Thank you for your interest. ${campaignData.businessName} is here to help you succeed.
-              </p>
+              ${hasBusinessName && isRichContent ? `
+              <div style="background: #f8f9ff; padding: 25px; border-radius: 8px; margin: 30px 0;">
+                <h3 style="color: #333; margin-top: 0;">About ${campaignData.businessName}</h3>
+                <p style="color: #666; line-height: 1.6; margin: 0;">
+                  ${campaignData.businessName} is committed to providing excellent service and innovative solutions that drive real results.
+                </p>
+              </div>
               ` : ''}
-            </div>
-            
-            <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
-              <p>Best regards,<br>
-              <strong>${campaignData.businessName || 'Our Team'}</strong></p>
-              ${campaignData.businessName ? `
-              <p style="margin-top: 20px; font-size: 12px;">
-                This email was sent by ${campaignData.businessName}
-              </p>
-              ` : ''}
+              
+              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                <p>Best regards,<br>
+                <strong>${hasBusinessName ? campaignData.businessName : 'Our Team'}</strong></p>
+                ${hasBusinessName ? `
+                <p style="margin-top: 20px; font-size: 12px;">
+                  This email was sent by ${campaignData.businessName}
+                </p>
+                ` : ''}
+              </div>
             </div>
           </div>
         `
@@ -2097,36 +2063,43 @@ function getFallbackTemplate(templateType, campaignData) {
         subject: baseSubject,
         body: `
           <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
-            <div style="background: #4CAF50; color: white; padding: 20px; text-align: center;">
-              ${campaignData.businessName ? `<h1 style="margin: 0; font-size: 24px;">${campaignData.businessName}</h1>` : ''}
-              <p style="margin: 5px 0 0 0; font-size: 14px;">Newsletter</p>
+            <div style="background: #4CAF50; color: white; padding: ${isRichContent ? '25px' : '20px'}; text-align: center;">
+              ${hasBusinessName ? `<h1 style="margin: 0; font-size: ${isRichContent ? '28px' : '24px'};">${campaignData.businessName}</h1>` : ''}
+              <p style="margin: ${hasBusinessName ? '8px' : '5px'} 0 0 0; font-size: 14px;">Newsletter</p>
             </div>
             
-            <div style="padding: 30px 0;">
-              <h2 style="color: #333; margin-bottom: 20px;">${campaignData.purpose}</h2>
+            <div style="padding: ${isRichContent ? '40px' : '30px'} 0;">
+              ${hasPurpose ? `<h2 style="color: #333; margin-bottom: 20px; font-size: ${isRichContent ? '26px' : '22px'};">${campaignData.purpose}</h2>` : ''}
+              
+              ${isRichContent ? `
+              <p style="color: #666; line-height: 1.6; margin-bottom: 25px; font-size: 16px;">
+                Welcome to our latest newsletter! We're excited to share ${campaignData.purpose.toLowerCase()} with you. This edition is packed with valuable insights and updates.
+              </p>
+              ` : hasPurpose ? `
               <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
                 Welcome to our latest newsletter! We're excited to share ${campaignData.purpose.toLowerCase()} with you.
               </p>
+              ` : ''}
               
-              ${campaignData.productService ? `
-              <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="color: #2e7d32; margin-top: 0;">Featured: ${campaignData.productService}</h3>
+              ${hasProductService ? `
+              <div style="background: #e8f5e8; padding: ${isRichContent ? '25px' : '20px'}; border-radius: 8px; margin: 20px 0;">
+                <h3 style="color: #2e7d32; margin-top: 0; font-size: ${isRichContent ? '20px' : '18px'};">Featured: ${campaignData.productService}</h3>
                 <p style="color: #666; line-height: 1.6;">
-                  Learn more about ${campaignData.productService} and how it can benefit your business.
+                  ${isRichContent ? `Learn more about ${campaignData.productService} and discover how it can transform your business operations.` : `Learn more about ${campaignData.productService} and how it can benefit your business.`}
                 </p>
               </div>
               ` : ''}
               
-              ${campaignData.targetUrl ? `
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${campaignData.targetUrl}" style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">Read More</a>
+              ${hasTargetUrl ? `
+              <div style="text-align: center; margin: ${isRichContent ? '40px' : '30px'} 0;">
+                <a href="${campaignData.targetUrl}" style="background: #4CAF50; color: white; padding: ${isRichContent ? '15px 30px' : '12px 24px'}; text-decoration: none; border-radius: 5px; display: inline-block; font-size: ${isRichContent ? '16px' : '14px'};">${isRichContent ? 'Read Full Article' : 'Read More'}</a>
               </div>
               ` : ''}
             </div>
             
             <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
               <p>Best regards,<br>
-              <strong>${campaignData.businessName || 'Our Team'}</strong></p>
+              <strong>${hasBusinessName ? campaignData.businessName : 'Our Team'}</strong></p>
             </div>
           </div>
         `
@@ -2137,15 +2110,26 @@ function getFallbackTemplate(templateType, campaignData) {
         subject: baseSubject,
         body: `
           <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
-            <div style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; padding: 20px; text-align: center;">
-              ${campaignData.businessName ? `<h1 style="margin: 0; font-size: 24px;">${campaignData.businessName}</h1>` : ''}
+            <div style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; padding: ${isRichContent ? '30px' : '20px'}; text-align: center;">
+              ${hasBusinessName ? `<h1 style="margin: 0; font-size: ${isRichContent ? '28px' : '24px'};">${campaignData.businessName}</h1>` : ''}
+              ${hasPurpose ? `<p style="margin: ${hasBusinessName ? '10px' : '0'} 0 0 0; font-size: ${isRichContent ? '16px' : '14px'}; opacity: 0.9;">${campaignData.purpose}</p>` : ''}
             </div>
-            <div style="padding: 30px;">
-              <h2 style="color: #333; margin-bottom: 20px;">${campaignData.purpose}</h2>
-              <p style="color: #666; line-height: 1.6;">${campaignData.productService ? `Discover ${campaignData.productService} and enjoy special offers.` : 'We have exciting offers for you.'}</p>
-              ${campaignData.targetUrl ? `
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${campaignData.targetUrl}" style="background: #FF6B6B; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Shop Now</a>
+            <div style="padding: ${isRichContent ? '40px' : '30px'};">
+              ${hasPurpose ? `<h2 style="color: #333; margin-bottom: 20px; font-size: ${isRichContent ? '26px' : '22px'};">${campaignData.purpose}</h2>` : ''}
+              
+              ${isRichContent ? `
+              <p style="color: #666; line-height: 1.6; font-size: 16px; margin-bottom: 25px;">
+                Discover ${campaignData.productService} and enjoy exclusive offers. Limited time deals await you!
+              </p>
+              ` : hasProductService ? `
+              <p style="color: #666; line-height: 1.6;">Discover ${campaignData.productService} and enjoy special offers.</p>
+              ` : hasPurpose ? `
+              <p style="color: #666; line-height: 1.6;">We have exciting offers for you.</p>
+              ` : ''}
+              
+              ${hasTargetUrl ? `
+              <div style="text-align: center; margin: ${isRichContent ? '40px' : '30px'} 0;">
+                <a href="${campaignData.targetUrl}" style="background: #FF6B6B; color: white; padding: ${isRichContent ? '18px 36px' : '12px 24px'}; text-decoration: none; border-radius: 5px; font-size: ${isRichContent ? '16px' : '14px'}; font-weight: 500;">${isRichContent ? 'Shop Now - Limited Time!' : 'Shop Now'}</a>
               </div>
               ` : ''}
             </div>
@@ -2157,21 +2141,33 @@ function getFallbackTemplate(templateType, campaignData) {
       return {
         subject: baseSubject,
         body: `
-          <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; padding: 20px;">
-            <h2 style="color: #333;">${campaignData.purpose}</h2>
+          <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; padding: ${isRichContent ? '30px' : '20px'};">
+            ${hasPurpose ? `<h2 style="color: #333; font-size: ${isRichContent ? '26px' : '22px'};">${campaignData.purpose}</h2>` : ''}
+            
+            ${isRichContent ? `
+            <p style="color: #666; line-height: 1.6; font-size: 16px; margin-bottom: 25px;">
+              We're excited to share ${campaignData.purpose.toLowerCase()} with you. This comprehensive update provides all the information you need.
+            </p>
+            ` : hasPurpose ? `
             <p style="color: #666; line-height: 1.6;">We're excited to share ${campaignData.purpose.toLowerCase()} with you.</p>
-            ${campaignData.productService ? `
-            <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
-              <h3 style="color: #333; margin-top: 0;">About ${campaignData.productService}</h3>
-              <p style="color: #666; margin: 0;">${campaignData.productService} provides professional solutions for your needs.</p>
+            ` : ''}
+            
+            ${hasProductService ? `
+            <div style="background: #f8f9fa; padding: ${isRichContent ? '20px' : '15px'}; border-radius: 5px; margin: 20px 0;">
+              <h3 style="color: #333; margin-top: 0; font-size: ${isRichContent ? '20px' : '18px'};">About ${campaignData.productService}</h3>
+              <p style="color: #666; margin: 0; line-height: 1.6;">
+                ${isRichContent ? `${campaignData.productService} provides comprehensive professional solutions tailored to your specific needs.` : `${campaignData.productService} provides professional solutions for your needs.`}
+              </p>
             </div>
             ` : ''}
-            ${campaignData.targetUrl ? `
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${campaignData.targetUrl}" style="background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Learn More</a>
+            
+            ${hasTargetUrl ? `
+            <div style="text-align: center; margin: ${isRichContent ? '40px' : '30px'} 0;">
+              <a href="${campaignData.targetUrl}" style="background: #007bff; color: white; padding: ${isRichContent ? '15px 30px' : '12px 24px'}; text-decoration: none; border-radius: 5px; font-size: ${isRichContent ? '16px' : '14px'};">${isRichContent ? 'Learn More' : 'Learn More'}</a>
             </div>
             ` : ''}
-            <p style="color: #666;">Best regards,<br>${campaignData.businessName || 'Our Team'}</p>
+            
+            <p style="color: #666;">Best regards,<br>${hasBusinessName ? campaignData.businessName : 'Our Team'}</p>
           </div>
         `
       };
