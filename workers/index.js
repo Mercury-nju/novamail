@@ -1730,9 +1730,9 @@ async function handleAIGenerateEmail(request, env) {
               </div>
             </div>
           `;
-          break;
-        default:
-          mockBody = `
+            break;
+          default:
+            mockBody = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
               <h1 style="color: #333; text-align: center;">${campaignData.purpose}</h1>
               <p style="color: #666; line-height: 1.6;">
@@ -1747,10 +1747,10 @@ async function handleAIGenerateEmail(request, env) {
               </p>
             </div>
           `;
-      }
-    } else {
-      // 简单邮件
-      mockBody = `
+        }
+      } else {
+        // 简单邮件
+        mockBody = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <p>Dear Friend,</p>
           <p>We're excited to share ${campaignData.purpose.toLowerCase()} with you.</p>
@@ -1760,8 +1760,8 @@ async function handleAIGenerateEmail(request, env) {
           <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
         </div>
       `;
-    }
-    
+      }
+      
       // 确保返回的内容是纯英文，没有任何中文占位符
       console.log('Returning English-only content:', { subject: mockSubject, template: selectedTemplate });
       
