@@ -1404,15 +1404,15 @@ async function handleAIGenerateEmail(request, env) {
       console.log('No AI API key found, using template-based content');
       
       // 确保所有内容都是英文
-    const mockSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
-    
-    // 根据模板类型生成不同的内容
-    let mockBody = '';
-    
-    if (emailMode === 'professional') {
-      switch (selectedTemplate) {
-        case 'modern-promo':
-          mockBody = `
+      const mockSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
+      
+      // 根据模板类型生成不同的内容
+      let mockBody = '';
+      
+      if (emailMode === 'professional') {
+        switch (selectedTemplate) {
+          case 'modern-promo':
+            mockBody = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
               <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
                 <h1 style="margin: 0; font-size: 28px;">${campaignData.purpose}</h1>
@@ -1454,9 +1454,9 @@ async function handleAIGenerateEmail(request, env) {
               </div>
             </div>
           `;
-          break;
-        case 'newsletter':
-          mockBody = `
+            break;
+          case 'newsletter':
+            mockBody = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
               <div style="background: #4CAF50; color: white; padding: 20px; text-align: center; border-radius: 8px;">
                 <h1 style="margin: 0; font-size: 24px;">${campaignData.businessName || 'Newsletter'}</h1>
@@ -1487,9 +1487,9 @@ async function handleAIGenerateEmail(request, env) {
               </div>
             </div>
           `;
-          break;
-        case 'ecommerce':
-          mockBody = `
+            break;
+          case 'ecommerce':
+            mockBody = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
               <div style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; padding: 20px; text-align: center; border-radius: 8px;">
                 <h1 style="margin: 0; font-size: 24px;">${campaignData.businessName || 'Shop Now'}</h1>
