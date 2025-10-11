@@ -156,84 +156,156 @@ export default function RegisterPage() {
   // Verification page
   if (step === 'verify') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center"
-          >
-            <SparklesIcon className="mx-auto h-12 w-auto text-primary-600" />
-            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-              Verify Your Email
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              We've sent a 6-digit verification code to <strong>{formData.email}</strong>
-            </p>
-            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm text-green-800">
-                <strong>Check your email:</strong> We've sent a 6-digit verification code to your email address.
+      <div className="min-h-screen bg-gradient-to-br from-slate-50/30 via-transparent to-blue-50/20 relative overflow-hidden backdrop-blur-sm">
+        {/* Enhanced Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Main floating blobs */}
+          <motion.div 
+            className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-primary-200/60 to-primary-300/40 rounded-full mix-blend-multiply filter blur-2xl opacity-80 backdrop-blur-sm"
+            animate={{
+              scale: [1, 1.3, 1],
+              rotate: [0, 180, 360],
+              opacity: [0.8, 1, 0.8],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div 
+            className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-200/60 to-purple-300/40 rounded-full mix-blend-multiply filter blur-2xl opacity-80 backdrop-blur-sm"
+            animate={{
+              scale: [1.3, 1, 1.3],
+              rotate: [360, 180, 0],
+              opacity: [0.8, 1, 0.8],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          
+          {/* Floating particles */}
+          {[...Array(12)].map((_, i) => (
+            <motion.div
+              key={`particle-${i}`}
+              className="absolute w-2 h-2 bg-primary-300 rounded-full opacity-60"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -100, 0],
+                x: [0, Math.random() * 50 - 25, 0],
+                scale: [1, 1.5, 1],
+                opacity: [0.6, 0.1, 0.6],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="relative z-10 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 min-h-screen">
+          <div className="max-w-md w-full space-y-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center"
+            >
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="mx-auto h-12 w-12 bg-gradient-to-br from-primary-600 via-primary-700 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl mb-6"
+              >
+                <motion.svg 
+                  className="h-7 w-7 text-white" 
+                  fill="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </motion.svg>
+              </motion.div>
+              <h2 className="text-3xl font-extrabold text-gray-900">
+                Verify Your Email
+              </h2>
+              <p className="mt-2 text-sm text-gray-600">
+                We've sent a 6-digit verification code to <strong>{formData.email}</strong>
               </p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-8 space-y-6"
-          >
-            <div>
-              <label htmlFor="verificationCode" className="block text-sm font-medium text-gray-700">
-                Verification Code
-              </label>
-              <input
-                id="verificationCode"
-                name="verificationCode"
-                type="text"
-                maxLength={6}
-                required
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
-                className="mt-1 input-field text-center text-2xl font-mono tracking-widest"
-                placeholder="000000"
-                autoComplete="one-time-code"
-              />
-            </div>
-
-            <div className="space-y-3">
-              <button
-                type="button"
-                onClick={handleVerifyAndRegister}
-                disabled={isLoading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="mt-4 p-4 bg-green-100/80 backdrop-blur-sm border border-green-400/50 text-green-800 rounded-xl"
               >
-                {isLoading ? 'Verifying...' : 'Verify & Create Account'}
-              </button>
+                <p className="text-sm">
+                  <strong>Check your email:</strong> We've sent a 6-digit verification code to your email address.
+                </p>
+              </motion.div>
+            </motion.div>
 
-              <button
-                type="button"
-                onClick={() => setStep('form')}
-                className="flex items-center justify-center w-full py-2 px-4 text-sm font-medium text-gray-600 hover:text-gray-900"
-              >
-                <ArrowLeftIcon className="mr-2 h-4 w-4" />
-                Back to registration
-              </button>
+            <div className="mt-8 space-y-6">
+              <div className="bg-white/20 backdrop-blur-md py-10 px-8 shadow-2xl rounded-2xl border border-white/30">
+                <div>
+                  <label htmlFor="verificationCode" className="block text-sm font-medium text-gray-800 mb-2">
+                    Verification Code
+                  </label>
+                  <input
+                    id="verificationCode"
+                    name="verificationCode"
+                    type="text"
+                    maxLength={6}
+                    required
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
+                    className="w-full px-4 py-3 bg-white/30 backdrop-blur-sm border border-white/40 rounded-xl text-center text-2xl font-mono tracking-widest placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-300"
+                    placeholder="000000"
+                    autoComplete="one-time-code"
+                  />
+                </div>
 
-              <button
-                type="button"
-                onClick={handleResendCode}
-                disabled={isResending}
-                className="w-full text-sm text-primary-600 hover:text-primary-500 disabled:opacity-50"
-              >
-                {isResending ? 'Sending...' : "Didn't receive code? Resend"}
-              </button>
+                <div className="space-y-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={handleVerifyAndRegister}
+                    disabled={isLoading}
+                    className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-primary-600 via-primary-700 to-purple-600 hover:from-primary-700 hover:via-primary-800 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-xl"
+                  >
+                    {isLoading ? 'Verifying...' : 'Verify & Create Account'}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setStep('form')}
+                    className="flex items-center justify-center w-full py-2 px-4 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-300"
+                  >
+                    <ArrowLeftIcon className="mr-2 h-4 w-4" />
+                    Back to registration
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleResendCode}
+                    disabled={isResending}
+                    className="w-full text-sm text-primary-600 hover:text-primary-500 disabled:opacity-50 transition-colors duration-300"
+                  >
+                    {isResending ? 'Sending...' : "Didn't receive code? Resend"}
+                  </button>
+                </div>
+              </div>
             </div>
-          </motion.div>
 
-          <div className="text-center text-xs text-gray-500">
-            Code expires in 10 minutes
+            <div className="text-center text-sm text-gray-500">
+              Code expires in 10 minutes
+            </div>
           </div>
         </div>
       </div>
@@ -252,34 +324,90 @@ export default function RegisterPage() {
   const isPasswordValid = passwordRequirements.every(req => req.met)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center"
-        >
-          <SparklesIcon className="mx-auto h-12 w-auto text-primary-600" />
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Join NovaMail and start your email marketing journey
-          </p>
-        </motion.div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50/30 via-transparent to-blue-50/20 relative overflow-hidden backdrop-blur-sm">
+      {/* Enhanced Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Main floating blobs */}
+        <motion.div 
+          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-primary-200/60 to-primary-300/40 rounded-full mix-blend-multiply filter blur-2xl opacity-80 backdrop-blur-sm"
+          animate={{
+            scale: [1, 1.3, 1],
+            rotate: [0, 180, 360],
+            opacity: [0.8, 1, 0.8],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div 
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-200/60 to-purple-300/40 rounded-full mix-blend-multiply filter blur-2xl opacity-80 backdrop-blur-sm"
+          animate={{
+            scale: [1.3, 1, 1.3],
+            rotate: [360, 180, 0],
+            opacity: [0.8, 1, 0.8],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        
+        {/* Floating particles */}
+        {[...Array(12)].map((_, i) => (
+          <motion.div
+            key={`particle-${i}`}
+            className="absolute w-2 h-2 bg-primary-300 rounded-full opacity-60"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -100, 0],
+              x: [0, Math.random() * 50 - 25, 0],
+              scale: [1, 1.5, 1],
+              opacity: [0.6, 0.1, 0.6],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
 
-        <motion.form
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-8 space-y-6"
-          onSubmit={(e) => { e.preventDefault(); handleSendVerification() }}
-        >
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+      <div className="relative z-10 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 min-h-screen">
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <div className="mx-auto h-12 w-12 bg-gradient-to-br from-primary-600 via-primary-700 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl mb-8">
+              <svg 
+                className="h-7 w-7 text-white" 
+                fill="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            </div>
+            <h2 className="text-3xl font-extrabold text-gray-900">
+              Create your account
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Join NovaMail and start your email marketing journey
+            </p>
+          </div>
+
+          <form
+            className="mt-8 space-y-6"
+            onSubmit={(e) => { e.preventDefault(); handleSendVerification() }}
+          >
+            <div className="bg-white/20 backdrop-blur-md py-10 px-8 shadow-2xl rounded-2xl border border-white/30">
+              <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-800 mb-2">
                   First Name
                 </label>
                 <input
@@ -290,12 +418,12 @@ export default function RegisterPage() {
                   required
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="mt-1 input-field"
+                  className="w-full px-4 py-3 bg-white/30 backdrop-blur-sm border border-white/40 rounded-xl placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-300"
                   placeholder="John"
                 />
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-800 mb-2">
                   Last Name
                 </label>
                 <input
@@ -306,14 +434,14 @@ export default function RegisterPage() {
                   required
                   value={formData.lastName}
                   onChange={handleChange}
-                  className="mt-1 input-field"
+                  className="w-full px-4 py-3 bg-white/30 backdrop-blur-sm border border-white/40 rounded-xl placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-300"
                   placeholder="Doe"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-800 mb-2">
                 Email Address
               </label>
               <input
@@ -324,16 +452,16 @@ export default function RegisterPage() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="mt-1 input-field"
+                className="w-full px-4 py-3 bg-white/30 backdrop-blur-sm border border-white/40 rounded-xl placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-300"
                 placeholder="john@example.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-800 mb-2">
                 Password
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
+              <div className="relative">
                 <input
                   id="password"
                   name="password"
@@ -342,14 +470,14 @@ export default function RegisterPage() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="input-field pr-10"
+                  className="w-full px-4 py-3 pr-12 bg-white/30 backdrop-blur-sm border border-white/40 rounded-xl placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-300"
                   placeholder="Create a strong password"
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                    className="text-gray-500 hover:text-gray-700 focus:outline-none transition-colors duration-300"
                   >
                     {showPassword ? (
                       <EyeSlashIcon className="h-5 w-5" aria-hidden="true" />
@@ -361,10 +489,10 @@ export default function RegisterPage() {
               </div>
               
               {formData.password && (
-                <div className="mt-2 space-y-1">
+                <div className="mt-2 space-y-2">
                   {passwordRequirements.map((req, index) => (
-                    <div key={index} className={`flex items-center text-xs ${req.met ? 'text-green-600' : 'text-red-500'}`}>
-                      <CheckIcon className={`mr-2 h-3 w-3 ${req.met ? 'text-green-500' : 'text-red-400'}`} />
+                    <div key={index} className={`flex items-center text-sm ${req.met ? 'text-green-600' : 'text-red-500'}`}>
+                      <CheckIcon className={`mr-2 h-4 w-4 ${req.met ? 'text-green-500' : 'text-red-400'}`} />
                       {req.label}
                     </div>
                   ))}
@@ -373,7 +501,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="company" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="company" className="block text-sm font-medium text-gray-800 mb-2">
                 Company (Optional)
               </label>
               <input
@@ -383,55 +511,52 @@ export default function RegisterPage() {
                 autoComplete="organization"
                 value={formData.company}
                 onChange={handleChange}
-                className="mt-1 input-field"
+                className="w-full px-4 py-3 bg-white/30 backdrop-blur-sm border border-white/40 rounded-xl placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-300"
                 placeholder="Acme Inc."
               />
             </div>
-          </div>
+            </div>
 
-          <div className="flex items-center">
-            <input
-              id="acceptTerms"
-              name="acceptTerms"
-              type="checkbox"
-              checked={formData.acceptTerms}
-              onChange={handleChange}
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-            />
-            <label htmlFor="acceptTerms" className="ml-2 block text-sm text-gray-900">
-              I agree to the{' '}
-              <Link href="/terms" className="text-primary-600 hover:text-primary-500">
-                Terms of Service
-              </Link>{' '}
-              and{' '}
-              <Link href="/privacy" className="text-primary-600 hover:text-primary-500">
-                Privacy Policy
-              </Link>
-            </label>
-          </div>
+            <div className="flex items-center mt-6">
+              <input
+                id="acceptTerms"
+                name="acceptTerms"
+                type="checkbox"
+                checked={formData.acceptTerms}
+                onChange={handleChange}
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-white/40 rounded bg-white/30 backdrop-blur-sm"
+              />
+              <label htmlFor="acceptTerms" className="ml-2 block text-sm text-gray-800">
+                I agree to the{' '}
+                <Link href="/terms" className="text-primary-600 hover:text-primary-500 transition-colors duration-300">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link href="/privacy" className="text-primary-600 hover:text-primary-500 transition-colors duration-300">
+                  Privacy Policy
+                </Link>
+              </label>
+            </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading || !formData.acceptTerms || !isPasswordValid || !formData.email || !formData.firstName || !formData.lastName}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Sending verification code...' : 'Send Verification Code'}
-            </button>
-          </div>
-        </motion.form>
+            <div className="mt-6">
+              <button
+                type="submit"
+                disabled={isLoading || !formData.acceptTerms || !isPasswordValid || !formData.email || !formData.firstName || !formData.lastName}
+                className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-primary-600 via-primary-700 to-purple-600 hover:from-primary-700 hover:via-primary-800 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-xl"
+              >
+                {isLoading ? 'Sending verification code...' : 'Send Verification Code'}
+              </button>
+            </div>
+            </div>
+          </form>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-6 text-center text-sm text-gray-500"
-        >
-          Already have an account?{' '}
-          <Link href="/login" className="font-medium text-primary-600 hover:text-primary-500">
-            Sign in
-          </Link>
-        </motion.div>
+          <div className="mt-8 text-center text-sm text-gray-700">
+            Already have an account?{' '}
+            <Link href="/login" className="font-medium text-primary-600 hover:text-primary-500 transition-colors duration-300">
+              Sign in
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )
