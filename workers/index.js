@@ -3623,7 +3623,7 @@ async function handleGoogleCallback(request, env) {
 
     // 1. 交换授权码获取访问令牌
     const clientId = env.GOOGLE_CLIENT_ID || '3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com'
-    const clientSecret = env.GOOGLE_CLIENT_SECRET || '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5tU'
+    const clientSecret = env.GOOGLE_CLIENT_SECRET || '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'
     
     console.log('Exchanging authorization code:', { 
       code: code.substring(0, 10) + '...', 
