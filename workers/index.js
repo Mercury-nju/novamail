@@ -74,6 +74,8 @@ export default {
         return await handleTestUserSave(request, env);
       } else if (path.startsWith('/api/test-kv-simple')) {
         return await handleTestKVSimple(request, env);
+      } else if (path.startsWith('/api/test-version')) {
+        return await handleTestVersion(request, env);
       } else if (path.startsWith('/api/creem/test')) {
         return await handleCreemTest(request, env);
       } else if (path.startsWith('/api/creem/webhook-test')) {
@@ -4130,6 +4132,34 @@ async function handleAnalytics(request, env) {
     headers: corsHeaders
   });
 };
+
+// 版本测试函数
+async function handleTestVersion(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  return new Response(JSON.stringify({
+    success: true,
+    version: '2.0.0',
+    timestamp: new Date().toISOString(),
+    message: 'Updated version with user existence check fix',
+    features: {
+      userExistenceCheck: true,
+      kvStorage: !!env.USERS_KV,
+      gmailAPI: true
+    }
+  }), {
+    headers: corsHeaders
+  });
+}
 
 // 简单 KV 测试函数
 async function handleTestKVSimple(request, env) {
