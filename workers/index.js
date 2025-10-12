@@ -1214,14 +1214,20 @@ async function handleCampaignSend(request, env) {
         `
       };
 
-      // 使用用户 SMTP 配置发送邮件
+      // 发送邮件
       try {
-        console.log('Sending via user SMTP:', userEmailConfig.email);
+        console.log('Sending email to:', recipient);
         
-        // 使用 Resend API 发送邮件（支持自定义 SMTP）
-        const response = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
+        let response;
+        
+        if (userEmailConfig?.isConfigured) {
+          // 使用用户 SMTP 配置发送邮件
+          console.log('Sending via user SMTP:', userEmailConfig.email);
+          
+          // 使用 Resend API 发送邮件（支持自定义 SMTP）
+          response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
             'Authorization': `Bearer ${env.RESEND_API_KEY}`,
             'Content-Type': 'application/json'
           },
@@ -1234,20 +1240,58 @@ async function handleCampaignSend(request, env) {
           })
         });
 
-        const result = await response.json();
-        
-        sentEmails.push({
-          recipient: recipient,
-          status: response.ok ? 'sent' : 'failed',
-          method: 'user_smtp_resend',
-          messageId: result.id,
-          timestamp: new Date().toISOString()
-        });
+          const result = await response.json();
+          
+          if (response.ok) {
+            sentEmails.push({
+              recipient: recipient,
+              status: 'sent',
+              method: 'user_smtp_resend',
+              messageId: result.id,
+              timestamp: new Date().toISOString()
+            });
+          } else {
+            throw new Error(`Resend API error: ${result.message || 'Unknown error'}`);
+          }
+        } else {
+          // 使用 NovaMail 默认发送服务
+          console.log('Sending via NovaMail default service');
+          
+          response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              from: 'NovaMail <noreply@novamail.world>',
+              to: [recipient],
+              subject: campaignData.subject || 'Email Campaign',
+              html: emailData.html,
+              reply_to: 'support@novamail.world'
+            })
+          });
+
+          const result = await response.json();
+          
+          if (response.ok) {
+            sentEmails.push({
+              recipient: recipient,
+              status: 'sent',
+              method: 'novamail_default',
+              messageId: result.id,
+              timestamp: new Date().toISOString()
+            });
+          } else {
+            throw new Error(`Resend API error: ${result.message || 'Unknown error'}`);
+          }
+        }
       } catch (error) {
+        console.error('Email sending failed:', error);
         sentEmails.push({
           recipient: recipient,
           status: 'failed',
-          method: 'user_smtp_resend',
+          method: userEmailConfig?.isConfigured ? 'user_smtp_resend' : 'novamail_default',
           error: error.message,
           timestamp: new Date().toISOString()
         });
@@ -1283,6 +1327,32 @@ async function handleCampaignSend(request, env) {
       }
     } catch (error) {
       console.error('Failed to save campaign record:', error);
+    }
+
+    // 更新用户统计数据
+    try {
+      if (env.USERS_KV && userId) {
+        const userKey = `user_${userId}`;
+        const storedUser = await env.USERS_KV.get(userKey);
+        
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          
+          // 更新用户统计数据
+          user.campaignsCount = (user.campaignsCount || 0) + 1;
+          user.emailsSentThisMonth = (user.emailsSentThisMonth || 0) + sentEmails.filter(email => email.status === 'sent').length;
+          user.updatedAt = new Date().toISOString();
+          
+          // 保存更新后的用户数据
+          await env.USERS_KV.put(userKey, JSON.stringify(user));
+          console.log('User statistics updated:', {
+            campaignsCount: user.campaignsCount,
+            emailsSentThisMonth: user.emailsSentThisMonth
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Failed to update user statistics:', error);
     }
 
     return new Response(JSON.stringify({
@@ -1797,42 +1867,59 @@ async function handleAIGenerateEmail(request, env) {
       // 检测用户输入的语言
       const detectLanguage = (text) => {
         if (!text) return 'en';
-        // 检测中文字符
-        const chineseRegex = /[\u4e00-\u9fff]/;
+        
+        // 检测中文字符（包括简体、繁体、标点符号）
+        const chineseRegex = /[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/;
         const chineseCount = (text.match(chineseRegex) || []).length;
         const totalChars = text.length;
         
-        // 如果中文字符占比超过30%，则认为是中文
-        return chineseCount / totalChars > 0.3 ? 'zh' : 'en';
+        // 如果中文字符占比超过20%，则认为是中文
+        // 或者如果包含常见的中文词汇
+        const chineseWords = ['产品', '服务', '公司', '用户', '客户', '活动', '促销', '发布', '反馈', '维护', '营销', '邮件'];
+        const hasChineseWords = chineseWords.some(word => text.includes(word));
+        
+        return (chineseCount / totalChars > 0.2) || hasChineseWords ? 'zh' : 'en';
       };
 
       const detectedLanguage = detectLanguage(
-        `${campaignData.purpose} ${campaignData.businessName || ''} ${campaignData.productService || ''}`
+        `${campaignData.purpose || ''} ${campaignData.businessName || ''} ${campaignData.productService || ''} ${campaignData.targetAudience || ''} ${campaignData.campaignGoals || ''}`
       );
+      
+      console.log('Detected language:', detectedLanguage, 'for text:', `${campaignData.purpose || ''} ${campaignData.businessName || ''} ${campaignData.productService || ''}`);
 
       const languageInstruction = detectedLanguage === 'zh' 
         ? '请用中文生成邮件内容，保持专业、友好的语调。'
         : 'Please generate email content in English, maintaining a professional and friendly tone.';
 
-      const aiPrompt = `You are an expert email marketing writer with deep understanding of professional email design. Create a sophisticated, intelligent email that adapts perfectly to the available information.
+      const aiPrompt = `You are an expert email marketing writer. Create a personalized email that directly addresses the user's specific needs and goals.
 
 ${languageInstruction}
 
-Available Information:
-- Purpose: ${campaignData.purpose}
+USER'S SPECIFIC REQUIREMENTS:
+- Purpose/Goal: ${campaignData.purpose}
 - Business Name: ${campaignData.businessName || 'Not provided'}
 - Product/Service: ${campaignData.productService || 'Not provided'}
 - Target URL: ${campaignData.targetUrl || 'Not provided'}
+- Target Audience: ${campaignData.targetAudience || 'Not provided'}
+- Campaign Goals: ${campaignData.campaignGoals || 'Not provided'}
 - Tone Style: ${toneStyle || 'professional'}
 - Template Style: ${selectedTemplate || 'general'}
 
-INTELLIGENT ADAPTATION RULES:
-1. Analyze what information is available and create content accordingly
-2. If information is rich, create a comprehensive, detailed email
-3. If information is minimal, create a clean, focused email
-4. Use the template style as a design guide, not a rigid structure
-5. Be creative and professional in your approach
-6. Make every element meaningful and purposeful
+CRITICAL INSTRUCTIONS:
+1. READ the user's purpose/goal carefully - this is what they want to achieve
+2. CREATE content that directly serves their stated purpose, not generic marketing content
+3. USE the business name and product/service information provided by the user
+4. MATCH the language of the user's input - if they wrote in Chinese, respond in Chinese
+5. FOCUS on the specific goal: if it's a product launch, write about the launch; if it's customer feedback, ask for feedback
+6. MAKE the subject line relevant to their actual purpose
+7. INCLUDE a clear call-to-action that helps achieve their stated goal
+8. AVOID generic templates - personalize based on their specific information
+
+EXAMPLES:
+- If purpose is "产品发布会" → Write about the product launch event
+- If purpose is "用户反馈收集" → Ask for user feedback and opinions  
+- If purpose is "促销活动" → Write about the special offer or discount
+- If purpose is "客户维护" → Write about maintaining customer relationships
 
 DESIGN INTELLIGENCE:
 - For ${selectedTemplate}: Use appropriate color schemes, layouts, and styling
