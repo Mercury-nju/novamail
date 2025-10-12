@@ -68,6 +68,8 @@ export default {
         return await handleGoogleCallback(request, env);
       } else if (path.startsWith('/api/test-gmail')) {
         return await handleTestGmail(request, env);
+      } else if (path.startsWith('/api/debug-kv')) {
+        return await handleDebugKV(request, env);
       } else if (path.startsWith('/api/creem/test')) {
         return await handleCreemTest(request, env);
       } else if (path.startsWith('/api/creem/webhook-test')) {
@@ -4095,6 +4097,89 @@ async function handleAnalytics(request, env) {
     headers: corsHeaders
   });
 };
+
+// KV 存储调试函数
+async function handleDebugKV(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const data = await request.json();
+    const email = data.email || 'lihongyangnju@gmail.com';
+    
+    console.log('Debug KV storage for email:', email);
+    
+    // 检查 KV 存储配置
+    const kvStatus = {
+      hasUsersKV: !!env.USERS_KV,
+      hasContactsKV: !!env.CONTACTS_KV,
+      hasCampaignsKV: !!env.CAMPAIGNS_KV
+    };
+    
+    // 尝试获取用户数据
+    let userData = null;
+    let kvError = null;
+    
+    try {
+      if (env.USERS_KV) {
+        const key = `user_${email.toLowerCase()}`;
+        console.log('Looking for key:', key);
+        userData = await env.USERS_KV.get(key);
+        if (userData) {
+          userData = JSON.parse(userData);
+        }
+      }
+    } catch (error) {
+      kvError = error.message;
+      console.error('KV error:', error);
+    }
+    
+    // 列出所有用户键
+    let allUsers = [];
+    try {
+      if (env.USERS_KV) {
+        const list = await env.USERS_KV.list();
+        allUsers = list.keys.map(key => key.name);
+      }
+    } catch (error) {
+      console.error('List users error:', error);
+    }
+    
+    return new Response(JSON.stringify({
+      success: true,
+      debug: {
+        email: email,
+        key: `user_${email.toLowerCase()}`,
+        kvStatus: kvStatus,
+        userData: userData,
+        kvError: kvError,
+        allUsers: allUsers,
+        userCount: allUsers.length
+      }
+    }), {
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    console.error('Debug KV error:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Debug KV failed',
+      details: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
 
 // Gmail API 测试函数
 async function handleTestGmail(request, env) {
