@@ -24,8 +24,8 @@ export default function HomePage() {
 
   const handleGetStarted = () => {
     // Always redirect to login page (no session check in static export)
-    router.push('/login')
-  }
+      router.push('/login')
+    }
 
   // Continuous auto scroll functionality
   useEffect(() => {
@@ -225,12 +225,20 @@ export default function HomePage() {
                   <div className="relative">
                     <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
                       <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        {/* Email envelope */}
-                        <rect x="6" y="8" width="12" height="8" fill="white" rx="1"/>
-                        <path d="M6 8 L12 12 L18 8" stroke="white" strokeWidth="1.5" fill="none"/>
-                        {/* AI sparkle */}
-                        <circle cx="18" cy="6" r="1.5" fill="white" opacity="0.9"/>
-                        <path d="M17 5 L19 5 M18 4 L18 6" stroke="white" strokeWidth="0.8"/>
+                        {/* Paper airplane pointing up-right */}
+                        <path d="M8 12 L16 8 L12 16 L8 12 Z" fill="white"/>
+                        <path d="M12 16 L16 8 L20 14 L12 16 Z" fill="white"/>
+                        {/* Speed lines radiating outward */}
+                        <line x1="12" y1="6" x2="12" y2="4" stroke="white" strokeWidth="1.5" opacity="0.8"/>
+                        <line x1="14" y1="7" x2="15.5" y2="5.5" stroke="white" strokeWidth="1.5" opacity="0.6"/>
+                        <line x1="16" y1="10" x2="18" y2="8" stroke="white" strokeWidth="1.5" opacity="0.4"/>
+                        <line x1="16" y1="14" x2="18" y2="16" stroke="white" strokeWidth="1.5" opacity="0.4"/>
+                        <line x1="14" y1="17" x2="15.5" y2="18.5" stroke="white" strokeWidth="1.5" opacity="0.6"/>
+                        <line x1="12" y1="18" x2="12" y2="20" stroke="white" strokeWidth="1.5" opacity="0.8"/>
+                        <line x1="10" y1="17" x2="8.5" y2="18.5" stroke="white" strokeWidth="1.5" opacity="0.6"/>
+                        <line x1="8" y1="14" x2="6" y2="16" stroke="white" strokeWidth="1.5" opacity="0.4"/>
+                        <line x1="8" y1="10" x2="6" y2="8" stroke="white" strokeWidth="1.5" opacity="0.4"/>
+                        <line x1="10" y1="7" x2="8.5" y2="5.5" stroke="white" strokeWidth="1.5" opacity="0.6"/>
                       </svg>
                     </div>
                   </div>
@@ -497,16 +505,16 @@ export default function HomePage() {
               transition={{ duration: 0.8, delay: 0.8 }}
               className="text-xl md:text-2xl text-gray-600 mb-16 max-w-5xl mx-auto leading-relaxed font-light space-y-2"
             >
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.9 }}
-              >
+            >
                 Writes, designs, and sends stunning campaigns — all in minutes.
-              </motion.p>
+            </motion.p>
               <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 1.1 }}
                 className="text-lg md:text-xl"
               >
@@ -527,7 +535,7 @@ export default function HomePage() {
                   boxShadow: "0 20px 40px rgba(59, 130, 246, 0.3)"
                 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={handleGetStarted}
+                  onClick={handleGetStarted}
                 className="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-blue-800 hover:to-purple-700 text-white text-lg px-12 py-6 flex items-center rounded-2xl font-bold cursor-pointer select-none transition-all duration-300 shadow-xl hover:shadow-2xl border-2 border-white/20 hover:border-white/40 relative overflow-hidden"
                 style={{
                   border: 'none',
@@ -539,7 +547,7 @@ export default function HomePage() {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
                 <span className="relative z-10">Get Started</span>
-                <motion.div
+                  <motion.div
                   animate={{ 
                     x: [0, 8, 0],
                     scale: [1, 1.2, 1]
@@ -548,7 +556,7 @@ export default function HomePage() {
                   className="ml-3 relative z-10"
                 >
                   <ArrowRightIcon className="h-5 w-5" />
-                </motion.div>
+                  </motion.div>
               </motion.div>
               <motion.div
                 whileHover={{ 
@@ -761,15 +769,15 @@ export default function HomePage() {
                       }}
                     >
                       <feature.icon className="h-6 w-6 text-white" />
-                    </motion.div>
+                  </motion.div>
                   </motion.div>
                   <div className="relative z-10">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {feature.title}
-                    </h3>
+                    {feature.title}
+                  </h3>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                      {feature.description}
-                    </p>
+                    {feature.description}
+                  </p>
                   </div>
                   
                   {/* Decorative element */}
@@ -804,7 +812,7 @@ export default function HomePage() {
         </div>
 
         {/* Add full professional template showcase */}
-        <TemplateShowcase />
+      <TemplateShowcase />
         
         {/* Old simple showcase - keeping for backup */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" style={{ display: 'none' }}>
@@ -1232,8 +1240,8 @@ export default function HomePage() {
                           scale: 1.3,
                           rotate: 15
                         }}
-                      >
-                        {index + 1}
+                    >
+                      {index + 1}
                       </motion.span>
                     </motion.div>
                     <p className="text-gray-700 text-sm leading-relaxed flex-grow relative z-10">
@@ -1244,8 +1252,8 @@ export default function HomePage() {
                   
                 </motion.div>
               ))}
-            </div>
-          </div>
+                      </div>
+                    </div>
         </div>
       </motion.section>
 
@@ -1319,7 +1327,7 @@ export default function HomePage() {
             >
               Join thousands of satisfied customers who have transformed their email marketing with NovaMail
             </motion.p>
-          </motion.div>
+                </motion.div>
 
           <div className="relative">
             <div 
@@ -1431,8 +1439,8 @@ export default function HomePage() {
                     >
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </motion.svg>
-                  ))}
-                </div>
+              ))}
+            </div>
 
                 {/* Review Text */}
                 <motion.p 
@@ -1621,7 +1629,7 @@ export default function HomePage() {
                     }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
-                    <ArrowRightIcon className="ml-2 h-5 w-5" />
+                  <ArrowRightIcon className="ml-2 h-5 w-5" />
                   </motion.div>
                 </Link>
               </motion.div>
@@ -1694,7 +1702,7 @@ export default function HomePage() {
         className="bg-gray-900 text-white relative z-10"
       >
         <div className="py-12 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             {/* Company Info */}
             <div>
@@ -1753,9 +1761,9 @@ export default function HomePage() {
                 <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
                 <Link href="/cookie" className="hover:text-white transition-colors">Cookie Policy</Link>
               </div>
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </motion.footer>
     </div>
