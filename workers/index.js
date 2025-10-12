@@ -348,7 +348,15 @@ async function handleSendVerification(request, env) {
       code: verificationCode,
       note: 'Gmail API error occurred, but verification code is available for testing',
       error: error.message,
-// 楠岃瘉楠岃瘉鐮佸鐞嗗嚱鏁?async function handleVerifyCode(request, env) {
+      timestamp: new Date().toISOString()
+    }), {
+      headers: corsHeaders
+    });
+  }
+}
+
+// 楠岃瘉楠岃瘉鐮佸鐞嗗嚱鏁?
+async function handleVerifyCode(request, env) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
