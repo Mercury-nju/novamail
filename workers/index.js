@@ -948,12 +948,12 @@ async function handleCheckPermission(request, env) {
   }
 }
 
-// 鍙戦€佹椿鍔ㄩ偖浠跺鐞嗗嚱鏁?async function handleCampaignSend(request, env) {
+// Send campaign email processing function
+async function handleCampaignSend(request, env) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json'
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
   };
 
   if (request.method !== 'POST') {
