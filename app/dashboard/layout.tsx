@@ -171,17 +171,18 @@ export default function DashboardLayout({
               <Link href="/dashboard" className="flex items-center">
                 <div className="flex items-center space-x-2">
                   {/* Logo Icon */}
-                  <div className="h-6 w-6 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full flex items-center justify-center shadow-md">
+                  <div className="h-6 w-6 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                     <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      {/* Speed lines */}
+                      <line x1="5" y1="9" x2="7" y2="9" stroke="white" strokeWidth="1" opacity="0.9"/>
+                      <line x1="4" y1="11" x2="6" y2="11" stroke="white" strokeWidth="1" opacity="0.7"/>
+                      <line x1="3" y1="13" x2="5" y2="13" stroke="white" strokeWidth="1" opacity="0.5"/>
                       {/* Paper airplane pointing up-right */}
-                      <path d="M10 7 L13 5 L12 11 L10 7 Z" fill="white"/>
-                      <path d="M12 11 L13 5 L15 13 L12 11 Z" fill="white"/>
-                      {/* Sparkles around the airplane */}
-                      <circle cx="7" cy="8" r="0.8" fill="white" opacity="0.8"/>
-                      <circle cx="8" cy="10" r="0.6" fill="white" opacity="0.6"/>
-                      <circle cx="6" cy="11" r="0.5" fill="white" opacity="0.4"/>
-                      <circle cx="15" cy="6" r="0.6" fill="white" opacity="0.9"/>
-                      <circle cx="16" cy="12" r="0.5" fill="white" opacity="0.7"/>
+                      <path d="M10 6 L13 4 L12 10 L10 6 Z" fill="white"/>
+                      <path d="M12 10 L13 4 L15 12 L12 10 Z" fill="white"/>
+                      {/* Four-pointed star/sparkle */}
+                      <path d="M16 5 L17 6 L16 7 L15 6 Z" fill="white"/>
+                      <path d="M16 6 L18 6 L16 6 L14 6 Z" fill="white"/>
                     </svg>
                   </div>
                   {/* Logo Text */}
@@ -236,17 +237,18 @@ export default function DashboardLayout({
             <Link href="/dashboard" className="flex items-center">
               <div className="flex items-center space-x-2">
                 {/* Logo Icon */}
-                <div className="h-6 w-6 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full flex items-center justify-center shadow-md">
+                <div className="h-6 w-6 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                   <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {/* Speed lines */}
+                    <line x1="5" y1="9" x2="7" y2="9" stroke="white" strokeWidth="1" opacity="0.9"/>
+                    <line x1="4" y1="11" x2="6" y2="11" stroke="white" strokeWidth="1" opacity="0.7"/>
+                    <line x1="3" y1="13" x2="5" y2="13" stroke="white" strokeWidth="1" opacity="0.5"/>
                     {/* Paper airplane pointing up-right */}
-                    <path d="M10 7 L13 5 L12 11 L10 7 Z" fill="white"/>
-                    <path d="M12 11 L13 5 L15 13 L12 11 Z" fill="white"/>
-                    {/* Sparkles around the airplane */}
-                    <circle cx="7" cy="8" r="0.8" fill="white" opacity="0.8"/>
-                    <circle cx="8" cy="10" r="0.6" fill="white" opacity="0.6"/>
-                    <circle cx="6" cy="11" r="0.5" fill="white" opacity="0.4"/>
-                    <circle cx="15" cy="6" r="0.6" fill="white" opacity="0.9"/>
-                    <circle cx="16" cy="12" r="0.5" fill="white" opacity="0.7"/>
+                    <path d="M10 6 L13 4 L12 10 L10 6 Z" fill="white"/>
+                    <path d="M12 10 L13 4 L15 12 L12 10 Z" fill="white"/>
+                    {/* Four-pointed star/sparkle */}
+                    <path d="M16 5 L17 6 L16 7 L15 6 Z" fill="white"/>
+                    <path d="M16 6 L18 6 L16 6 L14 6 Z" fill="white"/>
                   </svg>
                 </div>
                 {/* Logo Text */}
