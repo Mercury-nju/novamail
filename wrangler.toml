@@ -13,8 +13,8 @@ RESEND_API_KEY = "re_PCbEHboB..."  # Resend API密钥
 # Gmail API 配置 (用于注册验证码)
 GMAIL_SMTP_USER = "lihongyangnju@gmail.com"  # Gmail邮箱
 GMAIL_SMTP_PASSWORD = "zjhk rkmy ysoz dhyi"  # Gmail应用专用密码
-GMAIL_ACCESS_TOKEN = "ya29.a0AfH6SMC..."  # Gmail API访问令牌
-GMAIL_REFRESH_TOKEN = "1//04..."  # Gmail API刷新令牌
+GMAIL_ACCESS_TOKEN = "ya29.a0AfH6SMC..."  # Gmail API访问令牌 - 需要完整的访问令牌
+GMAIL_REFRESH_TOKEN = "1//04..."  # Gmail API刷新令牌 - 需要完整的刷新令牌
 GMAIL_SMTP_HOST = "smtp.gmail.com"
 GMAIL_SMTP_PORT = "587"
 

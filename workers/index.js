@@ -416,6 +416,7 @@ async function handleSendVerification(request, env) {
       
       if (!gmailAccessToken || gmailAccessToken.length < 50) {
         console.log('Gmail Access Token not properly configured, returning verification code for testing');
+        console.log('Verification code for testing:', verificationCode);
         return new Response(JSON.stringify({
           success: true,
           message: 'Verification code generated (Gmail API not configured)',
