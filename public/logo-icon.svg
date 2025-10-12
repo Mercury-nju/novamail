@@ -5,22 +5,20 @@
       <stop offset="100%" stop-color="#1E40AF" />
     </linearGradient>
   </defs>
-  <rect width="40" height="40" fill="url(#gradient)" rx="8"/>
-  <g fill="none" stroke="white" stroke-width="2.5">
-    <!-- Circle border -->
-    <circle cx="20" cy="20" r="15" fill="none" stroke="white" stroke-width="2.5"/>
-    
-    <!-- Paper airplane -->
-    <path d="M12 22 L22 15 L17 27 L12 22 Z" fill="white"/>
-    <path d="M17 27 L22 15 L27 20 L17 27 Z" fill="white"/>
-    
-    <!-- Speed lines -->
-    <line x1="10" y1="15" x2="7" y2="12" stroke="white" stroke-width="2" opacity="0.8"/>
-    <line x1="10" y1="17" x2="7" y2="14" stroke="white" stroke-width="2" opacity="0.6"/>
-    <line x1="10" y1="19" x2="7" y2="16" stroke="white" stroke-width="2" opacity="0.4"/>
-    
-    <!-- Star -->
-    <path d="M7 10 L8 11 L7 12 L6 11 Z" fill="white" opacity="0.9"/>
-    <path d="M7 10 L7 12 L5 11 L9 11 Z" fill="white" opacity="0.9"/>
-  </g>
+  <rect width="40" height="40" fill="url(#gradient)" rx="20"/>
+  
+  <!-- Circle border -->
+  <circle cx="20" cy="20" r="17" fill="none" stroke="white" stroke-width="2.5"/>
+  
+  <!-- Paper airplane (larger, centered) -->
+  <path d="M13 21 L25 12 L19 29 L13 21 Z" fill="white" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M19 29 L25 12 L31 18 L19 29 Z" fill="white" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+  
+  <!-- Speed lines (horizontal) -->
+  <line x1="8" y1="17" x2="12" y2="17" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <line x1="8" y1="21" x2="12" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <line x1="8" y1="25" x2="12" y2="25" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Four-pointed star (top left) -->
+  <path d="M11 10 L11.5 12 L13.5 12.5 L11.5 13 L11 15 L10.5 13 L8.5 12.5 L10.5 12 Z" fill="white"/>
 </svg>
