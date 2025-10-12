@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'NovaMail',
-  description: 'Transform your email marketing with AI. Create beautiful emails, automate campaigns, and reach your audience worldwide.',
+  description: 'Your AI Copilot for Email Marketing. Writes, designs, and sends stunning campaigns — all in minutes. Track results instantly and grow your audience effortlessly.',
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',
