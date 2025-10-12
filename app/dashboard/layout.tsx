@@ -174,8 +174,9 @@ export default function DashboardLayout({
                   <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                     <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       {/* Paper airplane pointing up-right */}
-                      <path d="M6 9 L12 6 L9 12 L6 9 Z" fill="white"/>
-                      <path d="M9 12 L12 6 L15 10 L9 12 Z" fill="white"/>
+                      <path d="M5 9 L11 6 L8 12 L5 9 Z" fill="white"/>
+                      <path d="M8 12 L11 6 L14 9 L8 12 Z" fill="white"/>
+                      <path d="M11 6 L14 9 L13 11 L11 6 Z" fill="white"/>
                       {/* Speed lines radiating outward */}
                       <line x1="9" y1="4" x2="9" y2="2" stroke="white" strokeWidth="1" opacity="0.8"/>
                       <line x1="10.5" y1="5" x2="11.5" y2="4" stroke="white" strokeWidth="1" opacity="0.6"/>
@@ -246,8 +247,9 @@ export default function DashboardLayout({
                 <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                   <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     {/* Paper airplane pointing up-right */}
-                    <path d="M6 9 L12 6 L9 12 L6 9 Z" fill="white"/>
-                    <path d="M9 12 L12 6 L15 10 L9 12 Z" fill="white"/>
+                    <path d="M5 9 L11 6 L8 12 L5 9 Z" fill="white"/>
+                    <path d="M8 12 L11 6 L14 9 L8 12 Z" fill="white"/>
+                    <path d="M11 6 L14 9 L13 11 L11 6 Z" fill="white"/>
                     {/* Speed lines radiating outward */}
                     <line x1="9" y1="4" x2="9" y2="2" stroke="white" strokeWidth="1" opacity="0.8"/>
                     <line x1="10.5" y1="5" x2="11.5" y2="4" stroke="white" strokeWidth="1" opacity="0.6"/>
