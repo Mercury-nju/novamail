@@ -63,8 +63,6 @@ export default function RegisterPage() {
         if (result.code) {
           console.log('Verification code for testing:', result.code)
           console.log('API Response:', result)
-          // 在页面上显示验证码（仅用于调试）
-          alert(`验证码: ${result.code}\n\n这是临时调试功能，请手动输入此验证码。`)
         }
       } else {
         // 处理用户已存在的情况
