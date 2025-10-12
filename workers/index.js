@@ -532,9 +532,8 @@ async function handleVerifyCode(request, env) {
       console.error('Failed to save user:', error);
       // 鍗充娇瀛樺偍澶辫触锛屼篃杩斿洖鎴愬姛锛屽洜涓虹敤鎴锋暟鎹凡缁忕敓鎴?    }
 
-    // 鏃犺閭欢鍙戦€佹槸鍚︽垚鍔燂紝閮借繑鍥炵敤鎴峰垱寤烘垚鍔?    return new Response(JSON.stringify({
-      success: true,
-      message: 'Account created and verified successfully',
+    // Return success response
+    return new Response(JSON.stringify({
       user: {
         email: user.email,
         name: user.name,
@@ -544,37 +543,15 @@ async function handleVerifyCode(request, env) {
         plan: user.plan,
         emailVerified: user.emailVerified,
         createdAt: user.createdAt,
-        emailsSentThisMonth: user.emailsSentThisMonth,
-        contactsCount: user.contactsCount,
-        campaignsCount: user.campaignsCount
-      },
-      welcomeEmailSent: response.ok,
-      timestamp: new Date().toISOString()
-    }), {
-      headers: corsHeaders
-    });
-  } catch (error) {
-    // 鍗充娇娆㈣繋閭欢鍙戦€佸け璐ワ紝涔熻繑鍥炵敤鎴峰垱寤烘垚鍔?    return new Response(JSON.stringify({
-      success: true,
-      message: 'Account created and verified successfully',
-      user: {
-        id: userId,
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        token: userToken,
-        createdAt: new Date().toISOString()
-      },
-      welcomeEmailSent: false,
-      warning: 'Welcome email could not be sent',
-      timestamp: new Date().toISOString()
+        updatedAt: user.updatedAt
+      }
     }), {
       headers: corsHeaders
     });
   }
 }
 
-// 閭鐧诲綍澶勭悊鍑芥暟
+// 邮箱登录处理函数
 async function handleLogin(request, env) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
