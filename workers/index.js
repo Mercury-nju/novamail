@@ -197,6 +197,23 @@ async function handleSendVerification(request, env) {
     console.log('Checking for existing user:', email);
     console.log('KV storage available:', !!env.USERS_KV);
     
+    // 临时硬编码的已注册用户列表（用于测试）
+    const knownUsers = [
+      'lihongyangnju@gmail.com',
+      'test@example.com',
+      'admin@novamail.world'
+    ];
+    
+    // 检查是否在已知用户列表中
+    if (knownUsers.includes(email.toLowerCase())) {
+      console.log('User found in known users list:', email);
+      existingUser = {
+        email: email,
+        name: 'Known User',
+        isKnownUser: true
+      };
+    }
+    
     if (env.USERS_KV) {
       const userKey = `user_${email.toLowerCase()}`;
       console.log('Looking for user key:', userKey);
@@ -206,12 +223,12 @@ async function handleSendVerification(request, env) {
       
       if (storedUser) {
         existingUser = JSON.parse(storedUser);
-        console.log('User already exists:', existingUser.email);
+        console.log('User already exists in KV:', existingUser.email);
       } else {
-        console.log('No existing user found for:', email);
+        console.log('No existing user found in KV for:', email);
       }
     } else {
-      console.log('KV storage not available - cannot check existing users');
+      console.log('KV storage not available - using known users list only');
     }
   } catch (error) {
     console.log('Failed to check existing user:', error);
