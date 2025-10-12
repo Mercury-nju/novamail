@@ -94,9 +94,10 @@ function LoginForm() {
             <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl border-2 border-white flex items-center justify-center shadow-xl">
               <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {/* Paper airplane pointing up-right */}
-                <path d="M6 12 L14 8 L10 16 L6 12 Z" fill="white"/>
-                <path d="M10 16 L14 8 L18 12 L10 16 Z" fill="white"/>
-                <path d="M14 8 L18 12 L16 14 L14 8 Z" fill="white"/>
+                <path d="M8 14 L16 10 L12 18 L8 14 Z" fill="white"/>
+                <path d="M12 18 L16 10 L20 14 L12 18 Z" fill="white"/>
+                <path d="M16 10 L20 14 L18 16 L16 10 Z" fill="white"/>
+                <path d="M8 14 L12 18 L10 20 L8 14 Z" fill="white"/>
                 {/* Speed lines radiating outward */}
                 <line x1="12" y1="6" x2="12" y2="4" stroke="white" strokeWidth="1.5" opacity="0.8"/>
                 <line x1="14" y1="7" x2="15.5" y2="5.5" stroke="white" strokeWidth="1.5" opacity="0.6"/>
