@@ -6,7 +6,7 @@ import { Providers } from './providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'NovaMail - AI-Powered Email Marketing Platform',
+  title: 'NovaMail',
   description: 'Transform your email marketing with AI. Create beautiful emails, automate campaigns, and reach your audience worldwide.',
   icons: {
     icon: '/favicon.svg',
