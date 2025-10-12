@@ -1,6 +1,6 @@
 ﻿// Cloudflare Workers 涓诲叆鍙ｆ枃浠?// 璺敱鍒颁笉鍚岀殑 API 绔偣
 
-// Gmail璁块棶浠ょ墝鍒锋柊鍑芥暟
+// Gmail access token refresh function
 async function refreshGmailAccessToken(env) {
   if (!env.GMAIL_REFRESH_TOKEN || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
     console.log('Missing refresh token or Google credentials');
@@ -41,7 +41,7 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // CORS 澶撮儴
+    // CORS headers
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -49,7 +49,7 @@ export default {
       'Content-Type': 'application/json'
     };
 
-    // 澶勭悊 OPTIONS 璇锋眰
+    // Handle OPTIONS request
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
@@ -164,7 +164,7 @@ export default {
   }
 };
 
-// 鍙戦€侀獙璇佺爜澶勭悊鍑芥暟
+// Send verification code processing function
 async function handleSendVerification(request, env) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -193,7 +193,7 @@ async function handleSendVerification(request, env) {
     });
   }
 
-  // 妫€鏌ョ敤鎴锋槸鍚﹀凡瀛樺湪
+  // Check if user already exists
   let existingUser = null;
   try {
     console.log('Checking for existing user:', email);
@@ -248,7 +248,7 @@ async function handleSendVerification(request, env) {
     });
   }
 
-  // 鐢熸垚6浣嶉獙璇佺爜
+  // Generate 6-digit verification code
   const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
   
   // 浣跨敤Gmail API鍙戦€侀獙璇佺爜閭欢
@@ -1221,8 +1221,8 @@ async function handleCampaignSend(request, env) {
   }
 }
 
-// 鏇存柊鐢ㄦ埛浣跨敤閲忓鐞嗗嚱鏁?async function handleUpdateUsage(request, env) {
-  const corsHeaders = {
+// Update user usage processing function
+async function handleUpdateUsage(request, env) {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -3157,8 +3157,8 @@ async function handleClearEmailConfigs(request, env) {
   }
 }
 
-// 娓呯┖鎵€鏈夋暟鎹鐞嗗嚱鏁?async function handleClearAll(request, env) {
-  const corsHeaders = {
+// Clear all data processing function
+async function handleClearAll(request, env) {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -3304,7 +3304,7 @@ async function handleGoogleLogin(request, env) {
       lastUsageReset: new Date().toISOString()
     };
 
-    // 妫€鏌ョ敤鎴锋槸鍚﹀凡瀛樺湪锛堜娇鐢–loudflare KV瀛樺偍鎴栨ā鎷熷瓨鍌級
+    // Check if user already exists锛堜娇鐢–loudflare KV瀛樺偍鎴栨ā鎷熷瓨鍌級
     let existingUser = null;
     try {
       if (env.USERS_KV) {
@@ -3494,7 +3494,7 @@ async function handleGoogleCallback(request, env) {
       lastUsageReset: new Date().toISOString()
     };
 
-    // 妫€鏌ョ敤鎴锋槸鍚﹀凡瀛樺湪
+    // Check if user already exists
     let existingUser = null;
     try {
       if (env.USERS_KV) {
@@ -3583,8 +3583,8 @@ async function handleGoogleCallback(request, env) {
   }
 }
 
-// 鑱旂郴浜哄鍏ュ鐞嗗嚱鏁?async function handleContactsImport(request, env) {
-  const corsHeaders = {
+// Contact import processing function
+async function handleContactsImport(request, env) {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -4019,8 +4019,8 @@ async function handleAnalytics(request, env) {
   });
 }
 
-// 澶勭悊浠〃鏉跨粺璁℃暟鎹姹?async function handleDashboardStats(request, env) {
-  const corsHeaders = {
+// Dashboard statistics data processing function
+async function handleDashboardStats(request, env) {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
