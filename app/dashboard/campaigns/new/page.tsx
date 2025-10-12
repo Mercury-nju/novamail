@@ -1175,118 +1175,73 @@ export default function NewCampaignPage() {
                 
                 {/* Professional Template Styles */}
                 {emailMode === 'professional' && (
-                  <div className="mt-6">
-                    <div className="text-center mb-6">
-                      <h5 className="text-lg font-semibold text-gray-900 mb-1">Choose Template Style</h5>
-                      <p className="text-sm text-gray-600">Select from our professional email templates</p>
+                  <div className="mt-4">
+                    <div className="text-center mb-3">
+                      <h5 className="text-base font-semibold text-gray-900 mb-1">Choose Template</h5>
+                      <p className="text-xs text-gray-600">Select a professional email template</p>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-4 gap-2">
                       {[
                         { 
                           id: 'modern-promo', 
-                          name: 'Modern Promo', 
+                          name: 'Promo', 
                           icon: '🚀', 
-                          desc: 'Sleek promotional design',
                           gradient: 'from-blue-50 to-purple-50'
                         },
                         { 
                           id: 'newsletter', 
                           name: 'Newsletter',
                           icon: '📰', 
-                          desc: 'Clean newsletter layout',
                           gradient: 'from-green-50 to-blue-50'
                         },
                         { 
                           id: 'ecommerce', 
                           name: 'E-commerce', 
                           icon: '🛒', 
-                          desc: 'Product-focused design',
                           gradient: 'from-orange-50 to-red-50'
                         },
                         { 
                           id: 'event', 
-                          name: 'Event Invite', 
+                          name: 'Event', 
                           icon: '🎉', 
-                          desc: 'Party and event themed',
                           gradient: 'from-pink-50 to-purple-50'
                         },
                         { 
                           id: 'announcement', 
                           name: 'Announcement', 
                           icon: '📢', 
-                          desc: 'Formal announcement style',
                           gradient: 'from-indigo-50 to-blue-50'
                         },
                         { 
                           id: 'welcome', 
                           name: 'Welcome', 
                           icon: '👋', 
-                          desc: 'Warm welcome message',
                           gradient: 'from-yellow-50 to-orange-50'
                         },
                         { 
                           id: 'survey', 
                           name: 'Survey', 
                           icon: '📊', 
-                          desc: 'Feedback collection',
                           gradient: 'from-teal-50 to-cyan-50'
                         },
                         { 
                           id: 'thank-you', 
                           name: 'Thank You', 
                           icon: '🙏', 
-                          desc: 'Gratitude and appreciation',
                           gradient: 'from-rose-50 to-pink-50'
                         }
                       ].map((template) => (
                         <button
                           key={template.id}
                           onClick={() => setSelectedTemplate(template.id)}
-                          className={`p-4 border-2 rounded-lg text-center transition-all duration-200 hover:shadow-md ${
+                          className={`p-3 border rounded-lg text-center transition-all duration-200 hover:shadow-sm ${
                             selectedTemplate === template.id
-                              ? 'border-blue-500 bg-blue-50 shadow-md'
+                              ? 'border-blue-500 bg-blue-50 shadow-sm'
                               : 'border-gray-200 hover:border-gray-300 bg-white'
                           }`}
                         >
-                          <div className="text-2xl mb-2">{template.icon}</div>
-                          <h6 className="font-semibold text-gray-900 mb-1 text-sm">{template.name}</h6>
-                          <p className="text-xs text-gray-600 leading-relaxed mb-3">{template.desc}</p>
-                          
-                          {/* Enhanced Preview */}
-                          <div className="border border-gray-200 rounded-lg p-3 bg-white hover:shadow-sm transition-shadow">
-                            <div className="text-xs text-gray-500 mb-2">Preview</div>
-                            <div 
-                              className={`h-14 bg-gradient-to-r ${template.gradient} rounded-lg flex items-center justify-center relative overflow-hidden cursor-pointer group`}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setPreviewTemplate(template.id)
-                                setShowPreview(true)
-                              }}
-                            >
-                              <div className="absolute inset-0 bg-black bg-opacity-10 rounded-lg group-hover:bg-opacity-20 transition-all"></div>
-                              <div className="text-xs text-gray-700 relative z-10 font-semibold">
-                                {template.name}
-                              </div>
-                              <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <svg className="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                  <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                                </svg>
-                              </div>
-                            </div>
-                            <div className="text-center mt-2">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setPreviewTemplate(template.id)
-                                  setShowPreview(true)
-                                }}
-                                className="text-xs text-blue-600 hover:text-blue-700 font-medium hover:underline"
-                              >
-                                View Full Preview
-                              </button>
-                            </div>
-                          </div>
+                          <div className="text-lg mb-1">{template.icon}</div>
+                          <h6 className="font-medium text-gray-900 text-xs">{template.name}</h6>
                         </button>
                       ))}
                     </div>
@@ -1300,19 +1255,19 @@ export default function NewCampaignPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-white/80 backdrop-blur-sm rounded-2xl border border-white/20 shadow-xl p-8"
+              className="bg-white/80 backdrop-blur-sm rounded-2xl border border-white/20 shadow-xl p-6"
             >
-              <div className="flex items-center mb-6">
-                <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl mr-4">
-                  <SwatchIcon className="h-6 w-6 text-white" />
+              <div className="flex items-center mb-4">
+                <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg mr-3">
+                  <SwatchIcon className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Tone Style Selection</h3>
-                  <p className="text-sm text-gray-600 mt-1">Choose the tone and style for your email content</p>
+                  <h3 className="text-lg font-bold text-gray-900">Tone Style</h3>
+                  <p className="text-xs text-gray-600 mt-1">Choose the tone for your email content</p>
                 </div>
               </div>
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="space-y-4">
+                <div className="grid grid-cols-3 gap-2">
                   {[
                     { 
                       id: 'friendly', 
@@ -1372,26 +1327,19 @@ export default function NewCampaignPage() {
                     <motion.button
                       key={tone.id}
                       onClick={() => setToneStyle(tone.id)}
-                      className={`p-5 border-2 rounded-xl text-left transition-all duration-300 group relative overflow-hidden ${
+                      className={`p-3 border rounded-lg text-center transition-all duration-200 group relative ${
                         toneStyle === tone.id
-                          ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-lg'
-                          : `border-gray-200 hover:${tone.borderColor} bg-white hover:shadow-md`
+                          ? 'border-blue-500 bg-blue-50 shadow-sm'
+                          : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm'
                       }`}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      <div className="flex items-start space-x-3">
-                        <div className={`p-2 rounded-lg ${tone.iconBg} group-hover:scale-110 transition-transform duration-200`}>
-                          <span className="text-xl">{tone.icon}</span>
-                        </div>
-                        <div className="flex-1">
-                          <h6 className="font-bold text-gray-900 mb-1 text-sm">{tone.name}</h6>
-                          <p className="text-xs text-gray-600 leading-relaxed">{tone.desc}</p>
-                        </div>
-                      </div>
+                      <div className="text-lg mb-1">{tone.icon}</div>
+                      <h6 className="font-medium text-gray-900 text-xs">{tone.name}</h6>
                       {toneStyle === tone.id && (
-                        <div className="absolute top-3 right-3 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                          <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <div className="absolute top-1 right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                          <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
                         </div>
