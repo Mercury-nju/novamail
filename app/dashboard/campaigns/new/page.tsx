@@ -1970,8 +1970,8 @@ export default function NewCampaignPage() {
             </div>
           </div>
         )}
-      </div>
       </motion.div>
+      </div>
     </div>
   )
 }
