@@ -1223,6 +1223,7 @@ async function handleCampaignSend(request, env) {
 
 // Update user usage processing function
 async function handleUpdateUsage(request, env) {
+  const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -3159,6 +3160,7 @@ async function handleClearEmailConfigs(request, env) {
 
 // Clear all data processing function
 async function handleClearAll(request, env) {
+  const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -3585,6 +3587,7 @@ async function handleGoogleCallback(request, env) {
 
 // Contact import processing function
 async function handleContactsImport(request, env) {
+  const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -4021,6 +4024,7 @@ async function handleAnalytics(request, env) {
 
 // Dashboard statistics data processing function
 async function handleDashboardStats(request, env) {
+  const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
