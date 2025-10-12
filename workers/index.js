@@ -3622,6 +3622,8 @@ async function handleGoogleCallback(request, env) {
     }
 
     // 1. 交换授权码获取访问令牌
+    console.log('Exchanging authorization code:', { code: code.substring(0, 10) + '...', redirect_uri });
+    
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: {
@@ -3636,22 +3638,32 @@ async function handleGoogleCallback(request, env) {
       })
     });
 
+    console.log('Token exchange response status:', tokenResponse.status);
+
     if (!tokenResponse.ok) {
-      throw new Error('Failed to exchange authorization code');
+      const errorText = await tokenResponse.text();
+      console.error('Token exchange failed:', errorText);
+      throw new Error(`Failed to exchange authorization code: ${tokenResponse.status} - ${errorText}`);
     }
 
     const tokenData = await tokenResponse.json();
+    console.log('Token exchange successful, access token received');
     const accessToken = tokenData.access_token;
 
     // 2. 获取Google用户信息
+    console.log('Fetching user information from Google API');
     const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: {
         'Authorization': `Bearer ${accessToken}`
       }
     });
 
+    console.log('User info response status:', userResponse.status);
+
     if (!userResponse.ok) {
-      throw new Error('Failed to get user information');
+      const errorText = await userResponse.text();
+      console.error('Failed to get user information:', errorText);
+      throw new Error(`Failed to get user information: ${userResponse.status} - ${errorText}`);
     }
 
     const googleUser = await userResponse.json();
