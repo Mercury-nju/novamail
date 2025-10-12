@@ -348,8 +348,8 @@ export default function ContactsPage() {
               <p className="text-sm font-medium text-gray-600">Total Contacts</p>
               <p className="text-2xl font-bold text-gray-900">
                 {contacts.length}
-                {contactLimit !== -1 && (
-                  <span className="text-sm font-normal text-gray-500"> / {contactLimit}</span>
+                {limits.maxContacts !== -1 && (
+                  <span className="text-sm font-normal text-gray-500"> / {limits.maxContacts}</span>
                 )}
               </p>
               {isAtLimit && (
