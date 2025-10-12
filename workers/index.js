@@ -200,12 +200,13 @@ async function handleSendVerification(request, env) {
     console.log('KV storage available:', !!env.USERS_KV);
     
     // Temporary hardcoded list of registered users (for testing)
+    const knownUsers = [
       'lihongyangnju@gmail.com',
       'test@example.com',
       'admin@novamail.world'
     ];
     
-    // 检查是否在已知用户列表中
+    // Check if in known users list
     if (knownUsers.includes(email.toLowerCase())) {
       console.log('User found in known users list:', email);
       existingUser = {
@@ -250,12 +251,11 @@ async function handleSendVerification(request, env) {
   // Generate 6-digit verification code
   const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
   
-  // 浣跨敤Gmail API鍙戦€侀獙璇佺爜閭欢
+  // Use Gmail API to send verification email欢
   console.log('Sending verification email via Gmail API to:', email);
 
   try {
-    // 妫€鏌mail閰嶇疆
-    const gmailUser = env.GMAIL_SMTP_USER;
+    // Check Gmail configuration
     const gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
     
     console.log('Gmail configuration check:', {
@@ -279,8 +279,7 @@ async function handleSendVerification(request, env) {
     }
 
     // 鏋勫缓Gmail API閭欢鍐呭
-    const emailContent = [
-      `From: NovaMail <${gmailUser}>`,
+    // Build Gmail API email content
       `To: ${email}`,
       `Subject: Your NovaMail Verification Code`,
       `MIME-Version: 1.0`,
@@ -312,12 +311,10 @@ async function handleSendVerification(request, env) {
 
     // Base64缂栫爜閭欢鍐呭
     const encodedMessage = btoa(emailContent).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    
-    // 璋冪敤Gmail API
+    // Base64 encode email content
     console.log('Attempting to send email via Gmail API...');
     const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
-      method: 'POST',
-      headers: {
+    // Call Gmail API
         'Authorization': `Bearer ${gmailAccessToken}`,
         'Content-Type': 'application/json'
       },
@@ -353,8 +350,7 @@ async function handleSendVerification(request, env) {
       if (gmailResponse.status === 401) {
         console.log('Gmail API authentication failed - token may be expired');
         return new Response(JSON.stringify({
-          success: true,
-          message: 'Verification code generated (Gmail authentication failed)',
+      // Check if authentication error
           code: verificationCode,
           note: 'Gmail API authentication failed - please check access token',
           error: 'Authentication failed - token may be expired',
@@ -369,8 +365,7 @@ async function handleSendVerification(request, env) {
         success: true,
         message: 'Verification code generated (Gmail API failed)',
         code: verificationCode,
-        note: 'Gmail API failed, but verification code is available for testing',
-        error: `Gmail API Error: ${gmailResponse.status} - ${errorText}`,
+      // Even if Gmail API fails, return verification code to user
         timestamp: new Date().toISOString()
       }), {
         headers: corsHeaders
@@ -385,8 +380,7 @@ async function handleSendVerification(request, env) {
       message: 'Verification code generated (Gmail API error)',
       code: verificationCode,
       note: 'Gmail API error occurred, but verification code is available for testing',
-      error: error.message,
-      timestamp: new Date().toISOString()
+    // Even if error occurs, return verification code to user
     }), {
       headers: corsHeaders
     });
