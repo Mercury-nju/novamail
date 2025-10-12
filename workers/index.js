@@ -1064,13 +1064,16 @@ async function handleCampaignSend(request, env) {
         let response;
         
         if (userEmailConfig?.isConfigured) {
-          // 浣跨敤鐢ㄦ埛 SMTP 閰嶇疆鍙戦€侀偖浠?          console.log('Sending via user SMTP:', userEmailConfig.email);
+          // Use user SMTP configuration to send email
+          console.log('Sending via user SMTP:', userEmailConfig.email);
           
-          // 浣跨敤 Resend API 鍙戦€侀偖浠讹紙鏀寔鑷畾涔?SMTP锛?          response = await fetch('https://api.resend.com/emails', {
+          // Use Resend API to send email (supports custom SMTP)
+          response = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
-            'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-            'Content-Type': 'application/json'
+              'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+              'Content-Type': 'application/json'
+            },
           },
           body: JSON.stringify({
             from: `${campaignData.businessName || 'Your Company'} <${userEmailConfig.email}>`,
