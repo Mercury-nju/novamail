@@ -157,6 +157,8 @@ export default {
 
 // 发送验证码处理函数
 async function handleSendVerification(request, env) {
+  console.log('handleSendVerification called with method:', request.method);
+  
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -165,19 +167,36 @@ async function handleSendVerification(request, env) {
   };
 
   if (request.method !== 'POST') {
+    console.log('Method not allowed:', request.method);
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
       headers: corsHeaders
     });
   }
 
-  const data = await request.json();
-  const email = data.email;
-  
-  if (!email) {
+  let email;
+  try {
+    const data = await request.json();
+    console.log('Received data:', data);
+    email = data.email;
+    
+    if (!email) {
+      console.log('Email is required');
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Email is required' 
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+    
+    console.log('Processing verification for email:', email);
+  } catch (error) {
+    console.error('Error parsing request body:', error);
     return new Response(JSON.stringify({ 
       success: false, 
-      error: 'Email is required' 
+      error: 'Invalid JSON in request body' 
     }), {
       status: 400,
       headers: corsHeaders
