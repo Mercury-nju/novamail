@@ -1,0 +1,39 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="sparkleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.3" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background gradient -->
+  <rect width="200" height="60" fill="url(#backgroundGradient)" rx="8"/>
+  
+  <!-- Subtle sparkle in bottom right -->
+  <circle cx="185" cy="50" r="1.5" fill="url(#sparkleGradient)" opacity="0.6"/>
+  
+  <!-- Logo Icon Container -->
+  <circle cx="30" cy="30" r="18" stroke="white" stroke-width="2" fill="none"/>
+  
+  <!-- Speed lines behind paper airplane -->
+  <line x1="15" y1="25" x2="20" y2="25" stroke="white" stroke-width="1.5" opacity="0.8"/>
+  <line x1="14" y1="30" x2="18" y2="30" stroke="white" stroke-width="1.5" opacity="0.6"/>
+  <line x1="13" y1="35" x2="16" y2="35" stroke="white" stroke-width="1.5" opacity="0.4"/>
+  
+  <!-- Paper airplane -->
+  <path d="M22 28 L35 20 L28 32 L22 28 Z" fill="white" stroke="white" stroke-width="1"/>
+  <path d="M28 32 L35 20 L32 35 L28 32 Z" fill="white" stroke="white" stroke-width="1"/>
+  
+  <!-- Sparkle above airplane -->
+  <g transform="translate(38, 15)">
+    <path d="M0,-4 L1.5,-1.5 L4,0 L1.5,1.5 L0,4 L-1.5,1.5 L-4,0 L-1.5,-1.5 Z" fill="white" opacity="0.9"/>
+  </g>
+  
+  <!-- NovaMail Text -->
+  <text x="60" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white">Nova</text>
+  <text x="60" y="45" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white">Mail</text>
+</svg>

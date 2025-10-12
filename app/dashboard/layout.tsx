@@ -168,8 +168,12 @@ export default function DashboardLayout({
         <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
           <div className="flex h-16 items-center justify-between px-4">
             <div className="flex items-center">
-              <Link href="/dashboard" className="text-2xl font-bold text-primary-600">
-                NovaMail
+              <Link href="/dashboard" className="flex items-center">
+                <img 
+                  src="/logo.svg" 
+                  alt="NovaMail" 
+                  className="h-8 w-auto"
+                />
               </Link>
             </div>
             <button
@@ -217,7 +221,11 @@ export default function DashboardLayout({
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
           <div className="flex h-16 items-center px-4">
             <Link href="/dashboard" className="flex items-center">
-              <span className="text-xl font-bold text-blue-600">NovaMail</span>
+              <img 
+                src="/logo.svg" 
+                alt="NovaMail" 
+                className="h-8 w-auto"
+              />
             </Link>
           </div>
           <nav className="flex-1 px-4 py-4 space-y-2">

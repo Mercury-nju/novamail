@@ -382,14 +382,12 @@ export default function RegisterPage() {
       <div className="relative z-10 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 min-h-screen">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
-            <div className="mx-auto h-12 w-12 bg-gradient-to-br from-primary-600 via-primary-700 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl mb-8">
-              <svg 
-                className="h-7 w-7 text-white" 
-                fill="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-              </svg>
+            <div className="mx-auto h-12 w-12 flex items-center justify-center mb-8">
+              <img 
+                src="/logo-icon.svg" 
+                alt="NovaMail" 
+                className="h-12 w-12"
+              />
             </div>
             <h2 className="text-3xl font-extrabold text-gray-900">
               Create your account

@@ -91,15 +91,11 @@ function LoginForm() {
       <div className="relative z-10 flex flex-col justify-center py-12 sm:px-6 lg:px-8 min-h-screen">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="mx-auto h-12 w-auto text-blue-600 flex items-center justify-center mb-8">
-            <div className="h-12 w-12 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
-              <svg 
-                className="h-7 w-7 text-white" 
-                fill="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-              </svg>
-            </div>
+            <img 
+              src="/logo-icon.svg" 
+              alt="NovaMail" 
+              className="h-12 w-12"
+            />
           </div>
           <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-3">
             Sign in to your account
