@@ -57,11 +57,14 @@ export default function RegisterPage() {
       const result = await response.json()
       
       if (result.success) {
-      toast.success('Verification code sent! Please check your email.')
-      setStep('verify')
+        toast.success('Verification code sent! Please check your email.')
+        setStep('verify')
         // 在开发环境中显示验证码（仅用于测试）
         if (result.code) {
           console.log('Verification code for testing:', result.code)
+          console.log('API Response:', result)
+          // 在页面上显示验证码（仅用于调试）
+          alert(`验证码: ${result.code}\n\n这是临时调试功能，请手动输入此验证码。`)
         }
       } else {
         // 处理用户已存在的情况
