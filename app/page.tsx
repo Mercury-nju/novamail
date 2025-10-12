@@ -226,9 +226,9 @@ export default function HomePage() {
                     scale: 1.02,
                     textShadow: "0 0 20px rgba(59, 130, 246, 0.5)"
                   }}
-                  className="text-xl font-bold"
+                  className="text-xl font-bold text-gray-900"
                 >
-                  <span className="text-blue-600">Nova</span><span className="text-purple-600">Mail</span>
+                  NovaMail
                 </motion.span>
               </Link>
             </motion.div>
