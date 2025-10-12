@@ -1293,7 +1293,6 @@ export default function NewCampaignPage() {
                   </div>
                 )}
               </div>
-            </div>
             </motion.div>
 
             {/* Tone Style Selection */}
@@ -2023,6 +2022,7 @@ export default function NewCampaignPage() {
             </div>
           </div>
         )}
+      </div>
       </motion.div>
     </div>
   )
