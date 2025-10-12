@@ -66,6 +66,8 @@ export default {
         return await handleGoogleLogin(request, env);
       } else if (path.startsWith('/api/auth/google-callback')) {
         return await handleGoogleCallback(request, env);
+      } else if (path.startsWith('/api/test-gmail')) {
+        return await handleTestGmail(request, env);
       } else if (path.startsWith('/api/creem/test')) {
         return await handleCreemTest(request, env);
       } else if (path.startsWith('/api/creem/webhook-test')) {
@@ -4097,3 +4099,103 @@ async function handleAnalytics(request, env) {
     headers: corsHeaders
   });
 };
+
+// Gmail API 测试函数
+async function handleTestGmail(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const gmailUser = env.GMAIL_SMTP_USER;
+    const gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
+    const gmailRefreshToken = env.GMAIL_REFRESH_TOKEN;
+
+    console.log('Testing Gmail API configuration...');
+
+    // 检查配置
+    if (!gmailUser || !gmailAccessToken) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Gmail API not configured',
+        details: {
+          hasGmailUser: !!gmailUser,
+          hasAccessToken: !!gmailAccessToken,
+          hasRefreshToken: !!gmailRefreshToken
+        }
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    // 测试 Gmail API 连接
+    const testResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/profile', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${gmailAccessToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (testResponse.ok) {
+      const profile = await testResponse.json();
+      console.log('Gmail API test successful:', profile.emailAddress);
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Gmail API connection successful',
+        profile: {
+          email: profile.emailAddress,
+          messagesTotal: profile.messagesTotal,
+          threadsTotal: profile.threadsTotal
+        },
+        configuration: {
+          gmailUser: gmailUser,
+          hasAccessToken: !!gmailAccessToken,
+          hasRefreshToken: !!gmailRefreshToken,
+          tokenLength: gmailAccessToken.length
+        }
+      }), {
+        headers: corsHeaders
+      });
+    } else {
+      const errorText = await testResponse.text();
+      console.error('Gmail API test failed:', testResponse.status, errorText);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Gmail API connection failed',
+        details: {
+          status: testResponse.status,
+          statusText: testResponse.statusText,
+          error: errorText
+        },
+        suggestion: testResponse.status === 401 ? 
+          'Access token may be expired. Please refresh the token.' : 
+          'Check Gmail API configuration and permissions.'
+      }), {
+        status: testResponse.status,
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Gmail API test error:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Gmail API test failed',
+      details: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
