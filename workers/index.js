@@ -492,8 +492,8 @@ async function handleVerifyCode(request, env) {
     `
   };
 
-  // 鍙戦€佹杩庨偖浠?  try {
-    const response = await fetch('https://api.resend.com/emails', {
+  // Send welcome email
+  try {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + env.RESEND_API_KEY,
@@ -1058,8 +1058,8 @@ async function handleCampaignSend(request, env) {
         `
       };
 
-      // 鍙戦€侀偖浠?      try {
-        console.log('Sending email to:', recipient);
+      // Send email
+      try {
         
         let response;
         
@@ -1074,8 +1074,7 @@ async function handleCampaignSend(request, env) {
               'Authorization': `Bearer ${env.RESEND_API_KEY}`,
               'Content-Type': 'application/json'
             },
-          },
-          body: JSON.stringify({
+            body: JSON.stringify({
             from: `${campaignData.businessName || 'Your Company'} <${userEmailConfig.email}>`,
             to: [recipient],
             subject: campaignData.subject || 'Email Campaign',
