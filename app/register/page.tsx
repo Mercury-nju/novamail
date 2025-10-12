@@ -44,7 +44,7 @@ export default function RegisterPage() {
       }
 
       // 调用真实的验证码发送API
-      const response = await fetch('https://novamail.world/api/auth/send-verification', {
+      const response = await fetch('https://novamail.world/api/send-verification', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ export default function RegisterPage() {
 
     try {
       // 调用真实的验证码发送API
-      const response = await fetch('https://novamail.world/api/auth/send-verification', {
+      const response = await fetch('https://novamail.world/api/send-verification', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

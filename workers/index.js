@@ -65,6 +65,8 @@ export default {
         return await handleLogin(request, env);
       } else if (path.startsWith('/api/auth/google-login')) {
         return await handleGoogleLogin(request, env);
+      } else if (path.startsWith('/api/auth/google-callback')) {
+        return await handleGoogleCallback(request, env);
       } else if (path.startsWith('/api/creem/test')) {
         return await handleCreemTest(request, env);
       } else if (path.startsWith('/api/creem/webhook-test')) {
@@ -3506,6 +3508,184 @@ async function handleGoogleLogin(request, env) {
     return new Response(JSON.stringify({
       success: false,
       error: 'Failed to process Google login',
+      details: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// Google OAuth 回调处理函数
+async function handleGoogleCallback(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    const data = await request.json();
+    const { code, redirect_uri } = data;
+    
+    if (!code) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Authorization code is required' 
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    // 1. 交换授权码获取访问令牌
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        client_id: env.GOOGLE_CLIENT_ID || '3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com',
+        client_secret: env.GOOGLE_CLIENT_SECRET || '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5tU',
+        code: code,
+        grant_type: 'authorization_code',
+        redirect_uri: redirect_uri
+      })
+    });
+
+    if (!tokenResponse.ok) {
+      throw new Error('Failed to exchange authorization code');
+    }
+
+    const tokenData = await tokenResponse.json();
+    const accessToken = tokenData.access_token;
+
+    // 2. 获取Google用户信息
+    const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    if (!userResponse.ok) {
+      throw new Error('Failed to get user information');
+    }
+
+    const googleUser = await userResponse.json();
+
+    // 3. 创建或更新用户账户
+    const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const userToken = 'token_' + Math.random().toString(36).substr(2, 9);
+    
+    const user = {
+      id: userId,
+      email: googleUser.email.toLowerCase().trim(),
+      name: googleUser.name,
+      firstName: googleUser.name.split(' ')[0] || googleUser.name,
+      lastName: googleUser.name.split(' ').slice(1).join(' ') || '',
+      picture: googleUser.picture || '',
+      provider: 'google',
+      emailVerified: true,
+      plan: 'free',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      token: userToken,
+      emailsSentThisMonth: 0,
+      contactsCount: 0,
+      campaignsCount: 0,
+      lastUsageReset: new Date().toISOString()
+    };
+
+    // 检查用户是否已存在
+    let existingUser = null;
+    try {
+      if (env.USERS_KV) {
+        const storedUser = await env.USERS_KV.get(`user_${googleUser.email.toLowerCase()}`);
+        if (storedUser) {
+          existingUser = JSON.parse(storedUser);
+          // 更新现有用户信息
+          existingUser.token = userToken;
+          existingUser.updatedAt = new Date().toISOString();
+          existingUser.picture = googleUser.picture || existingUser.picture;
+          await env.USERS_KV.put(`user_${googleUser.email.toLowerCase()}`, JSON.stringify(existingUser));
+        }
+      }
+    } catch (error) {
+      console.log('Failed to check existing user:', error);
+    }
+
+    if (existingUser) {
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Login successful (existing user)',
+        user: {
+          id: existingUser.id,
+          email: existingUser.email,
+          name: existingUser.name,
+          firstName: existingUser.firstName,
+          lastName: existingUser.lastName,
+          picture: existingUser.picture,
+          provider: existingUser.provider,
+          plan: existingUser.plan,
+          token: existingUser.token,
+          emailsSentThisMonth: existingUser.emailsSentThisMonth || 0,
+          contactsCount: existingUser.contactsCount || 0,
+          campaignsCount: existingUser.campaignsCount || 0
+        },
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    } else {
+      // 创建新用户
+      try {
+        if (env.USERS_KV) {
+          await env.USERS_KV.put(`user_${googleUser.email.toLowerCase()}`, JSON.stringify(user));
+          console.log('Created new user:', user.email);
+        } else {
+          console.log('KV storage not available, user creation simulated');
+        }
+      } catch (error) {
+        console.error('Failed to create user:', error);
+        console.log('User creation simulated due to storage error');
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Account created and login successful',
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          picture: user.picture,
+          provider: user.provider,
+          plan: user.plan,
+          token: user.token,
+          emailsSentThisMonth: user.emailsSentThisMonth,
+          contactsCount: user.contactsCount,
+          campaignsCount: user.campaignsCount
+        },
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Google callback error:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to process Google authentication',
       details: error.message
     }), {
       status: 500,

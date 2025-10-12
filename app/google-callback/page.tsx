@@ -27,17 +27,14 @@ function GoogleCallbackContent() {
           setStatus('Processing Google authentication...')
           
           try {
-            // 1. 交换授权码获取访问令牌
-            const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+            // 1. 调用后端API处理Google OAuth
+            const tokenResponse = await fetch('https://novamail.world/api/auth/google-callback', {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
               },
-              body: new URLSearchParams({
-                client_id: '3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com',
-                client_secret: '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5tU',
+              body: JSON.stringify({
                 code: code,
-                grant_type: 'authorization_code',
                 redirect_uri: 'https://novamail.world/google-callback'
               })
             })
@@ -46,48 +43,15 @@ function GoogleCallbackContent() {
               throw new Error('Failed to exchange authorization code')
             }
 
-            const tokenData = await tokenResponse.json()
-            const accessToken = tokenData.access_token
-
-            // 2. 获取Google用户信息
-            const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-              headers: {
-                'Authorization': `Bearer ${accessToken}`
-              }
-            })
-
-            if (!userResponse.ok) {
-              throw new Error('Failed to get user information')
-            }
-
-            const googleUser = await userResponse.json()
-            
-            setStatus('Creating user account...')
-
-            // 3. 调用后端API创建或更新用户
-            const userResponse2 = await fetch('https://novamail.world/api/auth/google-login', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                email: googleUser.email,
-                name: googleUser.name,
-                picture: googleUser.picture,
-                provider: 'google',
-                accessToken: accessToken
-              })
-            })
-
-            const userResult = await userResponse2.json()
+            const userResult = await tokenResponse.json()
 
             if (userResult.success) {
               // 4. 存储用户信息到本地存储
-              localStorage.setItem('user-email', googleUser.email)
-              localStorage.setItem('user-name', googleUser.name)
+              localStorage.setItem('user-email', userResult.user.email)
+              localStorage.setItem('user-name', userResult.user.name)
               localStorage.setItem('user-token', userResult.user.token)
               localStorage.setItem('user-id', userResult.user.id)
-              localStorage.setItem('user-picture', googleUser.picture)
+              localStorage.setItem('user-picture', userResult.user.picture || '')
               localStorage.setItem('auth-provider', 'google')
 
               setStatus('Login successful! Redirecting...')
