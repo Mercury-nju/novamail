@@ -190,12 +190,24 @@ async function handleSendVerification(request, env) {
   // 妫€鏌ョ敤鎴锋槸鍚﹀凡瀛樺湪
   let existingUser = null;
   try {
+    console.log('Checking for existing user:', email);
+    console.log('KV storage available:', !!env.USERS_KV);
+    
     if (env.USERS_KV) {
-      const storedUser = await env.USERS_KV.get(`user_${email.toLowerCase()}`);
+      const userKey = `user_${email.toLowerCase()}`;
+      console.log('Looking for user key:', userKey);
+      
+      const storedUser = await env.USERS_KV.get(userKey);
+      console.log('Stored user data:', storedUser ? 'Found' : 'Not found');
+      
       if (storedUser) {
         existingUser = JSON.parse(storedUser);
         console.log('User already exists:', existingUser.email);
+      } else {
+        console.log('No existing user found for:', email);
       }
+    } else {
+      console.log('KV storage not available - cannot check existing users');
     }
   } catch (error) {
     console.log('Failed to check existing user:', error);
