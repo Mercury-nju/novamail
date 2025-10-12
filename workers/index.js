@@ -72,6 +72,8 @@ export default {
         return await handleDebugKV(request, env);
       } else if (path.startsWith('/api/test-user-save')) {
         return await handleTestUserSave(request, env);
+      } else if (path.startsWith('/api/test-kv-simple')) {
+        return await handleTestKVSimple(request, env);
       } else if (path.startsWith('/api/creem/test')) {
         return await handleCreemTest(request, env);
       } else if (path.startsWith('/api/creem/webhook-test')) {
@@ -4111,6 +4113,81 @@ async function handleAnalytics(request, env) {
     headers: corsHeaders
   });
 };
+
+// 简单 KV 测试函数
+async function handleTestKVSimple(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    console.log('Testing KV storage availability...');
+    
+    const kvStatus = {
+      hasUsersKV: !!env.USERS_KV,
+      hasContactsKV: !!env.CONTACTS_KV,
+      hasCampaignsKV: !!env.CAMPAIGNS_KV,
+      hasEmailConfigKV: !!env.EMAIL_CONFIG_KV
+    };
+    
+    console.log('KV status:', kvStatus);
+    
+    // 尝试简单的 KV 操作
+    let testResult = null;
+    let testError = null;
+    
+    try {
+      if (env.USERS_KV) {
+        // 写入测试数据
+        await env.USERS_KV.put('test_key', 'test_value');
+        console.log('Test data written to KV');
+        
+        // 读取测试数据
+        const testValue = await env.USERS_KV.get('test_key');
+        console.log('Test data read from KV:', testValue);
+        
+        testResult = {
+          writeSuccess: true,
+          readValue: testValue,
+          readSuccess: testValue === 'test_value'
+        };
+      } else {
+        testError = 'USERS_KV not available';
+      }
+    } catch (error) {
+      testError = error.message;
+      console.error('KV test error:', error);
+    }
+    
+    return new Response(JSON.stringify({
+      success: true,
+      kvStatus: kvStatus,
+      testResult: testResult,
+      testError: testError,
+      timestamp: new Date().toISOString()
+    }), {
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    console.error('Simple KV test error:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Simple KV test failed',
+      details: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
 
 // 测试用户保存函数
 async function handleTestUserSave(request, env) {
