@@ -100,8 +100,30 @@ export default {
 
         const templateInfo = templateInstructions[selectedTemplate] || templateInstructions['modern-promo']
 
+        // 检测用户输入的语言
+        const detectLanguage = (text) => {
+          if (!text) return 'en';
+          // 检测中文字符
+          const chineseRegex = /[\u4e00-\u9fff]/;
+          const chineseCount = (text.match(chineseRegex) || []).length;
+          const totalChars = text.length;
+          
+          // 如果中文字符占比超过30%，则认为是中文
+          return chineseCount / totalChars > 0.3 ? 'zh' : 'en';
+        };
+
+        const detectedLanguage = detectLanguage(
+          `${campaignPurpose} ${businessName || ''} ${productService || ''}`
+        );
+
+        const languageInstruction = detectedLanguage === 'zh' 
+          ? '请用中文生成邮件内容，保持专业、友好的语调。'
+          : 'Please generate email content in English, maintaining a professional and friendly tone.';
+
         systemPrompt = `You are an expert email marketing designer. Generate ONLY the email body content (no DOCTYPE, html, head, or body tags) in ${templateInfo.style}. 
         Create an email that achieves the goal: ${templateInfo.goal}.
+        
+        ${languageInstruction}
         
         Requirements:
         - Generate ONLY the email body content (div container with content)
@@ -118,6 +140,15 @@ export default {
         - Make it visually appealing and professional
         - Use modern email design with gradients, colors, and visual elements
         - Include call-to-action buttons with proper styling
+        ${detectedLanguage === 'zh' ? `
+        - 使用中文表达，符合中文邮件营销习惯
+        - 采用合适的中文称呼和礼貌用语
+        - 确保语言自然流畅，符合中文表达习惯
+        ` : `
+        - Use English expressions that align with email marketing best practices
+        - Apply appropriate English greetings and polite language
+        - Ensure natural and fluent language usage
+        `}
         
         Generate ONLY the email body HTML content, no explanations or full HTML document.`
 
@@ -148,6 +179,8 @@ export default {
         // 简单邮件提示词
         systemPrompt = `You are an expert email writer. Create ONLY the email body content (no DOCTYPE, html, head, or body tags) that follows proper email format. 
         
+        ${languageInstruction}
+        
         Requirements:
         - Generate ONLY the email body content (div container with content)
         - Use proper email structure: greeting, body paragraphs, closing, signature
@@ -162,6 +195,15 @@ export default {
         - NO buttons, NO call-to-action elements, NO fancy styling
         - Use proper paragraph breaks with <p> tags
         - Just clean, simple text content with basic formatting
+        ${detectedLanguage === 'zh' ? `
+        - 使用中文表达，符合中文邮件营销习惯
+        - 采用合适的中文称呼和礼貌用语
+        - 确保语言自然流畅，符合中文表达习惯
+        ` : `
+        - Use English expressions that align with email marketing best practices
+        - Apply appropriate English greetings and polite language
+        - Ensure natural and fluent language usage
+        `}
         
         Generate ONLY the email body HTML content, no explanations or full HTML document.`
 

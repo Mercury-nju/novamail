@@ -1792,7 +1792,29 @@ async function handleAIGenerateEmail(request, env) {
       // 使用 AI 生成内容
       console.log('Using AI generation with DashScope API');
       
+      // 检测用户输入的语言
+      const detectLanguage = (text) => {
+        if (!text) return 'en';
+        // 检测中文字符
+        const chineseRegex = /[\u4e00-\u9fff]/;
+        const chineseCount = (text.match(chineseRegex) || []).length;
+        const totalChars = text.length;
+        
+        // 如果中文字符占比超过30%，则认为是中文
+        return chineseCount / totalChars > 0.3 ? 'zh' : 'en';
+      };
+
+      const detectedLanguage = detectLanguage(
+        `${campaignData.purpose} ${campaignData.businessName || ''} ${campaignData.productService || ''}`
+      );
+
+      const languageInstruction = detectedLanguage === 'zh' 
+        ? '请用中文生成邮件内容，保持专业、友好的语调。'
+        : 'Please generate email content in English, maintaining a professional and friendly tone.';
+
       const aiPrompt = `You are an expert email marketing writer with deep understanding of professional email design. Create a sophisticated, intelligent email that adapts perfectly to the available information.
+
+${languageInstruction}
 
 Available Information:
 - Purpose: ${campaignData.purpose}
@@ -1897,6 +1919,15 @@ CONTENT INTELLIGENCE:
 - Include relevant calls-to-action when appropriate
 - Make the email feel personal and authentic
 - Ensure all content is actionable and valuable
+${detectedLanguage === 'zh' ? `
+- 使用中文表达，符合中文邮件营销习惯
+- 采用合适的中文称呼和礼貌用语
+- 确保语言自然流畅，符合中文表达习惯
+` : `
+- Use English expressions that align with email marketing best practices
+- Apply appropriate English greetings and polite language
+- Ensure natural and fluent language usage
+`}
 
 Generate ONLY:
 1. Subject line (compelling and relevant)
@@ -1909,6 +1940,7 @@ BODY: [HTML email body here]
 Be intelligent, creative, and professional. Create an email that truly serves its purpose.`;
 
       console.log('Sending request to DashScope API with key:', env.DASHSCOPE_API_KEY ? 'Key present' : 'Key missing');
+      console.log('Detected language:', detectedLanguage);
       console.log('AI Prompt for template:', selectedTemplate);
       console.log('Full AI Prompt:', aiPrompt);
       
