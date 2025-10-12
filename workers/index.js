@@ -57,7 +57,7 @@ export default {
 
     try {
       // 路由到不同的 API 端点
-      if (path.startsWith('/api/auth/send-verification')) {
+      if (path.startsWith('/api/auth/send-verification') || path.startsWith('/api/send-verification')) {
         return await handleSendVerification(request, env);
       } else if (path.startsWith('/api/auth/verify-code')) {
         return await handleVerifyCode(request, env);
@@ -118,6 +118,7 @@ export default {
           error: 'API endpoint not found',
           availableEndpoints: [
             '/api/auth/send-verification',
+            '/api/send-verification',
             '/api/auth/verify-code',
             '/api/auth/login',
             '/api/creem/test',
