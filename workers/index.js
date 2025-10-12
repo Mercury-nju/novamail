@@ -280,6 +280,8 @@ async function handleSendVerification(request, env) {
 
     // 鏋勫缓Gmail API閭欢鍐呭
     // Build Gmail API email content
+    const emailContent = [
+      `From: NovaMail <${gmailUser}>`,
       `To: ${email}`,
       `Subject: Your NovaMail Verification Code`,
       `MIME-Version: 1.0`,
