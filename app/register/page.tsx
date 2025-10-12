@@ -382,17 +382,17 @@ export default function RegisterPage() {
       <div className="relative z-10 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 min-h-screen">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
-            <div className="mx-auto h-12 w-12 bg-gradient-to-br from-primary-600 via-primary-700 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl mb-8">
+            <div className="mx-auto h-12 w-12 bg-gradient-to-b from-primary-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl mb-8">
               <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {/* Speed lines */}
-                <line x1="6" y1="10" x2="8" y2="10" stroke="white" strokeWidth="1.5" opacity="0.8"/>
-                <line x1="5" y1="12" x2="7" y2="12" stroke="white" strokeWidth="1.5" opacity="0.6"/>
-                <line x1="4" y1="14" x2="6" y2="14" stroke="white" strokeWidth="1.5" opacity="0.4"/>
-                {/* Paper airplane */}
-                <path d="M10 12 L16 8 L14 16 L10 12 Z" fill="white"/>
-                <path d="M14 16 L16 8 L18 18 L14 16 Z" fill="white"/>
-                {/* Sparkle */}
-                <path d="M18 6 L19.5 7.5 L21 6 L19.5 4.5 Z" fill="white" opacity="0.9"/>
+                {/* Paper airplane pointing up-right */}
+                <path d="M12 8 L16 6 L14 14 L12 8 Z" fill="white"/>
+                <path d="M14 14 L16 6 L18 16 L14 14 Z" fill="white"/>
+                {/* Sparkles around the airplane */}
+                <circle cx="8" cy="10" r="1.2" fill="white" opacity="0.8"/>
+                <circle cx="9" cy="12" r="1" fill="white" opacity="0.6"/>
+                <circle cx="7" cy="13" r="0.8" fill="white" opacity="0.4"/>
+                <circle cx="18" cy="7" r="1" fill="white" opacity="0.9"/>
+                <circle cx="19" cy="15" r="0.9" fill="white" opacity="0.7"/>
               </svg>
             </div>
             <h2 className="text-3xl font-extrabold text-gray-900">
