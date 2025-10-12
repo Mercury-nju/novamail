@@ -14,7 +14,7 @@ import {
 import toast from 'react-hot-toast'
 import * as XLSX from 'xlsx'
 import DOMPurify from 'dompurify'
-import { hasProAccess, getUserSubscription } from '@/lib/permissions'
+import { hasProAccess, getUserSubscription, getUserLimits } from '@/lib/permissions'
 
 export default function NewCampaignPage() {
   const router = useRouter()
@@ -192,42 +192,20 @@ export default function NewCampaignPage() {
       return
     }
 
-    // 检查用户订阅等级和邮件发送限制
-    const getUserPlan = () => {
-      if (!mounted) return 'free'
-      // 从localStorage获取用户订阅状态
-      const subscriptionData = localStorage.getItem('user-subscription');
-      if (subscriptionData) {
-        try {
-          const subscription = JSON.parse(subscriptionData);
-          return subscription.status === 'active' ? subscription.plan : 'free';
-        } catch (e) {
-          console.log('Invalid subscription data');
-        }
-      }
-      return 'free';
-    };
-
-    const getEmailLimit = () => {
-      if (!mounted) return 1000
-      const subscriptionData = localStorage.getItem('user-subscription');
-      if (subscriptionData) {
-        try {
-          const subscription = JSON.parse(subscriptionData);
-          if (subscription.status === 'active' && subscription.features) {
-            return subscription.features.maxEmailsPerMonth;
-          }
-        } catch (e) {
-          console.log('Invalid subscription data');
-        }
-      }
-      return 1000; // 默认免费用户限制
-    };
-
-    const emailLimit = getEmailLimit();
-    if (emailLimit !== -1 && campaignData.recipients.length > emailLimit) {
-      toast.error(`Email limit exceeded. Your plan allows up to ${emailLimit} emails per month. Upgrade to send more.`)
-      return;
+    // 检查用户使用限制
+    const limits = getUserLimits()
+    const recipientCount = campaignData.recipients.length
+    
+    // 检查邮件发送限制
+    if (limits.maxEmailsPerMonth !== -1 && recipientCount > limits.maxEmailsPerMonth) {
+      toast.error(`Email limit exceeded. Your plan allows up to ${limits.maxEmailsPerMonth} emails per month. Upgrade to send more.`)
+      return
+    }
+    
+    // 检查联系人限制
+    if (limits.maxContacts !== -1 && recipientCount > limits.maxContacts) {
+      toast.error(`Contact limit exceeded. Your plan allows up to ${limits.maxContacts} contacts. Upgrade to add more.`)
+      return
     }
 
     // Check if user can send emails

@@ -12,6 +12,7 @@ import {
   Cog6ToothIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline'
+import UsageStats from '@/components/UsageStats'
 
 export default function DashboardPage() {
   const [stats, setStats] = useState([
@@ -237,35 +238,51 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        {stats.map((stat, index) => (
-          <motion.div
-            key={stat.name}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: (index + 1) * 0.1 }}
-            className="card"
-          >
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <stat.icon className="h-8 w-8 text-primary-600" />
+      {/* Stats and Usage */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        {/* Basic Stats */}
+        <div className="lg:col-span-2 grid grid-cols-1 gap-5 sm:grid-cols-2">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: (index + 1) * 0.1 }}
+              className="card"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <stat.icon className="h-8 w-8 text-primary-600" />
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-gray-500 truncate">
+                      {stat.name}
+                    </dt>
+                    <dd>
+                      <div className="text-2xl font-semibold text-gray-900">
+                        {stat.value}
+                      </div>
+                    </dd>
+                  </dl>
+                </div>
               </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    {stat.name}
-                  </dt>
-                  <dd>
-                    <div className="text-2xl font-semibold text-gray-900">
-                      {stat.value}
-                    </div>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Usage Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <UsageStats 
+            currentContacts={parseInt(stats[0]?.value || '0')}
+            currentEmails={parseInt(stats[1]?.value || '0')}
+            currentCampaigns={recentCampaigns.length}
+          />
+        </motion.div>
       </div>
 
       {/* Quick Actions */}

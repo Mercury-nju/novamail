@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { toast } from 'react-toastify'
 import * as XLSX from 'xlsx'
+import { getUserLimits } from '@/lib/permissions'
 
 interface Contact {
   id: string
@@ -37,40 +38,9 @@ export default function ContactsPage() {
     setMounted(true)
   }, [])
 
-  // 检查用户订阅等级
-  const getUserPlan = () => {
-    if (!mounted) return 'free'
-    // 从localStorage获取用户订阅状态
-    const subscriptionData = localStorage.getItem('user-subscription');
-    if (subscriptionData) {
-      try {
-        const subscription = JSON.parse(subscriptionData);
-        return subscription.status === 'active' ? subscription.plan : 'free';
-      } catch (e) {
-        console.log('Invalid subscription data');
-      }
-    }
-    return 'free';
-  };
-
-  const getContactLimit = () => {
-    if (!mounted) return 500
-    const subscriptionData = localStorage.getItem('user-subscription');
-    if (subscriptionData) {
-      try {
-        const subscription = JSON.parse(subscriptionData);
-        if (subscription.status === 'active' && subscription.features) {
-          return subscription.features.maxContacts;
-        }
-      } catch (e) {
-        console.log('Invalid subscription data');
-      }
-    }
-    return 500; // 默认免费用户限制
-  };
-
-  const contactLimit = getContactLimit();
-  const isAtLimit = contactLimit !== -1 && contacts.length >= contactLimit;
+  // 获取用户使用限制
+  const limits = getUserLimits()
+  const isAtLimit = limits.maxContacts !== -1 && contacts.length >= limits.maxContacts
 
   useEffect(() => {
       fetchContacts()
