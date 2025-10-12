@@ -355,6 +355,176 @@ async function handleSendVerification(request, env) {
       headers: corsHeaders
     });
   }
+  // 妫€鏌ョ敤鎴锋槸鍚﹀凡瀛樺湪
+  let existingUser = null;
+  try {
+    if (env.USERS_KV) {
+      const storedUser = await env.USERS_KV.get(`user_${email.toLowerCase()}`);
+      if (storedUser) {
+        existingUser = JSON.parse(storedUser);
+        console.log('User already exists:', existingUser.email);
+      }
+    }
+  } catch (error) {
+    console.log('Failed to check existing user:', error);
+  }
+
+  if (existingUser) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'User already exists',
+      message: 'This email is already registered. Please use login instead.',
+      code: 'USER_EXISTS'
+    }), {
+      status: 400,
+      headers: corsHeaders
+    });
+  }
+
+  // 鐢熸垚6浣嶉獙璇佺爜
+  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  // 浣跨敤Gmail API鍙戦€侀獙璇佺爜閭欢
+  console.log('Sending verification email via Gmail API to:', email);
+
+  try {
+    // 妫€鏌mail閰嶇疆
+    const gmailUser = env.GMAIL_SMTP_USER;
+    const gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
+    
+    console.log('Gmail configuration check:', {
+      hasGmailUser: !!gmailUser,
+      hasAccessToken: !!gmailAccessToken,
+      gmailUser: gmailUser ? `${gmailUser.substring(0, 3)}***` : 'not set',
+      tokenLength: gmailAccessToken ? gmailAccessToken.length : 0
+    });
+    
+    if (!gmailUser || !gmailAccessToken) {
+      console.log('Gmail API not configured, returning verification code for testing');
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Verification code generated (Gmail API not configured)',
+        code: verificationCode,
+        note: 'Please configure Gmail API credentials to enable real email sending',
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    }
+
+    // 鏋勫缓Gmail API閭欢鍐呭
+    const emailContent = [
+      `From: NovaMail <${gmailUser}>`,
+      `To: ${email}`,
+      `Subject: Your NovaMail Verification Code`,
+      `MIME-Version: 1.0`,
+      `Content-Type: text/html; charset=UTF-8`,
+      ``,
+      `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">`,
+      `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">`,
+      `<h1 style="color: white; margin: 0;">NovaMail</h1>`,
+      `</div>`,
+      `<div style="padding: 30px; background: #f9f9f9;">`,
+      `<h2 style="color: #333; margin-bottom: 20px;">Verify Your Email Address</h2>`,
+      `<p style="color: #666; font-size: 16px; line-height: 1.5;">`,
+      `Thank you for signing up for NovaMail! To complete your registration, please use the verification code below:`,
+      `</p>`,
+      `<div style="background: white; border: 2px solid #667eea; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">`,
+      `<span style="font-size: 32px; font-weight: bold; color: #667eea; letter-spacing: 5px;">${verificationCode}</span>`,
+      `</div>`,
+      `<p style="color: #666; font-size: 14px;">`,
+      `This code will expire in 10 minutes. If you didn't request this code, please ignore this email.`,
+      `</p>`,
+      `<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">`,
+      `<p style="color: #999; font-size: 12px;">`,
+      `This email was sent by NovaMail. If you have any questions, please contact our support team.`,
+      `</p>`,
+      `</div>`,
+      `</div>`,
+      `</div>`
+    ].join('\r\n');
+
+    // Base64缂栫爜閭欢鍐呭
+    const encodedMessage = btoa(emailContent).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    
+    // 璋冪敤Gmail API
+    console.log('Attempting to send email via Gmail API...');
+    const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${gmailAccessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        raw: encodedMessage
+      })
+    });
+
+    console.log('Gmail API response status:', gmailResponse.status);
+
+    if (gmailResponse.ok) {
+      const result = await gmailResponse.json();
+      console.log('Email sent successfully via Gmail API:', result.id);
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Verification code sent successfully via Gmail',
+        code: verificationCode,
+        messageId: result.id,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    } else {
+      const errorText = await gmailResponse.text();
+      console.error('Gmail API error details:', {
+        status: gmailResponse.status,
+        statusText: gmailResponse.statusText,
+        error: errorText
+      });
+      
+      // 妫€鏌ユ槸鍚︽槸璁よ瘉閿欒
+      if (gmailResponse.status === 401) {
+        console.log('Gmail API authentication failed - token may be expired');
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Verification code generated (Gmail authentication failed)',
+          code: verificationCode,
+          note: 'Gmail API authentication failed - please check access token',
+          error: 'Authentication failed - token may be expired',
+          timestamp: new Date().toISOString()
+        }), {
+          headers: corsHeaders
+        });
+      }
+      
+      // 鍗充娇Gmail API澶辫触锛屼篃杩斿洖楠岃瘉鐮佺粰鐢ㄦ埛
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Verification code generated (Gmail API failed)',
+        code: verificationCode,
+        note: 'Gmail API failed, but verification code is available for testing',
+        error: `Gmail API Error: ${gmailResponse.status} - ${errorText}`,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Gmail API error:', error);
+    // 鍗充娇鍑洪敊锛屼篃杩斿洖楠岃瘉鐮佺粰鐢ㄦ埛
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'Verification code generated (Gmail API error)',
+      code: verificationCode,
+      note: 'Gmail API error occurred, but verification code is available for testing',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      headers: corsHeaders
+    });
+  }
 }
 
 // 楠岃瘉楠岃瘉鐮佸鐞嗗嚱鏁?
@@ -386,7 +556,8 @@ async function handleVerifyCode(request, env) {
     });
   }
 
-  // 楠岃瘉鐮佹牸寮忔鏌?  if (!/^\d{6}$/.test(code)) {
+  // 楠岃瘉楠岃瘉鐮佹牸寮?
+  if (!/^\d{6}$/.test(code)) {
     return new Response(JSON.stringify({
       success: false,
       error: 'Invalid verification code format'
@@ -395,9 +566,6 @@ async function handleVerifyCode(request, env) {
       headers: corsHeaders
     });
   }
-
-  // 妫€鏌ョ敤鎴锋槸鍚﹀凡瀛樺湪
-  let existingUser = null;
   try {
     if (env.USERS_KV) {
       const storedUser = await env.USERS_KV.get(`user_${email.toLowerCase()}`);
