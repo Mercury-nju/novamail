@@ -355,31 +355,6 @@ async function handleSendVerification(request, env) {
       headers: corsHeaders
     });
   }
-  // 妫€鏌ョ敤鎴锋槸鍚﹀凡瀛樺湪
-  let existingUser = null;
-  try {
-    if (env.USERS_KV) {
-      const storedUser = await env.USERS_KV.get(`user_${email.toLowerCase()}`);
-      if (storedUser) {
-        existingUser = JSON.parse(storedUser);
-        console.log('User already exists:', existingUser.email);
-      }
-    }
-  } catch (error) {
-    console.log('Failed to check existing user:', error);
-  }
-
-  if (existingUser) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'User already exists',
-      message: 'This email is already registered. Please use login instead.',
-      code: 'USER_EXISTS'
-    }), {
-      status: 400,
-      headers: corsHeaders
-    });
-  }
 
   // 鐢熸垚6浣嶉獙璇佺爜
   const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
