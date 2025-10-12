@@ -384,16 +384,26 @@ export default function RegisterPage() {
           <div className="text-center">
             <div className="mx-auto h-12 w-12 bg-gradient-to-r from-primary-600 to-purple-600 rounded-2xl border-2 border-white flex items-center justify-center shadow-xl mb-8">
               <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {/* Paper airplane */}
+                {/* Email-style paper airplane */}
                 <path d="M8 12 L16 8 L12 16 L8 12 Z" fill="white"/>
                 <path d="M12 16 L16 8 L20 12 L12 16 Z" fill="white"/>
-                {/* Speed lines */}
-                <line x1="6" y1="8" x2="4" y2="6" stroke="white" strokeWidth="1.5" opacity="0.8"/>
-                <line x1="6" y1="10" x2="4" y2="8" stroke="white" strokeWidth="1.5" opacity="0.6"/>
-                <line x1="6" y1="12" x2="4" y2="10" stroke="white" strokeWidth="1.5" opacity="0.4"/>
-                {/* Star */}
-                <path d="M4 4 L5 5 L4 6 L3 5 Z" fill="white" opacity="0.9"/>
-                <path d="M4 4 L4 6 L2 5 L6 5 Z" fill="white" opacity="0.9"/>
+                {/* Envelope flap */}
+                <path d="M16 8 L20 12 L16 12 L16 8 Z" fill="white" opacity="0.8"/>
+                {/* Wing fold lines */}
+                <path d="M8 12 L12 16" strokeWidth="0.5" fill="none" opacity="0.7"/>
+                <path d="M16 8 L12 16" strokeWidth="0.5" fill="none" opacity="0.7"/>
+                <path d="M16 8 L20 12" strokeWidth="0.5" fill="none" opacity="0.7"/>
+                {/* Body center line */}
+                <line x1="12" y1="12" x2="12" y2="16" stroke="white" strokeWidth="0.4" opacity="0.6"/>
+                {/* Wing details */}
+                <line x1="14" y1="10" x2="14" y2="12" stroke="white" strokeWidth="0.3" opacity="0.5"/>
+                <line x1="18" y1="10" x2="18" y2="12" stroke="white" strokeWidth="0.3" opacity="0.5"/>
+                {/* Wing tips */}
+                <path d="M8 12 L9 13" strokeWidth="0.4" fill="none" opacity="0.8"/>
+                <path d="M20 12 L19 13" strokeWidth="0.4" fill="none" opacity="0.8"/>
+                {/* @ symbol */}
+                <circle cx="14" cy="12" r="0.8" fill="none" stroke="white" strokeWidth="0.3" opacity="0.7"/>
+                <path d="M13.5 11.5 L14.5 11.5 L14.5 12.5 L13.5 12.5 Z" fill="white" opacity="0.7"/>
               </svg>
             </div>
             <h2 className="text-3xl font-extrabold text-gray-900">

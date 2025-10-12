@@ -173,16 +173,26 @@ export default function DashboardLayout({
                   {/* Logo Icon */}
                   <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                     <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      {/* Paper airplane */}
+                      {/* Email-style paper airplane */}
                       <path d="M6 9 L12 6 L9 12 L6 9 Z" fill="white"/>
                       <path d="M9 12 L12 6 L15 9 L9 12 Z" fill="white"/>
-                      {/* Speed lines */}
-                      <line x1="4" y1="6" x2="3" y2="5" stroke="white" strokeWidth="1" opacity="0.8"/>
-                      <line x1="4" y1="8" x2="3" y2="7" stroke="white" strokeWidth="1" opacity="0.6"/>
-                      <line x1="4" y1="10" x2="3" y2="9" stroke="white" strokeWidth="1" opacity="0.4"/>
-                      {/* Star */}
-                      <path d="M3 3 L3.5 3.5 L3 4 L2.5 3.5 Z" fill="white" opacity="0.9"/>
-                      <path d="M3 3 L3 4 L2 3.5 L4 3.5 Z" fill="white" opacity="0.9"/>
+                      {/* Envelope flap */}
+                      <path d="M12 6 L15 9 L12 9 L12 6 Z" fill="white" opacity="0.8"/>
+                      {/* Wing fold lines */}
+                      <path d="M6 9 L9 12" strokeWidth="0.3" fill="none" opacity="0.7"/>
+                      <path d="M12 6 L9 12" strokeWidth="0.3" fill="none" opacity="0.7"/>
+                      <path d="M12 6 L15 9" strokeWidth="0.3" fill="none" opacity="0.7"/>
+                      {/* Body center line */}
+                      <line x1="9" y1="9" x2="9" y2="12" stroke="white" strokeWidth="0.2" opacity="0.6"/>
+                      {/* Wing details */}
+                      <line x1="10" y1="7" x2="10" y2="9" stroke="white" strokeWidth="0.2" opacity="0.5"/>
+                      <line x1="13" y1="7" x2="13" y2="9" stroke="white" strokeWidth="0.2" opacity="0.5"/>
+                      {/* Wing tips */}
+                      <path d="M6 9 L7 10" strokeWidth="0.2" fill="none" opacity="0.8"/>
+                      <path d="M15 9 L14 10" strokeWidth="0.2" fill="none" opacity="0.8"/>
+                      {/* @ symbol */}
+                      <circle cx="10" cy="9" r="0.5" fill="none" stroke="white" strokeWidth="0.2" opacity="0.7"/>
+                      <path d="M9.7 8.7 L10.3 8.7 L10.3 9.3 L9.7 9.3 Z" fill="white" opacity="0.7"/>
                     </svg>
                   </div>
                   {/* Logo Text */}
@@ -241,16 +251,26 @@ export default function DashboardLayout({
                 {/* Logo Icon */}
                 <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                   <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    {/* Paper airplane */}
+                    {/* Email-style paper airplane */}
                     <path d="M6 9 L12 6 L9 12 L6 9 Z" fill="white"/>
                     <path d="M9 12 L12 6 L15 9 L9 12 Z" fill="white"/>
-                    {/* Speed lines */}
-                    <line x1="4" y1="6" x2="3" y2="5" stroke="white" strokeWidth="1" opacity="0.8"/>
-                    <line x1="4" y1="8" x2="3" y2="7" stroke="white" strokeWidth="1" opacity="0.6"/>
-                    <line x1="4" y1="10" x2="3" y2="9" stroke="white" strokeWidth="1" opacity="0.4"/>
-                    {/* Star */}
-                    <path d="M3 3 L3.5 3.5 L3 4 L2.5 3.5 Z" fill="white" opacity="0.9"/>
-                    <path d="M3 3 L3 4 L2 3.5 L4 3.5 Z" fill="white" opacity="0.9"/>
+                    {/* Envelope flap */}
+                    <path d="M12 6 L15 9 L12 9 L12 6 Z" fill="white" opacity="0.8"/>
+                    {/* Wing fold lines */}
+                    <path d="M6 9 L9 12" strokeWidth="0.3" fill="none" opacity="0.7"/>
+                    <path d="M12 6 L9 12" strokeWidth="0.3" fill="none" opacity="0.7"/>
+                    <path d="M12 6 L15 9" strokeWidth="0.3" fill="none" opacity="0.7"/>
+                    {/* Body center line */}
+                    <line x1="9" y1="9" x2="9" y2="12" stroke="white" strokeWidth="0.2" opacity="0.6"/>
+                    {/* Wing details */}
+                    <line x1="10" y1="7" x2="10" y2="9" stroke="white" strokeWidth="0.2" opacity="0.5"/>
+                    <line x1="13" y1="7" x2="13" y2="9" stroke="white" strokeWidth="0.2" opacity="0.5"/>
+                    {/* Wing tips */}
+                    <path d="M6 9 L7 10" strokeWidth="0.2" fill="none" opacity="0.8"/>
+                    <path d="M15 9 L14 10" strokeWidth="0.2" fill="none" opacity="0.8"/>
+                    {/* @ symbol */}
+                    <circle cx="10" cy="9" r="0.5" fill="none" stroke="white" strokeWidth="0.2" opacity="0.7"/>
+                    <path d="M9.7 8.7 L10.3 8.7 L10.3 9.3 L9.7 9.3 Z" fill="white" opacity="0.7"/>
                   </svg>
                 </div>
                 {/* Logo Text */}
