@@ -25,6 +25,7 @@ function GoogleCallbackContent() {
         
         if (code) {
           setStatus('Processing Google authentication...')
+          console.log('Received authorization code:', code)
           
           try {
             // 1. 调用后端API处理Google OAuth
@@ -40,10 +41,13 @@ function GoogleCallbackContent() {
             })
 
             if (!tokenResponse.ok) {
-              throw new Error('Failed to exchange authorization code')
+              const errorText = await tokenResponse.text()
+              console.error('API response error:', tokenResponse.status, errorText)
+              throw new Error(`API error: ${tokenResponse.status} - ${errorText}`)
             }
 
             const userResult = await tokenResponse.json()
+            console.log('API response:', userResult)
 
             if (userResult.success) {
               // 4. 存储用户信息到本地存储
@@ -65,7 +69,7 @@ function GoogleCallbackContent() {
 
           } catch (error) {
             console.error('Google authentication error:', error)
-            setStatus('Authentication failed. Redirecting to login...')
+            setStatus(`Authentication failed: ${error.message}. Redirecting to login...`)
             setTimeout(() => {
               router.push('/login')
             }, 3000)
