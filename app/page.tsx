@@ -220,45 +220,16 @@ export default function HomePage() {
               className="flex items-center"
             >
               <Link href="/" className="flex items-center">
-                <div className="flex items-center space-x-3">
-                  {/* Logo Icon */}
-                  <div className="relative">
-                    <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
-                      <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        {/* Email-style paper airplane */}
-                        <path d="M6 9 L12 6 L9 12 L6 9 Z" fill="white"/>
-                        <path d="M9 12 L12 6 L15 9 L9 12 Z" fill="white"/>
-                        {/* Envelope flap */}
-                        <path d="M12 6 L15 9 L12 9 L12 6 Z" fill="white" opacity="0.8"/>
-                        {/* Wing fold lines */}
-                        <path d="M6 9 L9 12" strokeWidth="0.3" fill="none" opacity="0.7"/>
-                        <path d="M12 6 L9 12" strokeWidth="0.3" fill="none" opacity="0.7"/>
-                        <path d="M12 6 L15 9" strokeWidth="0.3" fill="none" opacity="0.7"/>
-                        {/* Body center line */}
-                        <line x1="9" y1="9" x2="9" y2="12" stroke="white" strokeWidth="0.2" opacity="0.6"/>
-                        {/* Wing details */}
-                        <line x1="10" y1="7" x2="10" y2="9" stroke="white" strokeWidth="0.2" opacity="0.5"/>
-                        <line x1="13" y1="7" x2="13" y2="9" stroke="white" strokeWidth="0.2" opacity="0.5"/>
-                        {/* Wing tips */}
-                        <path d="M6 9 L7 10" strokeWidth="0.2" fill="none" opacity="0.8"/>
-                        <path d="M15 9 L14 10" strokeWidth="0.2" fill="none" opacity="0.8"/>
-                        {/* @ symbol */}
-                        <circle cx="10" cy="9" r="0.5" fill="none" stroke="white" strokeWidth="0.2" opacity="0.7"/>
-                        <path d="M9.7 8.7 L10.3 8.7 L10.3 9.3 L9.7 9.3 Z" fill="white" opacity="0.7"/>
-                      </svg>
-                    </div>
-                  </div>
-                  {/* Logo Text */}
-                  <motion.span 
-                    whileHover={{ 
-                      scale: 1.02,
-                      textShadow: "0 0 20px rgba(59, 130, 246, 0.5)"
-                    }}
-                    className="text-xl font-bold"
-                  >
-                    <span className="text-blue-600">Nova</span><span className="text-purple-600">Mail</span>
-                  </motion.span>
-                </div>
+                {/* Logo Text Only */}
+                <motion.span 
+                  whileHover={{ 
+                    scale: 1.02,
+                    textShadow: "0 0 20px rgba(59, 130, 246, 0.5)"
+                  }}
+                  className="text-xl font-bold"
+                >
+                  <span className="text-blue-600">Nova</span><span className="text-purple-600">Mail</span>
+                </motion.span>
               </Link>
             </motion.div>
             <div className="flex items-center space-x-6">
