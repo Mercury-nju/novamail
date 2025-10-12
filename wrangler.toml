@@ -3,12 +3,6 @@ compatibility_date = "2024-01-01"
 
 pages_build_output_dir = "out"
 
-# Workers Functions配置
-[build]
-command = "npm run build"
-cwd = "."
-watch_dir = "."
-
 # 环境变量
 [vars]
 CREEM_API_KEY = "creem_22oMcuzUH4TeWyWVAVjTes"
@@ -23,21 +17,3 @@ GMAIL_ACCESS_TOKEN = "ya29.a0AfH6SMC..."  # Gmail API访问令牌
 GMAIL_REFRESH_TOKEN = "1//04..."  # Gmail API刷新令牌
 GMAIL_SMTP_HOST = "smtp.gmail.com"
 GMAIL_SMTP_PORT = "587"
-
-# KV 存储配置
-[[kv_namespaces]]
-binding = "USERS_KV"
-id = "41bca314c98c4db580f450fb2e2c37bd"
-
-[[kv_namespaces]]
-binding = "CAMPAIGNS_KV"
-id = "4a0baebc9760468f86460c891aaece66"
-
-[[kv_namespaces]]
-binding = "EMAIL_CONFIG_KV"
-id = "c78c884ca05043979505041373ecfe18"
-
-# 注意：需要创建 CONTACTS_KV 命名空间
-# [[kv_namespaces]]
-# binding = "CONTACTS_KV"
-# id = "YOUR_CONTACTS_KV_ID_HERE"
