@@ -422,7 +422,8 @@ async function handleVerifyCode(request, env) {
   const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   const userToken = 'token_' + Math.random().toString(36).substr(2, 9);
   
-  // 鍙戦€佹杩庨偖浠?  const welcomeEmailData = {
+  // 鍙戦€佹杩庨偖浠?
+  const welcomeEmailData = {
     from: 'NovaMail <welcome@novamail.world>',
     to: email,
     subject: 'Welcome to NovaMail!',
