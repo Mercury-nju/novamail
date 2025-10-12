@@ -7,19 +7,9 @@
   </defs>
   <rect width="32" height="32" fill="url(#gradient)" rx="4"/>
   <g fill="white">
-    <path d="M10 18 L18 14 L14 22 L10 18 Z" fill="white"/>
-    <path d="M14 22 L18 14 L22 18 L14 22 Z" fill="white"/>
-    <path d="M18 14 L22 18 L20 20 L18 14 Z" fill="white"/>
-    <path d="M10 18 L14 22 L12 24 L10 18 Z" fill="white"/>
-    <line x1="16" y1="10" x2="16" y2="8" stroke="white" strokeWidth="2" opacity="0.8"/>
-    <line x1="18" y1="11" x2="19.5" y2="9.5" stroke="white" strokeWidth="2" opacity="0.6"/>
-    <line x1="20" y1="14" x2="22" y2="12" stroke="white" strokeWidth="2" opacity="0.4"/>
-    <line x1="20" y1="18" x2="22" y2="20" stroke="white" strokeWidth="2" opacity="0.4"/>
-    <line x1="18" y1="21" x2="19.5" y2="22.5" stroke="white" strokeWidth="2" opacity="0.6"/>
-    <line x1="16" y1="22" x2="16" y2="24" stroke="white" strokeWidth="2" opacity="0.8"/>
-    <line x1="14" y1="21" x2="12.5" y2="22.5" stroke="white" strokeWidth="2" opacity="0.6"/>
-    <line x1="12" y1="18" x2="10" y2="20" stroke="white" strokeWidth="2" opacity="0.4"/>
-    <line x1="12" y1="14" x2="10" y2="12" stroke="white" strokeWidth="2" opacity="0.4"/>
-    <line x1="14" y1="11" x2="12.5" y2="9.5" stroke="white" strokeWidth="2" opacity="0.6"/>
+    <rect x="8" y="10" width="16" height="12" fill="white" rx="1.5"/>
+    <path d="M8 10 L16 16 L24 10" stroke="white" strokeWidth="2" fill="none"/>
+    <circle cx="24" cy="8" r="2" fill="white" opacity="0.9"/>
+    <path d="M22.5 7 L25.5 7 M24 6 L24 9" stroke="white" strokeWidth="1"/>
   </g>
 </svg>

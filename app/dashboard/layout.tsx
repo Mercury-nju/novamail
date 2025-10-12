@@ -173,22 +173,12 @@ export default function DashboardLayout({
                   {/* Logo Icon */}
                   <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                     <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      {/* Paper airplane pointing up-right */}
-                      <path d="M6 11 L12 8 L9 15 L6 11 Z" fill="white"/>
-                      <path d="M9 15 L12 8 L15 11 L9 15 Z" fill="white"/>
-                      <path d="M12 8 L15 11 L13 13 L12 8 Z" fill="white"/>
-                      <path d="M6 11 L9 15 L7 17 L6 11 Z" fill="white"/>
-                      {/* Speed lines radiating outward */}
-                      <line x1="9" y1="4" x2="9" y2="2" stroke="white" strokeWidth="1" opacity="0.8"/>
-                      <line x1="10.5" y1="5" x2="11.5" y2="4" stroke="white" strokeWidth="1" opacity="0.6"/>
-                      <line x1="12" y1="7" x2="13.5" y2="5.5" stroke="white" strokeWidth="1" opacity="0.4"/>
-                      <line x1="12" y1="10" x2="13.5" y2="11.5" stroke="white" strokeWidth="1" opacity="0.4"/>
-                      <line x1="10.5" y1="12" x2="11.5" y2="13" stroke="white" strokeWidth="1" opacity="0.6"/>
-                      <line x1="9" y1="13" x2="9" y2="15" stroke="white" strokeWidth="1" opacity="0.8"/>
-                      <line x1="7.5" y1="12" x2="6.5" y2="13" stroke="white" strokeWidth="1" opacity="0.6"/>
-                      <line x1="6" y1="10" x2="4.5" y2="11.5" stroke="white" strokeWidth="1" opacity="0.4"/>
-                      <line x1="6" y1="7" x2="4.5" y2="5.5" stroke="white" strokeWidth="1" opacity="0.4"/>
-                      <line x1="7.5" y1="5" x2="6.5" y2="4" stroke="white" strokeWidth="1" opacity="0.6"/>
+                      {/* Email envelope */}
+                      <rect x="5" y="7" width="10" height="6" fill="white" rx="0.8"/>
+                      <path d="M5 7 L10 10 L15 7" stroke="white" strokeWidth="1" fill="none"/>
+                      {/* AI sparkle */}
+                      <circle cx="15" cy="5" r="1" fill="white" opacity="0.9"/>
+                      <path d="M14.5 4.5 L15.5 4.5 M15 4 L15 5" stroke="white" strokeWidth="0.6"/>
                     </svg>
                   </div>
                   {/* Logo Text */}

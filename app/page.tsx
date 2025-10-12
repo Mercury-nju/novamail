@@ -225,22 +225,12 @@ export default function HomePage() {
                   <div className="relative">
                     <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
                       <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        {/* Paper airplane pointing up-right */}
-                        <path d="M8 14 L16 10 L12 18 L8 14 Z" fill="white"/>
-                        <path d="M12 18 L16 10 L20 14 L12 18 Z" fill="white"/>
-                        <path d="M16 10 L20 14 L18 16 L16 10 Z" fill="white"/>
-                        <path d="M8 14 L12 18 L10 20 L8 14 Z" fill="white"/>
-                        {/* Speed lines radiating outward */}
-                        <line x1="12" y1="6" x2="12" y2="4" stroke="white" strokeWidth="1.5" opacity="0.8"/>
-                        <line x1="14" y1="7" x2="15.5" y2="5.5" stroke="white" strokeWidth="1.5" opacity="0.6"/>
-                        <line x1="16" y1="10" x2="18" y2="8" stroke="white" strokeWidth="1.5" opacity="0.4"/>
-                        <line x1="16" y1="14" x2="18" y2="16" stroke="white" strokeWidth="1.5" opacity="0.4"/>
-                        <line x1="14" y1="17" x2="15.5" y2="18.5" stroke="white" strokeWidth="1.5" opacity="0.6"/>
-                        <line x1="12" y1="18" x2="12" y2="20" stroke="white" strokeWidth="1.5" opacity="0.8"/>
-                        <line x1="10" y1="17" x2="8.5" y2="18.5" stroke="white" strokeWidth="1.5" opacity="0.6"/>
-                        <line x1="8" y1="14" x2="6" y2="16" stroke="white" strokeWidth="1.5" opacity="0.4"/>
-                        <line x1="8" y1="10" x2="6" y2="8" stroke="white" strokeWidth="1.5" opacity="0.4"/>
-                        <line x1="10" y1="7" x2="8.5" y2="5.5" stroke="white" strokeWidth="1.5" opacity="0.6"/>
+                        {/* Email envelope */}
+                        <rect x="6" y="8" width="12" height="8" fill="white" rx="1"/>
+                        <path d="M6 8 L12 12 L18 8" stroke="white" strokeWidth="1.5" fill="none"/>
+                        {/* AI sparkle */}
+                        <circle cx="18" cy="6" r="1.5" fill="white" opacity="0.9"/>
+                        <path d="M17 5 L19 5 M18 4 L18 6" stroke="white" strokeWidth="0.8"/>
                       </svg>
                     </div>
                   </div>
