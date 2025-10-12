@@ -17,3 +17,7 @@ GMAIL_ACCESS_TOKEN = "ya29.a0AfH6SMC..."  # Gmail API访问令牌
 GMAIL_REFRESH_TOKEN = "1//04..."  # Gmail API刷新令牌
 GMAIL_SMTP_HOST = "smtp.gmail.com"
 GMAIL_SMTP_PORT = "587"
+
+# Google OAuth 配置
+GOOGLE_CLIENT_ID = "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET = "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5tU"
