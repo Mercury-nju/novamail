@@ -142,98 +142,98 @@ export default function SettingsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
           <p className="text-gray-600">Manage your account information</p>
-        </div>
-        <button
+      </div>
+              <button
           onClick={handleSave}
           disabled={saving}
           className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
         >
           {saving ? 'Saving...' : 'Save Changes'}
-        </button>
-      </div>
+              </button>
+        </div>
 
-      {/* Profile Settings */}
+          {/* Profile Settings */}
       <div className="bg-white p-6 rounded-lg shadow-sm border">
         <h2 className="text-lg font-semibold text-gray-900 mb-6">Profile Information</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
+                  <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
-            <input
-              type="text"
+                    <input
+                      type="text"
               value={settings.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
               placeholder="Enter your full name"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               required
-            />
-          </div>
+                    />
+                  </div>
           
-          <div>
+                  <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
-            <input
-              type="email"
+                    <input
+                      type="email"
               value={settings.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               placeholder="Enter your email address"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               required
-            />
-          </div>
+                    />
+                  </div>
           
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
-            <input
-              type="text"
+                    <input
+                      type="text"
               value={settings.company}
               onChange={(e) => handleInputChange('company', e.target.value)}
               placeholder="Enter your company name (optional)"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
-        </div>
-      </div>
+                    />
+                  </div>
+                </div>
+              </div>
 
       {/* Email Configuration */}
       <div className="bg-white p-6 rounded-lg shadow-sm border">
         <div className="flex justify-between items-center mb-6">
-          <div>
+                    <div>
             <h2 className="text-lg font-semibold text-gray-900">Email Configuration</h2>
             <p className="text-gray-600">Configure your email sending settings</p>
-          </div>
-          <button
+                    </div>
+                    <button
             onClick={() => router.push('/dashboard/settings/email')}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
             {emailConfig?.isConfigured ? 'Update Configuration' : 'Configure Email'}
-          </button>
-        </div>
+                  </button>
+                </div>
         
         {emailConfig?.isConfigured ? (
-          <div className="space-y-4">
+                <div className="space-y-4">
             {/* 配置状态 */}
             <div className="flex items-center space-x-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="text-sm font-medium text-green-800">Email Configuration Active</span>
-            </div>
+              </div>
 
             {/* 配置详情 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-3">
-                <div>
+                  <div>
                   <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">Provider</label>
                   <p className="text-sm text-gray-900 capitalize">{emailConfig.provider}</p>
                 </div>
-                <div>
+                    <div>
                   <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">Email Address</label>
                   <p className="text-sm text-gray-900">{emailConfig.email}</p>
                 </div>
               </div>
               <div className="space-y-3">
-                <div>
+                    <div>
                   <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">SMTP Server</label>
                   <p className="text-sm text-gray-900">{emailConfig.smtpHost}</p>
                 </div>
@@ -241,23 +241,23 @@ export default function SettingsPage() {
                   <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">Port</label>
                   <p className="text-sm text-gray-900">{emailConfig.smtpPort} ({emailConfig.isSecure ? 'TLS/SSL' : 'Unencrypted'})</p>
                 </div>
+                </div>
               </div>
-            </div>
 
             {/* 操作说明 */}
             <div className="bg-blue-50 p-4 rounded-lg">
               <p className="text-sm text-blue-800">
                 <strong>Ready to send emails!</strong> Your SMTP configuration is active and ready to use for sending marketing emails.
-              </p>
-            </div>
-          </div>
+                    </p>
+                  </div>
+                </div>
         ) : (
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="text-sm text-gray-600">
               Set up your SMTP configuration to send emails from your own domain and email address.
             </p>
-          </div>
-        )}
+              </div>
+          )}
       </div>
     </div>
   )

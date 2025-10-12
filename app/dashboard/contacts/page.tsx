@@ -145,19 +145,19 @@ export default function ContactsPage() {
         formData.append('csvFile', file)
 
         const response = await fetch('https://novamail.world/api/contacts/import', {
-          method: 'POST',
+        method: 'POST',
           body: formData
         })
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
-
-        const data = await response.json()
-        if (data.success) {
+      
+      const data = await response.json()
+      if (data.success) {
           contactsData = data.data.contacts || []
           toast.success(`Successfully imported ${contactsData.length} contacts from CSV`)
-        } else {
+      } else {
           throw new Error(data.message || 'Failed to import contacts')
         }
       } else if (isExcel) {
@@ -200,15 +200,15 @@ export default function ContactsPage() {
           saveContacts(contactsData)
         }
         reader.readAsArrayBuffer(file)
-        return
-      }
+      return
+    }
 
       // 保存联系人数据
       if (contactsData.length > 0) {
         await saveContacts(contactsData)
       }
 
-    } catch (error) {
+          } catch (error) {
       console.error('Import failed:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to import contacts')
     } finally {
@@ -265,8 +265,8 @@ export default function ContactsPage() {
     const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
     if (!emailRegex.test(newContact.email)) {
       toast.error('Please enter a valid email address')
-      return
-    }
+            return
+          }
 
     try {
       setAdding(true)
@@ -315,7 +315,7 @@ export default function ContactsPage() {
       } else {
         throw new Error(data.error || 'Failed to add contact')
       }
-    } catch (error) {
+        } catch (error) {
       console.error('Add contact failed:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to add contact')
     } finally {
@@ -348,14 +348,14 @@ export default function ContactsPage() {
           <p className="text-gray-600">Manage your email contacts and lists</p>
         </div>
         <div className="flex space-x-3">
-          <button 
+          <button
             onClick={handleImportClick}
             disabled={importing}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {importing ? 'Importing...' : 'Import Contacts'}
           </button>
-          <button 
+          <button
             onClick={handleAddContactClick}
             disabled={adding}
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -395,7 +395,7 @@ export default function ContactsPage() {
               <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-            </div>
+              </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Active</p>
               <p className="text-2xl font-bold text-gray-900">
@@ -411,7 +411,7 @@ export default function ContactsPage() {
               <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-            </div>
+              </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Inactive</p>
               <p className="text-2xl font-bold text-gray-900">
@@ -438,7 +438,7 @@ export default function ContactsPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <select
+            <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
                 className="w-full md:w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -446,7 +446,7 @@ export default function ContactsPage() {
                 <option value="all">All</option>
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
-              </select>
+            </select>
             </div>
           </div>
           <div className="text-sm text-gray-600">
@@ -533,18 +533,18 @@ export default function ContactsPage() {
           <h3 className="mt-2 text-sm font-medium text-gray-900">No contacts found</h3>
           <p className="mt-1 text-sm text-gray-500">Get started by adding your first contact.</p>
           <div className="mt-6">
-            <button 
+              <button
               onClick={handleAddContactClick}
               className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
-            >
+              >
               Add Contact
-            </button>
+              </button>
           </div>
         </div>
       )}
 
       {/* 隐藏的文件输入 */}
-      <input
+                <input
         ref={fileInputRef}
         type="file"
         accept=".csv,.xlsx,.xls"
@@ -625,24 +625,24 @@ export default function ContactsPage() {
                     setNewContact(prev => ({ ...prev, tags }))
                   }}
                 />
-              </div>
+            </div>
 
               <div className="flex space-x-3 pt-4">
-                <button
+              <button
                   type="submit"
                   disabled={adding}
                   className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {adding ? 'Adding...' : 'Add Contact'}
-                </button>
+              </button>
                 <button
                   type="button"
                   onClick={() => setShowAddContactModal(false)}
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
+              >
+                Cancel
+              </button>
+            </div>
             </form>
           </div>
         </div>

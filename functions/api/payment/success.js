@@ -51,11 +51,22 @@ export async function onRequest(context) {
       email: email,
       subscriptionId: subscriptionId,
       planId: planId || 'pro',
+      plan: planId || 'pro',
       status: 'active',
       amount: amount || 19,
       currency: currency || 'USD',
       activatedAt: new Date().toISOString(),
-      expiresAt: null // 买断制，永不过期
+      expiresAt: null, // 买断制，永不过期
+      features: {
+        maxContacts: 10000,
+        maxEmailsPerMonth: 50000,
+        hasAdvancedTemplates: true,
+        hasAITeatures: true,
+        hasAnalytics: true,
+        hasAPIAccess: true,
+        hasWebhookAccess: true,
+        hasCustomBranding: true
+      }
     };
 
     // 在实际应用中，这里应该：
