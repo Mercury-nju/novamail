@@ -993,8 +993,9 @@ async function handleCampaignSend(request, env) {
         }
       }
       
-      // 濡傛灉娌℃湁鎵惧埌閰嶇疆鎴栭厤缃笉瀹屾暣锛屾嫆缁濆彂閫?      if (!userEmailConfig || !userEmailConfig.isConfigured || !userEmailConfig.email || !userEmailConfig.password) {
-        return new Response(JSON.stringify({ 
+      // If no configuration found or incomplete, reject sending
+      if (!userEmailConfig || !userEmailConfig.isConfigured || !userEmailConfig.email || !userEmailConfig.password) {
+        return new Response(JSON.stringify({
           success: false, 
           error: 'SMTP configuration required',
           message: 'Please configure your SMTP settings before sending emails. Go to Settings > Email Configuration to set up your email account.',
