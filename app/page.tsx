@@ -220,11 +220,34 @@ export default function HomePage() {
               className="flex items-center"
             >
               <Link href="/" className="flex items-center">
-                <img 
-                  src="/logo.svg" 
-                  alt="NovaMail" 
-                  className="h-8 w-auto"
-                />
+                <div className="flex items-center space-x-3">
+                  {/* Logo Icon */}
+                  <div className="relative">
+                    <div className="h-8 w-8 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                      <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {/* Speed lines */}
+                        <line x1="6" y1="10" x2="8" y2="10" stroke="white" strokeWidth="1.5" opacity="0.8"/>
+                        <line x1="5" y1="12" x2="7" y2="12" stroke="white" strokeWidth="1.5" opacity="0.6"/>
+                        <line x1="4" y1="14" x2="6" y2="14" stroke="white" strokeWidth="1.5" opacity="0.4"/>
+                        {/* Paper airplane */}
+                        <path d="M10 12 L16 8 L14 16 L10 12 Z" fill="white"/>
+                        <path d="M14 16 L16 8 L18 18 L14 16 Z" fill="white"/>
+                        {/* Sparkle */}
+                        <path d="M18 6 L19.5 7.5 L21 6 L19.5 4.5 Z" fill="white" opacity="0.9"/>
+                      </svg>
+                    </div>
+                  </div>
+                  {/* Logo Text */}
+                  <motion.span 
+                    whileHover={{ 
+                      scale: 1.02,
+                      textShadow: "0 0 20px rgba(59, 130, 246, 0.5)"
+                    }}
+                    className="text-xl font-bold bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 bg-clip-text text-transparent"
+                  >
+                    NovaMail
+                  </motion.span>
+                </div>
               </Link>
             </motion.div>
             <div className="flex items-center space-x-6">

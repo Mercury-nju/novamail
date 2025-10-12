@@ -169,11 +169,24 @@ export default function DashboardLayout({
           <div className="flex h-16 items-center justify-between px-4">
             <div className="flex items-center">
               <Link href="/dashboard" className="flex items-center">
-                <img 
-                  src="/logo.svg" 
-                  alt="NovaMail" 
-                  className="h-8 w-auto"
-                />
+                <div className="flex items-center space-x-2">
+                  {/* Logo Icon */}
+                  <div className="h-6 w-6 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-full flex items-center justify-center shadow-md">
+                    <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      {/* Speed lines */}
+                      <line x1="4" y1="8" x2="6" y2="8" stroke="white" strokeWidth="1" opacity="0.8"/>
+                      <line x1="3" y1="10" x2="5" y2="10" stroke="white" strokeWidth="1" opacity="0.6"/>
+                      <line x1="2" y1="12" x2="4" y2="12" stroke="white" strokeWidth="1" opacity="0.4"/>
+                      {/* Paper airplane */}
+                      <path d="M8 10 L12 7 L11 13 L8 10 Z" fill="white"/>
+                      <path d="M11 13 L12 7 L14 15 L11 13 Z" fill="white"/>
+                      {/* Sparkle */}
+                      <path d="M14 5 L15 6 L16 5 L15 4 Z" fill="white" opacity="0.9"/>
+                    </svg>
+                  </div>
+                  {/* Logo Text */}
+                  <span className="text-lg font-bold text-blue-600">NovaMail</span>
+                </div>
               </Link>
             </div>
             <button
@@ -221,11 +234,24 @@ export default function DashboardLayout({
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
           <div className="flex h-16 items-center px-4">
             <Link href="/dashboard" className="flex items-center">
-              <img 
-                src="/logo.svg" 
-                alt="NovaMail" 
-                className="h-8 w-auto"
-              />
+              <div className="flex items-center space-x-2">
+                {/* Logo Icon */}
+                <div className="h-6 w-6 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-full flex items-center justify-center shadow-md">
+                  <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {/* Speed lines */}
+                    <line x1="4" y1="8" x2="6" y2="8" stroke="white" strokeWidth="1" opacity="0.8"/>
+                    <line x1="3" y1="10" x2="5" y2="10" stroke="white" strokeWidth="1" opacity="0.6"/>
+                    <line x1="2" y1="12" x2="4" y2="12" stroke="white" strokeWidth="1" opacity="0.4"/>
+                    {/* Paper airplane */}
+                    <path d="M8 10 L12 7 L11 13 L8 10 Z" fill="white"/>
+                    <path d="M11 13 L12 7 L14 15 L11 13 Z" fill="white"/>
+                    {/* Sparkle */}
+                    <path d="M14 5 L15 6 L16 5 L15 4 Z" fill="white" opacity="0.9"/>
+                  </svg>
+                </div>
+                {/* Logo Text */}
+                <span className="text-lg font-bold text-blue-600">NovaMail</span>
+              </div>
             </Link>
           </div>
           <nav className="flex-1 px-4 py-4 space-y-2">

@@ -91,11 +91,19 @@ function LoginForm() {
       <div className="relative z-10 flex flex-col justify-center py-12 sm:px-6 lg:px-8 min-h-screen">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="mx-auto h-12 w-auto text-blue-600 flex items-center justify-center mb-8">
-            <img 
-              src="/logo-icon.svg" 
-              alt="NovaMail" 
-              className="h-12 w-12"
-            />
+            <div className="h-12 w-12 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
+              <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {/* Speed lines */}
+                <line x1="6" y1="10" x2="8" y2="10" stroke="white" strokeWidth="1.5" opacity="0.8"/>
+                <line x1="5" y1="12" x2="7" y2="12" stroke="white" strokeWidth="1.5" opacity="0.6"/>
+                <line x1="4" y1="14" x2="6" y2="14" stroke="white" strokeWidth="1.5" opacity="0.4"/>
+                {/* Paper airplane */}
+                <path d="M10 12 L16 8 L14 16 L10 12 Z" fill="white"/>
+                <path d="M14 16 L16 8 L18 18 L14 16 Z" fill="white"/>
+                {/* Sparkle */}
+                <path d="M18 6 L19.5 7.5 L21 6 L19.5 4.5 Z" fill="white" opacity="0.9"/>
+              </svg>
+            </div>
           </div>
           <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-3">
             Sign in to your account
