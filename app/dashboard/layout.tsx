@@ -171,7 +171,7 @@ export default function DashboardLayout({
               <Link href="/dashboard" className="flex items-center">
                 <div className="flex items-center space-x-2">
                   {/* Logo Icon */}
-                  <div className="h-6 w-6 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
+                  <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                     <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       {/* Speed lines - solid rectangles */}
                       <rect x="5" y="8" width="2.5" height="1" fill="white" opacity="0.9"/>
@@ -186,7 +186,9 @@ export default function DashboardLayout({
                     </svg>
                   </div>
                   {/* Logo Text */}
-                  <span className="text-lg font-bold text-blue-600">NovaMail</span>
+                  <span className="text-lg font-bold">
+                    <span className="text-blue-600">Nova</span><span className="text-purple-600">Mail</span>
+                  </span>
                 </div>
               </Link>
             </div>
@@ -237,7 +239,7 @@ export default function DashboardLayout({
             <Link href="/dashboard" className="flex items-center">
               <div className="flex items-center space-x-2">
                 {/* Logo Icon */}
-                <div className="h-6 w-6 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
+                <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                   <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     {/* Speed lines - solid rectangles */}
                     <rect x="5" y="8" width="2.5" height="1" fill="white" opacity="0.9"/>
@@ -252,7 +254,9 @@ export default function DashboardLayout({
                   </svg>
                 </div>
                 {/* Logo Text */}
-                <span className="text-lg font-bold text-blue-600">NovaMail</span>
+                <span className="text-lg font-bold">
+                  <span className="text-blue-600">Nova</span><span className="text-purple-600">Mail</span>
+                </span>
               </div>
             </Link>
           </div>

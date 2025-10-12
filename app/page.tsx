@@ -223,7 +223,7 @@ export default function HomePage() {
                 <div className="flex items-center space-x-3">
                   {/* Logo Icon */}
                   <div className="relative">
-                    <div className="h-8 w-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
+                    <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
                       <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         {/* Speed lines - solid rectangles */}
                         <rect x="6" y="9" width="3" height="1.5" fill="white" opacity="0.9"/>
@@ -244,9 +244,9 @@ export default function HomePage() {
                       scale: 1.02,
                       textShadow: "0 0 20px rgba(59, 130, 246, 0.5)"
                     }}
-                    className="text-xl font-bold bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 bg-clip-text text-transparent"
+                    className="text-xl font-bold"
                   >
-                    NovaMail
+                    <span className="text-blue-600">Nova</span><span className="text-purple-600">Mail</span>
                   </motion.span>
                 </div>
               </Link>

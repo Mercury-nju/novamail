@@ -382,7 +382,7 @@ export default function RegisterPage() {
       <div className="relative z-10 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 min-h-screen">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
-            <div className="mx-auto h-12 w-12 bg-gradient-to-b from-primary-600 to-purple-600 rounded-2xl border-2 border-white flex items-center justify-center shadow-xl mb-8">
+            <div className="mx-auto h-12 w-12 bg-gradient-to-r from-primary-600 to-purple-600 rounded-2xl border-2 border-white flex items-center justify-center shadow-xl mb-8">
               <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {/* Speed lines - solid rectangles */}
                 <rect x="6" y="9" width="3" height="1.5" fill="white" opacity="0.9"/>

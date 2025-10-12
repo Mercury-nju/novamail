@@ -91,7 +91,7 @@ function LoginForm() {
       <div className="relative z-10 flex flex-col justify-center py-12 sm:px-6 lg:px-8 min-h-screen">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="mx-auto h-12 w-auto text-blue-600 flex items-center justify-center mb-8">
-            <div className="h-12 w-12 bg-gradient-to-b from-blue-600 to-purple-600 rounded-2xl border-2 border-white flex items-center justify-center shadow-xl">
+            <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl border-2 border-white flex items-center justify-center shadow-xl">
               <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {/* Speed lines - solid rectangles */}
                 <rect x="6" y="9" width="3" height="1.5" fill="white" opacity="0.9"/>
