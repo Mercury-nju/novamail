@@ -70,6 +70,8 @@ export default {
         return await handleTestGmail(request, env);
       } else if (path.startsWith('/api/debug-kv')) {
         return await handleDebugKV(request, env);
+      } else if (path.startsWith('/api/test-user-save')) {
+        return await handleTestUserSave(request, env);
       } else if (path.startsWith('/api/creem/test')) {
         return await handleCreemTest(request, env);
       } else if (path.startsWith('/api/creem/webhook-test')) {
@@ -4109,6 +4111,105 @@ async function handleAnalytics(request, env) {
     headers: corsHeaders
   });
 };
+
+// 测试用户保存函数
+async function handleTestUserSave(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const data = await request.json();
+    const email = data.email || 'lihongyangnju@gmail.com';
+    
+    console.log('Testing user save for email:', email);
+    
+    // 创建测试用户数据
+    const testUser = {
+      id: 'test_user_' + Date.now(),
+      email: email,
+      name: 'Test User',
+      firstName: 'Test',
+      lastName: 'User',
+      token: 'test_token_' + Math.random().toString(36).substr(2, 9),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      subscription: {
+        plan: 'free',
+        status: 'active',
+        features: {
+          maxContacts: 100,
+          maxCampaigns: 5,
+          hasAITeatures: true,
+          hasAnalytics: true
+        }
+      },
+      usage: {
+        contactsCount: 0,
+        campaignsCount: 0,
+        emailsSentThisMonth: 0,
+        lastUsageReset: new Date().toISOString()
+      }
+    };
+    
+    // 尝试保存用户数据
+    let saveResult = null;
+    let saveError = null;
+    
+    try {
+      if (env.USERS_KV) {
+        const userKey = `user_${email.toLowerCase()}`;
+        console.log('Saving user with key:', userKey);
+        
+        await env.USERS_KV.put(userKey, JSON.stringify(testUser));
+        console.log('User saved successfully');
+        
+        // 立即尝试读取
+        const savedUser = await env.USERS_KV.get(userKey);
+        if (savedUser) {
+          saveResult = JSON.parse(savedUser);
+        }
+      } else {
+        saveError = 'KV storage not available';
+      }
+    } catch (error) {
+      saveError = error.message;
+      console.error('Save error:', error);
+    }
+    
+    return new Response(JSON.stringify({
+      success: true,
+      test: {
+        email: email,
+        key: `user_${email.toLowerCase()}`,
+        kvAvailable: !!env.USERS_KV,
+        saveResult: saveResult,
+        saveError: saveError,
+        testUser: testUser
+      }
+    }), {
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    console.error('Test user save error:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Test user save failed',
+      details: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
 
 // KV 存储调试函数
 async function handleDebugKV(request, env) {
