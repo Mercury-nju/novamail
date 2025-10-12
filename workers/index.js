@@ -533,9 +533,9 @@ async function handleVerifyCode(request, env) {
       // 鍗充娇瀛樺偍澶辫触锛屼篃杩斿洖鎴愬姛锛屽洜涓虹敤鎴锋暟鎹凡缁忕敓鎴?    }
 
     // 鏃犺閭欢鍙戦€佹槸鍚︽垚鍔燂紝閮借繑鍥炵敤鎴峰垱寤烘垚鍔?    return new Response(JSON.stringify({
+      success: true,
       message: 'Account created and verified successfully',
       user: {
-        id: user.id,
         email: user.email,
         name: user.name,
         firstName: user.firstName,
