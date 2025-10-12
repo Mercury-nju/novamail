@@ -4,10 +4,10 @@ compatibility_date = "2024-01-01"
 pages_build_output_dir = "out"
 
 # Workers Functions配置
-[functions]
-directory = "functions"
-compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
+[build]
+command = "npm run build"
+cwd = "."
+watch_dir = "."
 
 # 环境变量
 [vars]
@@ -23,3 +23,19 @@ GMAIL_ACCESS_TOKEN = "ya29.a0AfH6SMC..."  # Gmail API访问令牌
 GMAIL_REFRESH_TOKEN = "1//04..."  # Gmail API刷新令牌
 GMAIL_SMTP_HOST = "smtp.gmail.com"
 GMAIL_SMTP_PORT = "587"
+
+# KV 存储配置
+[[kv_namespaces]]
+binding = "USERS_KV"
+id = "users_kv_namespace"
+preview_id = "users_kv_preview"
+
+[[kv_namespaces]]
+binding = "CONTACTS_KV"
+id = "contacts_kv_namespace"
+preview_id = "contacts_kv_preview"
+
+[[kv_namespaces]]
+binding = "CAMPAIGNS_KV"
+id = "campaigns_kv_namespace"
+preview_id = "campaigns_kv_preview"
