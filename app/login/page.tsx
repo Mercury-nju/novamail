@@ -93,16 +93,16 @@ function LoginForm() {
           <div className="mx-auto h-12 w-auto text-blue-600 flex items-center justify-center mb-8">
             <div className="h-12 w-12 bg-gradient-to-b from-blue-600 to-purple-600 rounded-2xl border-2 border-white flex items-center justify-center shadow-xl">
               <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {/* Speed lines */}
-                <line x1="6" y1="10" x2="9" y2="10" stroke="white" strokeWidth="1.5" opacity="0.9"/>
-                <line x1="5" y1="12" x2="8" y2="12" stroke="white" strokeWidth="1.5" opacity="0.7"/>
-                <line x1="4" y1="14" x2="7" y2="14" stroke="white" strokeWidth="1.5" opacity="0.5"/>
+                {/* Speed lines - solid rectangles */}
+                <rect x="6" y="9" width="3" height="1.5" fill="white" opacity="0.9"/>
+                <rect x="5" y="11" width="2.5" height="1.5" fill="white" opacity="0.7"/>
+                <rect x="4" y="13" width="2" height="1.5" fill="white" opacity="0.5"/>
                 {/* Paper airplane pointing up-right */}
                 <path d="M12 7 L16 5 L14 13 L12 7 Z" fill="white"/>
                 <path d="M14 13 L16 5 L18 15 L14 13 Z" fill="white"/>
-                {/* Four-pointed star/sparkle */}
+                {/* Four-pointed star */}
                 <path d="M19 6 L20 7 L19 8 L18 7 Z" fill="white"/>
-                <path d="M19 7 L21 7 L19 7 L17 7 Z" fill="white"/>
+                <path d="M19 6 L19 8 L17 7 L21 7 Z" fill="white"/>
               </svg>
             </div>
           </div>

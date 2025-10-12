@@ -173,16 +173,16 @@ export default function DashboardLayout({
                   {/* Logo Icon */}
                   <div className="h-6 w-6 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                     <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      {/* Speed lines */}
-                      <line x1="5" y1="9" x2="7" y2="9" stroke="white" strokeWidth="1" opacity="0.9"/>
-                      <line x1="4" y1="11" x2="6" y2="11" stroke="white" strokeWidth="1" opacity="0.7"/>
-                      <line x1="3" y1="13" x2="5" y2="13" stroke="white" strokeWidth="1" opacity="0.5"/>
+                      {/* Speed lines - solid rectangles */}
+                      <rect x="5" y="8" width="2.5" height="1" fill="white" opacity="0.9"/>
+                      <rect x="4" y="10" width="2" height="1" fill="white" opacity="0.7"/>
+                      <rect x="3" y="12" width="1.5" height="1" fill="white" opacity="0.5"/>
                       {/* Paper airplane pointing up-right */}
                       <path d="M10 6 L13 4 L12 10 L10 6 Z" fill="white"/>
                       <path d="M12 10 L13 4 L15 12 L12 10 Z" fill="white"/>
-                      {/* Four-pointed star/sparkle */}
+                      {/* Four-pointed star */}
                       <path d="M16 5 L17 6 L16 7 L15 6 Z" fill="white"/>
-                      <path d="M16 6 L18 6 L16 6 L14 6 Z" fill="white"/>
+                      <path d="M16 5 L16 7 L14 6 L18 6 Z" fill="white"/>
                     </svg>
                   </div>
                   {/* Logo Text */}
@@ -239,16 +239,16 @@ export default function DashboardLayout({
                 {/* Logo Icon */}
                 <div className="h-6 w-6 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                   <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    {/* Speed lines */}
-                    <line x1="5" y1="9" x2="7" y2="9" stroke="white" strokeWidth="1" opacity="0.9"/>
-                    <line x1="4" y1="11" x2="6" y2="11" stroke="white" strokeWidth="1" opacity="0.7"/>
-                    <line x1="3" y1="13" x2="5" y2="13" stroke="white" strokeWidth="1" opacity="0.5"/>
+                    {/* Speed lines - solid rectangles */}
+                    <rect x="5" y="8" width="2.5" height="1" fill="white" opacity="0.9"/>
+                    <rect x="4" y="10" width="2" height="1" fill="white" opacity="0.7"/>
+                    <rect x="3" y="12" width="1.5" height="1" fill="white" opacity="0.5"/>
                     {/* Paper airplane pointing up-right */}
                     <path d="M10 6 L13 4 L12 10 L10 6 Z" fill="white"/>
                     <path d="M12 10 L13 4 L15 12 L12 10 Z" fill="white"/>
-                    {/* Four-pointed star/sparkle */}
+                    {/* Four-pointed star */}
                     <path d="M16 5 L17 6 L16 7 L15 6 Z" fill="white"/>
-                    <path d="M16 6 L18 6 L16 6 L14 6 Z" fill="white"/>
+                    <path d="M16 5 L16 7 L14 6 L18 6 Z" fill="white"/>
                   </svg>
                 </div>
                 {/* Logo Text */}
