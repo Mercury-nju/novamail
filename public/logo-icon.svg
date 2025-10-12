@@ -7,15 +7,11 @@
   </defs>
   <rect width="40" height="40" fill="url(#gradient)" rx="8"/>
   <g fill="white">
-    <!-- Paper airplane -->
-    <path d="M12 20 L20 16 L16 24 L12 20 Z" fill="white"/>
-    <path d="M16 24 L20 16 L24 20 L16 24 Z" fill="white"/>
-    <!-- Speed lines -->
-    <line x1="10" y1="12" x2="8" y2="10" stroke="white" strokeWidth="2.5" opacity="0.8"/>
-    <line x1="10" y1="15" x2="8" y2="13" stroke="white" strokeWidth="2.5" opacity="0.6"/>
-    <line x1="10" y1="18" x2="8" y2="16" stroke="white" strokeWidth="2.5" opacity="0.4"/>
-    <!-- Star -->
-    <path d="M8 8 L9 9 L8 10 L7 9 Z" fill="white" opacity="0.9"/>
-    <path d="M8 8 L8 10 L6 9 L10 9 Z" fill="white" opacity="0.9"/>
+    <!-- Abstract design elements -->
+    <rect x="10" y="12" width="2.5" height="15" fill="white"/>
+    <line x1="7" y1="15" x2="10" y2="15" stroke="white" strokeWidth="1.2" opacity="0.8"/>
+    <line x1="7" y1="17" x2="10" y2="17" stroke="white" strokeWidth="1.2" opacity="0.6"/>
+    <line x1="7" y1="19" x2="10" y2="19" stroke="white" strokeWidth="1.2" opacity="0.4"/>
+    <path d="M22 10 L32 20 L22 30 L17 25 L22 10 Z" fill="white"/>
   </g>
 </svg>
