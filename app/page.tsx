@@ -225,12 +225,16 @@ export default function HomePage() {
                   <div className="relative">
                     <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
                       <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        {/* Email envelope */}
-                        <rect x="6" y="8" width="12" height="8" fill="white" rx="1"/>
-                        <path d="M6 8 L12 12 L18 8" stroke="white" strokeWidth="1.5" fill="none"/>
-                        {/* AI sparkle */}
-                        <circle cx="18" cy="6" r="1.5" fill="white" opacity="0.9"/>
-                        <path d="M17 5 L19 5 M18 4 L18 6" stroke="white" strokeWidth="0.8"/>
+                        {/* Paper airplane */}
+                        <path d="M8 12 L16 8 L12 16 L8 12 Z" fill="white"/>
+                        <path d="M12 16 L16 8 L20 12 L12 16 Z" fill="white"/>
+                        {/* Speed lines */}
+                        <line x1="6" y1="8" x2="4" y2="6" stroke="white" strokeWidth="1.5" opacity="0.8"/>
+                        <line x1="6" y1="10" x2="4" y2="8" stroke="white" strokeWidth="1.5" opacity="0.6"/>
+                        <line x1="6" y1="12" x2="4" y2="10" stroke="white" strokeWidth="1.5" opacity="0.4"/>
+                        {/* Star */}
+                        <path d="M4 4 L5 5 L4 6 L3 5 Z" fill="white" opacity="0.9"/>
+                        <path d="M4 4 L4 6 L2 5 L6 5 Z" fill="white" opacity="0.9"/>
                       </svg>
                     </div>
                   </div>
