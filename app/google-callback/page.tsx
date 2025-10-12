@@ -51,6 +51,7 @@ function GoogleCallbackContent() {
 
             if (userResult.success) {
               // 4. 存储用户信息到本地存储
+              console.log('Storing user data:', userResult.user)
               localStorage.setItem('user-email', userResult.user.email)
               localStorage.setItem('user-name', userResult.user.name)
               localStorage.setItem('user-token', userResult.user.token)
@@ -58,9 +59,15 @@ function GoogleCallbackContent() {
               localStorage.setItem('user-picture', userResult.user.picture || '')
               localStorage.setItem('auth-provider', 'google')
 
+              // 验证存储是否成功
+              const storedEmail = localStorage.getItem('user-email')
+              const storedToken = localStorage.getItem('user-token')
+              console.log('Verification - stored email:', storedEmail, 'stored token:', storedToken)
+
               setStatus('Login successful! Redirecting...')
               
               setTimeout(() => {
+                console.log('Redirecting to dashboard...')
                 router.push('/dashboard')
               }, 1500)
             } else {

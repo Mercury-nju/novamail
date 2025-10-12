@@ -52,6 +52,8 @@ export default function DashboardLayout({
         const userToken = localStorage.getItem('user-token')
         const userEmail = localStorage.getItem('user-email')
         
+        console.log('Dashboard auth check - token:', userToken, 'email:', userEmail)
+        
         if (userToken && userEmail) {
           setIsAuthenticated(true)
           console.log('User authenticated:', userEmail)
