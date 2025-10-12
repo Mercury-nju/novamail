@@ -57,7 +57,13 @@ export function hasFeatureAccess(feature: string): boolean {
   
   // Pro 和 Enterprise 用户拥有所有功能
   if (subscription.plan === 'pro' || subscription.plan === 'enterprise') {
-    return subscription.features?.[feature as keyof typeof subscription.features] || false
+    const featureValue = subscription.features?.[feature as keyof typeof subscription.features]
+    // 如果是数字类型（如 maxContacts），转换为 boolean
+    if (typeof featureValue === 'number') {
+      return featureValue > 0
+    }
+    // 如果是 boolean 类型，直接返回
+    return Boolean(featureValue)
   }
   
   return false
