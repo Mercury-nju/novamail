@@ -1294,6 +1294,7 @@ export default function NewCampaignPage() {
                 )}
               </div>
             </div>
+            </motion.div>
 
             {/* Tone Style Selection */}
             <motion.div 
