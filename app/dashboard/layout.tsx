@@ -173,16 +173,12 @@ export default function DashboardLayout({
                   {/* Logo Icon */}
                   <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                     <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      {/* Speed lines - solid rectangles */}
-                      <rect x="5" y="8" width="2.5" height="1" fill="white" opacity="0.9"/>
-                      <rect x="4" y="10" width="2" height="1" fill="white" opacity="0.7"/>
-                      <rect x="3" y="12" width="1.5" height="1" fill="white" opacity="0.5"/>
-                      {/* Paper airplane pointing up-right */}
-                      <path d="M10 6 L13 4 L12 10 L10 6 Z" fill="white"/>
-                      <path d="M12 10 L13 4 L15 12 L12 10 Z" fill="white"/>
-                      {/* Four-pointed star */}
-                      <path d="M16 5 L17 6 L16 7 L15 6 Z" fill="white"/>
-                      <path d="M16 5 L16 7 L14 6 L18 6 Z" fill="white"/>
+                      {/* Email envelope */}
+                      <rect x="5" y="7" width="10" height="6" fill="white" rx="0.8"/>
+                      <path d="M5 7 L10 10 L15 7" stroke="white" strokeWidth="1" fill="none"/>
+                      {/* AI sparkle */}
+                      <circle cx="15" cy="5" r="1" fill="white" opacity="0.9"/>
+                      <path d="M14.5 4.5 L15.5 4.5 M15 4 L15 5" stroke="white" strokeWidth="0.6"/>
                     </svg>
                   </div>
                   {/* Logo Text */}
@@ -241,16 +237,12 @@ export default function DashboardLayout({
                 {/* Logo Icon */}
                 <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
                   <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    {/* Speed lines - solid rectangles */}
-                    <rect x="5" y="8" width="2.5" height="1" fill="white" opacity="0.9"/>
-                    <rect x="4" y="10" width="2" height="1" fill="white" opacity="0.7"/>
-                    <rect x="3" y="12" width="1.5" height="1" fill="white" opacity="0.5"/>
-                    {/* Paper airplane pointing up-right */}
-                    <path d="M10 6 L13 4 L12 10 L10 6 Z" fill="white"/>
-                    <path d="M12 10 L13 4 L15 12 L12 10 Z" fill="white"/>
-                    {/* Four-pointed star */}
-                    <path d="M16 5 L17 6 L16 7 L15 6 Z" fill="white"/>
-                    <path d="M16 5 L16 7 L14 6 L18 6 Z" fill="white"/>
+                    {/* Email envelope */}
+                    <rect x="5" y="7" width="10" height="6" fill="white" rx="0.8"/>
+                    <path d="M5 7 L10 10 L15 7" stroke="white" strokeWidth="1" fill="none"/>
+                    {/* AI sparkle */}
+                    <circle cx="15" cy="5" r="1" fill="white" opacity="0.9"/>
+                    <path d="M14.5 4.5 L15.5 4.5 M15 4 L15 5" stroke="white" strokeWidth="0.6"/>
                   </svg>
                 </div>
                 {/* Logo Text */}

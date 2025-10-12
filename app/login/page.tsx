@@ -93,16 +93,12 @@ function LoginForm() {
           <div className="mx-auto h-12 w-auto text-blue-600 flex items-center justify-center mb-8">
             <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl border-2 border-white flex items-center justify-center shadow-xl">
               <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {/* Speed lines - solid rectangles */}
-                <rect x="6" y="9" width="3" height="1.5" fill="white" opacity="0.9"/>
-                <rect x="5" y="11" width="2.5" height="1.5" fill="white" opacity="0.7"/>
-                <rect x="4" y="13" width="2" height="1.5" fill="white" opacity="0.5"/>
-                {/* Paper airplane pointing up-right */}
-                <path d="M12 7 L16 5 L14 13 L12 7 Z" fill="white"/>
-                <path d="M14 13 L16 5 L18 15 L14 13 Z" fill="white"/>
-                {/* Four-pointed star */}
-                <path d="M19 6 L20 7 L19 8 L18 7 Z" fill="white"/>
-                <path d="M19 6 L19 8 L17 7 L21 7 Z" fill="white"/>
+                {/* Email envelope */}
+                <rect x="6" y="8" width="12" height="8" fill="white" rx="1"/>
+                <path d="M6 8 L12 12 L18 8" stroke="white" strokeWidth="1.5" fill="none"/>
+                {/* AI sparkle */}
+                <circle cx="18" cy="6" r="1.5" fill="white" opacity="0.9"/>
+                <path d="M17 5 L19 5 M18 4 L18 6" stroke="white" strokeWidth="0.8"/>
               </svg>
             </div>
           </div>
