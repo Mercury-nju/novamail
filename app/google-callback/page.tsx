@@ -69,7 +69,8 @@ function GoogleCallbackContent() {
 
           } catch (error) {
             console.error('Google authentication error:', error)
-            setStatus(`Authentication failed: ${error.message}. Redirecting to login...`)
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+            setStatus(`Authentication failed: ${errorMessage}. Redirecting to login...`)
             setTimeout(() => {
               router.push('/login')
             }, 3000)
