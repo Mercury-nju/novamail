@@ -1463,6 +1463,100 @@ export default function HomePage() {
         </div>
       </motion.section>
 
+      {/* Brand Philosophy Section */}
+      <motion.section 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="py-20 relative z-10 overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, rgba(248,250,252,0.8) 0%, rgba(255,255,255,0.6) 50%, rgba(240,249,255,0.8) 100%)'
+        }}
+      >
+        {/* Background Elements */}
+        <div className="absolute inset-0 -z-10">
+          <motion.div 
+            className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-200/20 to-purple-200/20 rounded-full blur-3xl"
+            animate={{ 
+              scale: [1, 1.1, 1], 
+              opacity: [0.2, 0.4, 0.2],
+              x: [0, 30, 0],
+              y: [0, -20, 0]
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mb-12"
+          >
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-6"
+            >
+              Our Story
+            </motion.span>
+            <motion.h2 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="text-4xl md:text-5xl font-bold text-gray-900 mb-8"
+            >
+              Built for 
+              <span className="text-primary-600"> Startups & Indie Developers</span>
+            </motion.h2>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="space-y-8"
+          >
+            <div className="bg-white/60 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/40">
+              <motion.p 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="text-xl md:text-2xl text-gray-700 leading-relaxed mb-6 font-light"
+              >
+                "We built NovaMail for startups and indie developers who need to focus on building, not marketing."
+              </motion.p>
+              
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="space-y-4 text-left max-w-3xl mx-auto"
+              >
+                <p className="text-gray-600 leading-relaxed">
+                  <strong className="text-gray-900">We understand</strong> that as a startup or indie developer, you need to maintain user relationships, collect feedback, and increase retention — but you don't have time for complex email marketing tools.
+                </p>
+                <p className="text-gray-600 leading-relaxed">
+                  <strong className="text-gray-900">We believe</strong> that customer communication shouldn't be a bottleneck. Whether you're onboarding new users, gathering product feedback, or nurturing your community, email should be simple and effective.
+                </p>
+                <p className="text-gray-600 leading-relaxed">
+                  <strong className="text-gray-900">We built NovaMail</strong> to handle your user maintenance, email marketing, customer retention, and feedback collection — so you can focus on what matters most: building your product.
+                </p>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </motion.section>
+
       {/* CTA Section */}
       <motion.section 
         initial={{ opacity: 0 }}
