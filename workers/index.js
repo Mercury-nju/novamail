@@ -3622,7 +3622,15 @@ async function handleGoogleCallback(request, env) {
     }
 
     // 1. 交换授权码获取访问令牌
-    console.log('Exchanging authorization code:', { code: code.substring(0, 10) + '...', redirect_uri });
+    const clientId = env.GOOGLE_CLIENT_ID || '3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com'
+    const clientSecret = env.GOOGLE_CLIENT_SECRET || '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5tU'
+    
+    console.log('Exchanging authorization code:', { 
+      code: code.substring(0, 10) + '...', 
+      redirect_uri,
+      clientId: clientId.substring(0, 20) + '...',
+      hasClientSecret: !!clientSecret
+    });
     
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
@@ -3630,8 +3638,8 @@ async function handleGoogleCallback(request, env) {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        client_id: env.GOOGLE_CLIENT_ID || '3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com',
-        client_secret: env.GOOGLE_CLIENT_SECRET || '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5tU',
+        client_id: clientId,
+        client_secret: clientSecret,
         code: code,
         grant_type: 'authorization_code',
         redirect_uri: redirect_uri
