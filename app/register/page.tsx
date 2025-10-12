@@ -57,14 +57,23 @@ export default function RegisterPage() {
       const result = await response.json()
       
       if (result.success) {
-        toast.success('Verification code sent! Please check your email.')
-        setStep('verify')
+      toast.success('Verification code sent! Please check your email.')
+      setStep('verify')
         // 在开发环境中显示验证码（仅用于测试）
         if (result.code) {
           console.log('Verification code for testing:', result.code)
         }
       } else {
-        toast.error(result.error || 'Failed to send verification code')
+        // 处理用户已存在的情况
+        if (result.code === 'USER_EXISTS') {
+          toast.error('This email is already registered. Please use login instead.')
+          // 可以选择重定向到登录页面
+          setTimeout(() => {
+            router.push('/login')
+          }, 2000)
+        } else {
+          toast.error(result.error || 'Failed to send verification code')
+        }
       }
     } catch (error: any) {
       console.error('Send verification error:', error)
@@ -143,7 +152,15 @@ export default function RegisterPage() {
           console.log('New verification code for testing:', result.code)
         }
       } else {
-        toast.error(result.error || 'Failed to resend verification code')
+        // 处理用户已存在的情况
+        if (result.code === 'USER_EXISTS') {
+          toast.error('This email is already registered. Please use login instead.')
+          setTimeout(() => {
+            router.push('/login')
+          }, 2000)
+        } else {
+          toast.error(result.error || 'Failed to resend verification code')
+        }
       }
     } catch (error: any) {
       console.error('Resend verification error:', error)
@@ -212,13 +229,13 @@ export default function RegisterPage() {
         </div>
 
         <div className="relative z-10 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 min-h-screen">
-          <div className="max-w-md w-full space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-center"
-            >
+        <div className="max-w-md w-full space-y-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
+          >
               <motion.div
                 animate={{ 
                   scale: [1, 1.1, 1],
@@ -236,11 +253,11 @@ export default function RegisterPage() {
                 </motion.svg>
               </motion.div>
               <h2 className="text-3xl font-extrabold text-gray-900">
-                Verify Your Email
-              </h2>
-              <p className="mt-2 text-sm text-gray-600">
-                We've sent a 6-digit verification code to <strong>{formData.email}</strong>
-              </p>
+              Verify Your Email
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              We've sent a 6-digit verification code to <strong>{formData.email}</strong>
+            </p>
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -250,61 +267,61 @@ export default function RegisterPage() {
                   <strong>Check your email:</strong> We've sent a 6-digit verification code to your email address.
                 </p>
               </motion.div>
-            </motion.div>
+          </motion.div>
 
             <div className="mt-8 space-y-6">
               <div className="bg-white/20 backdrop-blur-md py-10 px-8 shadow-2xl rounded-2xl border border-white/30">
-                <div>
+            <div>
                   <label htmlFor="verificationCode" className="block text-sm font-medium text-gray-800 mb-2">
-                    Verification Code
-                  </label>
-                  <input
-                    id="verificationCode"
-                    name="verificationCode"
-                    type="text"
-                    maxLength={6}
-                    required
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
+                Verification Code
+              </label>
+              <input
+                id="verificationCode"
+                name="verificationCode"
+                type="text"
+                maxLength={6}
+                required
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
                     className="w-full px-4 py-3 bg-white/30 backdrop-blur-sm border border-white/40 rounded-xl text-center text-2xl font-mono tracking-widest placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-300"
-                    placeholder="000000"
-                    autoComplete="one-time-code"
-                  />
-                </div>
+                placeholder="000000"
+                autoComplete="one-time-code"
+              />
+            </div>
 
                 <div className="space-y-3 mt-6">
-                  <button
-                    type="button"
-                    onClick={handleVerifyAndRegister}
-                    disabled={isLoading}
+              <button
+                type="button"
+                onClick={handleVerifyAndRegister}
+                disabled={isLoading}
                     className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-primary-600 via-primary-700 to-purple-600 hover:from-primary-700 hover:via-primary-800 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-xl"
-                  >
-                    {isLoading ? 'Verifying...' : 'Verify & Create Account'}
-                  </button>
+              >
+                {isLoading ? 'Verifying...' : 'Verify & Create Account'}
+              </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setStep('form')}
+              <button
+                type="button"
+                onClick={() => setStep('form')}
                     className="flex items-center justify-center w-full py-2 px-4 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-300"
-                  >
-                    <ArrowLeftIcon className="mr-2 h-4 w-4" />
-                    Back to registration
-                  </button>
+              >
+                <ArrowLeftIcon className="mr-2 h-4 w-4" />
+                Back to registration
+              </button>
 
-                  <button
-                    type="button"
-                    onClick={handleResendCode}
-                    disabled={isResending}
+              <button
+                type="button"
+                onClick={handleResendCode}
+                disabled={isResending}
                     className="w-full text-sm text-primary-600 hover:text-primary-500 disabled:opacity-50 transition-colors duration-300"
-                  >
-                    {isResending ? 'Sending...' : "Didn't receive code? Resend"}
-                  </button>
-                </div>
+              >
+                {isResending ? 'Sending...' : "Didn't receive code? Resend"}
+              </button>
+            </div>
               </div>
             </div>
 
             <div className="text-center text-sm text-gray-500">
-              Code expires in 10 minutes
+            Code expires in 10 minutes
             </div>
           </div>
         </div>
@@ -380,7 +397,7 @@ export default function RegisterPage() {
       </div>
 
       <div className="relative z-10 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 min-h-screen">
-        <div className="max-w-md w-full space-y-8">
+      <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <div className="mx-auto h-12 w-12 bg-gradient-to-r from-primary-600 to-purple-600 rounded-2xl border-2 border-white flex items-center justify-center shadow-xl mb-8">
               <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -407,17 +424,17 @@ export default function RegisterPage() {
               </svg>
             </div>
             <h2 className="text-3xl font-extrabold text-gray-900">
-              Create your account
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Join NovaMail and start your email marketing journey
-            </p>
+            Create your account
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Join NovaMail and start your email marketing journey
+          </p>
           </div>
 
           <form
-            className="mt-8 space-y-6"
-            onSubmit={(e) => { e.preventDefault(); handleSendVerification() }}
-          >
+          className="mt-8 space-y-6"
+          onSubmit={(e) => { e.preventDefault(); handleSendVerification() }}
+        >
             <div className="bg-white/20 backdrop-blur-md py-10 px-8 shadow-2xl rounded-2xl border border-white/30">
               <div className="space-y-6">
             <div className="grid grid-cols-2 gap-6">
@@ -530,46 +547,46 @@ export default function RegisterPage() {
                 placeholder="Acme Inc."
               />
             </div>
-            </div>
+          </div>
 
             <div className="flex items-center mt-6">
-              <input
-                id="acceptTerms"
-                name="acceptTerms"
-                type="checkbox"
-                checked={formData.acceptTerms}
-                onChange={handleChange}
+            <input
+              id="acceptTerms"
+              name="acceptTerms"
+              type="checkbox"
+              checked={formData.acceptTerms}
+              onChange={handleChange}
                 className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-white/40 rounded bg-white/30 backdrop-blur-sm"
-              />
+            />
               <label htmlFor="acceptTerms" className="ml-2 block text-sm text-gray-800">
-                I agree to the{' '}
+              I agree to the{' '}
                 <Link href="/terms" className="text-primary-600 hover:text-primary-500 transition-colors duration-300">
-                  Terms of Service
-                </Link>{' '}
-                and{' '}
+                Terms of Service
+              </Link>{' '}
+              and{' '}
                 <Link href="/privacy" className="text-primary-600 hover:text-primary-500 transition-colors duration-300">
-                  Privacy Policy
-                </Link>
-              </label>
-            </div>
+                Privacy Policy
+              </Link>
+            </label>
+          </div>
 
             <div className="mt-6">
-              <button
-                type="submit"
-                disabled={isLoading || !formData.acceptTerms || !isPasswordValid || !formData.email || !formData.firstName || !formData.lastName}
+            <button
+              type="submit"
+              disabled={isLoading || !formData.acceptTerms || !isPasswordValid || !formData.email || !formData.firstName || !formData.lastName}
                 className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-primary-600 via-primary-700 to-purple-600 hover:from-primary-700 hover:via-primary-800 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-xl"
-              >
-                {isLoading ? 'Sending verification code...' : 'Send Verification Code'}
-              </button>
-            </div>
+            >
+              {isLoading ? 'Sending verification code...' : 'Send Verification Code'}
+            </button>
+          </div>
             </div>
           </form>
 
           <div className="mt-8 text-center text-sm text-gray-700">
-            Already have an account?{' '}
+          Already have an account?{' '}
             <Link href="/login" className="font-medium text-primary-600 hover:text-primary-500 transition-colors duration-300">
-              Sign in
-            </Link>
+            Sign in
+          </Link>
           </div>
         </div>
       </div>
