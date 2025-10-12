@@ -197,7 +197,7 @@ function LoginForm() {
 
             <div className="mt-4">
               <a
-                href="https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=email%20profile&response_type=code&state=test123&prompt=consent&access_type=offline"
+                href="https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.world/google-callback&scope=email%20profile&response_type=code&state=test123&prompt=consent&access_type=offline"
                 className="w-full flex items-center justify-center py-3 px-4 bg-white/20 backdrop-blur-sm border border-white/40 rounded-xl text-sm font-medium text-gray-800 hover:bg-white/30 hover:border-white/50 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
