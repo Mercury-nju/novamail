@@ -846,12 +846,12 @@ async function handleCreemSubscriptions(request, env) {
   });
 }
 
-// 妫€鏌ョ敤鎴锋潈闄愬鐞嗗嚱鏁?async function handleCheckPermission(request, env) {
+// Check user permission function
+async function handleCheckPermission(request, env) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json'
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
   };
 
   if (request.method !== 'POST') {
