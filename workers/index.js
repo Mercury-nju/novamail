@@ -411,7 +411,9 @@ async function handleSendVerification(request, env) {
         hasAccessToken: !!gmailAccessToken,
         accessTokenLength: gmailAccessToken ? gmailAccessToken.length : 0,
         hasRefreshToken: !!env.GMAIL_REFRESH_TOKEN,
-        gmailUser: gmailUser
+        gmailUser: gmailUser,
+        accessTokenPreview: gmailAccessToken ? gmailAccessToken.substring(0, 20) + '...' : 'null',
+        refreshTokenPreview: env.GMAIL_REFRESH_TOKEN ? env.GMAIL_REFRESH_TOKEN.substring(0, 20) + '...' : 'null'
       });
       
       if (!gmailAccessToken || gmailAccessToken.length < 50) {
