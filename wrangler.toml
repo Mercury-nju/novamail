@@ -27,15 +27,17 @@ GMAIL_SMTP_PORT = "587"
 # KV 存储配置
 [[kv_namespaces]]
 binding = "USERS_KV"
-id = "users_kv_namespace"
-preview_id = "users_kv_preview"
-
-[[kv_namespaces]]
-binding = "CONTACTS_KV"
-id = "contacts_kv_namespace"
-preview_id = "contacts_kv_preview"
+id = "41bca314c98c4db580f450fb2e2c37bd"
 
 [[kv_namespaces]]
 binding = "CAMPAIGNS_KV"
-id = "campaigns_kv_namespace"
-preview_id = "campaigns_kv_preview"
+id = "4a0baebc9760468f86460c891aaece66"
+
+[[kv_namespaces]]
+binding = "EMAIL_CONFIG_KV"
+id = "c78c884ca05043979505041373ecfe18"
+
+# 注意：需要创建 CONTACTS_KV 命名空间
+# [[kv_namespaces]]
+# binding = "CONTACTS_KV"
+# id = "YOUR_CONTACTS_KV_ID_HERE"
