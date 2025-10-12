@@ -1,5 +1,5 @@
-﻿// Cloudflare Workers 涓诲叆鍙ｆ枃浠?// 璺敱鍒颁笉鍚岀殑 API 绔偣
-
+﻿// Cloudflare Workers main entry file
+// Route to different API endpoints
 // Gmail access token refresh function
 async function refreshGmailAccessToken(env) {
   if (!env.GMAIL_REFRESH_TOKEN || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
@@ -55,8 +55,8 @@ export default {
     }
 
     try {
-      // 璺敱鍒颁笉鍚岀殑 API 绔偣
-      if (path.startsWith('/api/auth/send-verification') || path.startsWith('/api/send-verification')) {
+      // Route to different API endpoints
+      if (path.startsWith('/api/send-verification') || path.startsWith('/api/auth/send-verification')) {
         return await handleSendVerification(request, env);
       } else if (path.startsWith('/api/auth/verify-code')) {
         return await handleVerifyCode(request, env);
@@ -199,8 +199,7 @@ async function handleSendVerification(request, env) {
     console.log('Checking for existing user:', email);
     console.log('KV storage available:', !!env.USERS_KV);
     
-    // 临时硬编码的已注册用户列表（用于测试）
-    const knownUsers = [
+    // Temporary hardcoded list of registered users (for testing)
       'lihongyangnju@gmail.com',
       'test@example.com',
       'admin@novamail.world'
@@ -3365,7 +3364,8 @@ async function handleGoogleLogin(request, env) {
         headers: corsHeaders
       });
     } else {
-      // 鍒涘缓鏂扮敤鎴?      try {
+      // Create new user
+      try {
         if (env.USERS_KV) {
           await env.USERS_KV.put(`user_${email.toLowerCase()}`, JSON.stringify(user));
           console.log('Created new user:', user.email);
@@ -3539,7 +3539,8 @@ async function handleGoogleCallback(request, env) {
         headers: corsHeaders
       });
     } else {
-      // 鍒涘缓鏂扮敤鎴?      try {
+      // Create new user
+      try {
         if (env.USERS_KV) {
           await env.USERS_KV.put(`user_${googleUser.email.toLowerCase()}`, JSON.stringify(user));
           console.log('Created new user:', user.email);
