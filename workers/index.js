@@ -184,109 +184,57 @@ async function handleSendVerification(request, env) {
     });
   }
 
+  // 检查用户是否已存在
+  let existingUser = null;
+  try {
+    if (env.USERS_KV) {
+      const storedUser = await env.USERS_KV.get(`user_${email.toLowerCase()}`);
+      if (storedUser) {
+        existingUser = JSON.parse(storedUser);
+        console.log('User already exists:', existingUser.email);
+      }
+    }
+  } catch (error) {
+    console.log('Failed to check existing user:', error);
+  }
+
+  if (existingUser) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'User already exists',
+      message: 'This email is already registered. Please use login instead.',
+      code: 'USER_EXISTS'
+    }), {
+      status: 400,
+      headers: corsHeaders
+    });
+  }
+
   // 生成6位验证码
   const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
   
-  // 使用Resend API发送邮件
-  const emailData = {
-    from: 'NovaMail <noreply@novamail.world>',
-    to: email,
-    subject: 'Your NovaMail Verification Code',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
-          <h1 style="color: white; margin: 0;">NovaMail</h1>
-        </div>
-        <div style="padding: 30px; background: #f9f9f9;">
-          <h2 style="color: #333; margin-bottom: 20px;">Verify Your Email Address</h2>
-          <p style="color: #666; font-size: 16px; line-height: 1.5;">
-            Thank you for signing up for NovaMail! To complete your registration, please use the verification code below:
-          </p>
-          <div style="background: white; border: 2px solid #667eea; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">
-            <span style="font-size: 32px; font-weight: bold; color: #667eea; letter-spacing: 5px;">${verificationCode}</span>
-          </div>
-          <p style="color: #666; font-size: 14px;">
-            This code will expire in 10 minutes. If you didn't request this code, please ignore this email.
-          </p>
-          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-            <p style="color: #999; font-size: 12px;">
-              This email was sent by NovaMail. If you have any questions, please contact our support team.
-            </p>
-          </div>
-        </div>
-      </div>
-    `
-  };
+  // 使用Gmail API发送验证码邮件
+  console.log('Sending verification email via Gmail API to:', email);
 
-  // 使用Gmail发送验证码邮件（通过Resend API）
   try {
     // 检查Gmail配置
     const gmailUser = env.GMAIL_SMTP_USER;
-    const resendApiKey = env.RESEND_API_KEY;
+    const gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
     
-    if (!gmailUser || gmailUser === 'your-email@gmail.com') {
-      // 如果Gmail未配置，返回验证码用于测试
-      console.log('Gmail not configured, returning verification code for testing');
+    if (!gmailUser || !gmailAccessToken) {
+      console.log('Gmail API not configured, returning verification code for testing');
       return new Response(JSON.stringify({
         success: true,
-        message: 'Verification code generated (Gmail not configured)',
+        message: 'Verification code generated (Gmail API not configured)',
         code: verificationCode,
-        note: 'Please configure GMAIL_SMTP_USER in wrangler.toml to enable real email sending',
+        note: 'Please configure Gmail API credentials to enable real email sending',
         timestamp: new Date().toISOString()
       }), {
         headers: corsHeaders
       });
     }
 
-    if (!resendApiKey || resendApiKey === 're_1234567890abcdef') {
-      // 如果Resend API未配置，返回验证码用于测试
-      console.log('Resend API not configured, returning verification code for testing');
-      return new Response(JSON.stringify({
-        success: true,
-        message: 'Verification code generated (Resend API not configured)',
-        code: verificationCode,
-        note: 'Please configure RESEND_API_KEY in wrangler.toml to enable real email sending',
-        timestamp: new Date().toISOString()
-      }), {
-        headers: corsHeaders
-      });
-    }
-
-    // 使用Gmail SMTP发送邮件
-    const smtpData = {
-      from: gmailUser,
-      to: email,
-      subject: 'Your NovaMail Verification Code',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">NovaMail</h1>
-          </div>
-          <div style="padding: 30px; background: #f9f9f9;">
-            <h2 style="color: #333; margin-bottom: 20px;">Verify Your Email Address</h2>
-            <p style="color: #666; font-size: 16px; line-height: 1.5;">
-              Thank you for signing up for NovaMail! To complete your registration, please use the verification code below:
-            </p>
-            <div style="background: white; border: 2px solid #667eea; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">
-              <span style="font-size: 32px; font-weight: bold; color: #667eea; letter-spacing: 5px;">${verificationCode}</span>
-            </div>
-            <p style="color: #666; font-size: 14px;">
-              This code will expire in 10 minutes. If you didn't request this code, please ignore this email.
-            </p>
-            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-              <p style="color: #999; font-size: 12px;">
-                This email was sent by NovaMail. If you have any questions, please contact our support team.
-              </p>
-            </div>
-          </div>
-        </div>
-      `
-    };
-
-    // 使用Gmail API发送邮件（而不是SMTP，因为Cloudflare Workers不支持SMTP连接）
-    console.log('Using Gmail API to send verification email');
-    
-    // 构建SMTP邮件内容
+    // 构建Gmail API邮件内容
     const emailContent = [
       `From: NovaMail <${gmailUser}>`,
       `To: ${email}`,
@@ -317,6 +265,166 @@ async function handleSendVerification(request, env) {
       `</div>`,
       `</div>`
     ].join('\r\n');
+
+    // Base64编码邮件内容
+    const encodedMessage = btoa(emailContent).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    
+    // 调用Gmail API
+    const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${gmailAccessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        raw: encodedMessage
+      })
+    });
+
+    if (gmailResponse.ok) {
+      const result = await gmailResponse.json();
+      console.log('Email sent successfully via Gmail API:', result.id);
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Verification code sent successfully via Gmail',
+        code: verificationCode,
+        messageId: result.id,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    } else {
+      const errorText = await gmailResponse.text();
+      console.error('Gmail API error:', errorText);
+      
+      // 即使Gmail API失败，也返回验证码给用户
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Verification code generated (Gmail API failed)',
+        code: verificationCode,
+        note: 'Gmail API failed, but verification code is available for testing',
+        error: `Gmail API Error: ${gmailResponse.status} - ${errorText}`,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Gmail API error:', error);
+    // 即使出错，也返回验证码给用户
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'Verification code generated (Gmail API error)',
+      code: verificationCode,
+      note: 'Gmail API error occurred, but verification code is available for testing',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      headers: corsHeaders
+    });
+  }
+}
+
+  // 使用Gmail API发送验证码邮件
+  try {
+    // 检查Gmail配置
+    const gmailUser = env.GMAIL_SMTP_USER;
+    const gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
+    
+    if (!gmailUser || !gmailAccessToken) {
+      console.log('Gmail API not configured, returning verification code for testing');
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Verification code generated (Gmail API not configured)',
+        code: verificationCode,
+        note: 'Please configure Gmail API credentials to enable real email sending',
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    }
+
+    // 构建Gmail API邮件内容
+    const emailContent = [
+      `From: NovaMail <${gmailUser}>`,
+      `To: ${email}`,
+      `Subject: Your NovaMail Verification Code`,
+      `MIME-Version: 1.0`,
+      `Content-Type: text/html; charset=UTF-8`,
+      ``,
+      `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">`,
+      `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">`,
+      `<h1 style="color: white; margin: 0;">NovaMail</h1>`,
+      `</div>`,
+      `<div style="padding: 30px; background: #f9f9f9;">`,
+      `<h2 style="color: #333; margin-bottom: 20px;">Verify Your Email Address</h2>`,
+      `<p style="color: #666; font-size: 16px; line-height: 1.5;">`,
+      `Thank you for signing up for NovaMail! To complete your registration, please use the verification code below:`,
+      `</p>`,
+      `<div style="background: white; border: 2px solid #667eea; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">`,
+      `<span style="font-size: 32px; font-weight: bold; color: #667eea; letter-spacing: 5px;">${verificationCode}</span>`,
+      `</div>`,
+      `<p style="color: #666; font-size: 14px;">`,
+      `This code will expire in 10 minutes. If you didn't request this code, please ignore this email.`,
+      `</p>`,
+      `<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">`,
+      `<p style="color: #999; font-size: 12px;">`,
+      `This email was sent by NovaMail. If you have any questions, please contact our support team.`,
+      `</p>`,
+      `</div>`,
+      `</div>`,
+      `</div>`
+    ].join('\r\n');
+
+    // 使用Gmail API发送邮件
+    console.log('Sending email via Gmail API');
+    
+    // Base64编码邮件内容
+    const encodedMessage = btoa(emailContent).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    
+    // 调用Gmail API
+    const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${gmailAccessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        raw: encodedMessage
+      })
+    });
+
+    if (gmailResponse.ok) {
+      const result = await gmailResponse.json();
+      console.log('Email sent successfully via Gmail API:', result.id);
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Verification code sent successfully via Gmail',
+        code: verificationCode,
+        messageId: result.id,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    } else {
+      const errorText = await gmailResponse.text();
+      console.error('Gmail API error:', errorText);
+      
+      // 即使Gmail API失败，也返回验证码给用户
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Verification code generated (Gmail API failed)',
+        code: verificationCode,
+        note: 'Gmail API failed, but verification code is available for testing',
+        error: `Gmail API Error: ${gmailResponse.status} - ${errorText}`,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    }
 
     // 使用Gmail API发送邮件
     try {
