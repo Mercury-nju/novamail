@@ -417,11 +417,17 @@ async function handleSendVerification(request, env) {
       if (!gmailAccessToken || gmailAccessToken.length < 50) {
         console.log('Gmail Access Token not properly configured, returning verification code for testing');
         console.log('Verification code for testing:', verificationCode);
+        console.log('Current access token:', gmailAccessToken);
         return new Response(JSON.stringify({
           success: true,
           message: 'Verification code generated (Gmail API not configured)',
           code: verificationCode,
           note: 'Please configure GMAIL_ACCESS_TOKEN in wrangler.toml to enable real email sending',
+          debug: {
+            hasAccessToken: !!gmailAccessToken,
+            accessTokenLength: gmailAccessToken ? gmailAccessToken.length : 0,
+            accessTokenPreview: gmailAccessToken ? gmailAccessToken.substring(0, 20) + '...' : 'null'
+          },
           timestamp: new Date().toISOString()
         }), {
           headers: corsHeaders
