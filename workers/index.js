@@ -94,6 +94,8 @@ export default {
         return await handleTestSimpleEmail(request, env);
       } else if (path.startsWith('/api/check-gmail-scopes')) {
         return await handleCheckGmailScopes(request, env);
+      } else if (path.startsWith('/api/refresh-gmail-token')) {
+        return await handleRefreshGmailToken(request, env);
       } else if (path.startsWith('/api/debug-verification')) {
         return await handleDebugVerification(request, env);
       } else if (path.startsWith('/api/test')) {
@@ -4814,6 +4816,98 @@ async function handleCheckGmailScopes(request, env) {
     return new Response(JSON.stringify({
       success: false,
       error: 'Failed to check Gmail scopes',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 刷新Gmail访问令牌
+async function handleRefreshGmailToken(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  console.log('Refresh Gmail token endpoint called');
+  
+  try {
+    // 临时硬编码Refresh Token进行测试
+    const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
+    
+    if (!refreshToken) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'No refresh token found'
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    const clientId = env.GOOGLE_CLIENT_ID || '3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com';
+    const clientSecret = env.GOOGLE_CLIENT_SECRET || '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';
+
+    console.log('Refreshing Gmail access token...');
+    console.log('Client ID:', clientId.substring(0, 20) + '...');
+    console.log('Refresh token length:', refreshToken.length);
+
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token'
+      })
+    });
+
+    console.log('Token refresh response status:', response.status);
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Token refreshed successfully');
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Gmail access token refreshed successfully',
+        newAccessToken: data.access_token,
+        expiresIn: data.expires_in,
+        tokenType: data.token_type,
+        scope: data.scope,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    } else {
+      const errorData = await response.text();
+      console.error('Failed to refresh token:', response.status, errorData);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Failed to refresh token: ${response.status}`,
+        details: errorData,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Refresh token error:', error);
+    
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to refresh Gmail token',
       details: error.message,
       timestamp: new Date().toISOString()
     }), {
