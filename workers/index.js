@@ -4584,11 +4584,11 @@ async function sendViaSMTP(config, env) {
       provider: config.provider || 'unknown'
     });
 
-    // 使用 Gmail API 作为邮件发送服务
-    // 保持用户的发件人地址，但通过Gmail API发送
-    console.log('sendViaSMTP: Refreshing Gmail access token...');
+    // 使用与test-gmail函数完全相同的逻辑
+    const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
     
     // 直接刷新获取新的访问令牌
+    console.log('sendViaSMTP: Refreshing access token...');
     const refreshResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: {
@@ -4597,7 +4597,7 @@ async function sendViaSMTP(config, env) {
       body: new URLSearchParams({
         client_id: env.GOOGLE_CLIENT_ID || "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com",
         client_secret: env.GOOGLE_CLIENT_SECRET || "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",
-        refresh_token: env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU",
+        refresh_token: refreshToken,
         grant_type: 'refresh_token'
       })
     });
@@ -4609,17 +4609,19 @@ async function sendViaSMTP(config, env) {
     }
 
     const refreshData = await refreshResponse.json();
-    const accessToken = refreshData.access_token;
-    console.log('sendViaSMTP: Got fresh access token:', accessToken ? 'YES' : 'NO');
-    if (!accessToken) {
+    const gmailAccessToken = refreshData.access_token;
+    console.log('sendViaSMTP: Got fresh access token:', gmailAccessToken ? 'YES' : 'NO');
+    console.log('sendViaSMTP: Access token preview:', gmailAccessToken ? gmailAccessToken.substring(0, 20) + '...' : 'NONE');
+    console.log('sendViaSMTP: Refresh response data:', JSON.stringify(refreshData));
+    if (!gmailAccessToken) {
       throw new Error('Gmail access token not available');
     }
-
-    // 构建邮件内容
-    const emailContent = `From: ${config.from}
-To: ${config.to}
+    
+    // 构建邮件内容 - 使用与test-gmail相同的格式
+    const emailContent = `To: ${config.to}
+From: ${config.from}
 Subject: ${config.subject}
-Content-Type: text/html; charset=UTF-8
+Content-Type: text/html; charset=utf-8
 X-SMTP-Provider: ${config.provider || 'custom'}
 X-SMTP-Host: ${config.host}
 X-SMTP-Port: ${config.port}
@@ -4628,31 +4630,45 @@ X-Original-Sender: ${config.from}
 
 ${config.html}`;
 
-    const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    // 使用Gmail API发送邮件
+    const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
+    
+    const gmailMessage = {
+      raw: btoa(emailContent).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    };
+
+    console.log('sendViaSMTP: Sending email via Gmail API...');
+    console.log('sendViaSMTP: Access token length:', gmailAccessToken ? gmailAccessToken.length : 0);
+    console.log('sendViaSMTP: Refresh token length:', refreshToken ? refreshToken.length : 0);
+
+    const gmailResponse = await fetch(gmailApiUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        'Authorization': `Bearer ${gmailAccessToken}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        raw: btoa(emailContent).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-      })
+      body: JSON.stringify(gmailMessage)
     });
+
+    console.log('sendViaSMTP: Gmail API response status:', gmailResponse.status);
 
     if (gmailResponse.ok) {
       const result = await gmailResponse.json();
+      console.log('sendViaSMTP: Email sent successfully:', result.id);
+      
       return {
         success: true,
         messageId: result.id,
         method: `smtp_gmail_api_${config.provider || 'custom'}`
       };
     } else {
-      const errorData = await gmailResponse.text();
-      throw new Error(`Gmail API error: ${errorData}`);
+      const errorText = await gmailResponse.text();
+      console.error('sendViaSMTP: Gmail API error:', gmailResponse.status, errorText);
+      throw new Error(`Gmail API error: ${gmailResponse.status} - ${errorText}`);
     }
 
   } catch (error) {
-    console.error('SMTP sending failed:', error);
+    console.error('sendViaSMTP: SMTP sending failed:', error);
     return {
       success: false,
       error: error.message
