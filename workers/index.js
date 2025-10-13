@@ -92,6 +92,8 @@ export default {
         return await handleTestVerification(request, env);
       } else if (path.startsWith('/api/test-simple-email')) {
         return await handleTestSimpleEmail(request, env);
+      } else if (path.startsWith('/api/test-direct-verification')) {
+        return await handleTestDirectVerification(request, env);
       } else if (path.startsWith('/api/check-gmail-scopes')) {
         return await handleCheckGmailScopes(request, env);
       } else if (path.startsWith('/api/refresh-gmail-token')) {
@@ -4701,6 +4703,141 @@ async function handleTestVerification(request, env) {
 
   } catch (error) {
     console.error('Test verification error:', error);
+    
+    return new Response(JSON.stringify({
+      success: false,
+      error: '验证码发送失败',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 直接验证码测试函数 - 使用手动刷新的Token
+async function handleTestDirectVerification(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  console.log('Direct verification test endpoint called');
+  
+  try {
+    // 1. 先手动刷新Token
+    console.log('Step 1: Refreshing Gmail token...');
+    const refreshResponse = await fetch('https://novamail.world/api/refresh-gmail-token', {
+      method: 'GET'
+    });
+    
+    if (!refreshResponse.ok) {
+      throw new Error('Failed to refresh token');
+    }
+    
+    const refreshResult = await refreshResponse.json();
+    console.log('Token refresh result:', refreshResult.success);
+    
+    if (!refreshResult.success) {
+      throw new Error('Token refresh failed');
+    }
+    
+    const freshToken = refreshResult.newAccessToken;
+    console.log('Fresh token length:', freshToken.length);
+    
+    // 2. 生成验证码
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const testEmail = '66597405@qq.com';
+    
+    console.log('Step 2: Sending verification code to:', testEmail);
+    console.log('Verification code:', verificationCode);
+    
+    // 3. 构建邮件内容
+    const emailBody = [
+      `To: ${testEmail}`,
+      `From: lihongyangnju@gmail.com`,
+      `Subject: NovaMail 验证码 (直接测试)`,
+      `Content-Type: text/plain; charset=utf-8`,
+      ``,
+      `您的 NovaMail 验证码是：${verificationCode}`,
+      ``,
+      `此验证码有效期为 10 分钟。`,
+      `如果您没有请求此验证码，请忽略此邮件。`,
+      ``,
+      `---`,
+      `NovaMail 团队`
+    ].join('\r\n');
+
+    // 4. 使用Gmail API发送邮件
+    const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
+    
+    // 使用安全的UTF-8编码
+    function utf8ToBase64(str) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(str);
+      let binary = '';
+      for (let i = 0; i < data.length; i++) {
+        binary += String.fromCharCode(data[i]);
+      }
+      return btoa(binary);
+    }
+    
+    const gmailMessage = {
+      raw: utf8ToBase64(emailBody).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    };
+
+    console.log('Step 3: Sending email via Gmail API...');
+    console.log('Using fresh token:', freshToken.substring(0, 20) + '...');
+
+    const gmailResponse = await fetch(gmailApiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${freshToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(gmailMessage)
+    });
+
+    console.log('Gmail API response status:', gmailResponse.status);
+
+    if (gmailResponse.ok) {
+      const result = await gmailResponse.json();
+      console.log('Verification email sent successfully:', result.id);
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: '验证码发送成功！(直接测试)',
+        code: verificationCode,
+        email: testEmail,
+        messageId: result.id,
+        tokenLength: freshToken.length,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    } else {
+      const errorText = await gmailResponse.text();
+      console.error('Gmail API error:', gmailResponse.status, errorText);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Gmail API Error: ${gmailResponse.status}`,
+        details: errorText,
+        code: verificationCode,
+        email: testEmail,
+        tokenLength: freshToken.length,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Direct verification test error:', error);
     
     return new Response(JSON.stringify({
       success: false,
