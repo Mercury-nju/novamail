@@ -6,10 +6,17 @@ async function getCurrentGmailAccessToken(env) {
   // 首先尝试从环境变量获取
   let token = env.GMAIL_ACCESS_TOKEN;
   
-  // 如果环境变量中的Token无效，尝试刷新
+  // 如果环境变量中的Token无效或不存在，尝试刷新
   if (!token || token.length < 50) {
-    console.log('Environment token invalid, refreshing...');
+    console.log('Environment token invalid or missing, refreshing...');
     token = await refreshGmailAccessToken(env);
+  } else {
+    // 即使token存在，也尝试刷新以确保是最新的
+    console.log('Environment token exists, refreshing to ensure validity...');
+    const refreshedToken = await refreshGmailAccessToken(env);
+    if (refreshedToken) {
+      token = refreshedToken;
+    }
   }
   
   return token;
