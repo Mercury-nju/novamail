@@ -265,10 +265,11 @@ export default function HomePage() {
                   transition: { type: "spring", stiffness: 300 }
                 }} 
                 whileTap={{ scale: 0.95 }}
+                onClick={handleGetStarted}
               >
-                <Link href="/register" className="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-blue-800 hover:to-purple-700 text-white px-6 py-2.5 rounded-xl font-semibold transition-all duration-300">
+                <button className="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-blue-800 hover:to-purple-700 text-white px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 cursor-pointer">
                   Get Started
-                </Link>
+                </button>
               </motion.div>
             </div>
           </div>
