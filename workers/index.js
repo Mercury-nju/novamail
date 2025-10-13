@@ -4573,6 +4573,13 @@ async function handleTestVerification(request, env) {
     // 获取Gmail访问令牌
     let gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
     
+    // 先尝试刷新Token以确保使用最新的
+    const refreshedToken = await refreshGmailAccessToken(env);
+    if (refreshedToken) {
+      gmailAccessToken = refreshedToken;
+      console.log('Using refreshed token for test verification');
+    }
+    
     // 构建邮件内容
     const emailBody = [
       `To: ${testEmail}`,
