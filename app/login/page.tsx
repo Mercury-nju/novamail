@@ -164,19 +164,10 @@ function LoginForm() {
               </div>
             </div>
 
+            {/* Google Login - 优先显示 */}
             <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-xl text-sm font-medium text-white bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-blue-800 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-              >
-                {loading ? 'Signing in...' : 'Sign in'}
-              </button>
-            </div>
-
-            <div className="mt-4">
               <a
-                href="https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=email%20profile&response_type=code&state=test123&prompt=consent&access_type=offline"
+                href="https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.world/google-callback&scope=email%20profile&response_type=code&state=test123&prompt=consent&access_type=offline"
                 className="w-full flex items-center justify-center py-3 px-4 bg-white/20 backdrop-blur-sm border border-white/40 rounded-xl text-sm font-medium text-gray-800 hover:bg-white/30 hover:border-white/50 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
@@ -187,6 +178,29 @@ function LoginForm() {
                 </svg>
                 Continue with Google
               </a>
+            </div>
+
+            {/* 分隔线 */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300/50" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white/20 backdrop-blur-sm text-gray-600 rounded-full">
+                  Or continue with email
+                </span>
+              </div>
+            </div>
+
+            {/* Email/Password Login - 次要选项 */}
+            <div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-xl text-sm font-medium text-white bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-blue-800 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+              >
+                {loading ? 'Signing in...' : 'Sign in with Email'}
+              </button>
             </div>
           </form>
 
