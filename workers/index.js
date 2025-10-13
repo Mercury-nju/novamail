@@ -4586,7 +4586,9 @@ async function sendViaSMTP(config, env) {
 
     // 使用 Gmail API 作为邮件发送服务
     // 保持用户的发件人地址，但通过Gmail API发送
+    console.log('sendViaSMTP: Getting Gmail access token...');
     const accessToken = await getCurrentGmailAccessToken(env);
+    console.log('sendViaSMTP: Got access token:', accessToken ? 'YES' : 'NO');
     if (!accessToken) {
       throw new Error('Gmail access token not available');
     }
