@@ -19,6 +19,7 @@ import {
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import OnboardingTour from '@/components/OnboardingTour'
+import { fetchUserSubscription } from '@/lib/permissions'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
@@ -45,6 +46,9 @@ export default function DashboardLayout({
   
   // 用户引导状态
   const [showOnboarding, setShowOnboarding] = useState(false)
+  
+  // 订阅状态
+  const [userSubscription, setUserSubscription] = useState<any>(null)
 
   useEffect(() => {
     const checkAuth = () => {
@@ -57,6 +61,20 @@ export default function DashboardLayout({
         if (userToken && userEmail) {
           setIsAuthenticated(true)
           console.log('User authenticated:', userEmail)
+          
+          // 获取用户订阅状态
+          const loadSubscription = async () => {
+            try {
+              const subscription = await fetchUserSubscription(userEmail)
+              if (subscription) {
+                setUserSubscription(subscription)
+                console.log('User subscription loaded:', subscription)
+              }
+            } catch (error) {
+              console.error('Failed to load subscription:', error)
+            }
+          }
+          loadSubscription()
           
         // 检查是否需要显示用户引导（按用户ID区分）
         const userId = localStorage.getItem('user-id') || userEmail
@@ -280,7 +298,18 @@ export default function DashboardLayout({
                 <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
                   <span className="text-sm font-medium text-primary-700">{getUserInitials()}</span>
                 </div>
-                <span className="hidden lg:block text-sm font-medium text-gray-700">{getUserDisplayName()}</span>
+                <div className="flex flex-col">
+                  <span className="hidden lg:block text-sm font-medium text-gray-700">{getUserDisplayName()}</span>
+                  {userSubscription && (
+                    <span className={`hidden lg:block text-xs px-2 py-1 rounded-full ${
+                      userSubscription.plan === 'pro' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {userSubscription.plan === 'pro' ? 'Pro Plan' : 'Free Plan'}
+                    </span>
+                  )}
+                </div>
                 <button
                   onClick={triggerOnboarding}
                   className="text-blue-400 hover:text-blue-600 text-xs px-2 py-1 rounded ml-2"
