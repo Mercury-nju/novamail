@@ -4617,7 +4617,7 @@ async function sendViaSMTP(config, env) {
       throw new Error('Gmail access token not available');
     }
     
-    // 构建邮件内容 - 使用简单的HTML内容
+    // 构建邮件内容 - 使用与test-gmail完全相同的格式
     const emailContent = `To: ${config.to}
 From: ${config.from}
 Subject: ${config.subject}
