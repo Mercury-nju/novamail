@@ -196,6 +196,8 @@ export default {
         return await handleGrantSubscription(request, env);
       } else if (path.startsWith('/api/admin/check-user')) {
         return await handleCheckUser(request, env);
+      } else if (path.startsWith('/api/admin/debug-kv')) {
+        return await handleDebugKV(request, env);
       } else if (path.startsWith('/api/user/subscription')) {
         return await handleGetUserSubscription(request, env);
       } else if (path.startsWith('/api/admin/clear-campaigns')) {
@@ -4315,13 +4317,25 @@ async function handleContacts(request, env) {
       // 从KV存储获取联系人
       if (env.CONTACTS_KV) {
         try {
+          console.log('Fetching contacts from CONTACTS_KV...');
           const { keys } = await env.CONTACTS_KV.list();
+          console.log('Found keys:', keys.length, keys.map(k => k.name));
+          
           const contactPromises = keys.map(key => env.CONTACTS_KV.get(key.name));
           const contactData = await Promise.all(contactPromises);
+          console.log('Contact data retrieved:', contactData.length);
           
           contacts = contactData
             .filter(data => data)
-            .map(data => JSON.parse(data))
+            .map(data => {
+              try {
+                return JSON.parse(data);
+              } catch (e) {
+                console.error('Failed to parse contact data:', data, e);
+                return null;
+              }
+            })
+            .filter(contact => contact)
             .filter(contact => {
               // 搜索过滤
               if (search && !contact.name.toLowerCase().includes(search.toLowerCase()) && 
@@ -4336,9 +4350,13 @@ async function handleContacts(request, env) {
               
               return true;
             });
+          
+          console.log('Filtered contacts:', contacts.length);
         } catch (error) {
           console.error('Failed to fetch contacts from KV:', error);
         }
+      } else {
+        console.log('CONTACTS_KV not available');
       }
 
       // 分页
@@ -4431,8 +4449,15 @@ async function handleContacts(request, env) {
 
       // 保存到KV存储
       if (env.CONTACTS_KV) {
-        await env.CONTACTS_KV.put(`contact_${newContact.email}`, JSON.stringify(newContact));
-        console.log('Contact saved to KV:', newContact.email);
+        const key = `contact_${newContact.email}`;
+        await env.CONTACTS_KV.put(key, JSON.stringify(newContact));
+        console.log('Contact saved to KV:', key, newContact);
+        
+        // 验证保存是否成功
+        const saved = await env.CONTACTS_KV.get(key);
+        console.log('Verification - saved contact:', saved ? 'SUCCESS' : 'FAILED');
+      } else {
+        console.log('CONTACTS_KV not available for saving');
       }
 
       return new Response(JSON.stringify({
@@ -4460,6 +4485,68 @@ async function handleContacts(request, env) {
     status: 405,
     headers: corsHeaders
   });
+}
+
+// KV调试处理函数
+async function handleDebugKV(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const debugInfo = {
+      timestamp: new Date().toISOString(),
+      kvStatus: {
+        CONTACTS_KV: !!env.CONTACTS_KV,
+        USERS_KV: !!env.USERS_KV,
+        CAMPAIGNS_KV: !!env.CAMPAIGNS_KV,
+        EMAIL_CONFIG_KV: !!env.EMAIL_CONFIG_KV
+      }
+    };
+
+    // 测试CONTACTS_KV
+    if (env.CONTACTS_KV) {
+      try {
+        const { keys } = await env.CONTACTS_KV.list();
+        debugInfo.contactsKV = {
+          available: true,
+          keyCount: keys.length,
+          keys: keys.map(k => k.name)
+        };
+      } catch (error) {
+        debugInfo.contactsKV = {
+          available: true,
+          error: error.message
+        };
+      }
+    } else {
+      debugInfo.contactsKV = { available: false };
+    }
+
+    return new Response(JSON.stringify({
+      success: true,
+      debug: debugInfo
+    }), {
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    console.error('Debug KV error:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
 }
 
 // 处理分析数据请求
