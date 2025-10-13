@@ -4617,16 +4617,11 @@ async function sendViaSMTP(config, env) {
       throw new Error('Gmail access token not available');
     }
     
-    // 构建邮件内容 - 使用与test-gmail相同的格式
+    // 构建邮件内容 - 使用与test-gmail完全相同的格式
     const emailContent = `To: ${config.to}
 From: ${config.from}
 Subject: ${config.subject}
-Content-Type: text/plain; charset=utf-8
-X-SMTP-Provider: ${config.provider || 'custom'}
-X-SMTP-Host: ${config.host}
-X-SMTP-Port: ${config.port}
-X-SMTP-Secure: ${config.secure ? 'true' : 'false'}
-X-Original-Sender: ${config.from}
+Content-Type: text/html; charset=utf-8
 
 ${config.html}`;
 
