@@ -473,12 +473,19 @@ async function handleSendVerification(request, env) {
       // 使用Gmail API发送邮件
       const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
       
-      // 构建Gmail API请求
-      const encoder = new TextEncoder();
-      const data = encoder.encode(emailBody);
-      const base64 = btoa(String.fromCharCode(...data));
+      // 构建Gmail API请求 - 使用安全的UTF-8编码
+      function utf8ToBase64(str) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        let binary = '';
+        for (let i = 0; i < data.length; i++) {
+          binary += String.fromCharCode(data[i]);
+        }
+        return btoa(binary);
+      }
+      
       const gmailMessage = {
-        raw: base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+        raw: utf8ToBase64(emailBody).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
       };
 
       const gmailResponse = await fetch(gmailApiUrl, {
@@ -4585,11 +4592,19 @@ async function handleTestVerification(request, env) {
     // 使用Gmail API发送邮件
     const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
     
-    const encoder = new TextEncoder();
-    const data = encoder.encode(emailBody);
-    const base64 = btoa(String.fromCharCode(...data));
+    // 使用安全的UTF-8编码
+    function utf8ToBase64(str) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(str);
+      let binary = '';
+      for (let i = 0; i < data.length; i++) {
+        binary += String.fromCharCode(data[i]);
+      }
+      return btoa(binary);
+    }
+    
     const gmailMessage = {
-      raw: base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      raw: utf8ToBase64(emailBody).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
     };
 
     console.log('Sending email via Gmail API...');
