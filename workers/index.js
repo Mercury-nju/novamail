@@ -475,7 +475,7 @@ async function handleSendVerification(request, env) {
       
       // 构建Gmail API请求
       const gmailMessage = {
-        raw: btoa(emailBody).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+        raw: Buffer.from(emailBody, 'utf8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
       };
 
       const gmailResponse = await fetch(gmailApiUrl, {
@@ -4478,7 +4478,7 @@ Timestamp: ${new Date().toISOString()}`;
     const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
     
     const gmailMessage = {
-      raw: btoa(testEmail).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      raw: Buffer.from(testEmail, 'utf8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
     };
 
     console.log('Sending test email via Gmail API...');
@@ -4583,7 +4583,7 @@ async function handleTestVerification(request, env) {
     const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
     
     const gmailMessage = {
-      raw: btoa(emailBody).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      raw: Buffer.from(emailBody, 'utf8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
     };
 
     console.log('Sending email via Gmail API...');
@@ -4711,7 +4711,7 @@ If you receive this email, Gmail API is working correctly.`;
     const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
     
     const gmailMessage = {
-      raw: btoa(simpleEmail).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      raw: Buffer.from(simpleEmail, 'utf8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
     };
 
     console.log('Sending simple test email via Gmail API...');
