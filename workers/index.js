@@ -4312,16 +4312,24 @@ async function handleContacts(request, env) {
       const page = parseInt(searchParams.get('page') || '1');
       const limit = parseInt(searchParams.get('limit') || '100');
 
+      // 获取用户邮箱（从请求头或认证信息中获取）
+      const userEmail = request.headers.get('x-user-email') || 'anonymous@example.com';
+      const userPrefix = `user_${userEmail.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+
       let contacts = [];
 
       // 从KV存储获取联系人
       if (env.CONTACTS_KV) {
         try {
-          console.log('Fetching contacts from CONTACTS_KV...');
+          console.log('Fetching contacts from CONTACTS_KV for user:', userEmail);
           const { keys } = await env.CONTACTS_KV.list();
           console.log('Found keys:', keys.length, keys.map(k => k.name));
           
-          const contactPromises = keys.map(key => env.CONTACTS_KV.get(key.name));
+          // 只获取当前用户的联系人
+          const userKeys = keys.filter(key => key.name.startsWith(userPrefix));
+          console.log('User-specific keys:', userKeys.length, userKeys.map(k => k.name));
+          
+          const contactPromises = userKeys.map(key => env.CONTACTS_KV.get(key.name));
           const contactData = await Promise.all(contactPromises);
           console.log('Contact data retrieved:', contactData.length);
           
@@ -4419,9 +4427,13 @@ async function handleContacts(request, env) {
         });
       }
 
+      // 获取用户邮箱（从请求头或认证信息中获取）
+      const userEmail = request.headers.get('x-user-email') || 'anonymous@example.com';
+      const userPrefix = `user_${userEmail.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      
       // 检查联系人是否已存在
       if (env.CONTACTS_KV) {
-        const existingContact = await env.CONTACTS_KV.get(`contact_${email.toLowerCase()}`);
+        const existingContact = await env.CONTACTS_KV.get(`${userPrefix}_contact_${email.toLowerCase()}`);
         if (existingContact) {
           return new Response(JSON.stringify({
             success: false,
@@ -4444,12 +4456,13 @@ async function handleContacts(request, env) {
         lastContact: new Date().toISOString(),
         totalEmails: 0,
         openRate: 0,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        userEmail: userEmail // 添加用户邮箱标识
       };
 
       // 保存到KV存储
       if (env.CONTACTS_KV) {
-        const key = `contact_${newContact.email}`;
+        const key = `${userPrefix}_contact_${newContact.email}`;
         await env.CONTACTS_KV.put(key, JSON.stringify(newContact));
         console.log('Contact saved to KV:', key, newContact);
         

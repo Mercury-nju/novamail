@@ -18,7 +18,7 @@ GMAIL_SMTP_PASSWORD = "zjhk rkmy ysoz dhyi"  # Gmail应用专用密码
 GMAIL_SMTP_HOST = "smtp.gmail.com"
 GMAIL_SMTP_PORT = "587"
 # Gmail API 令牌现在在 Cloudflare Dashboard 中配置为 Secrets
-GMAIL_ACCESS_TOKEN = "ya29.a0AQQ_BDRCkfZ7Wa0ciE4t1cF3ZSDV2uS8MRmI-EThxG5de79YULy1HjsLMG31Yyc6S3ZdpHmHxAlL8sx_zLyIpi3uUwjXegwyU4HEJZWdAQ-4luKrESSPTzt2oudJz6cN0NVsD2NvM1kY7Grvej5pXUa6EoQVOzdpd6NLxRkl93ljg6zNiz27U5E_ADO6N5dt1Y3M4qX1aCgYKAa8SARISFQHGX2MiVOyq5KHgRsdn_Y4elL3xkQ0207"
+# GMAIL_ACCESS_TOKEN = "配置为 Secret"
 GMAIL_REFRESH_TOKEN = "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU"
 GOOGLE_CLIENT_ID = "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com"  # Google OAuth客户端ID
 GOOGLE_CLIENT_SECRET = "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"  # Google OAuth客户端密钥

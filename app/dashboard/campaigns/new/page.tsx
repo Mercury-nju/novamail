@@ -316,7 +316,12 @@ export default function NewCampaignPage() {
   const fetchAvailableContacts = async () => {
     try {
       console.log('Fetching contacts from API...')
-      const response = await fetch('https://novamail.world/api/contacts')
+      const userEmail = localStorage.getItem('user-email') || 'anonymous@example.com';
+      const response = await fetch('https://novamail.world/api/contacts', {
+        headers: {
+          'x-user-email': userEmail
+        }
+      })
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)

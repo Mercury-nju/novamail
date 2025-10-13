@@ -57,7 +57,12 @@ export default function ContactsPage() {
       params.append('page', '1')
       params.append('limit', '100')
       
-      const response = await fetch(`https://novamail.world/api/contacts?${params}`)
+      const userEmail = localStorage.getItem('user-email') || 'anonymous@example.com';
+      const response = await fetch(`https://novamail.world/api/contacts?${params}`, {
+        headers: {
+          'x-user-email': userEmail
+        }
+      })
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -241,10 +246,12 @@ export default function ContactsPage() {
     try {
       setAdding(true)
       
+      const userEmail = localStorage.getItem('user-email') || 'anonymous@example.com';
       const response = await fetch('https://novamail.world/api/contacts', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-user-email': userEmail
         },
         body: JSON.stringify({
           name: newContact.name.trim(),
