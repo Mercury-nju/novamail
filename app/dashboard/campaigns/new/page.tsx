@@ -337,6 +337,11 @@ export default function NewCampaignPage() {
     }
   }
 
+  // 添加刷新联系人列表的函数
+  const refreshContacts = () => {
+    fetchAvailableContacts()
+  }
+
   const handleImportFromContacts = () => {
     setShowImportContactsModal(true)
   }
@@ -1883,7 +1888,15 @@ export default function NewCampaignPage() {
         {showImportContactsModal && (
           <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Select Contacts to Import</h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium text-gray-900">Select Contacts to Import</h3>
+                <button
+                  onClick={refreshContacts}
+                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Refresh
+                </button>
+              </div>
               
               {/* Contacts List */}
               <div className="space-y-2 max-h-64 overflow-y-auto">
