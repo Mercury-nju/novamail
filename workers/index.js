@@ -21,6 +21,11 @@ async function refreshGmailAccessToken(env) {
   // 临时硬编码Refresh Token进行测试
   const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
   
+  console.log('Google credentials check:');
+  console.log('CLIENT_ID exists:', !!env.GOOGLE_CLIENT_ID);
+  console.log('CLIENT_SECRET exists:', !!env.GOOGLE_CLIENT_SECRET);
+  console.log('REFRESH_TOKEN exists:', !!refreshToken);
+  
   if (!refreshToken || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
     console.log('Missing refresh token or Google credentials');
     return null;
