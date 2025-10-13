@@ -171,37 +171,10 @@ export default function DashboardLayout({
           <div className="flex h-16 items-center justify-between px-4">
             <div className="flex items-center">
               <Link href="/dashboard" className="flex items-center">
-                <div className="flex items-center space-x-2">
-                  {/* Logo Icon */}
-                  <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
-                    <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      {/* Email-style paper airplane */}
-                      <path d="M6 9 L12 6 L9 12 L6 9 Z" fill="white"/>
-                      <path d="M9 12 L12 6 L15 9 L9 12 Z" fill="white"/>
-                      {/* Envelope flap */}
-                      <path d="M12 6 L15 9 L12 9 L12 6 Z" fill="white" opacity="0.8"/>
-                      {/* Wing fold lines */}
-                      <path d="M6 9 L9 12" strokeWidth="0.3" fill="none" opacity="0.7"/>
-                      <path d="M12 6 L9 12" strokeWidth="0.3" fill="none" opacity="0.7"/>
-                      <path d="M12 6 L15 9" strokeWidth="0.3" fill="none" opacity="0.7"/>
-                      {/* Body center line */}
-                      <line x1="9" y1="9" x2="9" y2="12" stroke="white" strokeWidth="0.2" opacity="0.6"/>
-                      {/* Wing details */}
-                      <line x1="10" y1="7" x2="10" y2="9" stroke="white" strokeWidth="0.2" opacity="0.5"/>
-                      <line x1="13" y1="7" x2="13" y2="9" stroke="white" strokeWidth="0.2" opacity="0.5"/>
-                      {/* Wing tips */}
-                      <path d="M6 9 L7 10" strokeWidth="0.2" fill="none" opacity="0.8"/>
-                      <path d="M15 9 L14 10" strokeWidth="0.2" fill="none" opacity="0.8"/>
-                      {/* @ symbol */}
-                      <circle cx="10" cy="9" r="0.5" fill="none" stroke="white" strokeWidth="0.2" opacity="0.7"/>
-                      <path d="M9.7 8.7 L10.3 8.7 L10.3 9.3 L9.7 9.3 Z" fill="white" opacity="0.7"/>
-                    </svg>
-                  </div>
-                  {/* Logo Text */}
-                  <span className="text-lg font-bold">
-                    <span className="text-blue-600">Nova</span><span className="text-purple-600">Mail</span>
-                  </span>
-                </div>
+                {/* Logo Text Only */}
+                <span className="text-xl font-bold text-blue-600">
+                  NovaMail
+                </span>
               </Link>
             </div>
             <button
@@ -249,37 +222,10 @@ export default function DashboardLayout({
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
           <div className="flex h-16 items-center px-4">
             <Link href="/dashboard" className="flex items-center">
-              <div className="flex items-center space-x-2">
-                {/* Logo Icon */}
-                <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border border-white flex items-center justify-center shadow-md">
-                  <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    {/* Email-style paper airplane */}
-                    <path d="M6 9 L12 6 L9 12 L6 9 Z" fill="white"/>
-                    <path d="M9 12 L12 6 L15 9 L9 12 Z" fill="white"/>
-                    {/* Envelope flap */}
-                    <path d="M12 6 L15 9 L12 9 L12 6 Z" fill="white" opacity="0.8"/>
-                    {/* Wing fold lines */}
-                    <path d="M6 9 L9 12" strokeWidth="0.3" fill="none" opacity="0.7"/>
-                    <path d="M12 6 L9 12" strokeWidth="0.3" fill="none" opacity="0.7"/>
-                    <path d="M12 6 L15 9" strokeWidth="0.3" fill="none" opacity="0.7"/>
-                    {/* Body center line */}
-                    <line x1="9" y1="9" x2="9" y2="12" stroke="white" strokeWidth="0.2" opacity="0.6"/>
-                    {/* Wing details */}
-                    <line x1="10" y1="7" x2="10" y2="9" stroke="white" strokeWidth="0.2" opacity="0.5"/>
-                    <line x1="13" y1="7" x2="13" y2="9" stroke="white" strokeWidth="0.2" opacity="0.5"/>
-                    {/* Wing tips */}
-                    <path d="M6 9 L7 10" strokeWidth="0.2" fill="none" opacity="0.8"/>
-                    <path d="M15 9 L14 10" strokeWidth="0.2" fill="none" opacity="0.8"/>
-                    {/* @ symbol */}
-                    <circle cx="10" cy="9" r="0.5" fill="none" stroke="white" strokeWidth="0.2" opacity="0.7"/>
-                    <path d="M9.7 8.7 L10.3 8.7 L10.3 9.3 L9.7 9.3 Z" fill="white" opacity="0.7"/>
-                  </svg>
-                </div>
-                {/* Logo Text */}
-                <span className="text-lg font-bold">
-                  <span className="text-blue-600">Nova</span><span className="text-purple-600">Mail</span>
-                </span>
-              </div>
+              {/* Logo Text Only */}
+              <span className="text-xl font-bold text-blue-600">
+                NovaMail
+              </span>
             </Link>
           </div>
           <nav className="flex-1 px-4 py-4 space-y-2">
@@ -338,9 +284,9 @@ export default function DashboardLayout({
                 <button
                   onClick={triggerOnboarding}
                   className="text-blue-400 hover:text-blue-600 text-xs px-2 py-1 rounded ml-2"
-                  title="重新显示用户引导"
+                  title="Show onboarding tour again"
                 >
-                  引导
+                  Guide
                 </button>
               </div>
             </div>
