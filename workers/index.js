@@ -1263,9 +1263,44 @@ async function handleCheckPermission(request, env) {
       });
     }
 
-    // 用户权限检查 - 生产环境实现
-    // 从请求头或认证token获取用户信息
-    const userPlan = 'free'; // 默认免费计划，实际应从用户认证信息获取
+    // 用户权限检查 - 从KV存储获取用户订阅信息
+    const { email } = data;
+    let userPlan = 'free'; // 默认免费计划
+    
+    if (email && env.USERS_KV) {
+      try {
+        const userKey = `user_${email.toLowerCase()}`;
+        const storedUser = await env.USERS_KV.get(userKey);
+        
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          
+          // 检查订阅是否有效
+          if (user.subscription && user.subscription.status === 'active') {
+            const expiresAt = new Date(user.subscription.expiresAt);
+            const now = new Date();
+            
+            if (expiresAt > now) {
+              userPlan = user.subscription.plan || user.subscriptionPlan || 'free';
+              console.log('User subscription found:', {
+                email: email,
+                plan: userPlan,
+                expiresAt: user.subscription.expiresAt
+              });
+            } else {
+              console.log('User subscription expired:', {
+                email: email,
+                expiresAt: user.subscription.expiresAt
+              });
+            }
+          } else {
+            console.log('No active subscription found for user:', email);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to check user subscription:', error);
+      }
+    }
     
     // 根据计划设置限制
     const limits = {
@@ -1275,9 +1310,9 @@ async function handleCheckPermission(request, env) {
         maxCampaignsPerMonth: 10
       },
       pro: {
-        maxEmailsPerMonth: 50000,
-        maxContacts: 10000,
-        maxCampaignsPerMonth: 100
+        maxEmailsPerMonth: -1, // 无限制
+        maxContacts: -1, // 无限制
+        maxCampaignsPerMonth: -1 // 无限制
       },
       enterprise: {
         maxEmailsPerMonth: -1, // 无限制
