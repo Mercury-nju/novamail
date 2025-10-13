@@ -107,7 +107,7 @@ export default function MarketingBanner() {
                     Get unlimited AI generations, advanced templates, and priority support.
                   </p>
                   <p className="text-xs text-blue-100 mt-1">
-                    Join 10,000+ businesses growing with NovaMail Pro
+                    Pro plan starts at just <span className="font-bold text-yellow-300">$0.51/day</span> with annual billing
                   </p>
                 </motion.div>
               </div>
