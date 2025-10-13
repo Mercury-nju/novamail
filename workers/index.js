@@ -4618,13 +4618,23 @@ async function sendViaSMTP(config, env) {
       throw new Error('Gmail access token not available');
     }
     
-    // 构建邮件内容 - 使用用户提供的HTML内容
+    // 构建邮件内容 - 使用简化的HTML内容进行测试
     const emailContent = `To: ${config.to}
 From: ${config.from}
 Subject: ${config.subject}
 Content-Type: text/html; charset=utf-8
 
-${config.html}`;
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+  <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
+    <h1 style="color: white; margin: 0;">${config.subject}</h1>
+  </div>
+  <div style="padding: 30px; background: #f9f9f9;">
+    <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0;">
+      <p>This is a test email from NovaMail in real user environment.</p>
+      <p>If you receive this email, it means the email sending function is working correctly!</p>
+    </div>
+  </div>
+</div>`;
 
     // 使用Gmail API发送邮件 - 与test-gmail完全相同的逻辑
     const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
