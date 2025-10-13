@@ -29,9 +29,13 @@ export default function CampaignsPage() {
     try {
       setLoading(true)
       
+      // 获取用户ID
+      const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email') || 'default_user'
+      
       // 构建查询参数
       const params = new URLSearchParams()
       if (selectedStatus !== 'all') params.append('status', selectedStatus)
+      params.append('userId', userId)
       
       const response = await fetch(`https://novamail.world/api/campaigns?${params}`)
       

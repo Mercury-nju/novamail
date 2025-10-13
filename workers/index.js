@@ -1562,66 +1562,78 @@ async function handleCampaignSend(request, env) {
           // 使用用户 SMTP 配置发送邮件
           console.log('Sending via user SMTP:', userEmailConfig.email);
           
-          // 使用 Resend API 发送邮件（支持自定义 SMTP）
-          response = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-            'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            from: `${campaignData.businessName || 'Your Company'} <${userEmailConfig.email}>`,
-            to: [recipient],
-            subject: campaignData.subject || 'Email Campaign',
-            html: emailData.html,
-            reply_to: userEmailConfig.email
-          })
-        });
-
-          const result = await response.json();
-          
-          if (response.ok) {
-            sentEmails.push({
-              recipient: recipient,
-              status: 'sent',
-              method: 'user_smtp_resend',
-              messageId: result.id,
-              timestamp: new Date().toISOString()
-            });
-          } else {
-            throw new Error(`Resend API error: ${result.message || 'Unknown error'}`);
+          // 使用 Gmail API 发送邮件
+          const accessToken = await getCurrentGmailAccessToken(env);
+          if (!accessToken) {
+            throw new Error('Gmail access token not available');
           }
-        } else {
-          // 使用 NovaMail 默认发送服务
-          console.log('Sending via NovaMail default service');
-          
-          response = await fetch('https://api.resend.com/emails', {
+
+          const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+              'Authorization': `Bearer ${accessToken}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              from: 'NovaMail <noreply@novamail.world>',
-              to: [recipient],
-              subject: campaignData.subject || 'Email Campaign',
-              html: emailData.html,
-              reply_to: 'support@novamail.world'
+              raw: utf8ToBase64(`From: ${userEmailConfig.email}
+To: ${recipient}
+Subject: ${campaignData.subject || 'Email Campaign'}
+Content-Type: text/html; charset=UTF-8
+
+${emailData.html}`)
             })
           });
 
-          const result = await response.json();
-          
-          if (response.ok) {
+          if (gmailResponse.ok) {
+            const result = await gmailResponse.json();
             sentEmails.push({
               recipient: recipient,
               status: 'sent',
-              method: 'novamail_default',
+              method: 'user_smtp_gmail',
               messageId: result.id,
               timestamp: new Date().toISOString()
             });
           } else {
-            throw new Error(`Resend API error: ${result.message || 'Unknown error'}`);
+            const errorData = await gmailResponse.text();
+            throw new Error(`Gmail API error: ${errorData}`);
+          }
+        } else {
+          // 使用 NovaMail Gmail 发送服务
+          console.log('Sending via NovaMail Gmail service');
+          
+          const accessToken = await getCurrentGmailAccessToken(env);
+          if (!accessToken) {
+            throw new Error('Gmail access token not available');
+          }
+
+          const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              raw: utf8ToBase64(`From: NovaMail <lihongyangnju@gmail.com>
+To: ${recipient}
+Subject: ${campaignData.subject || 'Email Campaign'}
+Content-Type: text/html; charset=UTF-8
+
+${emailData.html}`)
+            })
+          });
+
+          if (gmailResponse.ok) {
+            const result = await gmailResponse.json();
+            sentEmails.push({
+              recipient: recipient,
+              status: 'sent',
+              method: 'novamail_gmail',
+              messageId: result.id,
+              timestamp: new Date().toISOString()
+            });
+          } else {
+            const errorData = await gmailResponse.text();
+            throw new Error(`Gmail API error: ${errorData}`);
           }
         }
       } catch (error) {
@@ -1629,7 +1641,7 @@ async function handleCampaignSend(request, env) {
         sentEmails.push({
           recipient: recipient,
           status: 'failed',
-          method: userEmailConfig?.isConfigured ? 'user_smtp_resend' : 'novamail_default',
+          method: userEmailConfig?.isConfigured ? 'user_smtp_gmail' : 'novamail_gmail',
           error: error.message,
           timestamp: new Date().toISOString()
         });
@@ -1651,7 +1663,7 @@ async function handleCampaignSend(request, env) {
       createdAt: new Date().toISOString(),
       sentAt: new Date().toISOString(),
       businessName: campaignData.businessName,
-      sendingMethod: 'user_smtp_resend'
+      sendingMethod: 'user_smtp_gmail'
     };
 
     // 保存 campaign 到 KV 存储
@@ -1700,7 +1712,7 @@ async function handleCampaignSend(request, env) {
       sentEmails: sentEmails,
       totalSent: sentEmails.filter(email => email.status === 'sent').length,
       totalFailed: sentEmails.filter(email => email.status === 'failed').length,
-      sendingMethod: userEmailConfig?.isConfigured ? 'user_smtp_resend' : 'novamail_default',
+      sendingMethod: userEmailConfig?.isConfigured ? 'user_smtp_gmail' : 'novamail_gmail',
       campaign: campaignRecord,
       timestamp: new Date().toISOString()
     }), {
