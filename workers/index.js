@@ -4615,25 +4615,8 @@ async function sendViaSMTP(config, env) {
       throw new Error('Gmail access token not available');
     }
 
-    // 使用安全的UTF-8编码
-    function utf8ToBase64(str) {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(str);
-      let binary = '';
-      for (let i = 0; i < data.length; i++) {
-        binary += String.fromCharCode(data[i]);
-      }
-      return btoa(binary);
-    }
-
-    const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        raw: utf8ToBase64(`From: ${config.from}
+    // 构建邮件内容
+    const emailContent = `From: ${config.from}
 To: ${config.to}
 Subject: ${config.subject}
 Content-Type: text/html; charset=UTF-8
@@ -4643,7 +4626,16 @@ X-SMTP-Port: ${config.port}
 X-SMTP-Secure: ${config.secure ? 'true' : 'false'}
 X-Original-Sender: ${config.from}
 
-${config.html}`)
+${config.html}`;
+
+    const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        raw: btoa(emailContent).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
       })
     });
 
