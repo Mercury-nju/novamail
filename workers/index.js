@@ -339,7 +339,7 @@ async function handleSendVerification(request, env) {
       const emailBody = [
         `To: ${email}`,
         `From: NovaMail <lihongyangnju@gmail.com>`,
-        `Subject: NovaMail 验证码`,
+        `Subject: NovaMail Verification Code`,
         `Content-Type: text/html; charset=utf-8`,
         ``,
         `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">`,
@@ -4926,7 +4926,7 @@ async function handleTestDirectVerification(request, env) {
     const emailBody = [
       `To: ${testEmail}`,
       `From: NovaMail <lihongyangnju@gmail.com>`,
-      `Subject: NovaMail 验证码 (直接测试)`,
+      `Subject: NovaMail Verification Code (Direct Test)`,
       `Content-Type: text/plain; charset=utf-8`,
       ``,
       `您的 NovaMail 验证码是：${verificationCode}`,
