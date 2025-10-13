@@ -474,8 +474,11 @@ async function handleSendVerification(request, env) {
       const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
       
       // 构建Gmail API请求
+      const encoder = new TextEncoder();
+      const data = encoder.encode(emailBody);
+      const base64 = btoa(String.fromCharCode(...data));
       const gmailMessage = {
-        raw: Buffer.from(emailBody, 'utf8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+        raw: base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
       };
 
       const gmailResponse = await fetch(gmailApiUrl, {
@@ -4478,7 +4481,7 @@ Timestamp: ${new Date().toISOString()}`;
     const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
     
     const gmailMessage = {
-      raw: Buffer.from(testEmail, 'utf8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      raw: btoa(testEmail).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
     };
 
     console.log('Sending test email via Gmail API...');
@@ -4582,8 +4585,11 @@ async function handleTestVerification(request, env) {
     // 使用Gmail API发送邮件
     const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
     
+    const encoder = new TextEncoder();
+    const data = encoder.encode(emailBody);
+    const base64 = btoa(String.fromCharCode(...data));
     const gmailMessage = {
-      raw: Buffer.from(emailBody, 'utf8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      raw: base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
     };
 
     console.log('Sending email via Gmail API...');
@@ -4711,7 +4717,7 @@ If you receive this email, Gmail API is working correctly.`;
     const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
     
     const gmailMessage = {
-      raw: Buffer.from(simpleEmail, 'utf8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      raw: btoa(simpleEmail).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
     };
 
     console.log('Sending simple test email via Gmail API...');
