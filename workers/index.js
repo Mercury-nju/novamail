@@ -146,6 +146,8 @@ export default {
         return await handleTestSimpleEmail(request, env);
       } else if (path.startsWith('/api/test-direct-verification')) {
         return await handleTestDirectVerification(request, env);
+      } else if (path.startsWith('/api/debug-env')) {
+        return await handleDebugEnv(request, env);
       } else if (path.startsWith('/api/check-gmail-scopes')) {
         return await handleCheckGmailScopes(request, env);
       } else if (path.startsWith('/api/refresh-gmail-token')) {
@@ -5724,6 +5726,55 @@ async function handleGetUserSubscription(request, env) {
     return new Response(JSON.stringify({
       success: false,
       error: 'Failed to get subscription',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 调试环境变量函数
+async function handleDebugEnv(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  console.log('Debug environment variables endpoint called');
+
+  try {
+    const envInfo = {
+      hasGmailAccessToken: !!env.GMAIL_ACCESS_TOKEN,
+      gmailAccessTokenLength: env.GMAIL_ACCESS_TOKEN ? env.GMAIL_ACCESS_TOKEN.length : 0,
+      hasGmailRefreshToken: !!env.GMAIL_REFRESH_TOKEN,
+      gmailRefreshTokenLength: env.GMAIL_REFRESH_TOKEN ? env.GMAIL_REFRESH_TOKEN.length : 0,
+      hasGoogleClientId: !!env.GOOGLE_CLIENT_ID,
+      googleClientIdLength: env.GOOGLE_CLIENT_ID ? env.GOOGLE_CLIENT_ID.length : 0,
+      hasGoogleClientSecret: !!env.GOOGLE_CLIENT_SECRET,
+      googleClientSecretLength: env.GOOGLE_CLIENT_SECRET ? env.GOOGLE_CLIENT_SECRET.length : 0,
+      googleClientIdPreview: env.GOOGLE_CLIENT_ID ? env.GOOGLE_CLIENT_ID.substring(0, 20) + '...' : 'Not set',
+      timestamp: new Date().toISOString()
+    };
+
+    console.log('Environment variables status:', envInfo);
+
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'Environment variables debug info',
+      data: envInfo
+    }), {
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    console.error('Error in handleDebugEnv:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to debug environment variables',
       details: error.message,
       timestamp: new Date().toISOString()
     }), {
