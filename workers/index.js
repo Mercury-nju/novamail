@@ -5,16 +5,8 @@
 async function getCurrentGmailAccessToken(env) {
   console.log('Getting Gmail access token...');
   
-  // 首先尝试使用环境变量中的access token
-  if (env.GMAIL_ACCESS_TOKEN) {
-    console.log('Using GMAIL_ACCESS_TOKEN from environment');
-    console.log('Token length:', env.GMAIL_ACCESS_TOKEN.length);
-    console.log('Token preview:', env.GMAIL_ACCESS_TOKEN.substring(0, 20) + '...');
-    return env.GMAIL_ACCESS_TOKEN;
-  }
-  
-  // 如果环境变量中没有access token，尝试刷新
-  console.log('GMAIL_ACCESS_TOKEN not found, attempting refresh...');
+  // 总是尝试刷新令牌，因为环境变量中的令牌可能已过期
+  console.log('Attempting to refresh Gmail access token...');
   
   const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
   
