@@ -139,6 +139,8 @@ export default {
         return await handleClearUsers(request, env);
       } else if (path.startsWith('/api/admin/grant-subscription')) {
         return await handleGrantSubscription(request, env);
+      } else if (path.startsWith('/api/admin/check-user')) {
+        return await handleCheckUser(request, env);
       } else if (path.startsWith('/api/admin/clear-campaigns')) {
         return await handleClearCampaigns(request, env);
       } else if (path.startsWith('/api/admin/clear-email-configs')) {
@@ -5464,6 +5466,94 @@ async function handleGrantSubscription(request, env) {
     return new Response(JSON.stringify({
       success: false,
       error: 'Failed to grant subscription',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 检查用户数据调试端点
+async function handleCheckUser(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    const data = await request.json();
+    const { email } = data;
+
+    if (!email) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Email is required'
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    const userKey = `user_${email.toLowerCase()}`;
+    console.log('Checking user with key:', userKey);
+
+    if (env.USERS_KV) {
+      const storedUser = await env.USERS_KV.get(userKey);
+      
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        console.log('Found user data:', user);
+        
+        return new Response(JSON.stringify({
+          success: true,
+          userKey: userKey,
+          user: user,
+          hasSubscription: !!user.subscription,
+          subscriptionStatus: user.subscription?.status,
+          subscriptionPlan: user.subscription?.plan,
+          subscriptionExpiresAt: user.subscription?.expiresAt,
+          timestamp: new Date().toISOString()
+        }), {
+          headers: corsHeaders
+        });
+      } else {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'User not found',
+          userKey: userKey,
+          timestamp: new Date().toISOString()
+        }), {
+          status: 404,
+          headers: corsHeaders
+        });
+      }
+    } else {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'KV storage not available',
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Error in handleCheckUser:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to check user',
       details: error.message,
       timestamp: new Date().toISOString()
     }), {
