@@ -3,22 +3,16 @@
 
 // 获取当前有效的Gmail Access Token
 async function getCurrentGmailAccessToken(env) {
-  // 首先尝试从环境变量获取
-  let token = env.GMAIL_ACCESS_TOKEN;
+  // 直接刷新token以确保有效性，因为Cloudflare Workers无法更新环境变量
+  console.log('Refreshing Gmail access token to ensure validity...');
+  const token = await refreshGmailAccessToken(env);
   
-  // 如果环境变量中的Token无效或不存在，尝试刷新
-  if (!token || token.length < 50) {
-    console.log('Environment token invalid or missing, refreshing...');
-    token = await refreshGmailAccessToken(env);
-  } else {
-    // 即使token存在，也尝试刷新以确保是最新的
-    console.log('Environment token exists, refreshing to ensure validity...');
-    const refreshedToken = await refreshGmailAccessToken(env);
-    if (refreshedToken) {
-      token = refreshedToken;
-    }
+  if (!token) {
+    console.log('Failed to refresh Gmail access token');
+    return null;
   }
   
+  console.log('Gmail access token refreshed successfully');
   return token;
 }
 
