@@ -10,22 +10,17 @@ export default function MarketingBanner() {
   const [isDismissed, setIsDismissed] = useState(false)
 
   useEffect(() => {
-    // 检查是否已经关闭过banner
-    const dismissed = localStorage.getItem('marketing-banner-dismissed')
-    if (!dismissed) {
-      // 延迟显示banner，给页面加载时间
-      const timer = setTimeout(() => {
-        setIsVisible(true)
-      }, 2000)
-      return () => clearTimeout(timer)
-    }
+    // 每次打开都显示banner，不检查localStorage
+    const timer = setTimeout(() => {
+      setIsVisible(true)
+    }, 2000)
+    return () => clearTimeout(timer)
   }, [])
 
   const handleDismiss = () => {
     setIsVisible(false)
     setIsDismissed(true)
-    // 记住用户关闭了banner
-    localStorage.setItem('marketing-banner-dismissed', 'true')
+    // 不保存到localStorage，下次打开仍会显示
   }
 
   const handleUpgrade = () => {
