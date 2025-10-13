@@ -14,7 +14,7 @@ import {
 import toast from 'react-hot-toast'
 import * as XLSX from 'xlsx'
 import DOMPurify from 'dompurify'
-import { hasProAccess, getUserSubscription, getUserLimits } from '@/lib/permissions'
+import { hasProAccess, getUserSubscription, getUserLimits, fetchUserSubscription } from '@/lib/permissions'
 
 export default function NewCampaignPage() {
   const router = useRouter()
@@ -24,8 +24,21 @@ export default function NewCampaignPage() {
   useEffect(() => {
     setMounted(true)
     // 获取用户订阅状态
-    const subscription = getUserSubscription()
-    setUserSubscription(subscription)
+    const loadSubscription = async () => {
+      const userEmail = localStorage.getItem('user-email')
+      if (userEmail) {
+        // 先从API获取最新订阅状态
+        const apiSubscription = await fetchUserSubscription(userEmail)
+        if (apiSubscription) {
+          setUserSubscription(apiSubscription)
+        } else {
+          // 如果API失败，使用localStorage中的缓存
+          const localSubscription = getUserSubscription()
+          setUserSubscription(localSubscription)
+        }
+      }
+    }
+    loadSubscription()
   }, [])
 
   // Static export mode: no session check

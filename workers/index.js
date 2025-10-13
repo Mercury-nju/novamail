@@ -141,6 +141,8 @@ export default {
         return await handleGrantSubscription(request, env);
       } else if (path.startsWith('/api/admin/check-user')) {
         return await handleCheckUser(request, env);
+      } else if (path.startsWith('/api/user/subscription')) {
+        return await handleGetUserSubscription(request, env);
       } else if (path.startsWith('/api/admin/clear-campaigns')) {
         return await handleClearCampaigns(request, env);
       } else if (path.startsWith('/api/admin/clear-email-configs')) {
@@ -5554,6 +5556,126 @@ async function handleCheckUser(request, env) {
     return new Response(JSON.stringify({
       success: false,
       error: 'Failed to check user',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 获取用户订阅信息API端点
+async function handleGetUserSubscription(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    const data = await request.json();
+    const { email } = data;
+
+    if (!email) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Email is required'
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    const userKey = `user_${email.toLowerCase()}`;
+
+    if (env.USERS_KV) {
+      const storedUser = await env.USERS_KV.get(userKey);
+      
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        
+        // 检查订阅是否有效
+        if (user.subscription && user.subscription.status === 'active') {
+          const expiresAt = new Date(user.subscription.expiresAt);
+          const now = new Date();
+          
+          if (expiresAt > now) {
+            // 返回前端需要的订阅格式
+            const subscriptionData = {
+              email: user.email,
+              plan: user.subscription.plan,
+              status: user.subscription.status,
+              activatedAt: user.subscription.activatedAt,
+              expiresAt: user.subscription.expiresAt,
+              features: user.subscription.features
+            };
+
+            return new Response(JSON.stringify({
+              success: true,
+              subscription: subscriptionData,
+              timestamp: new Date().toISOString()
+            }), {
+              headers: corsHeaders
+            });
+          } else {
+            return new Response(JSON.stringify({
+              success: false,
+              error: 'Subscription expired',
+              subscription: null,
+              timestamp: new Date().toISOString()
+            }), {
+              status: 410,
+              headers: corsHeaders
+            });
+          }
+        } else {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'No active subscription',
+            subscription: null,
+            timestamp: new Date().toISOString()
+          }), {
+            status: 404,
+            headers: corsHeaders
+          });
+        }
+      } else {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'User not found',
+          subscription: null,
+          timestamp: new Date().toISOString()
+        }), {
+          status: 404,
+          headers: corsHeaders
+        });
+      }
+    } else {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'KV storage not available',
+        subscription: null,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Error in handleGetUserSubscription:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to get subscription',
       details: error.message,
       timestamp: new Date().toISOString()
     }), {

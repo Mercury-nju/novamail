@@ -34,6 +34,32 @@ export function getUserSubscription(): UserSubscription | null {
   return null
 }
 
+// 从API获取用户订阅状态
+export async function fetchUserSubscription(email: string): Promise<UserSubscription | null> {
+  try {
+    const response = await fetch('https://novamail.world/api/user/subscription', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email })
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      if (data.success && data.subscription) {
+        // 保存到localStorage
+        updateUserSubscription(data.subscription)
+        return data.subscription
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching subscription from API:', error)
+  }
+  
+  return null
+}
+
 // 检查用户是否有 Pro 权限
 export function hasProAccess(): boolean {
   const subscription = getUserSubscription()
