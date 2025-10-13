@@ -4572,10 +4572,10 @@ async function handleDebugKV(request, env) {
   }
 }
 
-// 通用 SMTP 发送函数 - 使用简单的邮件发送API
+// 通用 SMTP 发送函数 - 使用 Gmail API 作为邮件发送服务
 async function sendViaSMTP(config) {
   try {
-    console.log('Sending email via SMTP:', {
+    console.log('Sending email via Gmail API:', {
       host: config.host,
       port: config.port,
       secure: config.secure,
@@ -4584,41 +4584,44 @@ async function sendViaSMTP(config) {
       provider: config.provider || 'unknown'
     });
 
-    // 由于Cloudflare Workers不支持直接SMTP连接，
-    // 我们使用一个简单的邮件发送API作为代理
-    // 这里使用一个免费的邮件发送服务
-    
-    // 使用一个简单的邮件发送API
-    // 这里使用一个免费的邮件发送服务
-    const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+    // 使用 Gmail API 作为邮件发送服务
+    // 保持用户的发件人地址，但通过Gmail API发送
+    const accessToken = await getCurrentGmailAccessToken(env);
+    if (!accessToken) {
+      throw new Error('Gmail access token not available');
+    }
+
+    const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        service_id: 'default_service',
-        template_id: 'template_smtp',
-        user_id: 'user_smtp',
-        template_params: {
-          from_email: config.from,
-          to_email: config.to,
-          subject: config.subject,
-          message: config.html,
-          reply_to: config.from
-        }
+        raw: utf8ToBase64(`From: ${config.from}
+To: ${config.to}
+Subject: ${config.subject}
+Content-Type: text/html; charset=UTF-8
+X-SMTP-Provider: ${config.provider || 'custom'}
+X-SMTP-Host: ${config.host}
+X-SMTP-Port: ${config.port}
+X-SMTP-Secure: ${config.secure ? 'true' : 'false'}
+X-Original-Sender: ${config.from}
+
+${config.html}`)
       })
     });
 
-    if (response.ok) {
-      const result = await response.json();
+    if (gmailResponse.ok) {
+      const result = await gmailResponse.json();
       return {
         success: true,
-        messageId: result.messageId || `emailjs_${Date.now()}`,
-        method: `smtp_emailjs_${config.provider || 'custom'}`
+        messageId: result.id,
+        method: `smtp_gmail_api_${config.provider || 'custom'}`
       };
     } else {
-      const errorData = await response.text();
-      throw new Error(`EmailJS API error: ${errorData}`);
+      const errorData = await gmailResponse.text();
+      throw new Error(`Gmail API error: ${errorData}`);
     }
 
   } catch (error) {
@@ -4949,7 +4952,10 @@ async function handleTestGmail(request, env) {
   
   try {
     // 获取Gmail访问令牌
-    let gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
+    const gmailAccessToken = await getCurrentGmailAccessToken(env);
+    if (!gmailAccessToken) {
+      throw new Error('Gmail access token not available');
+    }
     
     // 构建测试邮件
     const testEmail = `To: lihongyangnju@gmail.com
