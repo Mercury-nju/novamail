@@ -26,44 +26,44 @@ interface OnboardingStep {
 const onboardingSteps: OnboardingStep[] = [
   {
     id: 'welcome',
-    title: '欢迎使用 NovaMail！',
-    description: '让我们快速了解一下如何开始使用我们的AI邮件营销平台。',
+    title: 'Welcome to NovaMail!',
+    description: 'Let\'s quickly learn how to get started with our AI email marketing platform.',
     icon: EnvelopeIcon
   },
   {
     id: 'smtp-config',
-    title: '配置您的邮箱',
-    description: '首先，您需要配置SMTP设置才能发送邮件。这是使用NovaMail的必要步骤。',
+    title: 'Configure Your Email',
+    description: 'First, you need to configure SMTP settings to send emails. This is a necessary step to use NovaMail.',
     icon: Cog6ToothIcon,
     action: {
-      text: '去配置',
+      text: 'Go Configure',
       href: '/dashboard/settings'
     }
   },
   {
     id: 'contacts',
-    title: '管理联系人',
-    description: '添加或导入您的联系人列表，这是发送邮件的基础。',
+    title: 'Manage Contacts',
+    description: 'Add or import your contact list, which is the foundation for sending emails.',
     icon: UserGroupIcon,
     action: {
-      text: '添加联系人',
+      text: 'Add Contacts',
       href: '/dashboard/contacts'
     }
   },
   {
     id: 'campaigns',
-    title: '创建邮件活动',
-    description: '使用AI生成邮件内容，创建您的第一个邮件营销活动。',
+    title: 'Create Email Campaigns',
+    description: 'Use our AI assistant to create professional email content, or choose from preset templates.',
     icon: EnvelopeIcon,
     action: {
-      text: '创建活动',
+      text: 'Create Campaign',
       href: '/dashboard/campaigns/new'
     }
   },
   {
     id: 'analytics',
-    title: '查看分析数据',
-    description: '跟踪您的邮件发送效果，了解收件人的参与度。',
+    title: 'View Analytics',
+    description: 'Track your email campaign performance and understand key metrics like open rates and click rates.',
     icon: ChartBarIcon
   }
 ]

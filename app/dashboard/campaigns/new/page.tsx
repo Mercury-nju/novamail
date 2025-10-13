@@ -61,6 +61,7 @@ export default function NewCampaignPage() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [showImportContactsModal, setShowImportContactsModal] = useState(false)
   const [showImportFileModal, setShowImportFileModal] = useState(false)
+  const [showProTemplateModal, setShowProTemplateModal] = useState(false)
   const [toneStyle, setToneStyle] = useState<string>('friendly')
   const [campaignData, setCampaignData] = useState({
     purpose: '',
@@ -1166,7 +1167,7 @@ export default function NewCampaignPage() {
                       <motion.button
                         onClick={() => {
                           if (!proAccess) {
-                            toast.error('Professional templates require a Pro subscription. Please upgrade to access premium features.')
+                            setShowProTemplateModal(true)
                             return
                           }
                           setEmailMode('professional')
@@ -1176,10 +1177,10 @@ export default function NewCampaignPage() {
                             ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-lg'
                             : proAccess 
                               ? 'border-gray-200 hover:border-blue-300 bg-white hover:shadow-md'
-                              : 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-75'
+                              : 'border-gray-200 bg-gray-50 cursor-pointer opacity-75 hover:opacity-90'
                         }`}
-                        whileHover={proAccess ? { scale: 1.02 } : {}}
-                        whileTap={proAccess ? { scale: 0.98 } : {}}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
                         <div className="text-center relative z-10">
                           <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-200">🎨</div>
@@ -2013,6 +2014,52 @@ export default function NewCampaignPage() {
                 >
                   Cancel
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Professional Template Upgrade Modal */}
+        {showProTemplateModal && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+              <div className="text-center">
+                <div className="text-6xl mb-4">🎨</div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Professional Templates
+                </h3>
+                <p className="text-sm text-gray-600 mb-6">
+                  Unlock beautiful, professional email templates designed for maximum conversion. 
+                  Upgrade to Pro to access premium templates and advanced features.
+                </p>
+                
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 mb-6">
+                  <h4 className="font-medium text-gray-900 mb-2">Pro Plan Benefits:</h4>
+                  <ul className="text-sm text-gray-600 text-left space-y-1">
+                    <li>• 20+ Professional email templates</li>
+                    <li>• Advanced AI features</li>
+                    <li>• Unlimited contacts & emails</li>
+                    <li>• Priority support</li>
+                  </ul>
+                </div>
+
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => setShowProTemplateModal(false)}
+                    className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Maybe Later
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowProTemplateModal(false)
+                      router.push('/pricing')
+                    }}
+                    className="flex-1 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors"
+                  >
+                    Upgrade Now
+                  </button>
+                </div>
               </div>
             </div>
           </div>

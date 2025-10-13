@@ -294,25 +294,33 @@ export default function DashboardLayout({
             <div className="flex flex-1" />
             <div className="flex items-center gap-x-4 lg:gap-x-6">
               <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" />
-              <div className="flex items-center gap-x-2">
-                <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
-                  <span className="text-sm font-medium text-primary-700">{getUserInitials()}</span>
+              <div className="flex items-center gap-x-3">
+                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span className="text-sm font-medium text-blue-700">{getUserInitials()}</span>
                 </div>
-                <div className="flex flex-col">
+                <div className="flex items-center gap-x-2">
                   <span className="hidden lg:block text-sm font-medium text-gray-700">{getUserDisplayName()}</span>
                   {userSubscription && (
-                    <span className={`hidden lg:block text-xs px-2 py-1 rounded-full ${
-                      userSubscription.plan === 'pro' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-gray-100 text-gray-600'
-                    }`}>
-                      {userSubscription.plan === 'pro' ? 'Pro Plan' : 'Free Plan'}
-                    </span>
+                    userSubscription.plan === 'pro' ? (
+                      <motion.span
+                        className="inline-flex items-center rounded-full bg-gradient-to-r from-green-500 to-emerald-500 px-3 py-1 text-xs font-semibold text-white shadow-sm"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3 }}
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        ✨ Pro Plan
+                      </motion.span>
+                    ) : (
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+                        Free Plan
+                      </span>
+                    )
                   )}
                 </div>
                 <button
                   onClick={triggerOnboarding}
-                  className="text-blue-400 hover:text-blue-600 text-xs px-2 py-1 rounded ml-2"
+                  className="text-blue-500 hover:text-blue-700 text-xs px-2 py-1 rounded-md hover:bg-blue-50 transition-colors"
                   title="Show onboarding tour again"
                 >
                   Guide
