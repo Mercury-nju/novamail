@@ -96,6 +96,8 @@ export default {
         });
       } else if (path.startsWith('/api/debug-verification')) {
         return await handleDebugVerification(request, env);
+      } else if (path.startsWith('/api/test-gmail')) {
+        return await handleTestGmail(request, env);
       } else if (path.startsWith('/api/user/email-config')) {
         return await handleEmailConfig(request, env);
       } else if (path.startsWith('/api/user/test-email')) {
@@ -4435,4 +4437,95 @@ async function handleDebugVerification(request, env) {
   }), {
     headers: corsHeaders
   });
+}
+
+// 测试Gmail API函数
+async function handleTestGmail(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  console.log('Test Gmail API endpoint called');
+  
+  // 临时硬编码Refresh Token进行测试
+  const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
+  
+  try {
+    // 获取Gmail访问令牌
+    let gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
+    
+    // 构建测试邮件
+    const testEmail = `To: lihongyangnju@gmail.com
+From: lihongyangnju@gmail.com
+Subject: Test Email from NovaMail
+Content-Type: text/plain; charset=utf-8
+
+This is a test email from NovaMail API.
+Timestamp: ${new Date().toISOString()}`;
+
+    // 使用Gmail API发送邮件
+    const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
+    
+    const gmailMessage = {
+      raw: btoa(testEmail).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    };
+
+    console.log('Sending test email via Gmail API...');
+    console.log('Access token length:', gmailAccessToken ? gmailAccessToken.length : 0);
+    console.log('Refresh token length:', refreshToken ? refreshToken.length : 0);
+
+    const gmailResponse = await fetch(gmailApiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${gmailAccessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(gmailMessage)
+    });
+
+    console.log('Gmail API response status:', gmailResponse.status);
+
+    if (gmailResponse.ok) {
+      const result = await gmailResponse.json();
+      console.log('Test email sent successfully:', result.id);
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Test email sent successfully via Gmail API',
+        messageId: result.id,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    } else {
+      const errorText = await gmailResponse.text();
+      console.error('Gmail API error:', gmailResponse.status, errorText);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Gmail API Error: ${gmailResponse.status}`,
+        details: errorText,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Test Gmail API error:', error);
+    
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Gmail API test failed',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
 }
