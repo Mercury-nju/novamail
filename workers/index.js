@@ -5264,8 +5264,18 @@ async function handleRefreshGmailToken(request, env) {
       });
     }
 
-    const clientId = env.GOOGLE_CLIENT_ID || '3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com';
-    const clientSecret = env.GOOGLE_CLIENT_SECRET || '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';
+    const clientId = env.GOOGLE_CLIENT_ID;
+    const clientSecret = env.GOOGLE_CLIENT_SECRET;
+    
+    if (!clientId || !clientSecret) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Google credentials not configured'
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
 
     console.log('Refreshing Gmail access token...');
     console.log('Client ID:', clientId.substring(0, 20) + '...');
