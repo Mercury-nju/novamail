@@ -41,10 +41,10 @@ export default function AchievementBadge() {
             stiffness: 300, 
             damping: 25 
           }}
-          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50"
+          className="fixed top-20 right-8 z-50"
         >
           <div className="bg-gray-100 rounded-lg border border-pink-300 shadow-lg px-4 py-3 flex items-center space-x-3 relative">
-            {/* Gold Medal Icon */}
+            {/* Trophy Medal Icon */}
             <motion.div
               animate={{ 
                 rotate: [0, 5, -5, 0],
@@ -57,15 +57,25 @@ export default function AchievementBadge() {
               }}
               className="flex-shrink-0 relative"
             >
-              {/* Gold Medal */}
-              <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 rounded-full flex items-center justify-center shadow-md border border-yellow-300">
-                <span className="text-white font-bold text-sm">1</span>
+              {/* Trophy Cup */}
+              <div className="w-8 h-8 relative">
+                {/* Trophy Base */}
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-3 bg-gradient-to-br from-yellow-300 to-yellow-500 rounded-b-full"></div>
+                {/* Trophy Body */}
+                <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-5 h-4 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-t-full"></div>
+                {/* Trophy Handles */}
+                <div className="absolute bottom-2 left-0 w-1 h-2 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-l-full"></div>
+                <div className="absolute bottom-2 right-0 w-1 h-2 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-r-full"></div>
+                {/* Number 1 */}
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 rounded-full flex items-center justify-center shadow-md border border-yellow-300">
+                  <span className="text-white font-bold text-xs">1</span>
+                </div>
               </div>
               
               {/* Ribbon */}
-              <div className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2">
-                <div className="w-5 h-2.5 bg-gradient-to-br from-orange-400 to-orange-500 rounded-b-full shadow-sm"></div>
-                <div className="w-3.5 h-1.5 bg-gradient-to-br from-orange-500 to-orange-600 rounded-b-full shadow-sm mx-auto mt-0.5"></div>
+              <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2">
+                <div className="w-6 h-3 bg-gradient-to-br from-orange-400 to-orange-500 rounded-b-full shadow-sm"></div>
+                <div className="w-4 h-2 bg-gradient-to-br from-orange-500 to-orange-600 rounded-b-full shadow-sm mx-auto mt-0.5"></div>
               </div>
             </motion.div>
             
