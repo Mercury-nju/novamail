@@ -91,6 +91,8 @@ export default {
         }), {
           headers: corsHeaders
         });
+      } else if (path.startsWith('/api/debug-verification')) {
+        return await handleDebugVerification(request, env);
       } else if (path.startsWith('/api/user/email-config')) {
         return await handleEmailConfig(request, env);
       } else if (path.startsWith('/api/user/test-email')) {
@@ -4396,3 +4398,35 @@ async function handleDashboardStats(request, env) {
     headers: corsHeaders
   });
 };
+
+// 调试验证码发送函数
+async function handleDebugVerification(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  console.log('Debug verification endpoint called');
+  
+  // 检查环境变量
+  const debugInfo = {
+    hasGmailAccessToken: !!env.GMAIL_ACCESS_TOKEN,
+    gmailAccessTokenLength: env.GMAIL_ACCESS_TOKEN ? env.GMAIL_ACCESS_TOKEN.length : 0,
+    hasGmailRefreshToken: !!env.GMAIL_REFRESH_TOKEN,
+    gmailRefreshTokenLength: env.GMAIL_REFRESH_TOKEN ? env.GMAIL_REFRESH_TOKEN.length : 0,
+    gmailUser: env.GMAIL_SMTP_USER || 'not configured',
+    timestamp: new Date().toISOString()
+  };
+
+  console.log('Debug info:', debugInfo);
+
+  return new Response(JSON.stringify({
+    success: true,
+    message: 'Debug verification endpoint',
+    debug: debugInfo
+  }), {
+    headers: corsHeaders
+  });
+}
