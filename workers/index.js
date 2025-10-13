@@ -4970,13 +4970,16 @@ async function handleTestGmail(request, env) {
     });
 
     if (!refreshResponse.ok) {
-      throw new Error('Failed to refresh access token');
+      const errorText = await refreshResponse.text();
+      console.error('OAuth refresh failed:', refreshResponse.status, errorText);
+      throw new Error(`Failed to refresh access token: ${refreshResponse.status} ${errorText}`);
     }
 
     const refreshData = await refreshResponse.json();
     const gmailAccessToken = refreshData.access_token;
     console.log('Test Gmail: Got fresh access token:', gmailAccessToken ? 'YES' : 'NO');
     console.log('Test Gmail: Access token preview:', gmailAccessToken ? gmailAccessToken.substring(0, 20) + '...' : 'NONE');
+    console.log('Test Gmail: Refresh response data:', JSON.stringify(refreshData));
     if (!gmailAccessToken) {
       throw new Error('Gmail access token not available');
     }
