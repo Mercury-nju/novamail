@@ -92,6 +92,8 @@ export default {
         return await handleTestVerification(request, env);
       } else if (path.startsWith('/api/test-simple-email')) {
         return await handleTestSimpleEmail(request, env);
+      } else if (path.startsWith('/api/check-gmail-scopes')) {
+        return await handleCheckGmailScopes(request, env);
       } else if (path.startsWith('/api/debug-verification')) {
         return await handleDebugVerification(request, env);
       } else if (path.startsWith('/api/test')) {
@@ -4723,6 +4725,95 @@ If you receive this email, Gmail API is working correctly.`;
     return new Response(JSON.stringify({
       success: false,
       error: 'Simple email test failed',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 检查Gmail API权限范围
+async function handleCheckGmailScopes(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  console.log('Check Gmail scopes endpoint called');
+  
+  try {
+    // 获取Gmail访问令牌
+    let gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
+    
+    if (!gmailAccessToken) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'No Gmail access token found'
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    // 检查令牌信息
+    const tokenInfoResponse = await fetch('https://www.googleapis.com/oauth2/v1/tokeninfo', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${gmailAccessToken}`
+      }
+    });
+
+    console.log('Token info response status:', tokenInfoResponse.status);
+
+    if (tokenInfoResponse.ok) {
+      const tokenInfo = await tokenInfoResponse.json();
+      console.log('Token info:', tokenInfo);
+      
+      // 检查是否有发送邮件的权限
+      const hasSendScope = tokenInfo.scope && tokenInfo.scope.includes('https://www.googleapis.com/auth/gmail.send');
+      const hasModifyScope = tokenInfo.scope && tokenInfo.scope.includes('https://www.googleapis.com/auth/gmail.modify');
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Gmail token info retrieved',
+        tokenInfo: {
+          audience: tokenInfo.audience,
+          scope: tokenInfo.scope,
+          expires_in: tokenInfo.expires_in,
+          email: tokenInfo.email,
+          hasSendScope: hasSendScope,
+          hasModifyScope: hasModifyScope,
+          allScopes: tokenInfo.scope ? tokenInfo.scope.split(' ') : []
+        },
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    } else {
+      const errorText = await tokenInfoResponse.text();
+      console.error('Token info error:', tokenInfoResponse.status, errorText);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Token info error: ${tokenInfoResponse.status}`,
+        details: errorText,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Check Gmail scopes error:', error);
+    
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to check Gmail scopes',
       details: error.message,
       timestamp: new Date().toISOString()
     }), {
