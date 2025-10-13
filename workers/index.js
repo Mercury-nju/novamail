@@ -339,7 +339,9 @@ async function handleSendVerification(request, env) {
       
       // 获取Gmail访问令牌
       // 获取当前有效的Gmail Access Token
+      console.log('Calling getCurrentGmailAccessToken...');
       let gmailAccessToken = await getCurrentGmailAccessToken(env);
+      console.log('getCurrentGmailAccessToken returned:', gmailAccessToken ? 'Token exists' : 'No token');
       
       if (!gmailAccessToken) {
         console.log('Failed to get valid Gmail Access Token');
