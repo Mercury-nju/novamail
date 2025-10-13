@@ -217,14 +217,18 @@ export default function PricingPage() {
               </ul>
 
                 <button
-                  onClick={() => handleSubscribe(plan.id)}
-                className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
-                  plan.popular
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                    : 'bg-gray-900 text-white hover:bg-gray-800'
-                  }`}
+                  onClick={() => {
+                    console.log('Button clicked for plan:', plan.id)
+                    handleSubscribe(plan.id)
+                  }}
+                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors cursor-pointer ${
+                    plan.popular
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-gray-900 text-white hover:bg-gray-800'
+                    }`}
+                  style={{ pointerEvents: 'auto' }}
                 >
-                {plan.cta}
+                  {plan.cta}
                 </button>
                       </div>
           ))}
