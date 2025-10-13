@@ -137,6 +137,8 @@ export default {
         return await handleCampaigns(request, env);
       } else if (path.startsWith('/api/admin/clear-users')) {
         return await handleClearUsers(request, env);
+      } else if (path.startsWith('/api/admin/grant-subscription')) {
+        return await handleGrantSubscription(request, env);
       } else if (path.startsWith('/api/admin/clear-campaigns')) {
         return await handleClearCampaigns(request, env);
       } else if (path.startsWith('/api/admin/clear-email-configs')) {
@@ -5321,6 +5323,112 @@ async function handleGetLatestGmailToken(request, env) {
     return new Response(JSON.stringify({
       success: false,
       error: 'Internal server error',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 手动授予用户订阅权限处理函数
+async function handleGrantSubscription(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    const data = await request.json();
+    const { email, plan = 'pro', durationDays = 1 } = data;
+
+    if (!email) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Email is required'
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    // 计算过期时间
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + (durationDays * 24 * 60 * 60 * 1000));
+
+    // 创建订阅数据
+    const subscriptionData = {
+      email: email,
+      plan: plan,
+      status: 'active',
+      activatedAt: now.toISOString(),
+      expiresAt: expiresAt.toISOString(),
+      durationDays: durationDays,
+      grantedBy: 'admin',
+      features: {
+        maxContacts: plan === 'pro' ? -1 : 500, // -1 表示无限制
+        maxEmailsPerMonth: plan === 'pro' ? -1 : 1000,
+        hasAdvancedTemplates: plan === 'pro',
+        hasAITeatures: true,
+        hasAnalytics: true,
+        hasAPIAccess: plan === 'pro',
+        hasWebhookAccess: plan === 'pro',
+        hasCustomBranding: plan === 'pro'
+      }
+    };
+
+    // 更新用户订阅状态到KV存储
+    if (env.USERS_KV) {
+      const userKey = `user_${email}`;
+      const storedUser = await env.USERS_KV.get(userKey);
+      
+      let user = storedUser ? JSON.parse(storedUser) : {
+        email: email,
+        createdAt: now.toISOString(),
+        updatedAt: now.toISOString()
+      };
+
+      // 更新用户订阅信息
+      user.subscription = subscriptionData;
+      user.subscriptionPlan = plan;
+      user.subscriptionStatus = 'active';
+      user.subscriptionEndsAt = expiresAt.toISOString();
+      user.updatedAt = now.toISOString();
+
+      // 保存更新后的用户数据
+      await env.USERS_KV.put(userKey, JSON.stringify(user));
+      console.log('User subscription granted:', {
+        email: email,
+        plan: plan,
+        expiresAt: expiresAt.toISOString(),
+        durationDays: durationDays
+      });
+    }
+
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'Subscription granted successfully',
+      subscription: subscriptionData,
+      timestamp: new Date().toISOString()
+    }), {
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    console.error('Error in handleGrantSubscription:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to grant subscription',
       details: error.message,
       timestamp: new Date().toISOString()
     }), {
