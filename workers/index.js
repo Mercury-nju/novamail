@@ -399,6 +399,9 @@ async function handleSendVerification(request, env) {
       };
 
       console.log('Sending verification email via Gmail API...');
+      console.log('Using Gmail Access Token:', gmailAccessToken ? 'Token exists' : 'No token');
+      console.log('Token length:', gmailAccessToken ? gmailAccessToken.length : 0);
+      console.log('Token preview:', gmailAccessToken ? gmailAccessToken.substring(0, 20) + '...' : 'No token');
 
       const gmailResponse = await fetch(gmailApiUrl, {
         method: 'POST',
