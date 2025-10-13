@@ -63,7 +63,11 @@ async function refreshGmailAccessToken(env) {
   console.log('CLIENT_SECRET exists:', !!env.GOOGLE_CLIENT_SECRET);
   console.log('REFRESH_TOKEN exists:', !!refreshToken);
   
-  if (!refreshToken || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+  // 使用硬编码的Google凭据作为备用
+  const clientId = env.GOOGLE_CLIENT_ID || "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com";
+  const clientSecret = env.GOOGLE_CLIENT_SECRET || "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";
+  
+  if (!refreshToken || !clientId || !clientSecret) {
     console.log('Missing refresh token or Google credentials');
     return null;
   }
