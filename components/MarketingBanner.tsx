@@ -160,10 +160,28 @@ export default function MarketingBanner() {
                 >
                   <Link
                     href="/pricing"
-                    className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl animate-pulse"
+                    className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl relative overflow-hidden"
                   >
-                    <span>Claim Offer</span>
-                    <ArrowRightIcon className="h-4 w-4" />
+                    {/* Animated border */}
+                    <motion.div
+                      className="absolute inset-0 rounded-lg"
+                      style={{
+                        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+                        backgroundSize: '200% 100%',
+                      }}
+                      animate={{
+                        backgroundPosition: ['200% 0', '-200% 0'],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: 'linear',
+                      }}
+                    />
+                    
+                    {/* Content */}
+                    <span className="relative z-10">Claim Offer</span>
+                    <ArrowRightIcon className="h-4 w-4 relative z-10" />
                   </Link>
                 </motion.div>
 
