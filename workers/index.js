@@ -4318,18 +4318,18 @@ async function handleContacts(request, env) {
 
       let contacts = [];
 
-      // 从KV存储获取联系人
-      if (env.CONTACTS_KV) {
+      // 从KV存储获取联系人（使用USERS_KV作为临时解决方案）
+      if (env.USERS_KV) {
         try {
-          console.log('Fetching contacts from CONTACTS_KV for user:', userEmail);
-          const { keys } = await env.CONTACTS_KV.list();
+          console.log('Fetching contacts from USERS_KV for user:', userEmail);
+          const { keys } = await env.USERS_KV.list();
           console.log('Found keys:', keys.length, keys.map(k => k.name));
           
           // 只获取当前用户的联系人
-          const userKeys = keys.filter(key => key.name.startsWith(userPrefix));
-          console.log('User-specific keys:', userKeys.length, userKeys.map(k => k.name));
+          const userKeys = keys.filter(key => key.name.startsWith(`${userPrefix}_contact_`));
+          console.log('User-specific contact keys:', userKeys.length, userKeys.map(k => k.name));
           
-          const contactPromises = userKeys.map(key => env.CONTACTS_KV.get(key.name));
+          const contactPromises = userKeys.map(key => env.USERS_KV.get(key.name));
           const contactData = await Promise.all(contactPromises);
           console.log('Contact data retrieved:', contactData.length);
           
@@ -4361,10 +4361,10 @@ async function handleContacts(request, env) {
           
           console.log('Filtered contacts:', contacts.length);
         } catch (error) {
-          console.error('Failed to fetch contacts from KV:', error);
+          console.error('Failed to fetch contacts from USERS_KV:', error);
         }
       } else {
-        console.log('CONTACTS_KV not available');
+        console.log('USERS_KV not available');
       }
 
       // 分页
@@ -4431,9 +4431,9 @@ async function handleContacts(request, env) {
       const userEmail = request.headers.get('x-user-email') || 'anonymous@example.com';
       const userPrefix = `user_${userEmail.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
       
-      // 检查联系人是否已存在
-      if (env.CONTACTS_KV) {
-        const existingContact = await env.CONTACTS_KV.get(`${userPrefix}_contact_${email.toLowerCase()}`);
+      // 检查联系人是否已存在（使用USERS_KV作为临时解决方案）
+      if (env.USERS_KV) {
+        const existingContact = await env.USERS_KV.get(`${userPrefix}_contact_${email.toLowerCase()}`);
         if (existingContact) {
           return new Response(JSON.stringify({
             success: false,
@@ -4460,17 +4460,17 @@ async function handleContacts(request, env) {
         userEmail: userEmail // 添加用户邮箱标识
       };
 
-      // 保存到KV存储
-      if (env.CONTACTS_KV) {
+      // 保存到KV存储（使用USERS_KV作为临时解决方案）
+      if (env.USERS_KV) {
         const key = `${userPrefix}_contact_${newContact.email}`;
-        await env.CONTACTS_KV.put(key, JSON.stringify(newContact));
-        console.log('Contact saved to KV:', key, newContact);
+        await env.USERS_KV.put(key, JSON.stringify(newContact));
+        console.log('Contact saved to USERS_KV:', key, newContact);
         
         // 验证保存是否成功
-        const saved = await env.CONTACTS_KV.get(key);
+        const saved = await env.USERS_KV.get(key);
         console.log('Verification - saved contact:', saved ? 'SUCCESS' : 'FAILED');
       } else {
-        console.log('CONTACTS_KV not available for saving');
+        console.log('USERS_KV not available for saving');
       }
 
       return new Response(JSON.stringify({
