@@ -86,6 +86,10 @@ export default {
         return await handleUpdateUsage(request, env);
       } else if (path.startsWith('/api/ai/generate-email')) {
         return await handleAIGenerateEmail(request, env);
+      } else if (path.startsWith('/api/test-gmail')) {
+        return await handleTestGmail(request, env);
+      } else if (path.startsWith('/api/debug-verification')) {
+        return await handleDebugVerification(request, env);
       } else if (path.startsWith('/api/test')) {
         return new Response(JSON.stringify({
           success: true,
@@ -94,10 +98,6 @@ export default {
         }), {
           headers: corsHeaders
         });
-      } else if (path.startsWith('/api/debug-verification')) {
-        return await handleDebugVerification(request, env);
-      } else if (path.startsWith('/api/test-gmail')) {
-        return await handleTestGmail(request, env);
       } else if (path.startsWith('/api/user/email-config')) {
         return await handleEmailConfig(request, env);
       } else if (path.startsWith('/api/user/test-email')) {
