@@ -338,7 +338,7 @@ async function handleSendVerification(request, env) {
       // 构建邮件内容
       const emailBody = [
         `To: ${email}`,
-        `From: lihongyangnju@gmail.com`,
+        `From: NovaMail <lihongyangnju@gmail.com>`,
         `Subject: NovaMail 验证码`,
         `Content-Type: text/html; charset=utf-8`,
         ``,
@@ -4623,7 +4623,7 @@ async function handleTestGmail(request, env) {
     
     // 构建测试邮件
     const testEmail = `To: lihongyangnju@gmail.com
-From: lihongyangnju@gmail.com
+From: NovaMail <lihongyangnju@gmail.com>
 Subject: Test Email from NovaMail
 Content-Type: text/plain; charset=utf-8
 
@@ -4757,7 +4757,7 @@ async function handleTestVerification(request, env) {
     // 构建邮件内容
     const emailBody = [
       `To: ${testEmail}`,
-      `From: lihongyangnju@gmail.com`,
+      `From: NovaMail <lihongyangnju@gmail.com>`,
       `Subject: NovaMail 验证码`,
       `Content-Type: text/plain; charset=utf-8`,
       ``,
@@ -4925,7 +4925,7 @@ async function handleTestDirectVerification(request, env) {
     // 3. 构建邮件内容
     const emailBody = [
       `To: ${testEmail}`,
-      `From: lihongyangnju@gmail.com`,
+      `From: NovaMail <lihongyangnju@gmail.com>`,
       `Subject: NovaMail 验证码 (直接测试)`,
       `Content-Type: text/plain; charset=utf-8`,
       ``,
@@ -5035,7 +5035,7 @@ async function handleTestSimpleEmail(request, env) {
     
     // 构建最简单的邮件
     const simpleEmail = `To: lihongyangnju@gmail.com
-From: lihongyangnju@gmail.com
+From: NovaMail <lihongyangnju@gmail.com>
 Subject: Simple Test Email
 Content-Type: text/plain; charset=utf-8
 
