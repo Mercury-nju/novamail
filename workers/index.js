@@ -5424,7 +5424,7 @@ async function handleGrantSubscription(request, env) {
 
     // 更新用户订阅状态到KV存储
     if (env.USERS_KV) {
-      const userKey = `user_${email}`;
+      const userKey = `user_${email.toLowerCase()}`;
       const storedUser = await env.USERS_KV.get(userKey);
       
       let user = storedUser ? JSON.parse(storedUser) : {
