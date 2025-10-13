@@ -4615,6 +4615,17 @@ async function sendViaSMTP(config, env) {
       throw new Error('Gmail access token not available');
     }
 
+    // 使用安全的UTF-8编码
+    function utf8ToBase64(str) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(str);
+      let binary = '';
+      for (let i = 0; i < data.length; i++) {
+        binary += String.fromCharCode(data[i]);
+      }
+      return btoa(binary);
+    }
+
     const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
       method: 'POST',
       headers: {
