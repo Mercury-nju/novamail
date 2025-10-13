@@ -4328,6 +4328,8 @@ async function handleContacts(request, env) {
           // 只获取当前用户的联系人
           const userKeys = keys.filter(key => key.name.startsWith(`${userPrefix}_contact_`));
           console.log('User-specific contact keys:', userKeys.length, userKeys.map(k => k.name));
+          console.log('Looking for keys starting with:', `${userPrefix}_contact_`);
+          console.log('All keys:', keys.map(k => k.name));
           
           const contactPromises = userKeys.map(key => env.USERS_KV.get(key.name));
           const contactData = await Promise.all(contactPromises);
