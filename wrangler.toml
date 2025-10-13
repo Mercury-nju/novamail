@@ -13,8 +13,8 @@ RESEND_API_KEY = "re_PCbEHboB..."  # Resend API密钥
 # Gmail API 配置 (用于注册验证码)
 GMAIL_SMTP_USER = "lihongyangnju@gmail.com"  # Gmail邮箱
 GMAIL_SMTP_PASSWORD = "zjhk rkmy ysoz dhyi"  # Gmail应用专用密码
-GMAIL_ACCESS_TOKEN = "REPLACE_WITH_REAL_TOKEN"  # 请在Cloudflare Workers环境中设置
-GMAIL_REFRESH_TOKEN = "REPLACE_WITH_REAL_REFRESH_TOKEN"  # 请在Cloudflare Workers环境中设置
+GMAIL_ACCESS_TOKEN = "ya29.a0AQQ_BDTCRjWbGVuwO-FhRMm3TXosYAAsdOheVpB0milFz54CqUgXHN1DZvHkPilKbQ2Qa19Cc1kOb3VkqNJWidHf9bQzbqadF4SjoTPwrTm8oIBEWs9wrr1f1XK9BPIvzd5ihcIKqhqnGEnjTn9nkJm1l4cSw-yvxlFECJKi1vWNlAg2en3Y9Axqp7Ee2XGfkLOdhwREaCgYKAXMSARISFQHGX2Miw2ki2HmtIyrTU0ExxmL3Fw0207"
+GMAIL_REFRESH_TOKEN = "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU"
 GMAIL_SMTP_HOST = "smtp.gmail.com"
 GMAIL_SMTP_PORT = "587"
 
