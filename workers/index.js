@@ -1673,7 +1673,7 @@ ${emailData.html}`)
           recipient: recipient,
           status: 'failed',
           method: userEmailConfig?.isConfigured ? 
-            (userEmailConfig.provider === 'gmail' ? 'user_smtp_gmail_api' : `user_smtp_${userEmailConfig.provider}`) 
+            (userEmailConfig.provider === 'gmail' ? 'user_smtp_gmail_api' : `smtp_proxy_gmail_${userEmailConfig.provider}`) 
             : 'novamail_gmail',
           error: error.message,
           timestamp: new Date().toISOString()
@@ -1746,7 +1746,7 @@ ${emailData.html}`)
       totalSent: sentEmails.filter(email => email.status === 'sent').length,
       totalFailed: sentEmails.filter(email => email.status === 'failed').length,
       sendingMethod: userEmailConfig?.isConfigured ? 
-        (userEmailConfig.provider === 'gmail' ? 'user_smtp_gmail_api' : `user_smtp_${userEmailConfig.provider}`) 
+        (userEmailConfig.provider === 'gmail' ? 'user_smtp_gmail_api' : `smtp_proxy_gmail_${userEmailConfig.provider}`) 
         : 'novamail_gmail',
       campaign: campaignRecord,
       timestamp: new Date().toISOString()
@@ -4615,10 +4615,10 @@ async function handleDebugKV(request, env) {
   }
 }
 
-// 通用 SMTP 发送函数 - 使用 Resend API 作为代理
+// 通用 SMTP 发送函数 - 直接使用 Gmail API 作为代理
 async function sendViaSMTP(config) {
   try {
-    console.log('Sending email via SMTP proxy:', {
+    console.log('Sending email via Gmail API proxy:', {
       host: config.host,
       port: config.port,
       secure: config.secure,
@@ -4627,46 +4627,8 @@ async function sendViaSMTP(config) {
       provider: config.provider || 'unknown'
     });
 
-    // 检查 Resend API 密钥是否配置
-    if (!env.RESEND_API_KEY || env.RESEND_API_KEY.startsWith('re_PCbEHboB')) {
-      console.log('Resend API key not configured, falling back to Gmail API');
-      // 回退到 Gmail API
-      return await sendViaGmailFallback(config);
-    }
-
-    // 使用 Resend API 作为通用 SMTP 代理
-    const resendResponse = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: config.from,
-        to: [config.to],
-        subject: config.subject,
-        html: config.html,
-        // 添加自定义头信息
-        headers: {
-          'X-SMTP-Provider': config.provider || 'custom',
-          'X-SMTP-Host': config.host,
-          'X-SMTP-Port': config.port.toString(),
-          'X-SMTP-Secure': config.secure ? 'true' : 'false'
-        }
-      })
-    });
-
-    if (resendResponse.ok) {
-      const result = await resendResponse.json();
-      return {
-        success: true,
-        messageId: result.id,
-        method: `smtp_proxy_resend_${config.provider || 'custom'}`
-      };
-    } else {
-      const errorData = await resendResponse.text();
-      throw new Error(`Resend API error: ${errorData}`);
-    }
+    // 直接使用 Gmail API 作为通用 SMTP 代理
+    return await sendViaGmailProxy(config);
 
   } catch (error) {
     console.error('SMTP sending failed:', error);
@@ -4677,10 +4639,10 @@ async function sendViaSMTP(config) {
   }
 }
 
-// Gmail API 回退发送函数
-async function sendViaGmailFallback(config) {
+// Gmail API 通用SMTP代理发送函数
+async function sendViaGmailProxy(config) {
   try {
-    console.log('Using Gmail API fallback for SMTP:', {
+    console.log('Using Gmail API as universal SMTP proxy:', {
       from: config.from,
       to: config.to,
       provider: config.provider
@@ -4688,7 +4650,7 @@ async function sendViaGmailFallback(config) {
 
     const accessToken = await getCurrentGmailAccessToken(env);
     if (!accessToken) {
-      throw new Error('Gmail access token not available for SMTP fallback');
+      throw new Error('Gmail access token not available for SMTP proxy');
     }
 
     const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
@@ -4715,15 +4677,15 @@ ${config.html}`)
       return {
         success: true,
         messageId: result.id,
-        method: `smtp_fallback_gmail_${config.provider || 'custom'}`
+        method: `smtp_proxy_gmail_${config.provider || 'custom'}`
       };
     } else {
       const errorData = await gmailResponse.text();
-      throw new Error(`Gmail API fallback error: ${errorData}`);
+      throw new Error(`Gmail API proxy error: ${errorData}`);
     }
 
   } catch (error) {
-    console.error('Gmail API fallback failed:', error);
+    console.error('Gmail API proxy failed:', error);
     return {
       success: false,
       error: error.message
