@@ -5028,7 +5028,7 @@ async function handleTestGmail(request, env) {
     }
     
     // 构建测试邮件
-    const testEmail = `To: lihongyangnju@gmail.com
+    const testEmail = `To: 66597405@qq.com
 From: NovaMail <lihongyangnju@gmail.com>
 Subject: Test Email from NovaMail
 Content-Type: text/plain; charset=utf-8
