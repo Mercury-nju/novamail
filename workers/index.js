@@ -300,7 +300,7 @@ async function handleSendVerification(request, env) {
       });
     }
 
-    if (!resendApiKey || resendApiKey === 're_1234567890abcdef') {
+    if (!resendApiKey || resendApiKey === 're_1234567890abcdef' || resendApiKey.startsWith('re_PCbEHboB')) {
       // 如果Resend API未配置，使用Gmail API发送验证码
       console.log('Resend API not configured, using Gmail API for verification code');
       
