@@ -301,17 +301,161 @@ async function handleSendVerification(request, env) {
     }
 
     if (!resendApiKey || resendApiKey === 're_1234567890abcdef') {
-      // 如果Resend API未配置，返回验证码用于测试
-      console.log('Resend API not configured, returning verification code for testing');
-      return new Response(JSON.stringify({
-        success: true,
-        message: 'Verification code generated (Resend API not configured)',
-        code: verificationCode,
-        note: 'Please configure RESEND_API_KEY in wrangler.toml to enable real email sending',
-        timestamp: new Date().toISOString()
-      }), {
-        headers: corsHeaders
+      // 如果Resend API未配置，使用Gmail API发送验证码
+      console.log('Resend API not configured, using Gmail API for verification code');
+      
+      // 获取Gmail访问令牌
+      let gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
+      
+      // 如果环境变量中没有Access Token，先刷新获取新的Token
+      if (!gmailAccessToken || gmailAccessToken.length < 50) {
+        console.log('No valid Gmail Access Token in environment, refreshing token...');
+        const refreshedToken = await refreshGmailAccessToken(env);
+        if (refreshedToken) {
+          gmailAccessToken = refreshedToken;
+          console.log('Using refreshed token for verification');
+        } else {
+          console.log('Failed to refresh token, cannot proceed');
+          return new Response(JSON.stringify({
+            success: false,
+            error: '无法获取Gmail访问令牌',
+            details: 'Gmail Access Token未配置且刷新失败',
+            timestamp: new Date().toISOString()
+          }), {
+            status: 500,
+            headers: corsHeaders
+          });
+        }
+      } else {
+        // 先尝试刷新Token以确保使用最新的
+        const refreshedToken = await refreshGmailAccessToken(env);
+        if (refreshedToken) {
+          gmailAccessToken = refreshedToken;
+          console.log('Using refreshed token for verification');
+        }
+      }
+      
+      // 构建邮件内容
+      const emailBody = [
+        `To: ${email}`,
+        `From: lihongyangnju@gmail.com`,
+        `Subject: NovaMail 验证码`,
+        `Content-Type: text/html; charset=utf-8`,
+        ``,
+        `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">`,
+        `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">`,
+        `<h1 style="color: white; margin: 0;">NovaMail</h1>`,
+        `</div>`,
+        `<div style="padding: 30px; background: #f9f9f9;">`,
+        `<h2 style="color: #333; margin-bottom: 20px;">验证您的邮箱地址</h2>`,
+        `<p style="color: #666; font-size: 16px; line-height: 1.5;">`,
+        `感谢您注册 NovaMail！请使用以下验证码完成注册：`,
+        `</p>`,
+        `<div style="background: white; border: 2px solid #667eea; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">`,
+        `<span style="font-size: 32px; font-weight: bold; color: #667eea; letter-spacing: 5px;">${verificationCode}</span>`,
+        `</div>`,
+        `<p style="color: #666; font-size: 14px;">`,
+        `此验证码有效期为 10 分钟。如果您没有请求此验证码，请忽略此邮件。`,
+        `</p>`,
+        `<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">`,
+        `<p style="color: #999; font-size: 12px;">`,
+        `此邮件由 NovaMail 发送。如有疑问，请联系我们的支持团队。`,
+        `</p>`,
+        `</div>`,
+        `</div>`,
+        `</div>`
+      ].join('\r\n');
+
+      // 使用Gmail API发送邮件
+      const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
+      
+      // 使用安全的UTF-8编码
+      function utf8ToBase64(str) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        let binary = '';
+        for (let i = 0; i < data.length; i++) {
+          binary += String.fromCharCode(data[i]);
+        }
+        return btoa(binary);
+      }
+      
+      const gmailMessage = {
+        raw: utf8ToBase64(emailBody).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      };
+
+      console.log('Sending verification email via Gmail API...');
+
+      const gmailResponse = await fetch(gmailApiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${gmailAccessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(gmailMessage)
       });
+
+      if (gmailResponse.ok) {
+        const result = await gmailResponse.json();
+        console.log('Verification email sent successfully via Gmail API:', result.id);
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Verification code sent successfully',
+          code: verificationCode,
+          messageId: result.id,
+          timestamp: new Date().toISOString()
+        }), {
+          headers: corsHeaders
+        });
+      } else {
+        const errorText = await gmailResponse.text();
+        console.error('Gmail API error:', gmailResponse.status, errorText);
+        
+        // 检查是否是401错误（令牌过期）
+        if (gmailResponse.status === 401) {
+          console.log('Gmail access token expired, attempting to refresh...');
+          const refreshedToken = await refreshGmailAccessToken(env);
+          
+          if (refreshedToken) {
+            console.log('Token refreshed, retrying email send...');
+            // 重新尝试发送邮件
+            const retryResponse = await fetch(gmailApiUrl, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${refreshedToken}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(gmailMessage)
+            });
+            
+            if (retryResponse.ok) {
+              const result = await retryResponse.json();
+              console.log('Verification email sent successfully after token refresh:', result.id);
+              
+              return new Response(JSON.stringify({
+                success: true,
+                message: 'Verification code sent successfully (Token refreshed)',
+                code: verificationCode,
+                messageId: result.id,
+                timestamp: new Date().toISOString()
+              }), {
+                headers: corsHeaders
+              });
+            }
+          }
+        }
+        
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Failed to send verification code',
+          details: `Gmail API Error: ${gmailResponse.status}`,
+          timestamp: new Date().toISOString()
+        }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
     }
 
     // 使用Gmail SMTP发送邮件
