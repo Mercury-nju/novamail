@@ -5,15 +5,42 @@
 async function getCurrentGmailAccessToken(env) {
   // 每次都刷新token，因为Cloudflare Workers无法更新环境变量
   console.log('Refreshing Gmail access token for this request...');
-  const token = await refreshGmailAccessToken(env);
   
-  if (!token) {
-    console.log('Failed to refresh Gmail access token');
+  // 直接在这里实现刷新逻辑，避免函数调用问题
+  const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
+  
+  if (!refreshToken || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+    console.log('Missing refresh token or Google credentials');
     return null;
   }
-  
-  console.log('Gmail access token refreshed successfully for this request');
-  return token;
+
+  try {
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        client_id: env.GOOGLE_CLIENT_ID,
+        client_secret: env.GOOGLE_CLIENT_SECRET,
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token'
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Gmail access token refreshed successfully');
+      return data.access_token;
+    } else {
+      const errorData = await response.text();
+      console.log('Failed to refresh Gmail access token:', response.status, errorData);
+      return null;
+    }
+  } catch (error) {
+    console.log('Error refreshing Gmail access token:', error);
+    return null;
+  }
 }
 
 // Gmail访问令牌刷新函数
