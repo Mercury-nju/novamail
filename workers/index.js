@@ -4586,9 +4586,31 @@ async function sendViaSMTP(config, env) {
 
     // 使用 Gmail API 作为邮件发送服务
     // 保持用户的发件人地址，但通过Gmail API发送
-    console.log('sendViaSMTP: Getting Gmail access token...');
-    const accessToken = await getCurrentGmailAccessToken(env);
-    console.log('sendViaSMTP: Got access token:', accessToken ? 'YES' : 'NO');
+    console.log('sendViaSMTP: Refreshing Gmail access token...');
+    
+    // 直接刷新获取新的访问令牌
+    const refreshResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        client_id: env.GOOGLE_CLIENT_ID || "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com",
+        client_secret: env.GOOGLE_CLIENT_SECRET || "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",
+        refresh_token: env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU",
+        grant_type: 'refresh_token'
+      })
+    });
+
+    if (!refreshResponse.ok) {
+      const errorText = await refreshResponse.text();
+      console.error('sendViaSMTP: OAuth refresh failed:', refreshResponse.status, errorText);
+      throw new Error(`Failed to refresh access token: ${refreshResponse.status} ${errorText}`);
+    }
+
+    const refreshData = await refreshResponse.json();
+    const accessToken = refreshData.access_token;
+    console.log('sendViaSMTP: Got fresh access token:', accessToken ? 'YES' : 'NO');
     if (!accessToken) {
       throw new Error('Gmail access token not available');
     }
