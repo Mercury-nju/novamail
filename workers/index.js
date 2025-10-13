@@ -4575,16 +4575,39 @@ async function handleTestVerification(request, env) {
     // 获取Gmail访问令牌
     let gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
     
-    // 先尝试刷新Token以确保使用最新的
-    const refreshedToken = await refreshGmailAccessToken(env);
-    if (refreshedToken) {
-      gmailAccessToken = refreshedToken;
-      console.log('Using refreshed token for test verification');
-      console.log('Refreshed token length:', refreshedToken.length);
-      console.log('Refreshed token preview:', refreshedToken.substring(0, 20) + '...');
+    // 如果环境变量中没有Access Token，先刷新获取新的Token
+    if (!gmailAccessToken || gmailAccessToken.length < 50) {
+      console.log('No valid Gmail Access Token in environment, refreshing token...');
+      const refreshedToken = await refreshGmailAccessToken(env);
+      if (refreshedToken) {
+        gmailAccessToken = refreshedToken;
+        console.log('Using refreshed token for test verification');
+        console.log('Refreshed token length:', refreshedToken.length);
+        console.log('Refreshed token preview:', refreshedToken.substring(0, 20) + '...');
+      } else {
+        console.log('Failed to refresh token, cannot proceed');
+        return new Response(JSON.stringify({
+          success: false,
+          error: '无法获取Gmail访问令牌',
+          details: 'Gmail Access Token未配置且刷新失败',
+          timestamp: new Date().toISOString()
+        }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
     } else {
-      console.log('Failed to refresh token, using original token');
-      console.log('Original token length:', gmailAccessToken ? gmailAccessToken.length : 0);
+      // 先尝试刷新Token以确保使用最新的
+      const refreshedToken = await refreshGmailAccessToken(env);
+      if (refreshedToken) {
+        gmailAccessToken = refreshedToken;
+        console.log('Using refreshed token for test verification');
+        console.log('Refreshed token length:', refreshedToken.length);
+        console.log('Refreshed token preview:', refreshedToken.substring(0, 20) + '...');
+      } else {
+        console.log('Failed to refresh token, using original token');
+        console.log('Original token length:', gmailAccessToken ? gmailAccessToken.length : 0);
+      }
     }
     
     // 构建邮件内容
