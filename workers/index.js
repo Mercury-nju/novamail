@@ -4315,6 +4315,8 @@ async function handleContacts(request, env) {
       // 获取用户邮箱（从请求头或认证信息中获取）
       const userEmail = request.headers.get('x-user-email') || 'anonymous@example.com';
       const userPrefix = `user_${userEmail.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      console.log('GET - User email:', userEmail);
+      console.log('GET - User prefix:', userPrefix);
 
       let contacts = [];
 
@@ -4432,6 +4434,8 @@ async function handleContacts(request, env) {
       // 获取用户邮箱（从请求头或认证信息中获取）
       const userEmail = request.headers.get('x-user-email') || 'anonymous@example.com';
       const userPrefix = `user_${userEmail.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      console.log('POST - User email:', userEmail);
+      console.log('POST - User prefix:', userPrefix);
       
       // 检查联系人是否已存在
       if (env.CONTACTS_KV) {
