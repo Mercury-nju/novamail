@@ -4954,10 +4954,28 @@ async function handleTestGmail(request, env) {
   const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
   
   try {
-    // 直接使用环境变量中的访问令牌
-    console.log('Test Gmail: Using environment access token...');
-    const gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
-    console.log('Test Gmail: Got access token:', gmailAccessToken ? 'YES' : 'NO');
+    // 直接刷新获取新的访问令牌
+    console.log('Test Gmail: Refreshing access token...');
+    const refreshResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        client_id: env.GOOGLE_CLIENT_ID || "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com",
+        client_secret: env.GOOGLE_CLIENT_SECRET || "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",
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token'
+      })
+    });
+
+    if (!refreshResponse.ok) {
+      throw new Error('Failed to refresh access token');
+    }
+
+    const refreshData = await refreshResponse.json();
+    const gmailAccessToken = refreshData.access_token;
+    console.log('Test Gmail: Got fresh access token:', gmailAccessToken ? 'YES' : 'NO');
     if (!gmailAccessToken) {
       throw new Error('Gmail access token not available');
     }
