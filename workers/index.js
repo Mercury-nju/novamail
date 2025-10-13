@@ -4578,6 +4578,11 @@ async function handleTestVerification(request, env) {
     if (refreshedToken) {
       gmailAccessToken = refreshedToken;
       console.log('Using refreshed token for test verification');
+      console.log('Refreshed token length:', refreshedToken.length);
+      console.log('Refreshed token preview:', refreshedToken.substring(0, 20) + '...');
+    } else {
+      console.log('Failed to refresh token, using original token');
+      console.log('Original token length:', gmailAccessToken ? gmailAccessToken.length : 0);
     }
     
     // 构建邮件内容
