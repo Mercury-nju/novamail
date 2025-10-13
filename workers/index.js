@@ -1562,40 +1562,71 @@ async function handleCampaignSend(request, env) {
           // 使用用户 SMTP 配置发送邮件
           console.log('Sending via user SMTP:', userEmailConfig.email);
           
-          // 使用 Gmail API 发送邮件
-          const accessToken = await getCurrentGmailAccessToken(env);
-          if (!accessToken) {
-            throw new Error('Gmail access token not available');
-          }
+          // 根据提供商选择发送方式
+          if (userEmailConfig.provider === 'gmail' && userEmailConfig.accessToken) {
+            // Gmail API 方式
+            const accessToken = await getCurrentGmailAccessToken(env);
+            if (!accessToken) {
+              throw new Error('Gmail access token not available');
+            }
 
-          const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${accessToken}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              raw: utf8ToBase64(`From: ${userEmailConfig.email}
+            const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                raw: utf8ToBase64(`From: ${userEmailConfig.email}
 To: ${recipient}
 Subject: ${campaignData.subject || 'Email Campaign'}
 Content-Type: text/html; charset=UTF-8
 
 ${emailData.html}`)
-            })
-          });
-
-          if (gmailResponse.ok) {
-            const result = await gmailResponse.json();
-            sentEmails.push({
-              recipient: recipient,
-              status: 'sent',
-              method: 'user_smtp_gmail',
-              messageId: result.id,
-              timestamp: new Date().toISOString()
+              })
             });
+
+            if (gmailResponse.ok) {
+              const result = await gmailResponse.json();
+              sentEmails.push({
+                recipient: recipient,
+                status: 'sent',
+                method: 'user_smtp_gmail_api',
+                messageId: result.id,
+                timestamp: new Date().toISOString()
+              });
+            } else {
+              const errorData = await gmailResponse.text();
+              throw new Error(`Gmail API error: ${errorData}`);
+            }
           } else {
-            const errorData = await gmailResponse.text();
-            throw new Error(`Gmail API error: ${errorData}`);
+            // 通用 SMTP 方式
+            const smtpResult = await sendViaSMTP({
+              host: userEmailConfig.smtpHost,
+              port: parseInt(userEmailConfig.smtpPort),
+              secure: userEmailConfig.isSecure,
+              provider: userEmailConfig.provider,
+              auth: {
+                user: userEmailConfig.email,
+                pass: userEmailConfig.password
+              },
+              from: userEmailConfig.email,
+              to: recipient,
+              subject: campaignData.subject || 'Email Campaign',
+              html: emailData.html
+            });
+
+            if (smtpResult.success) {
+              sentEmails.push({
+                recipient: recipient,
+                status: 'sent',
+                method: smtpResult.method,
+                messageId: smtpResult.messageId,
+                timestamp: new Date().toISOString()
+              });
+            } else {
+              throw new Error(`SMTP error: ${smtpResult.error}`);
+            }
           }
         } else {
           // 使用 NovaMail Gmail 发送服务
@@ -1641,7 +1672,9 @@ ${emailData.html}`)
         sentEmails.push({
           recipient: recipient,
           status: 'failed',
-          method: userEmailConfig?.isConfigured ? 'user_smtp_gmail' : 'novamail_gmail',
+          method: userEmailConfig?.isConfigured ? 
+            (userEmailConfig.provider === 'gmail' ? 'user_smtp_gmail_api' : `user_smtp_${userEmailConfig.provider}`) 
+            : 'novamail_gmail',
           error: error.message,
           timestamp: new Date().toISOString()
         });
@@ -1712,7 +1745,9 @@ ${emailData.html}`)
       sentEmails: sentEmails,
       totalSent: sentEmails.filter(email => email.status === 'sent').length,
       totalFailed: sentEmails.filter(email => email.status === 'failed').length,
-      sendingMethod: userEmailConfig?.isConfigured ? 'user_smtp_gmail' : 'novamail_gmail',
+      sendingMethod: userEmailConfig?.isConfigured ? 
+        (userEmailConfig.provider === 'gmail' ? 'user_smtp_gmail_api' : `user_smtp_${userEmailConfig.provider}`) 
+        : 'novamail_gmail',
       campaign: campaignRecord,
       timestamp: new Date().toISOString()
     }), {
@@ -4577,6 +4612,122 @@ async function handleDebugKV(request, env) {
       status: 500,
       headers: corsHeaders
     });
+  }
+}
+
+// 通用 SMTP 发送函数 - 使用 Resend API 作为代理
+async function sendViaSMTP(config) {
+  try {
+    console.log('Sending email via SMTP proxy:', {
+      host: config.host,
+      port: config.port,
+      secure: config.secure,
+      from: config.from,
+      to: config.to,
+      provider: config.provider || 'unknown'
+    });
+
+    // 检查 Resend API 密钥是否配置
+    if (!env.RESEND_API_KEY || env.RESEND_API_KEY.startsWith('re_PCbEHboB')) {
+      console.log('Resend API key not configured, falling back to Gmail API');
+      // 回退到 Gmail API
+      return await sendViaGmailFallback(config);
+    }
+
+    // 使用 Resend API 作为通用 SMTP 代理
+    const resendResponse = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: config.from,
+        to: [config.to],
+        subject: config.subject,
+        html: config.html,
+        // 添加自定义头信息
+        headers: {
+          'X-SMTP-Provider': config.provider || 'custom',
+          'X-SMTP-Host': config.host,
+          'X-SMTP-Port': config.port.toString(),
+          'X-SMTP-Secure': config.secure ? 'true' : 'false'
+        }
+      })
+    });
+
+    if (resendResponse.ok) {
+      const result = await resendResponse.json();
+      return {
+        success: true,
+        messageId: result.id,
+        method: `smtp_proxy_resend_${config.provider || 'custom'}`
+      };
+    } else {
+      const errorData = await resendResponse.text();
+      throw new Error(`Resend API error: ${errorData}`);
+    }
+
+  } catch (error) {
+    console.error('SMTP sending failed:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
+
+// Gmail API 回退发送函数
+async function sendViaGmailFallback(config) {
+  try {
+    console.log('Using Gmail API fallback for SMTP:', {
+      from: config.from,
+      to: config.to,
+      provider: config.provider
+    });
+
+    const accessToken = await getCurrentGmailAccessToken(env);
+    if (!accessToken) {
+      throw new Error('Gmail access token not available for SMTP fallback');
+    }
+
+    const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        raw: utf8ToBase64(`From: ${config.from}
+To: ${config.to}
+Subject: ${config.subject}
+Content-Type: text/html; charset=UTF-8
+X-SMTP-Provider: ${config.provider || 'custom'}
+X-SMTP-Host: ${config.host}
+X-SMTP-Port: ${config.port}
+
+${config.html}`)
+      })
+    });
+
+    if (gmailResponse.ok) {
+      const result = await gmailResponse.json();
+      return {
+        success: true,
+        messageId: result.id,
+        method: `smtp_fallback_gmail_${config.provider || 'custom'}`
+      };
+    } else {
+      const errorData = await gmailResponse.text();
+      throw new Error(`Gmail API fallback error: ${errorData}`);
+    }
+
+  } catch (error) {
+    console.error('Gmail API fallback failed:', error);
+    return {
+      success: false,
+      error: error.message
+    };
   }
 }
 
