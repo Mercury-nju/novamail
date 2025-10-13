@@ -42,5 +42,5 @@ preview_id = "5b1cbfcd0871579f97571d992bbdfd77"
 
 [[kv_namespaces]]
 binding = "CONTACTS_KV"
-id = "6c2dcgde1982680g08682e003cccee88"  # NovaMail-Contacts
-preview_id = "6c2dcgde1982680g08682e003cccee88"
+id = "d655e18827b44f79860ae7333517c9d7"  # NovaMail-Contacts
+preview_id = "d655e18827b44f79860ae7333517c9d7"
