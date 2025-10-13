@@ -1,6 +1,20 @@
 // Cloudflare Workers 主入口文件
 // 路由到不同的 API 端点
 
+// 获取当前有效的Gmail Access Token
+async function getCurrentGmailAccessToken(env) {
+  // 首先尝试从环境变量获取
+  let token = env.GMAIL_ACCESS_TOKEN;
+  
+  // 如果环境变量中的Token无效，尝试刷新
+  if (!token || token.length < 50) {
+    console.log('Environment token invalid, refreshing...');
+    token = await refreshGmailAccessToken(env);
+  }
+  
+  return token;
+}
+
 // Gmail访问令牌刷新函数
 async function refreshGmailAccessToken(env) {
   // 临时硬编码Refresh Token进行测试
@@ -28,6 +42,11 @@ async function refreshGmailAccessToken(env) {
     if (response.ok) {
       const data = await response.json();
       console.log('Gmail access token refreshed successfully');
+      
+      // 注意：Cloudflare Workers无法直接更新环境变量
+      // 需要在Cloudflare Dashboard中手动更新GMAIL_ACCESS_TOKEN
+      console.log('Please update GMAIL_ACCESS_TOKEN in Cloudflare Dashboard with the new token');
+      
       return data.access_token;
     } else {
       const errorData = await response.text();
@@ -98,6 +117,8 @@ export default {
         return await handleCheckGmailScopes(request, env);
       } else if (path.startsWith('/api/refresh-gmail-token')) {
         return await handleRefreshGmailToken(request, env);
+      } else if (path.startsWith('/api/get-latest-gmail-token')) {
+        return await handleGetLatestGmailToken(request, env);
       } else if (path.startsWith('/api/debug-verification')) {
         return await handleDebugVerification(request, env);
       } else if (path.startsWith('/api/test')) {
@@ -305,34 +326,20 @@ async function handleSendVerification(request, env) {
       console.log('Resend API not configured, using Gmail API for verification code');
       
       // 获取Gmail访问令牌
-      let gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
+      // 获取当前有效的Gmail Access Token
+      let gmailAccessToken = await getCurrentGmailAccessToken(env);
       
-      // 如果环境变量中没有Access Token，先刷新获取新的Token
-      if (!gmailAccessToken || gmailAccessToken.length < 50) {
-        console.log('No valid Gmail Access Token in environment, refreshing token...');
-        const refreshedToken = await refreshGmailAccessToken(env);
-        if (refreshedToken) {
-          gmailAccessToken = refreshedToken;
-          console.log('Using refreshed token for verification');
-        } else {
-          console.log('Failed to refresh token, cannot proceed');
-          return new Response(JSON.stringify({
-            success: false,
-            error: '无法获取Gmail访问令牌',
-            details: 'Gmail Access Token未配置且刷新失败',
-            timestamp: new Date().toISOString()
-          }), {
-            status: 500,
-            headers: corsHeaders
-          });
-        }
-      } else {
-        // 先尝试刷新Token以确保使用最新的
-        const refreshedToken = await refreshGmailAccessToken(env);
-        if (refreshedToken) {
-          gmailAccessToken = refreshedToken;
-          console.log('Using refreshed token for verification');
-        }
+      if (!gmailAccessToken) {
+        console.log('Failed to get valid Gmail Access Token');
+        return new Response(JSON.stringify({
+          success: false,
+          error: '无法获取Gmail访问令牌',
+          details: 'Gmail Access Token未配置且刷新失败',
+          timestamp: new Date().toISOString()
+        }), {
+          status: 500,
+          headers: corsHeaders
+        });
       }
       
       // 构建邮件内容
@@ -4717,42 +4724,25 @@ async function handleTestVerification(request, env) {
     console.log('Verification code:', verificationCode);
     
     // 获取Gmail访问令牌
-    let gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
+    // 获取当前有效的Gmail Access Token
+    let gmailAccessToken = await getCurrentGmailAccessToken(env);
     
-    // 如果环境变量中没有Access Token，先刷新获取新的Token
-    if (!gmailAccessToken || gmailAccessToken.length < 50) {
-      console.log('No valid Gmail Access Token in environment, refreshing token...');
-      const refreshedToken = await refreshGmailAccessToken(env);
-      if (refreshedToken) {
-        gmailAccessToken = refreshedToken;
-        console.log('Using refreshed token for test verification');
-        console.log('Refreshed token length:', refreshedToken.length);
-        console.log('Refreshed token preview:', refreshedToken.substring(0, 20) + '...');
-      } else {
-        console.log('Failed to refresh token, cannot proceed');
-        return new Response(JSON.stringify({
-          success: false,
-          error: '无法获取Gmail访问令牌',
-          details: 'Gmail Access Token未配置且刷新失败',
-          timestamp: new Date().toISOString()
-        }), {
-          status: 500,
-          headers: corsHeaders
-        });
-      }
-    } else {
-      // 先尝试刷新Token以确保使用最新的
-      const refreshedToken = await refreshGmailAccessToken(env);
-      if (refreshedToken) {
-        gmailAccessToken = refreshedToken;
-        console.log('Using refreshed token for test verification');
-        console.log('Refreshed token length:', refreshedToken.length);
-        console.log('Refreshed token preview:', refreshedToken.substring(0, 20) + '...');
-      } else {
-        console.log('Failed to refresh token, using original token');
-        console.log('Original token length:', gmailAccessToken ? gmailAccessToken.length : 0);
-      }
+    if (!gmailAccessToken) {
+      console.log('Failed to get valid Gmail Access Token');
+      return new Response(JSON.stringify({
+        success: false,
+        error: '无法获取Gmail访问令牌',
+        details: 'Gmail Access Token未配置且刷新失败',
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
     }
+    
+    console.log('Using Gmail Access Token for test verification');
+    console.log('Token length:', gmailAccessToken.length);
+    console.log('Token preview:', gmailAccessToken.substring(0, 20) + '...');
     
     // 构建邮件内容
     const emailBody = [
@@ -5280,6 +5270,57 @@ async function handleRefreshGmailToken(request, env) {
     return new Response(JSON.stringify({
       success: false,
       error: 'Failed to refresh Gmail token',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 获取最新Gmail Access Token端点（用于手动更新Dashboard）
+async function handleGetLatestGmailToken(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  console.log('Get latest Gmail token endpoint called');
+  
+  try {
+    const newToken = await refreshGmailAccessToken(env);
+    
+    if (newToken) {
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Latest Gmail access token retrieved',
+        instructions: 'Please copy the newAccessToken and update GMAIL_ACCESS_TOKEN in Cloudflare Dashboard',
+        newAccessToken: newToken,
+        expiresIn: 3600,
+        tokenType: 'Bearer',
+        scope: 'https://www.googleapis.com/auth/gmail.send',
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    } else {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Failed to get latest Gmail access token',
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+  } catch (error) {
+    console.error('Error in handleGetLatestGmailToken:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Internal server error',
       details: error.message,
       timestamp: new Date().toISOString()
     }), {
