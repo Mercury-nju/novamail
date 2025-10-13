@@ -91,30 +91,9 @@ function LoginForm() {
       <div className="relative z-10 flex flex-col justify-center py-12 sm:px-6 lg:px-8 min-h-screen">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="mx-auto h-12 w-auto text-blue-600 flex items-center justify-center mb-8">
-            <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl border-2 border-white flex items-center justify-center shadow-xl">
-              <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {/* Email-style paper airplane */}
-                <path d="M8 12 L16 8 L12 16 L8 12 Z" fill="white"/>
-                <path d="M12 16 L16 8 L20 12 L12 16 Z" fill="white"/>
-                {/* Envelope flap */}
-                <path d="M16 8 L20 12 L16 12 L16 8 Z" fill="white" opacity="0.8"/>
-                {/* Wing fold lines */}
-                <path d="M8 12 L12 16" strokeWidth="0.5" fill="none" opacity="0.7"/>
-                <path d="M16 8 L12 16" strokeWidth="0.5" fill="none" opacity="0.7"/>
-                <path d="M16 8 L20 12" strokeWidth="0.5" fill="none" opacity="0.7"/>
-                {/* Body center line */}
-                <line x1="12" y1="12" x2="12" y2="16" stroke="white" strokeWidth="0.4" opacity="0.6"/>
-                {/* Wing details */}
-                <line x1="14" y1="10" x2="14" y2="12" stroke="white" strokeWidth="0.3" opacity="0.5"/>
-                <line x1="18" y1="10" x2="18" y2="12" stroke="white" strokeWidth="0.3" opacity="0.5"/>
-                {/* Wing tips */}
-                <path d="M8 12 L9 13" strokeWidth="0.4" fill="none" opacity="0.8"/>
-                <path d="M20 12 L19 13" strokeWidth="0.4" fill="none" opacity="0.8"/>
-                {/* @ symbol */}
-                <circle cx="14" cy="12" r="0.8" fill="none" stroke="white" strokeWidth="0.3" opacity="0.7"/>
-                <path d="M13.5 11.5 L14.5 11.5 L14.5 12.5 L13.5 12.5 Z" fill="white" opacity="0.7"/>
-              </svg>
-            </div>
+            <Link href="/" className="text-3xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
+              NovaMail
+            </Link>
           </div>
           <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-3">
             Sign in to your account
@@ -197,7 +176,7 @@ function LoginForm() {
 
             <div className="mt-4">
               <a
-                href="https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.world/google-callback&scope=email%20profile&response_type=code&state=test123&prompt=consent&access_type=offline"
+                href="https://accounts.google.com/o/oauth2/v2/auth?client_id=3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com&redirect_uri=https://novamail.pages.dev/google-callback&scope=email%20profile&response_type=code&state=test123&prompt=consent&access_type=offline"
                 className="w-full flex items-center justify-center py-3 px-4 bg-white/20 backdrop-blur-sm border border-white/40 rounded-xl text-sm font-medium text-gray-800 hover:bg-white/30 hover:border-white/50 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
