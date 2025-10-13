@@ -21,7 +21,7 @@ GMAIL_SMTP_PORT = "587"
 # GMAIL_ACCESS_TOKEN = "配置为 Secret"
 # GMAIL_REFRESH_TOKEN = "配置为 Secret"
 GOOGLE_CLIENT_ID = "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com"  # Google OAuth客户端ID
-GOOGLE_CLIENT_SECRET = "your-google-client-secret"  # Google OAuth客户端密钥
+GOOGLE_CLIENT_SECRET = "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"  # Google OAuth客户端密钥
 
 # KV 存储配置
 # 已配置真实的KV命名空间ID
