@@ -6050,7 +6050,11 @@ async function handleTestOAuth(request, env) {
     console.log('CLIENT_SECRET:', env.GOOGLE_CLIENT_SECRET ? env.GOOGLE_CLIENT_SECRET.substring(0, 10) + '...' : 'Not set');
     console.log('REFRESH_TOKEN:', refreshToken ? refreshToken.substring(0, 20) + '...' : 'Not set');
 
-    if (!refreshToken || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+    // 使用硬编码的Google凭据作为备用
+    const clientId = env.GOOGLE_CLIENT_ID || "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com";
+    const clientSecret = env.GOOGLE_CLIENT_SECRET || "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";
+    
+    if (!refreshToken || !clientId || !clientSecret) {
       return new Response(JSON.stringify({
         success: false,
         error: 'Missing credentials',
