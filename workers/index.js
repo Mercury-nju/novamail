@@ -4618,6 +4618,41 @@ async function handleTestVerification(request, env) {
       const errorText = await gmailResponse.text();
       console.error('Gmail API error:', gmailResponse.status, errorText);
       
+      // 检查是否是401错误（令牌过期）
+      if (gmailResponse.status === 401) {
+        console.log('Gmail access token expired, attempting to refresh...');
+        const refreshedToken = await refreshGmailAccessToken(env);
+        
+        if (refreshedToken) {
+          console.log('Token refreshed, retrying email send...');
+          // 重新尝试发送邮件
+          const retryResponse = await fetch(gmailApiUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${refreshedToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(gmailMessage)
+          });
+          
+          if (retryResponse.ok) {
+            const result = await retryResponse.json();
+            console.log('Verification email sent successfully after token refresh:', result.id);
+            
+            return new Response(JSON.stringify({
+              success: true,
+              message: '验证码发送成功！(Token已刷新)',
+              code: verificationCode,
+              email: testEmail,
+              messageId: result.id,
+              timestamp: new Date().toISOString()
+            }), {
+              headers: corsHeaders
+            });
+          }
+        }
+      }
+      
       return new Response(JSON.stringify({
         success: false,
         error: `Gmail API Error: ${gmailResponse.status}`,
