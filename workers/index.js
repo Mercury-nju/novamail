@@ -1558,71 +1558,32 @@ async function handleCampaignSend(request, env) {
           // 使用用户 SMTP 配置发送邮件
           console.log('Sending via user SMTP:', userEmailConfig.email);
           
-          // 根据提供商选择发送方式
-          if (userEmailConfig.provider === 'gmail' && userEmailConfig.accessToken) {
-            // Gmail API 方式
-            const accessToken = await getCurrentGmailAccessToken(env);
-            if (!accessToken) {
-              throw new Error('Gmail access token not available');
-            }
+          // 使用用户配置的SMTP发送邮件
+          const smtpResult = await sendViaSMTP({
+            host: userEmailConfig.smtpHost,
+            port: parseInt(userEmailConfig.smtpPort),
+            secure: userEmailConfig.isSecure,
+            provider: userEmailConfig.provider,
+            auth: {
+              user: userEmailConfig.email,
+              pass: userEmailConfig.password
+            },
+            from: userEmailConfig.email,
+            to: recipient,
+            subject: campaignData.subject || 'Email Campaign',
+            html: emailData.html
+          });
 
-            const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                raw: utf8ToBase64(`From: ${userEmailConfig.email}
-To: ${recipient}
-Subject: ${campaignData.subject || 'Email Campaign'}
-Content-Type: text/html; charset=UTF-8
-
-${emailData.html}`)
-              })
+          if (smtpResult.success) {
+            sentEmails.push({
+              recipient: recipient,
+              status: 'sent',
+              method: smtpResult.method,
+              messageId: smtpResult.messageId,
+              timestamp: new Date().toISOString()
             });
-
-            if (gmailResponse.ok) {
-              const result = await gmailResponse.json();
-              sentEmails.push({
-                recipient: recipient,
-                status: 'sent',
-                method: 'user_smtp_gmail_api',
-                messageId: result.id,
-                timestamp: new Date().toISOString()
-              });
-            } else {
-              const errorData = await gmailResponse.text();
-              throw new Error(`Gmail API error: ${errorData}`);
-            }
           } else {
-            // 通用 SMTP 方式
-            const smtpResult = await sendViaSMTP({
-              host: userEmailConfig.smtpHost,
-              port: parseInt(userEmailConfig.smtpPort),
-              secure: userEmailConfig.isSecure,
-              provider: userEmailConfig.provider,
-              auth: {
-                user: userEmailConfig.email,
-                pass: userEmailConfig.password
-              },
-              from: userEmailConfig.email,
-              to: recipient,
-              subject: campaignData.subject || 'Email Campaign',
-              html: emailData.html
-            });
-
-            if (smtpResult.success) {
-              sentEmails.push({
-                recipient: recipient,
-                status: 'sent',
-                method: smtpResult.method,
-                messageId: smtpResult.messageId,
-                timestamp: new Date().toISOString()
-              });
-            } else {
-              throw new Error(`SMTP error: ${smtpResult.error}`);
-            }
+            throw new Error(`SMTP error: ${smtpResult.error}`);
           }
         } else {
           // 使用 NovaMail Gmail 发送服务
@@ -4611,10 +4572,10 @@ async function handleDebugKV(request, env) {
   }
 }
 
-// 通用 SMTP 发送函数 - 直接使用 Gmail API 作为代理
+// 通用 SMTP 发送函数 - 使用简单的邮件发送API
 async function sendViaSMTP(config) {
   try {
-    console.log('Sending email via Gmail API proxy:', {
+    console.log('Sending email via SMTP:', {
       host: config.host,
       port: config.port,
       secure: config.secure,
@@ -4623,8 +4584,42 @@ async function sendViaSMTP(config) {
       provider: config.provider || 'unknown'
     });
 
-    // 直接使用 Gmail API 作为通用 SMTP 代理
-    return await sendViaGmailProxy(config);
+    // 由于Cloudflare Workers不支持直接SMTP连接，
+    // 我们使用一个简单的邮件发送API作为代理
+    // 这里使用一个免费的邮件发送服务
+    
+    // 使用一个简单的邮件发送API
+    // 这里使用一个免费的邮件发送服务
+    const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        service_id: 'default_service',
+        template_id: 'template_smtp',
+        user_id: 'user_smtp',
+        template_params: {
+          from_email: config.from,
+          to_email: config.to,
+          subject: config.subject,
+          message: config.html,
+          reply_to: config.from
+        }
+      })
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      return {
+        success: true,
+        messageId: result.messageId || `emailjs_${Date.now()}`,
+        method: `smtp_emailjs_${config.provider || 'custom'}`
+      };
+    } else {
+      const errorData = await response.text();
+      throw new Error(`EmailJS API error: ${errorData}`);
+    }
 
   } catch (error) {
     console.error('SMTP sending failed:', error);
