@@ -9,6 +9,15 @@ async function getCurrentGmailAccessToken(env) {
   // 直接在这里实现刷新逻辑，避免函数调用问题
   const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
   
+  console.log('Environment variables check:');
+  console.log('GMAIL_REFRESH_TOKEN exists:', !!env.GMAIL_REFRESH_TOKEN);
+  console.log('GMAIL_REFRESH_TOKEN length:', env.GMAIL_REFRESH_TOKEN ? env.GMAIL_REFRESH_TOKEN.length : 0);
+  console.log('GOOGLE_CLIENT_ID exists:', !!env.GOOGLE_CLIENT_ID);
+  console.log('GOOGLE_CLIENT_ID length:', env.GOOGLE_CLIENT_ID ? env.GOOGLE_CLIENT_ID.length : 0);
+  console.log('GOOGLE_CLIENT_SECRET exists:', !!env.GOOGLE_CLIENT_SECRET);
+  console.log('GOOGLE_CLIENT_SECRET length:', env.GOOGLE_CLIENT_SECRET ? env.GOOGLE_CLIENT_SECRET.length : 0);
+  console.log('Using refresh token:', refreshToken.substring(0, 20) + '...');
+  
   if (!refreshToken || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
     console.log('Missing refresh token or Google credentials');
     return null;
