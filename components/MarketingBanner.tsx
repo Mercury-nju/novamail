@@ -8,6 +8,11 @@ import { XMarkIcon, SparklesIcon, ArrowRightIcon } from '@heroicons/react/24/out
 export default function MarketingBanner() {
   const [isVisible, setIsVisible] = useState(false)
   const [isDismissed, setIsDismissed] = useState(false)
+  const [timeLeft, setTimeLeft] = useState({
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  })
 
   useEffect(() => {
     // 每次打开都显示banner，不检查localStorage
@@ -15,6 +20,34 @@ export default function MarketingBanner() {
       setIsVisible(true)
     }, 2000)
     return () => clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    // 设置倒计时为24小时
+    const targetTime = Date.now() + 24 * 60 * 60 * 1000 // 24小时后
+    
+    const updateCountdown = () => {
+      const now = Date.now()
+      const difference = targetTime - now
+      
+      if (difference > 0) {
+        const hours = Math.floor(difference / (1000 * 60 * 60))
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000)
+        
+        setTimeLeft({ hours, minutes, seconds })
+      } else {
+        setTimeLeft({ hours: 0, minutes: 0, seconds: 0 })
+      }
+    }
+    
+    // 立即更新一次
+    updateCountdown()
+    
+    // 每秒更新
+    const interval = setInterval(updateCountdown, 1000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   const handleDismiss = () => {
@@ -71,12 +104,22 @@ export default function MarketingBanner() {
                     className="text-white"
                   >
                     <p className="text-sm font-medium">
-                      🚀 <span className="font-semibold">Unlock Premium Features!</span> 
+                      🚀 <span className="font-semibold">Limited Time Offer!</span> 
                       Get unlimited AI generations, advanced templates, and priority support.
                     </p>
-                    <p className="text-xs text-blue-100 mt-1">
-                      Join 10,000+ businesses growing with NovaMail Pro
-                    </p>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <p className="text-xs text-blue-100">
+                        Join 10,000+ businesses growing with NovaMail Pro
+                      </p>
+                      <div className="flex items-center space-x-1 bg-red-500/20 px-2 py-1 rounded-full">
+                        <span className="text-xs font-bold text-red-200">⏰</span>
+                        <span className="text-xs font-bold text-red-200">
+                          {String(timeLeft.hours).padStart(2, '0')}:
+                          {String(timeLeft.minutes).padStart(2, '0')}:
+                          {String(timeLeft.seconds).padStart(2, '0')}
+                        </span>
+                      </div>
+                    </div>
                   </motion.div>
                 </div>
               </div>
@@ -89,9 +132,9 @@ export default function MarketingBanner() {
                 >
                   <Link
                     href="/pricing"
-                    className="bg-white text-blue-600 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
+                    className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl animate-pulse"
                   >
-                    <span>Upgrade Now</span>
+                    <span>Claim Offer</span>
                     <ArrowRightIcon className="h-4 w-4" />
                   </Link>
                 </motion.div>
