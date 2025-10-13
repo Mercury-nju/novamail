@@ -157,6 +157,8 @@ export default {
         return await handleTestDirectVerification(request, env);
       } else if (path.startsWith('/api/debug-env')) {
         return await handleDebugEnv(request, env);
+      } else if (path.startsWith('/api/test-oauth')) {
+        return await handleTestOAuth(request, env);
       } else if (path.startsWith('/api/check-gmail-scopes')) {
         return await handleCheckGmailScopes(request, env);
       } else if (path.startsWith('/api/refresh-gmail-token')) {
@@ -5784,6 +5786,108 @@ async function handleDebugEnv(request, env) {
     return new Response(JSON.stringify({
       success: false,
       error: 'Failed to debug environment variables',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 测试OAuth刷新函数
+async function handleTestOAuth(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  console.log('Test OAuth refresh endpoint called');
+
+  try {
+    const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
+    
+    console.log('Environment check:');
+    console.log('CLIENT_ID:', env.GOOGLE_CLIENT_ID ? env.GOOGLE_CLIENT_ID.substring(0, 20) + '...' : 'Not set');
+    console.log('CLIENT_SECRET:', env.GOOGLE_CLIENT_SECRET ? env.GOOGLE_CLIENT_SECRET.substring(0, 10) + '...' : 'Not set');
+    console.log('REFRESH_TOKEN:', refreshToken ? refreshToken.substring(0, 20) + '...' : 'Not set');
+
+    if (!refreshToken || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Missing credentials',
+        details: {
+          hasClientId: !!env.GOOGLE_CLIENT_ID,
+          hasClientSecret: !!env.GOOGLE_CLIENT_SECRET,
+          hasRefreshToken: !!refreshToken
+        },
+        timestamp: new Date().toISOString()
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    // 直接调用Google OAuth API
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        client_id: env.GOOGLE_CLIENT_ID,
+        client_secret: env.GOOGLE_CLIENT_SECRET,
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token'
+      })
+    });
+
+    console.log('OAuth response status:', response.status);
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('OAuth refresh successful');
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'OAuth refresh successful',
+        data: {
+          access_token_length: data.access_token ? data.access_token.length : 0,
+          access_token_preview: data.access_token ? data.access_token.substring(0, 20) + '...' : 'Not provided',
+          expires_in: data.expires_in,
+          token_type: data.token_type
+        },
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+    } else {
+      const errorData = await response.text();
+      console.log('OAuth refresh failed:', response.status, errorData);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'OAuth refresh failed',
+        details: {
+          status: response.status,
+          statusText: response.statusText,
+          errorData: errorData
+        },
+        timestamp: new Date().toISOString()
+      }), {
+        status: response.status,
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Error in handleTestOAuth:', error);
+    
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'OAuth test failed',
       details: error.message,
       timestamp: new Date().toISOString()
     }), {
