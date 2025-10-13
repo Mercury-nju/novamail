@@ -4573,9 +4573,10 @@ async function handleDebugKV(request, env) {
 }
 
 // 通用 SMTP 发送函数 - 使用 Gmail API 作为邮件发送服务
+// 直接使用test-gmail函数的成功逻辑
 async function sendViaSMTP(config, env) {
   try {
-    console.log('Sending email via Gmail API:', {
+    console.log('sendViaSMTP: Starting email send via Gmail API:', {
       host: config.host,
       port: config.port,
       secure: config.secure,
@@ -4617,17 +4618,15 @@ async function sendViaSMTP(config, env) {
       throw new Error('Gmail access token not available');
     }
     
-    // 构建邮件内容 - 使用与test-gmail完全相同的格式
+    // 构建邮件内容 - 使用用户提供的HTML内容
     const emailContent = `To: ${config.to}
 From: ${config.from}
 Subject: ${config.subject}
 Content-Type: text/html; charset=utf-8
 
-<h1>Test Email</h1>
-<p>This is a test email from NovaMail.</p>
-<p>If you receive this email, it means the email sending function is working correctly!</p>`;
+${config.html}`;
 
-    // 使用Gmail API发送邮件
+    // 使用Gmail API发送邮件 - 与test-gmail完全相同的逻辑
     const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
     
     const gmailMessage = {
