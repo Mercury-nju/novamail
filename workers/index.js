@@ -3,7 +3,10 @@
 
 // Gmail访问令牌刷新函数
 async function refreshGmailAccessToken(env) {
-  if (!env.GMAIL_REFRESH_TOKEN || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+  // 临时硬编码Refresh Token进行测试
+  const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
+  
+  if (!refreshToken || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
     console.log('Missing refresh token or Google credentials');
     return null;
   }
@@ -17,7 +20,7 @@ async function refreshGmailAccessToken(env) {
       body: new URLSearchParams({
         client_id: env.GOOGLE_CLIENT_ID,
         client_secret: env.GOOGLE_CLIENT_SECRET,
-        refresh_token: env.GMAIL_REFRESH_TOKEN,
+        refresh_token: refreshToken,
         grant_type: 'refresh_token'
       })
     });
@@ -431,10 +434,10 @@ async function handleSendVerification(request, env) {
       console.log('Gmail configuration check:', {
         hasAccessToken: !!gmailAccessToken,
         accessTokenLength: gmailAccessToken ? gmailAccessToken.length : 0,
-        hasRefreshToken: !!env.GMAIL_REFRESH_TOKEN,
+        hasRefreshToken: !!refreshToken,
         gmailUser: gmailUser,
         accessTokenPreview: gmailAccessToken ? gmailAccessToken.substring(0, 20) + '...' : 'null',
-        refreshTokenPreview: env.GMAIL_REFRESH_TOKEN ? env.GMAIL_REFRESH_TOKEN.substring(0, 20) + '...' : 'null'
+        refreshTokenPreview: refreshToken ? refreshToken.substring(0, 20) + '...' : 'null'
       });
       
       if (!gmailAccessToken || gmailAccessToken.length < 50) {
@@ -4410,12 +4413,15 @@ async function handleDebugVerification(request, env) {
 
   console.log('Debug verification endpoint called');
   
+  // 临时硬编码Refresh Token进行测试
+  const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
+  
   // 检查环境变量
   const debugInfo = {
     hasGmailAccessToken: !!env.GMAIL_ACCESS_TOKEN,
     gmailAccessTokenLength: env.GMAIL_ACCESS_TOKEN ? env.GMAIL_ACCESS_TOKEN.length : 0,
-    hasGmailRefreshToken: !!env.GMAIL_REFRESH_TOKEN,
-    gmailRefreshTokenLength: env.GMAIL_REFRESH_TOKEN ? env.GMAIL_REFRESH_TOKEN.length : 0,
+    hasGmailRefreshToken: !!refreshToken,
+    gmailRefreshTokenLength: refreshToken ? refreshToken.length : 0,
     gmailUser: env.GMAIL_SMTP_USER || 'not configured',
     timestamp: new Date().toISOString()
   };
