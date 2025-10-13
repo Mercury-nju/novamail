@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { XMarkIcon, SparklesIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
 export default function MarketingBanner() {
   const [isVisible, setIsVisible] = useState(false)
   const [isDismissed, setIsDismissed] = useState(false)
+  const pathname = usePathname()
   const [timeLeft, setTimeLeft] = useState({
     hours: 0,
     minutes: 0,
@@ -15,12 +17,16 @@ export default function MarketingBanner() {
   })
 
   useEffect(() => {
-    // 每次打开都显示banner，不检查localStorage
-    const timer = setTimeout(() => {
-      setIsVisible(true)
-    }, 2000)
-    return () => clearTimeout(timer)
-  }, [])
+    // 只在首页显示banner
+    if (pathname === '/') {
+      const timer = setTimeout(() => {
+        setIsVisible(true)
+      }, 2000)
+      return () => clearTimeout(timer)
+    } else {
+      setIsVisible(false)
+    }
+  }, [pathname])
 
   useEffect(() => {
     // 设置倒计时为24小时
@@ -61,7 +67,8 @@ export default function MarketingBanner() {
     window.location.href = '/pricing'
   }
 
-  if (isDismissed) return null
+  // 只在首页显示，如果已关闭则不显示
+  if (isDismissed || pathname !== '/') return null
 
   return (
     <AnimatePresence>
