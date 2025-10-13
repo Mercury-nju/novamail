@@ -4946,6 +4946,9 @@ async function handleTestGmail(request, env) {
   };
 
   console.log('Test Gmail API endpoint called');
+  console.log('Test Gmail: env object:', typeof env);
+  console.log('Test Gmail: env.GMAIL_ACCESS_TOKEN exists:', !!env.GMAIL_ACCESS_TOKEN);
+  console.log('Test Gmail: env.GMAIL_ACCESS_TOKEN length:', env.GMAIL_ACCESS_TOKEN ? env.GMAIL_ACCESS_TOKEN.length : 0);
   
   // 临时硬编码Refresh Token进行测试
   const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
