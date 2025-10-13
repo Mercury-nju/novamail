@@ -4976,6 +4976,7 @@ async function handleTestGmail(request, env) {
     const refreshData = await refreshResponse.json();
     const gmailAccessToken = refreshData.access_token;
     console.log('Test Gmail: Got fresh access token:', gmailAccessToken ? 'YES' : 'NO');
+    console.log('Test Gmail: Access token preview:', gmailAccessToken ? gmailAccessToken.substring(0, 20) + '...' : 'NONE');
     if (!gmailAccessToken) {
       throw new Error('Gmail access token not available');
     }
