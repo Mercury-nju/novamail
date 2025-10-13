@@ -4952,7 +4952,9 @@ async function handleTestGmail(request, env) {
   
   try {
     // 获取Gmail访问令牌
+    console.log('Test Gmail: Calling getCurrentGmailAccessToken...');
     const gmailAccessToken = await getCurrentGmailAccessToken(env);
+    console.log('Test Gmail: Got access token:', gmailAccessToken ? 'YES' : 'NO');
     if (!gmailAccessToken) {
       throw new Error('Gmail access token not available');
     }
