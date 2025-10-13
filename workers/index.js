@@ -3,8 +3,8 @@
 
 // 获取当前有效的Gmail Access Token
 async function getCurrentGmailAccessToken(env) {
-  // 直接刷新token以确保有效性，因为Cloudflare Workers无法更新环境变量
-  console.log('Refreshing Gmail access token to ensure validity...');
+  // 每次都刷新token，因为Cloudflare Workers无法更新环境变量
+  console.log('Refreshing Gmail access token for this request...');
   const token = await refreshGmailAccessToken(env);
   
   if (!token) {
@@ -12,7 +12,7 @@ async function getCurrentGmailAccessToken(env) {
     return null;
   }
   
-  console.log('Gmail access token refreshed successfully');
+  console.log('Gmail access token refreshed successfully for this request');
   return token;
 }
 
@@ -45,8 +45,8 @@ async function refreshGmailAccessToken(env) {
       console.log('Gmail access token refreshed successfully');
       
       // 注意：Cloudflare Workers无法直接更新环境变量
-      // 需要在Cloudflare Dashboard中手动更新GMAIL_ACCESS_TOKEN
-      console.log('Please update GMAIL_ACCESS_TOKEN in Cloudflare Dashboard with the new token');
+      // 每次都刷新token以确保有效性
+      console.log('Token refreshed for this request, returning fresh token');
       
       return data.access_token;
     } else {
