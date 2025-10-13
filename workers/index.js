@@ -4951,9 +4951,9 @@ async function handleTestGmail(request, env) {
   const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
   
   try {
-    // 获取Gmail访问令牌
-    console.log('Test Gmail: Calling getCurrentGmailAccessToken...');
-    const gmailAccessToken = await getCurrentGmailAccessToken(env);
+    // 直接使用环境变量中的访问令牌
+    console.log('Test Gmail: Using environment access token...');
+    const gmailAccessToken = env.GMAIL_ACCESS_TOKEN;
     console.log('Test Gmail: Got access token:', gmailAccessToken ? 'YES' : 'NO');
     if (!gmailAccessToken) {
       throw new Error('Gmail access token not available');
