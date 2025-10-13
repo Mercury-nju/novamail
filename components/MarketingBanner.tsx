@@ -78,39 +78,82 @@ export default function MarketingBanner() {
           className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 shadow-2xl border-t border-white/20"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="py-4">
-              {/* Top row - Message and CTA */}
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center space-x-3">
-                  <motion.div
-                    animate={{ 
-                      rotate: [0, 10, -10, 0],
-                      scale: [1, 1.1, 1]
-                    }}
-                    transition={{ 
-                      duration: 2, 
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    className="flex-shrink-0"
-                  >
-                    <SparklesIcon className="h-5 w-5 text-yellow-300" />
-                  </motion.div>
-                  
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-white"
-                  >
-                    <p className="text-sm font-medium">
-                      🚀 <span className="font-semibold">Limited Time Offer!</span> 
-                      Get unlimited AI generations, advanced templates, and priority support.
-                    </p>
-                  </motion.div>
-                </div>
+            <div className="flex items-center justify-between py-4">
+              {/* Left section - Message */}
+              <div className="flex items-center space-x-4 flex-1 min-w-0">
+                <motion.div
+                  animate={{ 
+                    rotate: [0, 10, -10, 0],
+                    scale: [1, 1.1, 1]
+                  }}
+                  transition={{ 
+                    duration: 2, 
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="flex-shrink-0"
+                >
+                  <SparklesIcon className="h-6 w-6 text-yellow-300" />
+                </motion.div>
+                
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-white flex-1 min-w-0"
+                >
+                  <p className="text-sm font-medium">
+                    🚀 <span className="font-semibold">Limited Time Offer!</span> 
+                    Get unlimited AI generations, advanced templates, and priority support.
+                  </p>
+                  <p className="text-xs text-blue-100 mt-1">
+                    Join 10,000+ businesses growing with NovaMail Pro
+                  </p>
+                </motion.div>
+              </div>
 
-                {/* CTA Button */}
+              {/* Center section - Countdown Timer */}
+              <div className="flex items-center space-x-2 mx-6">
+                <div className="text-center">
+                  <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-gray-600">
+                    <div className="text-lg font-bold text-white">
+                      {String(timeLeft.hours).padStart(2, '0')}
+                    </div>
+                    <div className="text-xs text-gray-300 uppercase tracking-wide">
+                      Hours
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-white text-lg font-bold">:</div>
+                
+                <div className="text-center">
+                  <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-gray-600">
+                    <div className="text-lg font-bold text-white">
+                      {String(timeLeft.minutes).padStart(2, '0')}
+                    </div>
+                    <div className="text-xs text-gray-300 uppercase tracking-wide">
+                      Minutes
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-white text-lg font-bold">:</div>
+                
+                <div className="text-center">
+                  <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-gray-600">
+                    <div className="text-lg font-bold text-white">
+                      {String(timeLeft.seconds).padStart(2, '0')}
+                    </div>
+                    <div className="text-xs text-gray-300 uppercase tracking-wide">
+                      Seconds
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right section - CTA and Close */}
+              <div className="flex items-center space-x-3 flex-shrink-0">
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -123,62 +166,12 @@ export default function MarketingBanner() {
                     <ArrowRightIcon className="h-4 w-4" />
                   </Link>
                 </motion.div>
-              </div>
 
-              {/* Bottom row - Countdown Timer */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <p className="text-xs text-blue-100">
-                    Join 10,000+ businesses growing with NovaMail Pro
-                  </p>
-                </div>
-                
-                {/* Large Countdown Timer */}
-                <div className="flex items-center space-x-2">
-                  <div className="text-center">
-                    <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-gray-600">
-                      <div className="text-lg font-bold text-white">
-                        {String(timeLeft.hours).padStart(2, '0')}
-                      </div>
-                      <div className="text-xs text-gray-300 uppercase tracking-wide">
-                        Hours
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="text-white text-lg font-bold">:</div>
-                  
-                  <div className="text-center">
-                    <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-gray-600">
-                      <div className="text-lg font-bold text-white">
-                        {String(timeLeft.minutes).padStart(2, '0')}
-                      </div>
-                      <div className="text-xs text-gray-300 uppercase tracking-wide">
-                        Minutes
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="text-white text-lg font-bold">:</div>
-                  
-                  <div className="text-center">
-                    <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-gray-600">
-                      <div className="text-lg font-bold text-white">
-                        {String(timeLeft.seconds).padStart(2, '0')}
-                      </div>
-                      <div className="text-xs text-gray-300 uppercase tracking-wide">
-                        Seconds
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Close Button */}
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={handleDismiss}
-                  className="text-white/80 hover:text-white p-1 rounded-full hover:bg-white/10 transition-all duration-200 ml-4"
+                  className="text-white/80 hover:text-white p-1 rounded-full hover:bg-white/10 transition-all duration-200"
                   aria-label="Close banner"
                 >
                   <XMarkIcon className="h-5 w-5" />
