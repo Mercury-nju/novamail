@@ -1572,7 +1572,7 @@ async function handleCampaignSend(request, env) {
             to: recipient,
             subject: campaignData.subject || 'Email Campaign',
             html: emailData.html
-          });
+          }, env);
 
           if (smtpResult.success) {
             sentEmails.push({
@@ -4573,7 +4573,7 @@ async function handleDebugKV(request, env) {
 }
 
 // 通用 SMTP 发送函数 - 使用 Gmail API 作为邮件发送服务
-async function sendViaSMTP(config) {
+async function sendViaSMTP(config, env) {
   try {
     console.log('Sending email via Gmail API:', {
       host: config.host,
