@@ -4031,8 +4031,7 @@ async function handleGoogleCallback(request, env) {
     const googleUser = await userResponse.json();
 
     // 3. 创建或更新用户账户
-    // 使用邮箱作为稳定的用户ID，避免每次登录生成新的ID
-    const userId = 'user_' + googleUser.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     const userToken = 'token_' + Math.random().toString(36).substr(2, 9);
     
     const user = {
@@ -4573,7 +4572,8 @@ async function handleDebugKV(request, env) {
   }
 }
 
-// 通用 SMTP 发送函数 - 直接使用test-gmail函数的成功逻辑
+// 通用 SMTP 发送函数 - 使用 Gmail API 作为邮件发送服务
+// 直接使用test-gmail函数的成功逻辑
 async function sendViaSMTP(config, env) {
   try {
     console.log('sendViaSMTP: Starting email send via Gmail API:', {
@@ -4618,11 +4618,11 @@ async function sendViaSMTP(config, env) {
       throw new Error('Gmail access token not available');
     }
     
-    // 构建邮件内容 - 使用与test-gmail完全相同的格式
+    // 构建邮件内容 - 使用用户实际生成的邮件内容
     const emailContent = `To: ${config.to}
 From: ${config.from}
 Subject: ${config.subject}
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/html; charset=utf-8
 
 ${config.html}`;
 
