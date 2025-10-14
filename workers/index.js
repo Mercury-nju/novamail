@@ -4637,6 +4637,9 @@ async function sendViaSMTP(config, env) {
     
     // 使用用户AI生成的真实邮件内容
     // 将HTML转换为纯文本，保持邮件格式
+    console.log('sendViaSMTP: Original HTML content length:', config.html ? config.html.length : 0);
+    console.log('sendViaSMTP: Original HTML preview:', config.html ? config.html.substring(0, 200) + '...' : 'NO HTML');
+    
     const cleanHtml = config.html
       .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // 移除控制字符
       .replace(/\r\n/g, '\n') // 统一换行符
@@ -4655,6 +4658,9 @@ async function sendViaSMTP(config, env) {
       .replace(/&#39;/g, "'")
       .replace(/\s+/g, ' ') // 合并多个空格
       .trim(); // 去除首尾空格
+    
+    console.log('sendViaSMTP: Cleaned HTML content length:', cleanHtml.length);
+    console.log('sendViaSMTP: Cleaned HTML preview:', cleanHtml.substring(0, 200) + '...');
     
     const emailContent = `To: ${config.to}
 From: NovaMail <lihongyangnju@gmail.com>
