@@ -4642,6 +4642,12 @@ async function sendViaSMTP(config, env) {
     console.log('sendViaSMTP: Original HTML content length:', config.html ? config.html.length : 0);
     console.log('sendViaSMTP: Original HTML preview:', config.html ? config.html.substring(0, 200) + '...' : 'NO HTML');
     
+    // 安全检查：确保config.html存在
+    if (!config.html) {
+      console.error('sendViaSMTP: No HTML content provided');
+      throw new Error('No HTML content provided for email');
+    }
+    
     const cleanHtml = config.html
       .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // 移除控制字符
       .replace(/\r\n/g, '\n') // 统一换行符
