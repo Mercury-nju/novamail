@@ -4635,38 +4635,14 @@ async function sendViaSMTP(config, env) {
       throw new Error('Gmail access token not available');
     }
     
-    // 构建邮件内容 - 使用用户实际生成的邮件内容
-    // 确保HTML内容正确编码
-    // 清理HTML内容，移除可能导致问题的字符
-    // 将HTML转换为纯文本，因为使用text/plain内容类型
-    const cleanHtml = config.html
-      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // 移除控制字符
-      .replace(/\r\n/g, '\n') // 统一换行符
-      .replace(/\r/g, '\n') // 统一换行符
-      .replace(/<script[^>]*>.*?<\/script>/gi, '') // 移除script标签
-      .replace(/javascript:/gi, '') // 移除javascript:链接
-      .replace(/on\w+\s*=/gi, '') // 移除事件处理器
-      .replace(/style\s*=\s*["'][^"']*position\s*:\s*absolute[^"']*["']/gi, '') // 移除绝对定位样式
-      .replace(/style\s*=\s*["'][^"']*display\s*:\s*none[^"']*["']/gi, '') // 移除隐藏样式
-      .replace(/<[^>]*>/g, '') // 移除所有HTML标签
-      .replace(/&nbsp;/g, ' ') // 转换HTML实体
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/\s+/g, ' ') // 合并多个空格
-      .trim(); // 去除首尾空格
-    
-    // 强制使用经过OAuth授权的Gmail账户作为发送方
-    // Gmail API只能发送来自经过授权的Gmail账户的邮件
     // 使用与test-gmail完全相同的格式
     const emailContent = `To: ${config.to}
 From: NovaMail <lihongyangnju@gmail.com>
 Subject: ${config.subject}
 Content-Type: text/plain; charset=utf-8
 
-${cleanHtml}`;
+This is a test email from NovaMail API.
+Timestamp: ${new Date().toISOString()}`;
 
     // 使用Gmail API发送邮件 - 与test-gmail完全相同的逻辑
     const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
@@ -4677,14 +4653,6 @@ ${cleanHtml}`;
 
     console.log('sendViaSMTP: Sending email via Gmail API...');
     console.log('sendViaSMTP: Access token length:', gmailAccessToken ? gmailAccessToken.length : 0);
-    console.log('sendViaSMTP: Refresh token length:', refreshToken ? refreshToken.length : 0);
-    console.log('sendViaSMTP: Original HTML length:', config.html.length);
-    console.log('sendViaSMTP: Cleaned text length:', cleanHtml.length);
-    console.log('sendViaSMTP: Email content length:', emailContent.length);
-    console.log('sendViaSMTP: From address (fixed): NovaMail <lihongyangnju@gmail.com>');
-    console.log('sendViaSMTP: To address:', config.to);
-    console.log('sendViaSMTP: Subject:', config.subject);
-    console.log('sendViaSMTP: Cleaned text preview:', cleanHtml.substring(0, 200) + '...');
 
     const gmailResponse = await fetch(gmailApiUrl, {
       method: 'POST',
@@ -4700,7 +4668,6 @@ ${cleanHtml}`;
     if (gmailResponse.ok) {
       const result = await gmailResponse.json();
       console.log('sendViaSMTP: Email sent successfully:', result.id);
-      console.log('sendViaSMTP: Gmail API response:', JSON.stringify(result));
       
       return {
         success: true,
@@ -4710,7 +4677,6 @@ ${cleanHtml}`;
     } else {
       const errorText = await gmailResponse.text();
       console.error('sendViaSMTP: Gmail API error:', gmailResponse.status, errorText);
-      console.error('sendViaSMTP: Email content that failed:', emailContent);
       throw new Error(`Gmail API error: ${gmailResponse.status} - ${errorText}`);
     }
 
