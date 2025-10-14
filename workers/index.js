@@ -154,6 +154,8 @@ export default {
         return await handleAIGenerateEmail(request, env);
       } else if (path.startsWith('/api/test-gmail')) {
         return await handleTestGmail(request, env);
+      } else if (path.startsWith('/api/test-sendviasmtp')) {
+        return await handleTestSendViaSMTP(request, env);
       } else if (path.startsWith('/api/test-verification')) {
         return await handleTestVerification(request, env);
       } else if (path.startsWith('/api/test-simple-email')) {
@@ -5045,6 +5047,59 @@ async function handleDebugVerification(request, env) {
 }
 
 // 测试Gmail API函数
+async function handleTestSendViaSMTP(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-user-email'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 200, headers: corsHeaders });
+  }
+
+  if (request.method === 'POST') {
+    try {
+      console.log('Test SendViaSMTP: Starting test');
+      
+      // 测试sendViaSMTP函数
+      const result = await sendViaSMTP({
+        to: '66597405@qq.com',
+        from: 'lihongyangnju@gmail.com',
+        subject: 'Test SendViaSMTP Function',
+        html: '<h1>Test Email from SendViaSMTP</h1><p>This is a test to verify the sendViaSMTP function works correctly.</p>'
+      }, env);
+
+      console.log('Test SendViaSMTP result:', result);
+
+      return new Response(JSON.stringify({
+        success: result.success,
+        message: result.success ? 'SendViaSMTP test successful' : 'SendViaSMTP test failed',
+        details: result,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+
+    } catch (error) {
+      console.error('Test SendViaSMTP error:', error);
+      return new Response(JSON.stringify({
+        success: false,
+        error: error.message,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+  }
+
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), { 
+    status: 405, 
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+  });
+}
+
 async function handleTestGmail(request, env) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
