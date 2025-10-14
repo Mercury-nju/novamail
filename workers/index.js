@@ -168,6 +168,8 @@ export default {
         return await handleSimpleEmailTest(request, env);
       } else if (path.startsWith('/api/test-specific-email')) {
         return await handleTestSpecificEmail(request, env);
+      } else if (path.startsWith('/api/test-multiple-emails')) {
+        return await handleTestMultipleEmails(request, env);
       } else if (path.startsWith('/api/test-oauth')) {
         return await handleTestOAuth(request, env);
       } else if (path.startsWith('/api/check-gmail-scopes')) {
@@ -5495,6 +5497,170 @@ Test System`;
       return new Response(JSON.stringify({
         success: false,
         error: 'Test specific email failed',
+        details: error.message,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+  }
+  
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405,
+    headers: corsHeaders
+  });
+}
+
+// 测试发送到多个邮箱服务商
+async function handleTestMultipleEmails(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (request.method === 'POST') {
+    try {
+      console.log('Test multiple emails: Starting test to different email providers');
+      
+      // 使用与test-gmail完全相同的逻辑
+      const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
+      
+      // 直接刷新获取新的访问令牌
+      console.log('Test multiple emails: Refreshing access token...');
+      const refreshResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          client_id: env.GOOGLE_CLIENT_ID || "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com",
+          client_secret: env.GOOGLE_CLIENT_SECRET || "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",
+          refresh_token: refreshToken,
+          grant_type: 'refresh_token'
+        })
+      });
+
+      if (!refreshResponse.ok) {
+        const errorText = await refreshResponse.text();
+        console.error('Test multiple emails: OAuth refresh failed:', refreshResponse.status, errorText);
+        throw new Error(`Failed to refresh access token: ${refreshResponse.status} ${errorText}`);
+      }
+
+      const refreshData = await refreshResponse.json();
+      const gmailAccessToken = refreshData.access_token;
+      console.log('Test multiple emails: Got fresh access token:', gmailAccessToken ? 'YES' : 'NO');
+      
+      if (!gmailAccessToken) {
+        throw new Error('Gmail access token not available');
+      }
+      
+      // 测试多个邮箱服务商
+      const testEmails = [
+        '2945235656@qq.com',      // QQ邮箱
+        '66597405@qq.com',         // 另一个QQ邮箱
+        'lihongyangnju@gmail.com', // Gmail (发送给自己)
+        'test@outlook.com'         // Outlook (测试用)
+      ];
+      
+      const results = [];
+      
+      for (const email of testEmails) {
+        try {
+          console.log(`Test multiple emails: Testing ${email}`);
+          
+          // 构建测试邮件
+          const testEmail = `To: ${email}
+From: lihongyangnju@gmail.com
+Subject: Multi-Provider Test Email
+Content-Type: text/plain; charset=utf-8
+
+Hello,
+
+This is a test email to verify delivery across different email providers.
+
+From: lihongyangnju@gmail.com
+To: ${email}
+Time: ${new Date().toISOString()}
+
+This email is sent to test if the issue is specific to QQ邮箱 or affects all providers.
+
+Best regards,
+Test System`;
+
+          // 使用Gmail API发送邮件
+          const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
+          
+          const gmailMessage = {
+            raw: btoa(testEmail).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+          };
+
+          const gmailResponse = await fetch(gmailApiUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${gmailAccessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(gmailMessage)
+          });
+
+          if (gmailResponse.ok) {
+            const result = await gmailResponse.json();
+            console.log(`Test multiple emails: Email sent successfully to ${email}:`, result.id);
+            results.push({
+              email: email,
+              success: true,
+              messageId: result.id,
+              status: 'sent'
+            });
+          } else {
+            const errorText = await gmailResponse.text();
+            console.error(`Test multiple emails: Failed to send to ${email}:`, gmailResponse.status, errorText);
+            results.push({
+              email: email,
+              success: false,
+              error: `Gmail API Error: ${gmailResponse.status}`,
+              details: errorText,
+              status: 'failed'
+            });
+          }
+          
+          // 添加延迟，避免发送频率过高
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+        } catch (error) {
+          console.error(`Test multiple emails: Error sending to ${email}:`, error);
+          results.push({
+            email: email,
+            success: false,
+            error: error.message,
+            status: 'error'
+          });
+        }
+      }
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Multi-provider email test completed',
+        results: results,
+        timestamp: new Date().toISOString(),
+        note: 'Check each email provider to see which ones receive the emails. This will help identify if the issue is specific to QQ邮箱.'
+      }), {
+        headers: corsHeaders
+      });
+
+    } catch (error) {
+      console.error('Test multiple emails error:', error);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Test multiple emails failed',
         details: error.message,
         timestamp: new Date().toISOString()
       }), {
