@@ -4664,6 +4664,8 @@ async function sendViaSMTP(config, env) {
     // 将HTML转换为纯文本，保持邮件格式
     console.log('sendViaSMTP: Original HTML content length:', config.html ? config.html.length : 0);
     console.log('sendViaSMTP: Original HTML preview:', config.html ? config.html.substring(0, 200) + '...' : 'NO HTML');
+    console.log('sendViaSMTP: HTML contains complex styles:', config.html ? config.html.includes('linear-gradient') : false);
+    console.log('sendViaSMTP: HTML contains special characters:', config.html ? /[^\x00-\x7F]/.test(config.html) : false);
     
     // 安全检查：确保config.html存在
     if (!config.html) {
