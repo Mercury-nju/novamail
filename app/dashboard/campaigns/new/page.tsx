@@ -59,8 +59,6 @@ export default function NewCampaignPage() {
   const [previewTemplate, setPreviewTemplate] = useState<string>('')
   const [showPreview, setShowPreview] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
-  const [showImportContactsModal, setShowImportContactsModal] = useState(false)
-  const [showImportFileModal, setShowImportFileModal] = useState(false)
   const [showProTemplateModal, setShowProTemplateModal] = useState(false)
   const [toneStyle, setToneStyle] = useState<string>('friendly')
   const [campaignData, setCampaignData] = useState({
@@ -1587,6 +1585,50 @@ export default function NewCampaignPage() {
         {/* Step 3: Review & Send */}
         {step === 3 && (
           <div className="space-y-8">
+            {/* Email Generated Successfully */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">✅ Email Generated Successfully!</h3>
+              <p className="text-gray-600 mb-6">Your AI-generated email is ready. You can copy the content or export it as an HTML file.</p>
+              
+              <div className="flex space-x-4">
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(campaignData.body);
+                    toast.success('Email content copied to clipboard!');
+                  }}
+                  disabled={!campaignData.body.trim()}
+                  className="px-6 py-3 bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  <span>Copy Content</span>
+                </button>
+                
+                <button 
+                  onClick={() => {
+                    const blob = new Blob([campaignData.body], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${campaignData.subject || 'email'}.html`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    toast.success('Email exported as HTML file!');
+                  }}
+                  disabled={!campaignData.body.trim()}
+                  className="px-6 py-3 bg-purple-600 text-white hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Export HTML</span>
+                </button>
+              </div>
+            </div>
+
             {/* Campaign Summary */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Campaign Summary</h3>
@@ -1627,138 +1669,10 @@ export default function NewCampaignPage() {
               </div>
             </div>
 
-            {/* Recipients Selection */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Select Recipients</h3>
-              <div className="space-y-4">
-                {/* Import Options */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Import Recipients</label>
-                  <div className="flex flex-wrap gap-3">
-                    <button
-                      onClick={handleImportFromContacts}
-                      className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-                    >
-                      <UserGroupIcon className="h-4 w-4 mr-2" />
-                      From Contacts
-                    </button>
-                    <button
-                      onClick={handleImportFromFile}
-                      className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center"
-                    >
-                      <CloudArrowUpIcon className="h-4 w-4 mr-2" />
-                      From File
-                    </button>
-                  </div>
-                </div>
-
-                {/* Manual Input */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Manual Input</label>
-                  <textarea
-                    value={campaignData.recipients.join(', ')}
-                    onChange={(e) => {
-                      const emails = e.target.value.split(',').map(email => email.trim()).filter(email => email)
-                      setCampaignData({ ...campaignData, recipients: emails })
-                    }}
-                    placeholder="Enter email addresses separated by commas (e.g., user1@example.com, user2@example.com)"
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <p className="text-xs text-gray-500 mt-2">
-                    💡 You can enter multiple email addresses separated by commas
-                  </p>
-                </div>
-                
-                {/* Quick Add Options */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Quick Add</label>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => {
-                        const newEmails = [...campaignData.recipients, 'your-email@example.com']
-                        setCampaignData({ ...campaignData, recipients: newEmails })
-                      }}
-                      className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-                    >
-                      + Your Email
-                    </button>
-                  </div>
-                </div>
-
-                {/* Recipients List */}
-                {campaignData.recipients.length > 0 && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Recipients ({campaignData.recipients.length})
-                    </label>
-                    <div className="border border-gray-200 rounded-lg p-3 bg-gray-50 max-h-32 overflow-y-auto">
-                      <div className="flex flex-wrap gap-2">
-                        {campaignData.recipients.map((email, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-lg"
-                          >
-                            {email}
-                            <button
-                              onClick={() => {
-                                const newRecipients = campaignData.recipients.filter((_, i) => i !== index)
-                                setCampaignData({ ...campaignData, recipients: newRecipients })
-                              }}
-                              className="ml-1 text-blue-600 hover:text-blue-800"
-                            >
-                              ×
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
             <div className="flex justify-between items-center">
               <button onClick={handleBack} className="px-6 py-3 text-gray-600 hover:text-gray-800 transition-colors">← Back</button>
               <div className="flex space-x-4">
                 <button onClick={handleSave} className="px-6 py-3 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg transition-colors">Save Draft</button>
-                <div className="flex space-x-3">
-                  <button 
-                    onClick={() => {
-                      navigator.clipboard.writeText(campaignData.body);
-                      toast.success('Email content copied to clipboard!');
-                    }}
-                    disabled={!campaignData.body.trim()}
-                    className="px-6 py-3 bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2"
-                  >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                    <span>Copy Content</span>
-                  </button>
-                  
-                  <button 
-                    onClick={() => {
-                      const blob = new Blob([campaignData.body], { type: 'text/html' });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement('a');
-                      a.href = url;
-                      a.download = `${campaignData.subject || 'email'}.html`;
-                      document.body.appendChild(a);
-                      a.click();
-                      document.body.removeChild(a);
-                      URL.revokeObjectURL(url);
-                      toast.success('Email exported as HTML file!');
-                    }}
-                    disabled={!campaignData.body.trim()}
-                    className="px-6 py-3 bg-purple-600 text-white hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2"
-                  >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <span>Export HTML</span>
-                  </button>
-                </div>
               </div>
             </div>
           </div>
