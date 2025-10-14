@@ -1542,7 +1542,7 @@ async function handleCampaignSend(request, env) {
             <div style="padding: 30px; background: #f9f9f9;">
               <h2 style="color: #333; margin-bottom: 20px;">${campaignData.subject || 'Email Campaign'}</h2>
               <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0;">
-                ${campaignData.body || 'Your email content here'}
+                ${campaignData.body || '<h2>Welcome to Our Newsletter!</h2><p>Thank you for subscribing to our updates. We are excited to share valuable content with you.</p><p>This email was generated using AI technology to provide you with personalized content.</p>'}
               </div>
               ${campaignData.targetUrl ? `
                 <div style="text-align: center; margin: 20px 0;">
