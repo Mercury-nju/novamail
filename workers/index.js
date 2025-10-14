@@ -1571,6 +1571,8 @@ async function handleCampaignSend(request, env) {
           console.log('Campaign send - About to call sendViaSMTP');
           console.log('Campaign send - Recipient:', recipient);
           console.log('Campaign send - Subject:', campaignData.subject);
+          console.log('Campaign send - Campaign body length:', campaignData.body ? campaignData.body.length : 0);
+          console.log('Campaign send - Campaign body preview:', campaignData.body ? campaignData.body.substring(0, 200) + '...' : 'NO BODY');
           console.log('Campaign send - HTML length:', emailData.html.length);
           
           // 使用用户配置的SMTP发送邮件
