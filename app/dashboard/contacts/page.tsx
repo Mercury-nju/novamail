@@ -122,7 +122,7 @@ export default function ContactsPage() {
         const response = await fetch('https://novamail.world/api/contacts/import', {
         method: 'POST',
           body: formData
-        })
+      })
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -183,7 +183,7 @@ export default function ContactsPage() {
         await saveContacts(contactsData)
       }
 
-          } catch (error) {
+    } catch (error) {
       console.error('Import failed:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to import contacts')
     } finally {
@@ -203,6 +203,9 @@ export default function ContactsPage() {
       // 暂时直接更新本地状态
       setContacts(prev => [...prev, ...contactsData])
       toast.success(`Successfully imported ${contactsData.length} contacts`)
+      
+      // 触发Dashboard数据刷新
+      window.dispatchEvent(new CustomEvent('contactUpdated'))
     } catch (error) {
       console.error('Failed to save contacts:', error)
       toast.error('Failed to save contacts')
@@ -233,8 +236,8 @@ export default function ContactsPage() {
     
     if (!newContact.name.trim() || !newContact.email.trim()) {
       toast.error('Name and email are required')
-      return
-    }
+        return
+      }
 
     // 验证邮箱格式
     const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
@@ -280,6 +283,9 @@ export default function ContactsPage() {
         
         setContacts(prev => [...prev, contact])
         toast.success('Contact added successfully')
+        
+        // 触发Dashboard数据刷新
+        window.dispatchEvent(new CustomEvent('contactUpdated'))
         
         // 重置表单
         setNewContact({

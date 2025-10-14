@@ -42,15 +42,29 @@ export default function DashboardPage() {
       if (e.key && e.key.startsWith('email_config_')) {
         checkSmtpConfiguration()
       }
+      // 当联系人数据变化时，重新获取Dashboard数据
+      if (e.key && e.key.startsWith('contact_')) {
+        fetchDashboardData()
+      }
+    }
+
+    // 监听联系人更新事件
+    const handleContactUpdate = () => {
+      fetchDashboardData()
     }
 
     window.addEventListener('storage', handleStorageChange)
+    window.addEventListener('contactUpdated', handleContactUpdate)
     
-    // 定期检查SMTP配置状态
-    const interval = setInterval(checkSmtpConfiguration, 5000)
+    // 定期检查SMTP配置状态和刷新Dashboard数据
+    const interval = setInterval(() => {
+      checkSmtpConfiguration()
+      fetchDashboardData() // 定期刷新Dashboard数据
+    }, 30000) // 每30秒刷新一次
 
     return () => {
       window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('contactUpdated', handleContactUpdate)
       clearInterval(interval)
     }
   }, [])
@@ -86,7 +100,12 @@ export default function DashboardPage() {
   const fetchDashboardData = async () => {
     try {
       // 从真实API获取数据
-      const response = await fetch('https://novamail.world/api/dashboard/stats')
+      const userEmail = localStorage.getItem('user-email') || 'anonymous@example.com';
+      const response = await fetch('https://novamail.world/api/dashboard/stats', {
+        headers: {
+          'x-user-email': userEmail
+        }
+      })
       
       if (!response.ok) {
         throw new Error('Failed to fetch dashboard data')

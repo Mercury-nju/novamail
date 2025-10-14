@@ -4861,23 +4861,39 @@ async function handleDashboardStats(request, env) {
 
   if (request.method === 'GET') {
     try {
+      // 获取用户邮箱（从请求头或认证信息中获取）
+      const userEmail = request.headers.get('x-user-email') || 'anonymous@example.com';
+      const userPrefix = `user_${userEmail.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      console.log('Dashboard stats - User email:', userEmail);
+      console.log('Dashboard stats - User prefix:', userPrefix);
+
       // 获取统计数据
       let totalContacts = 0;
       let totalEmailsSent = 0;
       let recentCampaigns = [];
 
-      // 获取联系人总数
+      // 获取联系人总数（按用户隔离）
       if (env.CONTACTS_KV) {
         const contactsList = await env.CONTACTS_KV.list();
-        totalContacts = contactsList.keys.length;
+        // 只统计当前用户的联系人
+        const userContactKeys = contactsList.keys.filter(key => 
+          key.name.startsWith(`${userPrefix}_contact_`)
+        );
+        totalContacts = userContactKeys.length;
+        console.log('Dashboard stats - Total contacts for user:', totalContacts);
       }
 
-      // 获取活动数据
+      // 获取活动数据（按用户隔离）
       if (env.CAMPAIGNS_KV) {
         const campaignsList = await env.CAMPAIGNS_KV.list();
         
+        // 只处理当前用户的活动
+        const userCampaignKeys = campaignsList.keys.filter(key => 
+          key.name.startsWith(`${userPrefix}_campaign_`)
+        );
+        
         // 计算总邮件数
-        for (const key of campaignsList.keys) {
+        for (const key of userCampaignKeys) {
           const campaignData = await env.CAMPAIGNS_KV.get(key.name);
           if (campaignData) {
             const campaign = JSON.parse(campaignData);
@@ -4889,7 +4905,7 @@ async function handleDashboardStats(request, env) {
 
         // 获取最近的活动（最多5个）
         const campaigns = [];
-        for (const key of campaignsList.keys) {
+        for (const key of userCampaignKeys) {
           const campaignData = await env.CAMPAIGNS_KV.get(key.name);
           if (campaignData) {
             const campaign = JSON.parse(campaignData);
@@ -4909,6 +4925,9 @@ async function handleDashboardStats(request, env) {
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 5);
       }
+
+      console.log('Dashboard stats - Total emails sent for user:', totalEmailsSent);
+      console.log('Dashboard stats - Recent campaigns for user:', recentCampaigns.length);
 
       return new Response(JSON.stringify({
         success: true,
