@@ -105,8 +105,44 @@ export default function NewCampaignPage() {
     if (!emailPreviewRef.current) return
 
     try {
-      // 使用html2canvas库来截取邮件预览
-      const { default: html2canvas } = await import('html2canvas')
+      // 尝试动态导入html2canvas库
+      let html2canvas
+      try {
+        const module = await import('html2canvas')
+        html2canvas = module.default
+      } catch (importError) {
+        console.warn('html2canvas not available, using fallback method')
+        // 如果html2canvas不可用，使用简单的截图方法
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+        const img = new Image()
+        
+        // 将HTML内容转换为图片的简单方法
+        const htmlContent = emailPreviewRef.current.innerHTML
+        const blob = new Blob([`
+          <html>
+            <head>
+              <style>
+                body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+                img { max-width: 100%; height: auto; }
+              </style>
+            </head>
+            <body>${htmlContent}</body>
+          </html>
+        `], { type: 'text/html' })
+        
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `${campaignData.subject || 'email'}-preview.html`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+        
+        toast.success('Email exported as HTML file!')
+        return
+      }
       
       const canvas = await html2canvas(emailPreviewRef.current, {
         background: '#ffffff',
