@@ -1580,6 +1580,13 @@ async function handleCampaignSend(request, env) {
           console.log('Campaign send - Campaign body length:', campaignData.body ? campaignData.body.length : 0);
           console.log('Campaign send - Campaign body preview:', campaignData.body ? campaignData.body.substring(0, 200) + '...' : 'NO BODY');
           console.log('Campaign send - HTML length:', emailData.html.length);
+          console.log('Campaign send - User email config:', {
+            email: userEmailConfig.email,
+            provider: userEmailConfig.provider,
+            smtpHost: userEmailConfig.smtpHost,
+            smtpPort: userEmailConfig.smtpPort,
+            isSecure: userEmailConfig.isSecure
+          });
           
           // 使用用户配置的SMTP发送邮件
           const smtpResult = await sendViaSMTP({
@@ -1598,6 +1605,9 @@ async function handleCampaignSend(request, env) {
           }, env);
 
           console.log('Campaign send - sendViaSMTP result:', smtpResult);
+          console.log('Campaign send - SMTP success:', smtpResult.success);
+          console.log('Campaign send - SMTP messageId:', smtpResult.messageId);
+          console.log('Campaign send - SMTP method:', smtpResult.method);
           
           if (smtpResult.success) {
             sentEmails.push({
@@ -1608,7 +1618,14 @@ async function handleCampaignSend(request, env) {
               timestamp: new Date().toISOString()
             });
           } else {
-            throw new Error(`SMTP error: ${smtpResult.error}`);
+            console.log('Campaign send - SMTP failed:', smtpResult.error);
+            console.log('Campaign send - SMTP error details:', smtpResult);
+            sentEmails.push({
+              recipient: recipient,
+              status: 'failed',
+              error: smtpResult.error,
+              method: smtpResult.method
+            });
           }
         } else {
           // 使用 NovaMail Gmail 发送服务
