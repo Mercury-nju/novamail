@@ -4660,7 +4660,7 @@ async function sendViaSMTP(config, env) {
     
     // 强制使用经过OAuth授权的Gmail账户作为发送方
     // Gmail API只能发送来自经过授权的Gmail账户的邮件
-    // 使用text/plain内容类型，与test-gmail保持一致
+    // 使用与test-gmail完全相同的格式
     const emailContent = `To: ${config.to}
 From: NovaMail <lihongyangnju@gmail.com>
 Subject: ${config.subject}
@@ -4675,9 +4675,6 @@ ${cleanHtml}`;
       raw: btoa(emailContent).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
     };
 
-    // 添加发送延迟，避免频率过高
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
     console.log('sendViaSMTP: Sending email via Gmail API...');
     console.log('sendViaSMTP: Access token length:', gmailAccessToken ? gmailAccessToken.length : 0);
     console.log('sendViaSMTP: Refresh token length:', refreshToken ? refreshToken.length : 0);
