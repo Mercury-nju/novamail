@@ -5421,21 +5421,22 @@ async function handleTestSpecificEmail(request, env) {
       }
       
       // 构建测试邮件 - 发送到2945235656@qq.com
+      // 使用更简单的格式，避免触发QQ邮箱过滤器
       const testEmail = `To: 2945235656@qq.com
-From: NovaMail <lihongyangnju@gmail.com>
-Subject: Test Email from NovaMail (Specific Test)
+From: lihongyangnju@gmail.com
+Subject: Test Email
 Content-Type: text/plain; charset=utf-8
 
-This is a specific test email from NovaMail API.
-From: lihongyangnju@gmail.com
-To: 2945235656@qq.com
-Timestamp: ${new Date().toISOString()}
+Hello,
 
-This email is sent using the same logic as the working test-gmail endpoint.
-If you receive this email, the system is working correctly for your specific configuration.
+This is a test email from lihongyangnju@gmail.com to 2945235656@qq.com.
 
-Please check your inbox and spam folder.
-If you still don't receive it, there might be an issue with QQ邮箱's filtering.`;
+Time: ${new Date().toISOString()}
+
+If you receive this email, the system is working correctly.
+
+Best regards,
+Test System`;
 
       // 使用Gmail API发送邮件
       const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
