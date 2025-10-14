@@ -170,6 +170,8 @@ export default {
         return await handleTestSpecificEmail(request, env);
       } else if (path.startsWith('/api/test-multiple-emails')) {
         return await handleTestMultipleEmails(request, env);
+      } else if (path.startsWith('/api/test-qq-email')) {
+        return await handleTestQQEmail(request, env);
       } else if (path.startsWith('/api/test-oauth')) {
         return await handleTestOAuth(request, env);
       } else if (path.startsWith('/api/check-gmail-scopes')) {
@@ -5661,6 +5663,303 @@ Test System`;
       return new Response(JSON.stringify({
         success: false,
         error: 'Test multiple emails failed',
+        details: error.message,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+  }
+  
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405,
+    headers: corsHeaders
+  });
+}
+
+// 使用QQ邮箱SMTP服务发送邮件
+async function handleQQSMTPTest(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (request.method === 'POST') {
+    try {
+      console.log('QQ SMTP Test: Starting QQ邮箱 SMTP test');
+      
+      // 使用QQ邮箱的SMTP配置
+      const qqSmtpConfig = {
+        host: 'smtp.qq.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: 'lihongyangnju@gmail.com', // 这里应该是QQ邮箱地址
+          pass: 'your_qq_email_password' // 这里需要QQ邮箱的授权码
+        }
+      };
+      
+      // 构建测试邮件
+      const testEmail = {
+        from: 'lihongyangnju@gmail.com', // 应该是QQ邮箱地址
+        to: '2945235656@qq.com',
+        subject: 'QQ SMTP Test Email',
+        text: `Hello,
+
+This is a test email sent using QQ邮箱's SMTP service.
+
+From: QQ SMTP
+To: 2945235656@qq.com
+Time: ${new Date().toISOString()}
+
+If you receive this email, QQ SMTP is working correctly.
+
+Best regards,
+QQ SMTP Test System`
+      };
+      
+      // 注意：Cloudflare Workers不支持直接的SMTP连接
+      // 这里只是展示配置，实际需要其他方案
+      
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'QQ SMTP test not implemented',
+        reason: 'Cloudflare Workers does not support direct SMTP connections',
+        suggestion: 'Use a third-party email service like SendGrid, Mailgun, or Resend',
+        config: qqSmtpConfig,
+        email: testEmail,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+
+    } catch (error) {
+      console.error('QQ SMTP Test error:', error);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'QQ SMTP test failed',
+        details: error.message,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+  }
+  
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405,
+    headers: corsHeaders
+  });
+}
+
+// 测试发送到2945235656@qq.com，使用与test-gmail完全相同的格式
+async function handleTestQQEmail(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (request.method === 'POST') {
+    try {
+      console.log('Test QQ Email: Starting test for 2945235656@qq.com');
+      
+      // 使用与test-gmail完全相同的逻辑
+      const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
+      
+      // 直接刷新获取新的访问令牌
+      console.log('Test QQ Email: Refreshing access token...');
+      const refreshResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          client_id: env.GOOGLE_CLIENT_ID || "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com",
+          client_secret: env.GOOGLE_CLIENT_SECRET || "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",
+          refresh_token: refreshToken,
+          grant_type: 'refresh_token'
+        })
+      });
+
+      if (!refreshResponse.ok) {
+        const errorText = await refreshResponse.text();
+        console.error('Test QQ Email: OAuth refresh failed:', refreshResponse.status, errorText);
+        throw new Error(`Failed to refresh access token: ${refreshResponse.status} ${errorText}`);
+      }
+
+      const refreshData = await refreshResponse.json();
+      const gmailAccessToken = refreshData.access_token;
+      console.log('Test QQ Email: Got fresh access token:', gmailAccessToken ? 'YES' : 'NO');
+      
+      if (!gmailAccessToken) {
+        throw new Error('Gmail access token not available');
+      }
+      
+      // 使用与test-gmail完全相同的格式，但发送到2945235656@qq.com
+      const testEmail = `To: 2945235656@qq.com
+From: NovaMail <lihongyangnju@gmail.com>
+Subject: Test Email from NovaMail
+Content-Type: text/plain; charset=utf-8
+
+This is a test email from NovaMail API.
+Timestamp: ${new Date().toISOString()}`;
+
+      // 使用Gmail API发送邮件
+      const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
+      
+      const gmailMessage = {
+        raw: btoa(testEmail).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      };
+
+      console.log('Test QQ Email: Sending email via Gmail API...');
+      console.log('Test QQ Email: Access token length:', gmailAccessToken ? gmailAccessToken.length : 0);
+
+      const gmailResponse = await fetch(gmailApiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${gmailAccessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(gmailMessage)
+      });
+
+      console.log('Test QQ Email: Gmail API response status:', gmailResponse.status);
+
+      if (gmailResponse.ok) {
+        const result = await gmailResponse.json();
+        console.log('Test QQ Email: Email sent successfully:', result.id);
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Test email sent successfully to 2945235656@qq.com',
+          messageId: result.id,
+          recipient: '2945235656@qq.com',
+          timestamp: new Date().toISOString(),
+          note: 'This email uses the exact same format as the working test-gmail endpoint. Please check your inbox and spam folder.'
+        }), {
+          headers: corsHeaders
+        });
+      } else {
+        const errorText = await gmailResponse.text();
+        console.error('Test QQ Email: Gmail API error:', gmailResponse.status, errorText);
+        
+        return new Response(JSON.stringify({
+          success: false,
+          error: `Gmail API Error: ${gmailResponse.status}`,
+          details: errorText,
+          timestamp: new Date().toISOString()
+        }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
+
+    } catch (error) {
+      console.error('Test QQ Email error:', error);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Test QQ Email failed',
+        details: error.message,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+  }
+  
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405,
+    headers: corsHeaders
+  });
+}
+
+// 使用Web3Forms免费邮件服务
+async function handleWeb3FormsTest(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (request.method === 'POST') {
+    try {
+      console.log('Web3Forms Test: Starting Web3Forms email test');
+      
+      const { to, subject, content } = await request.json();
+      
+      // 使用Web3Forms免费邮件服务
+      const web3formsData = {
+        access_key: 'your-web3forms-access-key', // 需要注册获取
+        name: 'NovaMail System',
+        email: 'lihongyangnju@gmail.com',
+        subject: subject || 'Test Email from NovaMail',
+        message: content || 'This is a test email sent via Web3Forms service.',
+        to: to || '2945235656@qq.com'
+      };
+      
+      const web3formsResponse = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(web3formsData)
+      });
+      
+      if (web3formsResponse.ok) {
+        const result = await web3formsResponse.json();
+        console.log('Web3Forms Test: Email sent successfully:', result);
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Web3Forms email sent successfully',
+          result: result,
+          timestamp: new Date().toISOString()
+        }), {
+          headers: corsHeaders
+        });
+      } else {
+        const errorText = await web3formsResponse.text();
+        console.error('Web3Forms Test: Failed to send email:', web3formsResponse.status, errorText);
+        
+        return new Response(JSON.stringify({
+          success: false,
+          error: `Web3Forms API Error: ${web3formsResponse.status}`,
+          details: errorText,
+          timestamp: new Date().toISOString()
+        }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
+
+    } catch (error) {
+      console.error('Web3Forms Test error:', error);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Web3Forms test failed',
         details: error.message,
         timestamp: new Date().toISOString()
       }), {
