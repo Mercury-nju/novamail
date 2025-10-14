@@ -164,6 +164,8 @@ export default {
         return await handleDebugEnv(request, env);
       } else if (path.startsWith('/api/debug-email-send')) {
         return await handleDebugEmailSend(request, env);
+      } else if (path.startsWith('/api/simple-email-test')) {
+        return await handleSimpleEmailTest(request, env);
       } else if (path.startsWith('/api/test-oauth')) {
         return await handleTestOAuth(request, env);
       } else if (path.startsWith('/api/check-gmail-scopes')) {
@@ -1560,6 +1562,11 @@ async function handleCampaignSend(request, env) {
           // 使用用户 SMTP 配置发送邮件
           console.log('Sending via user SMTP:', userEmailConfig.email);
           
+          console.log('Campaign send - About to call sendViaSMTP');
+          console.log('Campaign send - Recipient:', recipient);
+          console.log('Campaign send - Subject:', campaignData.subject);
+          console.log('Campaign send - HTML length:', emailData.html.length);
+          
           // 使用用户配置的SMTP发送邮件
           const smtpResult = await sendViaSMTP({
             host: userEmailConfig.smtpHost,
@@ -1576,6 +1583,8 @@ async function handleCampaignSend(request, env) {
             html: emailData.html
           }, env);
 
+          console.log('Campaign send - sendViaSMTP result:', smtpResult);
+          
           if (smtpResult.success) {
             sentEmails.push({
               recipient: recipient,
@@ -5203,6 +5212,142 @@ async function handleDebugEmailSend(request, env) {
       return new Response(JSON.stringify({
         success: false,
         error: 'Debug email send failed',
+        details: error.message,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+  }
+  
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405,
+    headers: corsHeaders
+  });
+}
+
+// 简化的邮件发送测试 - 直接使用test-gmail逻辑
+async function handleSimpleEmailTest(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (request.method === 'POST') {
+    try {
+      const { to, subject } = await request.json();
+      
+      console.log('Simple email test - To:', to);
+      console.log('Simple email test - Subject:', subject);
+      
+      // 使用与test-gmail完全相同的逻辑
+      const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
+      
+      // 直接刷新获取新的访问令牌
+      console.log('Simple email test: Refreshing access token...');
+      const refreshResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          client_id: env.GOOGLE_CLIENT_ID || "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com",
+          client_secret: env.GOOGLE_CLIENT_SECRET || "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",
+          refresh_token: refreshToken,
+          grant_type: 'refresh_token'
+        })
+      });
+
+      if (!refreshResponse.ok) {
+        const errorText = await refreshResponse.text();
+        console.error('Simple email test: OAuth refresh failed:', refreshResponse.status, errorText);
+        throw new Error(`Failed to refresh access token: ${refreshResponse.status} ${errorText}`);
+      }
+
+      const refreshData = await refreshResponse.json();
+      const gmailAccessToken = refreshData.access_token;
+      console.log('Simple email test: Got fresh access token:', gmailAccessToken ? 'YES' : 'NO');
+      
+      if (!gmailAccessToken) {
+        throw new Error('Gmail access token not available');
+      }
+      
+      // 构建测试邮件 - 使用用户指定的收件人和主题
+      const testEmail = `To: ${to}
+From: NovaMail <lihongyangnju@gmail.com>
+Subject: ${subject || 'Test Email from NovaMail'}
+Content-Type: text/plain; charset=utf-8
+
+This is a test email from NovaMail API.
+Recipient: ${to}
+Subject: ${subject || 'Test Email from NovaMail'}
+Timestamp: ${new Date().toISOString()}
+
+If you receive this email, the system is working correctly.`;
+
+      // 使用Gmail API发送邮件
+      const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
+      
+      const gmailMessage = {
+        raw: btoa(testEmail).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      };
+
+      console.log('Simple email test: Sending email via Gmail API...');
+      console.log('Simple email test: Access token length:', gmailAccessToken ? gmailAccessToken.length : 0);
+
+      const gmailResponse = await fetch(gmailApiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${gmailAccessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(gmailMessage)
+      });
+
+      console.log('Simple email test: Gmail API response status:', gmailResponse.status);
+
+      if (gmailResponse.ok) {
+        const result = await gmailResponse.json();
+        console.log('Simple email test: Email sent successfully:', result.id);
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Simple test email sent successfully',
+          messageId: result.id,
+          recipient: to,
+          subject: subject,
+          timestamp: new Date().toISOString()
+        }), {
+          headers: corsHeaders
+        });
+      } else {
+        const errorText = await gmailResponse.text();
+        console.error('Simple email test: Gmail API error:', gmailResponse.status, errorText);
+        
+        return new Response(JSON.stringify({
+          success: false,
+          error: `Gmail API Error: ${gmailResponse.status}`,
+          details: errorText,
+          timestamp: new Date().toISOString()
+        }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
+
+    } catch (error) {
+      console.error('Simple email test error:', error);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Simple email test failed',
         details: error.message,
         timestamp: new Date().toISOString()
       }), {
