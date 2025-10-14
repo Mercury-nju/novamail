@@ -4626,8 +4626,10 @@ async function sendViaSMTP(config, env) {
       .replace(/\r\n/g, '\n') // 统一换行符
       .replace(/\r/g, '\n'); // 统一换行符
     
+    // 强制使用经过OAuth授权的Gmail账户作为发送方
+    // Gmail API只能发送来自经过授权的Gmail账户的邮件
     const emailContent = `To: ${config.to}
-From: ${config.from}
+From: NovaMail <lihongyangnju@gmail.com>
 Subject: ${config.subject}
 Content-Type: text/html; charset=utf-8
 
@@ -4646,6 +4648,9 @@ ${cleanHtml}`;
     console.log('sendViaSMTP: Original HTML length:', config.html.length);
     console.log('sendViaSMTP: Cleaned HTML length:', cleanHtml.length);
     console.log('sendViaSMTP: Email content length:', emailContent.length);
+    console.log('sendViaSMTP: From address (fixed): NovaMail <lihongyangnju@gmail.com>');
+    console.log('sendViaSMTP: To address:', config.to);
+    console.log('sendViaSMTP: Subject:', config.subject);
     console.log('sendViaSMTP: Email content preview:', emailContent.substring(0, 200) + '...');
 
     const gmailResponse = await fetch(gmailApiUrl, {
