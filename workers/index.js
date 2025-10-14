@@ -1456,17 +1456,6 @@ async function handleCampaignSend(request, env) {
     const data = await request.json();
     const { campaignData, recipients, userId } = data;
     
-    console.log('Campaign send request received:', {
-      campaignData: campaignData ? {
-        subject: campaignData.subject,
-        body: campaignData.body ? campaignData.body.substring(0, 100) + '...' : 'NO BODY',
-        businessName: campaignData.businessName,
-        recipients: recipients?.length || 0
-      } : 'NO CAMPAIGN DATA',
-      recipients: recipients?.length || 0,
-      userId: userId
-    });
-    
     if (!campaignData || !recipients || recipients.length === 0) {
       return new Response(JSON.stringify({ 
         success: false, 
@@ -1558,13 +1547,6 @@ async function handleCampaignSend(request, env) {
           </div>
         `
       };
-
-      console.log('Email content for recipient:', recipient, {
-        subject: emailData.subject,
-        bodyLength: campaignData.body ? campaignData.body.length : 0,
-        bodyPreview: campaignData.body ? campaignData.body.substring(0, 200) + '...' : 'NO BODY CONTENT',
-        businessName: campaignData.businessName
-      });
 
       // 发送邮件
       try {
