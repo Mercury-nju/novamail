@@ -162,6 +162,8 @@ export default {
         return await handleTestDirectVerification(request, env);
       } else if (path.startsWith('/api/debug-env')) {
         return await handleDebugEnv(request, env);
+      } else if (path.startsWith('/api/debug-email-send')) {
+        return await handleDebugEmailSend(request, env);
       } else if (path.startsWith('/api/test-oauth')) {
         return await handleTestOAuth(request, env);
       } else if (path.startsWith('/api/check-gmail-scopes')) {
@@ -5144,6 +5146,76 @@ Timestamp: ${new Date().toISOString()}`;
       headers: corsHeaders
     });
   }
+}
+
+// 调试邮件发送端点
+async function handleDebugEmailSend(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (request.method === 'POST') {
+    try {
+      const { to, subject, content } = await request.json();
+      
+      console.log('Debug email send - To:', to);
+      console.log('Debug email send - Subject:', subject);
+      console.log('Debug email send - Content length:', content ? content.length : 0);
+      
+      // 使用简化的邮件内容进行测试
+      const simpleHtml = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333;">Test Email from NovaMail</h2>
+          <p>This is a test email to verify email delivery.</p>
+          <p>Time: ${new Date().toISOString()}</p>
+          <p>If you receive this email, the system is working correctly.</p>
+        </div>
+      `;
+      
+      // 调用sendViaSMTP函数
+      const result = await sendViaSMTP({
+        to: to,
+        from: 'lihongyangnju@gmail.com',
+        subject: subject || 'Debug Test Email',
+        html: simpleHtml
+      }, env);
+      
+      console.log('Debug email send result:', result);
+      
+      return new Response(JSON.stringify({
+        success: result.success,
+        message: result.success ? 'Debug email sent successfully' : 'Debug email failed',
+        details: result,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: corsHeaders
+      });
+      
+    } catch (error) {
+      console.error('Debug email send error:', error);
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Debug email send failed',
+        details: error.message,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+  }
+  
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405,
+    headers: corsHeaders
+  });
 }
 
 // 测试验证码发送函数
