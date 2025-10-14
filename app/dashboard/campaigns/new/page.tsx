@@ -69,23 +69,9 @@ export default function NewCampaignPage() {
     body: '',
     businessName: '',
     productService: '',
-    targetUrl: '',
-    recipients: [] as string[]
+    targetUrl: ''
   })
 
-  // Get pre-selected recipients from URL parameters
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search)
-      const recipients = params.get('recipients')
-      if (recipients) {
-        const recipientList = recipients.split(',').filter(email => email.trim())
-        if (recipientList.length > 0) {
-          setCampaignData(prev => ({ ...prev, recipients: recipientList }))
-        }
-      }
-    }
-  }, [])
 
   const progress = ((step - 1) / 2) * 100
 
@@ -200,153 +186,12 @@ export default function NewCampaignPage() {
     }
   }
 
-  const handleSend = async () => {
-    if (campaignData.recipients.length === 0) {
-      toast.error('Please add at least one recipient')
-      return
-    }
-
-    // 检查用户使用限制
-    const limits = getUserLimits()
-    const recipientCount = campaignData.recipients.length
-    
-    // 检查邮件发送限制
-    if (limits.maxEmailsPerMonth !== -1 && recipientCount > limits.maxEmailsPerMonth) {
-      toast.error(`Email limit exceeded. Your plan allows up to ${limits.maxEmailsPerMonth} emails per month. Upgrade to send more.`)
-      return
-    }
-    
-    // 检查联系人限制
-    if (limits.maxContacts !== -1 && recipientCount > limits.maxContacts) {
-      toast.error(`Contact limit exceeded. Your plan allows up to ${limits.maxContacts} contacts. Upgrade to add more.`)
-      return
-    }
-
-    // Check if user can send emails
-    try {
-      const response = await fetch('https://novamail.world/api/user/check-permission', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'send_email',
-          currentCount: campaignData.recipients.length
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const data = await response.json()
-      
-      if (!data.allowed) {
-        toast.error(data.reason || 'You have reached your email sending limit. Please upgrade your plan.')
-        return
-      }
-    } catch (error) {
-      console.error('Permission check error:', error)
-      toast.error('Failed to verify permissions')
-      return
-    }
-    
-    try {
-      // Call email sending API
-      const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email') || 'default_user'
-      const response = await fetch('https://novamail.world/api/campaigns/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          campaignData,
-          recipients: campaignData.recipients,
-          userId: userId
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const result = await response.json()
-
-      if (result.success) {
-        // Update usage counter
-        try {
-          await fetch('https://novamail.world/api/user/update-usage', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              action: 'send_email',
-              increment: campaignData.recipients.length
-            }),
-          })
-        } catch (error) {
-          console.error('Failed to update usage:', error)
-        }
-
-        toast.success(`Campaign sent successfully to ${campaignData.recipients.length} recipients!`)
-        router.push('/dashboard/campaigns')
-      } else {
-        throw new Error(result.error || 'Sending failed')
-      }
-    } catch (error) {
-      console.error('Send campaign error:', error)
-      toast.error('Email sending failed, please try again later')
-    }
-  }
-
   const handleSave = () => {
     toast.success('Campaign saved as draft!')
     router.push('/dashboard/campaigns')
   }
 
-  const [availableContacts, setAvailableContacts] = useState<any[]>([])
-  const [selectedContacts, setSelectedContacts] = useState<number[]>([])
 
-  // Fetch real contacts from API (static export mode)
-  useEffect(() => {
-    // Static export mode: always fetch contacts
-      fetchAvailableContacts()
-  }, [])
-
-  const fetchAvailableContacts = async () => {
-    try {
-      console.log('Fetching contacts from API...')
-      const userEmail = localStorage.getItem('user-email') || 'anonymous@example.com';
-      const response = await fetch('https://novamail.world/api/contacts', {
-        headers: {
-          'x-user-email': userEmail
-        }
-      })
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      console.log('Contacts API response:', data)
-      
-      if (data.success) {
-        const contacts = data.data.contacts || []
-        console.log('Setting available contacts:', contacts)
-        setAvailableContacts(contacts)
-      } else {
-        console.error('API returned success: false', data.error)
-      }
-    } catch (error) {
-      console.error('Failed to fetch contacts:', error)
-    }
-  }
-
-  // 添加刷新联系人列表的函数
-  const refreshContacts = () => {
-    fetchAvailableContacts()
-  }
 
   const handleImportFromContacts = () => {
     setShowImportContactsModal(true)
@@ -1877,14 +1722,43 @@ export default function NewCampaignPage() {
               <button onClick={handleBack} className="px-6 py-3 text-gray-600 hover:text-gray-800 transition-colors">← Back</button>
               <div className="flex space-x-4">
                 <button onClick={handleSave} className="px-6 py-3 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg transition-colors">Save Draft</button>
-                <button 
-                  onClick={handleSend} 
-                  disabled={campaignData.recipients.length === 0}
-                  className="px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2"
-                >
-                  <PaperAirplaneIcon className="h-4 w-4" />
-                  <span>Send to {campaignData.recipients.length} Recipients</span>
-                </button>
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(campaignData.body);
+                      toast.success('Email content copied to clipboard!');
+                    }}
+                    disabled={!campaignData.body.trim()}
+                    className="px-6 py-3 bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2"
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    <span>Copy Content</span>
+                  </button>
+                  
+                  <button 
+                    onClick={() => {
+                      const blob = new Blob([campaignData.body], { type: 'text/html' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `${campaignData.subject || 'email'}.html`;
+                      document.body.appendChild(a);
+                      a.click();
+                      document.body.removeChild(a);
+                      URL.revokeObjectURL(url);
+                      toast.success('Email exported as HTML file!');
+                    }}
+                    disabled={!campaignData.body.trim()}
+                    className="px-6 py-3 bg-purple-600 text-white hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2"
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Export HTML</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
