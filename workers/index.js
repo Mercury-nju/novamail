@@ -4031,7 +4031,8 @@ async function handleGoogleCallback(request, env) {
     const googleUser = await userResponse.json();
 
     // 3. 创建或更新用户账户
-    const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    // 使用邮箱作为稳定的用户ID，避免每次登录生成新的ID
+    const userId = 'user_' + googleUser.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
     const userToken = 'token_' + Math.random().toString(36).substr(2, 9);
     
     const user = {

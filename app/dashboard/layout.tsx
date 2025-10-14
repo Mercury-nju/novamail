@@ -76,16 +76,16 @@ export default function DashboardLayout({
           }
           loadSubscription()
           
-        // 检查是否需要显示用户引导（按用户ID区分）
-        const userId = localStorage.getItem('user-id') || userEmail
-        const hasSeenOnboarding = localStorage.getItem(`has-seen-onboarding-${userId}`)
-        console.log('Onboarding check:', { hasSeenOnboarding, userEmail, userId })
-        if (!hasSeenOnboarding) {
-          console.log('Showing onboarding tour for user:', userId)
-          setShowOnboarding(true)
-        } else {
-          console.log('Onboarding already seen for user:', userId)
-        }
+          // 检查是否需要显示用户引导（按用户ID区分）
+          const userId = localStorage.getItem('user-id') || userEmail
+          const hasSeenOnboarding = localStorage.getItem(`has-seen-onboarding-${userId}`)
+          console.log('Onboarding check:', { hasSeenOnboarding, userEmail, userId })
+          if (!hasSeenOnboarding) {
+            console.log('Showing onboarding tour for user:', userId)
+            setShowOnboarding(true)
+          } else {
+            console.log('Onboarding already seen for user:', userId)
+          }
         } else {
           setIsAuthenticated(false)
           console.log('User not authenticated, redirecting to login')
@@ -96,6 +96,25 @@ export default function DashboardLayout({
     }
 
     checkAuth()
+    
+    // 定期刷新订阅状态
+    const subscriptionInterval = setInterval(async () => {
+      const userEmail = localStorage.getItem('user-email')
+      if (userEmail) {
+        try {
+          const subscription = await fetchUserSubscription(userEmail)
+          if (subscription) {
+            setUserSubscription(subscription)
+            console.log('Subscription refreshed:', subscription)
+          }
+        } catch (error) {
+          console.error('Failed to refresh subscription:', error)
+        }
+      }
+    }, 30000) // 每30秒刷新一次
+    
+    // 清理定时器
+    return () => clearInterval(subscriptionInterval)
   }, [router])
 
   // 处理用户引导完成

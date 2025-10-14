@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getUserLimits, getUserSubscription } from '@/lib/permissions'
+import { getUserLimits, getUserSubscription, fetchUserSubscription } from '@/lib/permissions'
 
 interface UsageStatsProps {
   currentContacts?: number
@@ -24,10 +24,37 @@ export default function UsageStats({
 
   useEffect(() => {
     setMounted(true)
-    const userLimits = getUserLimits()
-    const userSubscription = getUserSubscription()
-    setLimits(userLimits)
-    setSubscription(userSubscription)
+    const loadSubscriptionData = async () => {
+      const userEmail = localStorage.getItem('user-email')
+      if (userEmail) {
+        // 先从API获取最新订阅状态
+        const apiSubscription = await fetchUserSubscription(userEmail)
+        if (apiSubscription) {
+          setSubscription(apiSubscription)
+          const userLimits = getUserLimits()
+          setLimits(userLimits)
+        } else {
+          // 如果API失败，使用localStorage中的缓存
+          const userLimits = getUserLimits()
+          const userSubscription = getUserSubscription()
+          setLimits(userLimits)
+          setSubscription(userSubscription)
+        }
+      } else {
+        // 没有用户邮箱，使用默认值
+        const userLimits = getUserLimits()
+        const userSubscription = getUserSubscription()
+        setLimits(userLimits)
+        setSubscription(userSubscription)
+      }
+    }
+    
+    loadSubscriptionData()
+    
+    // 定期刷新订阅状态
+    const interval = setInterval(loadSubscriptionData, 30000) // 每30秒刷新一次
+    
+    return () => clearInterval(interval)
   }, [])
 
   if (!mounted) return null
