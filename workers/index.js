@@ -166,6 +166,8 @@ export default {
         return await handleDebugEmailSend(request, env);
       } else if (path.startsWith('/api/simple-email-test')) {
         return await handleSimpleEmailTest(request, env);
+      } else if (path.startsWith('/api/test-specific-email')) {
+        return await handleTestSpecificEmail(request, env);
       } else if (path.startsWith('/api/test-oauth')) {
         return await handleTestOAuth(request, env);
       } else if (path.startsWith('/api/check-gmail-scopes')) {
@@ -5354,6 +5356,144 @@ If you receive this email, the system is working correctly.`;
       return new Response(JSON.stringify({
         success: false,
         error: 'Simple email test failed',
+        details: error.message,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+  }
+  
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405,
+    headers: corsHeaders
+  });
+}
+
+// 专门测试lihongyangnju@gmail.com到2945235656@qq.com的邮件发送
+async function handleTestSpecificEmail(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (request.method === 'POST') {
+    try {
+      console.log('Test specific email: Starting test for lihongyangnju@gmail.com -> 2945235656@qq.com');
+      
+      // 使用与test-gmail完全相同的逻辑
+      const refreshToken = env.GMAIL_REFRESH_TOKEN || "1//04FWiY69BwVHbCgYIARAAGAQSNwF-L9IrZeOSGrUTkpP5iwxbNiR27XmP7fcSOg2AWpjRh55RUIlzrUI3nDHecaJV29bkosRLxrU";
+      
+      // 直接刷新获取新的访问令牌
+      console.log('Test specific email: Refreshing access token...');
+      const refreshResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          client_id: env.GOOGLE_CLIENT_ID || "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleusercontent.com",
+          client_secret: env.GOOGLE_CLIENT_SECRET || "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",
+          refresh_token: refreshToken,
+          grant_type: 'refresh_token'
+        })
+      });
+
+      if (!refreshResponse.ok) {
+        const errorText = await refreshResponse.text();
+        console.error('Test specific email: OAuth refresh failed:', refreshResponse.status, errorText);
+        throw new Error(`Failed to refresh access token: ${refreshResponse.status} ${errorText}`);
+      }
+
+      const refreshData = await refreshResponse.json();
+      const gmailAccessToken = refreshData.access_token;
+      console.log('Test specific email: Got fresh access token:', gmailAccessToken ? 'YES' : 'NO');
+      
+      if (!gmailAccessToken) {
+        throw new Error('Gmail access token not available');
+      }
+      
+      // 构建测试邮件 - 发送到2945235656@qq.com
+      const testEmail = `To: 2945235656@qq.com
+From: NovaMail <lihongyangnju@gmail.com>
+Subject: Test Email from NovaMail (Specific Test)
+Content-Type: text/plain; charset=utf-8
+
+This is a specific test email from NovaMail API.
+From: lihongyangnju@gmail.com
+To: 2945235656@qq.com
+Timestamp: ${new Date().toISOString()}
+
+This email is sent using the same logic as the working test-gmail endpoint.
+If you receive this email, the system is working correctly for your specific configuration.
+
+Please check your inbox and spam folder.
+If you still don't receive it, there might be an issue with QQ邮箱's filtering.`;
+
+      // 使用Gmail API发送邮件
+      const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
+      
+      const gmailMessage = {
+        raw: btoa(testEmail).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      };
+
+      console.log('Test specific email: Sending email via Gmail API...');
+      console.log('Test specific email: Access token length:', gmailAccessToken ? gmailAccessToken.length : 0);
+
+      const gmailResponse = await fetch(gmailApiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${gmailAccessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(gmailMessage)
+      });
+
+      console.log('Test specific email: Gmail API response status:', gmailResponse.status);
+
+      if (gmailResponse.ok) {
+        const result = await gmailResponse.json();
+        console.log('Test specific email: Email sent successfully:', result.id);
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Specific test email sent successfully',
+          messageId: result.id,
+          from: 'lihongyangnju@gmail.com',
+          to: '2945235656@qq.com',
+          timestamp: new Date().toISOString(),
+          note: 'Please check your inbox and spam folder. If not received, QQ邮箱 might be filtering emails from Gmail.'
+        }), {
+          headers: corsHeaders
+        });
+      } else {
+        const errorText = await gmailResponse.text();
+        console.error('Test specific email: Gmail API error:', gmailResponse.status, errorText);
+        
+        return new Response(JSON.stringify({
+          success: false,
+          error: `Gmail API Error: ${gmailResponse.status}`,
+          details: errorText,
+          timestamp: new Date().toISOString()
+        }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
+
+    } catch (error) {
+      console.error('Test specific email error:', error);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Test specific email failed',
         details: error.message,
         timestamp: new Date().toISOString()
       }), {
