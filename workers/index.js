@@ -4620,12 +4620,18 @@ async function sendViaSMTP(config, env) {
     
     // 构建邮件内容 - 使用用户实际生成的邮件内容
     // 确保HTML内容正确编码
+    // 清理HTML内容，移除可能导致问题的字符
+    const cleanHtml = config.html
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // 移除控制字符
+      .replace(/\r\n/g, '\n') // 统一换行符
+      .replace(/\r/g, '\n'); // 统一换行符
+    
     const emailContent = `To: ${config.to}
 From: ${config.from}
 Subject: ${config.subject}
 Content-Type: text/html; charset=utf-8
 
-${config.html}`;
+${cleanHtml}`;
 
     // 使用Gmail API发送邮件 - 与test-gmail完全相同的逻辑
     const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
@@ -4637,6 +4643,8 @@ ${config.html}`;
     console.log('sendViaSMTP: Sending email via Gmail API...');
     console.log('sendViaSMTP: Access token length:', gmailAccessToken ? gmailAccessToken.length : 0);
     console.log('sendViaSMTP: Refresh token length:', refreshToken ? refreshToken.length : 0);
+    console.log('sendViaSMTP: Original HTML length:', config.html.length);
+    console.log('sendViaSMTP: Cleaned HTML length:', cleanHtml.length);
     console.log('sendViaSMTP: Email content length:', emailContent.length);
     console.log('sendViaSMTP: Email content preview:', emailContent.substring(0, 200) + '...');
 
