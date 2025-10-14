@@ -4635,14 +4635,33 @@ async function sendViaSMTP(config, env) {
       throw new Error('Gmail access token not available');
     }
     
-    // 使用与test-gmail完全相同的格式
+    // 使用用户AI生成的真实邮件内容
+    // 将HTML转换为纯文本，保持邮件格式
+    const cleanHtml = config.html
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // 移除控制字符
+      .replace(/\r\n/g, '\n') // 统一换行符
+      .replace(/\r/g, '\n') // 统一换行符
+      .replace(/<script[^>]*>.*?<\/script>/gi, '') // 移除script标签
+      .replace(/javascript:/gi, '') // 移除javascript:链接
+      .replace(/on\w+\s*=/gi, '') // 移除事件处理器
+      .replace(/style\s*=\s*["'][^"']*position\s*:\s*absolute[^"']*["']/gi, '') // 移除绝对定位样式
+      .replace(/style\s*=\s*["'][^"']*display\s*:\s*none[^"']*["']/gi, '') // 移除隐藏样式
+      .replace(/<[^>]*>/g, '') // 移除所有HTML标签
+      .replace(/&nbsp;/g, ' ') // 转换HTML实体
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/\s+/g, ' ') // 合并多个空格
+      .trim(); // 去除首尾空格
+    
     const emailContent = `To: ${config.to}
 From: NovaMail <lihongyangnju@gmail.com>
 Subject: ${config.subject}
 Content-Type: text/plain; charset=utf-8
 
-This is a test email from NovaMail API.
-Timestamp: ${new Date().toISOString()}`;
+${cleanHtml}`;
 
     // 使用Gmail API发送邮件 - 与test-gmail完全相同的逻辑
     const gmailApiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
