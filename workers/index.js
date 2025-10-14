@@ -5093,8 +5093,8 @@ async function handleTestGmail(request, env) {
       throw new Error('Gmail access token not available');
     }
     
-    // 构建测试邮件
-    const testEmail = `To: 66597405@qq.com
+      // 构建测试邮件
+      const testEmail = `To: 66597405@qq.com
 From: NovaMail <lihongyangnju@gmail.com>
 Subject: Test Email from NovaMail
 Content-Type: text/plain; charset=utf-8
