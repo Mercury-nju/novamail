@@ -104,7 +104,7 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* 遮罩层 */}
+          {/* Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -113,7 +113,7 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
             onClick={handleSkip}
           />
 
-          {/* 引导卡片 - 现代化设计 */}
+          {/* Tour card - Modern design */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8, y: 50 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -122,14 +122,14 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
             <div className="relative bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl p-8 max-w-lg w-full mx-auto border border-gray-100">
-              {/* 装饰性背景 */}
+              {/* Decorative background */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50 rounded-2xl"></div>
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full -translate-y-16 translate-x-16"></div>
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-green-400/20 to-blue-400/20 rounded-full translate-y-12 -translate-x-12"></div>
               
-              {/* 内容容器 */}
+              {/* Content container */}
               <div className="relative z-10">
-                {/* 步骤指示器 */}
+                {/* Step indicator */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-3">
                     <div className="relative">
@@ -139,8 +139,8 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
                       <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
                     </div>
                     <div>
-                      <span className="text-sm font-medium text-gray-500">步骤 {currentStep + 1}</span>
-                      <div className="text-xs text-gray-400">共 {onboardingSteps.length} 步</div>
+                      <span className="text-sm font-medium text-gray-500">Step {currentStep + 1}</span>
+                      <div className="text-xs text-gray-400">of {onboardingSteps.length} steps</div>
                     </div>
                   </div>
                   <button
@@ -151,7 +151,7 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
                   </button>
                 </div>
 
-                {/* 进度条 */}
+                {/* Progress bar */}
                 <div className="mb-8">
                   <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                     <motion.div
@@ -163,7 +163,7 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
                   </div>
                 </div>
 
-                {/* 内容 */}
+                {/* Content */}
                 <div className="mb-8 text-center">
                   <motion.h3 
                     key={currentStep}
@@ -185,7 +185,7 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
                   </motion.p>
                 </div>
 
-                {/* 操作按钮 */}
+                {/* Action buttons */}
                 <div className="flex justify-between items-center">
                   <div className="flex space-x-3">
                     {currentStep > 0 && (
@@ -196,7 +196,7 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
                         onClick={handlePrevious}
                         className="px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all duration-200 shadow-sm hover:shadow-md"
                       >
-                        上一步
+                        Previous
                       </motion.button>
                     )}
                     
@@ -225,17 +225,17 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
                   >
                     {currentStep === onboardingSteps.length - 1 ? (
                       <>
-                        完成 <CheckIcon className="w-4 h-4 ml-2" />
+                        Complete <CheckIcon className="w-4 h-4 ml-2" />
                       </>
                     ) : (
                       <>
-                        下一步 <ArrowRightIcon className="w-4 h-4 ml-2" />
+                        Next <ArrowRightIcon className="w-4 h-4 ml-2" />
                       </>
                     )}
                   </motion.button>
                 </div>
 
-                {/* 跳过按钮 */}
+                {/* Skip button */}
                 {currentStep < onboardingSteps.length - 1 && (
                   <motion.button
                     initial={{ opacity: 0 }}
@@ -244,7 +244,7 @@ export default function OnboardingTour({ isOpen, onClose, onComplete }: Onboardi
                     onClick={handleSkip}
                     className="mt-6 w-full text-center text-sm text-gray-500 hover:text-gray-700 transition-colors py-2 hover:bg-gray-50 rounded-lg"
                   >
-                    跳过引导
+                    Skip Tour
                   </motion.button>
                 )}
               </div>

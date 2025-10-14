@@ -158,11 +158,11 @@ export default function DashboardPage() {
             </div>
             <div className="ml-3 flex-1">
               <h3 className="text-sm font-medium text-amber-800">
-                需要配置SMTP设置
+                SMTP Configuration Required
               </h3>
               <div className="mt-1 text-sm text-amber-700">
                 <p>
-                  您需要先配置SMTP设置才能发送邮件。这是使用NovaMail的必要步骤。
+                  You need to configure SMTP settings before sending emails. This is a necessary step to use NovaMail.
                 </p>
               </div>
               <div className="mt-3 flex space-x-3">
@@ -171,14 +171,14 @@ export default function DashboardPage() {
                   className="inline-flex items-center px-3 py-2 text-sm font-medium text-amber-800 bg-amber-100 rounded-lg hover:bg-amber-200 transition-colors"
                 >
                   <Cog6ToothIcon className="h-4 w-4 mr-2" />
-                  立即配置
+                  Configure Now
                 </Link>
                 <button
                   onClick={handleDismissAlert}
                   className="inline-flex items-center px-3 py-2 text-sm font-medium text-amber-600 hover:text-amber-800 transition-colors"
                 >
                   <XMarkIcon className="h-4 w-4 mr-1" />
-                  稍后提醒
+                  Remind Later
                 </button>
               </div>
             </div>
