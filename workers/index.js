@@ -4619,6 +4619,7 @@ async function sendViaSMTP(config, env) {
     }
     
     // 构建邮件内容 - 使用用户实际生成的邮件内容
+    // 确保HTML内容正确编码
     const emailContent = `To: ${config.to}
 From: ${config.from}
 Subject: ${config.subject}
@@ -4636,6 +4637,8 @@ ${config.html}`;
     console.log('sendViaSMTP: Sending email via Gmail API...');
     console.log('sendViaSMTP: Access token length:', gmailAccessToken ? gmailAccessToken.length : 0);
     console.log('sendViaSMTP: Refresh token length:', refreshToken ? refreshToken.length : 0);
+    console.log('sendViaSMTP: Email content length:', emailContent.length);
+    console.log('sendViaSMTP: Email content preview:', emailContent.substring(0, 200) + '...');
 
     const gmailResponse = await fetch(gmailApiUrl, {
       method: 'POST',
@@ -4651,6 +4654,7 @@ ${config.html}`;
     if (gmailResponse.ok) {
       const result = await gmailResponse.json();
       console.log('sendViaSMTP: Email sent successfully:', result.id);
+      console.log('sendViaSMTP: Gmail API response:', JSON.stringify(result));
       
       return {
         success: true,
@@ -4660,6 +4664,7 @@ ${config.html}`;
     } else {
       const errorText = await gmailResponse.text();
       console.error('sendViaSMTP: Gmail API error:', gmailResponse.status, errorText);
+      console.error('sendViaSMTP: Email content that failed:', emailContent);
       throw new Error(`Gmail API error: ${gmailResponse.status} - ${errorText}`);
     }
 
