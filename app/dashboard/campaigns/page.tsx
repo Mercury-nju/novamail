@@ -2,42 +2,46 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { toast } from 'react-toastify'
+import { motion } from 'framer-motion'
+import { toast } from 'react-hot-toast'
+import { 
+  PlusIcon,
+  EyeIcon,
+  DocumentTextIcon,
+  CalendarIcon,
+  SparklesIcon,
+  ClockIcon
+} from '@heroicons/react/24/outline'
 
-interface Campaign {
+interface EmailHistory {
   id: string
-  name: string
   subject: string
-  status: 'draft' | 'scheduled' | 'sent' | 'paused'
-  recipients: number
+  businessName: string
+  emailMode: 'simple' | 'professional'
+  selectedTemplate?: string
+  toneStyle: string
   createdAt: string
-  scheduledAt?: string
-  sentAt?: string
+  body: string
 }
 
 export default function CampaignsPage() {
   const router = useRouter()
-  const [campaigns, setCampaigns] = useState<Campaign[]>([])
+  const [emailHistory, setEmailHistory] = useState<EmailHistory[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedStatus, setSelectedStatus] = useState('all')
+  const [showPreview, setShowPreview] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchCampaigns()
+    fetchEmailHistory()
   }, [])
 
-  const fetchCampaigns = async () => {
+  const fetchEmailHistory = async () => {
     try {
       setLoading(true)
       
       // 获取用户ID
       const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email') || 'default_user'
       
-      // 构建查询参数
-      const params = new URLSearchParams()
-      if (selectedStatus !== 'all') params.append('status', selectedStatus)
-      params.append('userId', userId)
-      
-      const response = await fetch(`https://novamail.world/api/campaigns?${params}`)
+      const response = await fetch(`https://novamail.world/api/campaigns/history?userId=${userId}`)
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -45,207 +49,202 @@ export default function CampaignsPage() {
       
       const data = await response.json()
       if (data.success) {
-        setCampaigns(data.data.campaigns || [])
+        setEmailHistory(data.data.emails || [])
       } else {
-        throw new Error(data.error || 'Failed to fetch campaigns')
+        throw new Error(data.error || 'Failed to fetch email history')
       }
     } catch (error) {
-      console.error('Failed to fetch campaigns:', error)
-      toast.error('Failed to load campaigns')
-      // 如果API失败，设置为空数组而不是模拟数据
-      setCampaigns([])
+      console.error('Failed to fetch email history:', error)
+      toast.error('Failed to load email history')
     } finally {
       setLoading(false)
     }
   }
 
-  const filteredCampaigns = campaigns.filter(campaign => 
-    selectedStatus === 'all' || campaign.status === selectedStatus
-  )
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'sent': return 'bg-green-100 text-green-800'
-      case 'scheduled': return 'bg-blue-100 text-blue-800'
-      case 'draft': return 'bg-gray-100 text-gray-800'
-      case 'paused': return 'bg-yellow-100 text-yellow-800'
-      default: return 'bg-gray-100 text-gray-800'
+  const getStatusColor = (emailMode: string) => {
+    switch (emailMode) {
+      case 'professional':
+        return 'bg-purple-100 text-purple-800'
+      case 'simple':
+        return 'bg-blue-100 text-blue-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
     }
   }
 
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-      </div>
-    )
+  const getTemplateIcon = (emailMode: string) => {
+    return emailMode === 'professional' ? SparklesIcon : DocumentTextIcon
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Campaigns</h1>
-          <p className="text-gray-600">Manage your email campaigns and track performance</p>
-        </div>
-        <button 
-          onClick={() => router.push('/dashboard/campaigns/new')}
-          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="container mx-auto px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-7xl mx-auto"
         >
-          Create Campaign
-        </button>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Campaigns</p>
-              <p className="text-2xl font-bold text-gray-900">{campaigns.length}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Sent</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {campaigns.filter(c => c.status === 'sent').length}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Scheduled</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {campaigns.filter(c => c.status === 'scheduled').length}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-          <div className="flex items-center space-x-4">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              >
-                <option value="all">All Campaigns</option>
-                <option value="draft">Draft</option>
-                <option value="scheduled">Scheduled</option>
-                <option value="sent">Sent</option>
-                <option value="paused">Paused</option>
-              </select>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Email History</h1>
+              <p className="text-gray-600">View and manage your AI-generated emails</p>
             </div>
-          </div>
-          <div className="text-sm text-gray-600">
-            Showing {filteredCampaigns.length} of {campaigns.length} campaigns
-          </div>
-        </div>
-      </div>
-
-      {/* Campaigns Table */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Campaign
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Recipients
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Created
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredCampaigns.map((campaign) => (
-                <tr key={campaign.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{campaign.name}</div>
-                      <div className="text-sm text-gray-500">{campaign.subject}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(campaign.status)}`}>
-                      {campaign.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {campaign.recipients.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(campaign.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-primary-600 hover:text-primary-900 mr-3">View</button>
-                    {campaign.status === 'draft' && (
-                      <button className="text-green-600 hover:text-green-900 mr-3">Edit</button>
-                    )}
-                    <button className="text-red-600 hover:text-red-900">Delete</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {filteredCampaigns.length === 0 && (
-        <div className="text-center py-12">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No campaigns found</h3>
-          <p className="mt-1 text-sm text-gray-500">Get started by creating your first campaign.</p>
-          <div className="mt-6">
-            <button 
+            <button
               onClick={() => router.push('/dashboard/campaigns/new')}
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
             >
-              Create Campaign
+              <PlusIcon className="h-5 w-5" />
+              <span>Generate New Email</span>
             </button>
           </div>
-        </div>
-      )}
+
+          {/* Email History List */}
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : emailHistory.length === 0 ? (
+            <div className="text-center py-12">
+              <DocumentTextIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No emails generated yet</h3>
+              <p className="text-gray-600 mb-6">Start creating your first AI-generated email</p>
+              <button
+                onClick={() => router.push('/dashboard/campaigns/new')}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Generate Your First Email
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {emailHistory.map((email, index) => {
+                const TemplateIcon = getTemplateIcon(email.emailMode)
+                return (
+                  <motion.div
+                    key={email.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200"
+                  >
+                    {/* Email Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-blue-100 rounded-lg">
+                          <TemplateIcon className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900 line-clamp-2">{email.subject}</h3>
+                          <p className="text-sm text-gray-600">{email.businessName}</p>
+                        </div>
+                      </div>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(email.emailMode)}`}>
+                        {email.emailMode === 'professional' ? 'Professional' : 'Simple'}
+                      </span>
+                    </div>
+
+                    {/* Email Details */}
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center text-sm text-gray-600">
+                        <CalendarIcon className="h-4 w-4 mr-2" />
+                        <span>{formatDate(email.createdAt)}</span>
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <SparklesIcon className="h-4 w-4 mr-2" />
+                        <span className="capitalize">{email.toneStyle} tone</span>
+                      </div>
+                      {email.selectedTemplate && (
+                        <div className="flex items-center text-sm text-gray-600">
+                          <DocumentTextIcon className="h-4 w-4 mr-2" />
+                          <span className="capitalize">{email.selectedTemplate.replace('-', ' ')} template</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Email Preview */}
+                    {showPreview === email.id && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200 max-h-64 overflow-y-auto"
+                      >
+                        <div 
+                          className="text-sm text-gray-700"
+                          dangerouslySetInnerHTML={{ __html: email.body }}
+                        />
+                      </motion.div>
+                    )}
+
+                    {/* Actions */}
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => setShowPreview(showPreview === email.id ? null : email.id)}
+                        className="flex-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center space-x-1"
+                      >
+                        <EyeIcon className="h-4 w-4" />
+                        <span>{showPreview === email.id ? 'Hide' : 'Preview'}</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(email.body)
+                          toast.success('Email content copied to clipboard!')
+                        }}
+                        className="px-3 py-2 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                      >
+                        Copy
+                      </button>
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </div>
+          )}
+
+          {/* Stats Summary */}
+          {emailHistory.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-8 bg-white rounded-xl border border-gray-200 p-6"
+            >
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Summary</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">{emailHistory.length}</div>
+                  <div className="text-sm text-gray-600">Total Emails Generated</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {emailHistory.filter(e => e.emailMode === 'professional').length}
+                  </div>
+                  <div className="text-sm text-gray-600">Professional Templates</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">
+                    {emailHistory.filter(e => e.emailMode === 'simple').length}
+                  </div>
+                  <div className="text-sm text-gray-600">Simple Emails</div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
+      </div>
     </div>
   )
 }
