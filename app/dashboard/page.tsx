@@ -205,12 +205,15 @@ export default function DashboardPage() {
 
   const copyContent = () => {
     if (campaignData.body) {
-      // Convert HTML to plain text for text emails
-      const tempDiv = document.createElement('div')
-      tempDiv.innerHTML = campaignData.body
-      const plainText = tempDiv.textContent || tempDiv.innerText || ''
-      navigator.clipboard.writeText(plainText)
-      toast.success('Text content copied to clipboard!')
+      if (currentMode === 'text') {
+        // For text emails, copy as plain text
+        navigator.clipboard.writeText(campaignData.body)
+        toast.success('Text content copied to clipboard!')
+      } else {
+        // For template emails, copy HTML content
+        navigator.clipboard.writeText(campaignData.body)
+        toast.success('Template content copied to clipboard!')
+      }
     }
   }
 
@@ -503,24 +506,44 @@ export default function DashboardPage() {
                             <div>
                               <h4 className="text-lg font-semibold text-gray-800 mb-4">Tone & Style</h4>
                               <div className="space-y-4">
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                  {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
-                                    <button
-                                      key={tone}
-                                      onClick={() => setToneStyle(tone)}
-                                      className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
-                                        toneStyle === tone
-                                          ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-lg'
-                                          : 'border-gray-200 hover:border-gray-300 bg-white'
-                                      }`}
-                                    >
-                                      <div className="text-center">
-                                        <PaintBrushIcon className="h-6 w-6 mx-auto mb-2" />
-                                        <span className="font-medium">{tone.charAt(0).toUpperCase() + tone.slice(1)}</span>
+                                {/* Preset tone buttons - only show if no custom tone is entered */}
+                                {!toneStyle || ['friendly', 'professional', 'casual', 'formal'].includes(toneStyle) ? (
+                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
+                                      <button
+                                        key={tone}
+                                        onClick={() => setToneStyle(tone)}
+                                        className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
+                                          toneStyle === tone
+                                            ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-lg'
+                                            : 'border-gray-200 hover:border-gray-300 bg-white'
+                                        }`}
+                                      >
+                                        <div className="text-center">
+                                          <PaintBrushIcon className="h-6 w-6 mx-auto mb-2" />
+                                          <span className="font-medium">{tone.charAt(0).toUpperCase() + tone.slice(1)}</span>
+                                        </div>
+                                      </button>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl">
+                                    <div className="flex items-center justify-between">
+                                      <div>
+                                        <p className="font-medium text-blue-800">Custom Tone Selected</p>
+                                        <p className="text-sm text-blue-600">"{toneStyle}"</p>
                                       </div>
-                                    </button>
-                                  ))}
-                                </div>
+                                      <button
+                                        onClick={() => setToneStyle('')}
+                                        className="text-blue-600 hover:text-blue-800 transition-colors"
+                                      >
+                                        <XMarkIcon className="h-5 w-5" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Custom tone input */}
                                 <div>
                                   <label className="block text-sm font-semibold text-gray-700 mb-3">
                                     Or enter custom tone description
@@ -734,14 +757,14 @@ export default function DashboardPage() {
                         <motion.div
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="space-y-8"
+                          className="space-y-8 h-full flex flex-col"
                         >
                           <div className="text-center mb-8">
                             <h3 className="text-3xl font-bold text-gray-800 mb-3">Your template is ready!</h3>
                             <p className="text-gray-600 text-lg">Here's your professional template email</p>
                           </div>
 
-                          <div className="space-y-6">
+                          <div className="space-y-6 flex-1 flex flex-col">
                             <div>
                               <label className="block text-sm font-semibold text-gray-700 mb-3">Subject Line</label>
                               <input
@@ -752,38 +775,43 @@ export default function DashboardPage() {
                               />
                             </div>
 
-                            {/* Direct Template Display */}
-                            <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg">
-                              <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-200">
-                                <div className="flex items-center justify-between">
-                                  <h4 className="font-semibold text-gray-700">Professional Template</h4>
-                                  <div className="flex items-center space-x-2">
-                                    <button
-                                      onClick={copyContent}
-                                      className="flex items-center space-x-1 px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
-                                    >
-                                      <DocumentDuplicateIcon className="h-4 w-4" />
-                                      <span>Copy</span>
-                                    </button>
-                                    <button
-                                      onClick={saveAsImage}
-                                      className="flex items-center space-x-1 px-3 py-1 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm"
-                                    >
-                                      <CameraIcon className="h-4 w-4" />
-                                      <span>Save</span>
-                                    </button>
+                            {/* Editable Template Display */}
+                            <div className="flex-1 flex flex-col">
+                              <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg flex-1 flex flex-col">
+                                <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-200">
+                                  <div className="flex items-center justify-between">
+                                    <h4 className="font-semibold text-gray-700">Professional Template</h4>
+                                    <div className="flex items-center space-x-2">
+                                      <button
+                                        onClick={copyContent}
+                                        className="flex items-center space-x-1 px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+                                      >
+                                        <DocumentDuplicateIcon className="h-4 w-4" />
+                                        <span>Copy</span>
+                                      </button>
+                                      <button
+                                        onClick={saveAsImage}
+                                        className="flex items-center space-x-1 px-3 py-1 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm"
+                                      >
+                                        <CameraIcon className="h-4 w-4" />
+                                        <span>Save</span>
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
+                                <div className="flex-1 overflow-y-auto">
+                                  <textarea
+                                    value={campaignData.body}
+                                    onChange={(e) => setCampaignData(prev => ({ ...prev, body: e.target.value }))}
+                                    className="w-full h-full p-6 border-0 resize-none focus:ring-0 focus:outline-none bg-white"
+                                    placeholder="Your template content will appear here..."
+                                  />
+                                </div>
                               </div>
-                              <div
-                                ref={emailPreviewRef}
-                                className="p-8 bg-white min-h-[500px]"
-                                dangerouslySetInnerHTML={{ __html: campaignData.body }}
-                              />
                             </div>
                           </div>
 
-                          <div className="flex justify-center">
+                          <div className="flex justify-center pt-4">
                             <button
                               onClick={handleNewEmail}
                               className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
