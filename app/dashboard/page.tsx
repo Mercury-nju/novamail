@@ -54,7 +54,7 @@ export default function DashboardPage() {
   const [emailHistory, setEmailHistory] = useState<EmailHistory[]>([])
   const [showHistory, setShowHistory] = useState(false)
 
-  const progress = ((step - 1) / 2) * 100
+  const progress = ((step - 1) / 1) * 100
 
   useEffect(() => {
     fetchEmailHistory()
@@ -105,7 +105,7 @@ export default function DashboardPage() {
           subject: result.subject,
           body: result.body
         }))
-        setStep(currentMode === 'text' ? 3 : 2)
+        setStep(currentMode === 'text' ? 2 : 2)
         toast.success('Email generated successfully!')
         fetchEmailHistory()
       } else {
@@ -120,7 +120,7 @@ export default function DashboardPage() {
   }
 
   const handleNext = () => {
-    if (step < 3) {
+    if (step < 2) {
       setStep(step + 1)
     }
   }
@@ -399,7 +399,7 @@ export default function DashboardPage() {
                     {/* Progress Bar */}
                     <div className="px-8 pt-6">
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-semibold text-gray-700">Step {step} of 3</span>
+                        <span className="text-sm font-semibold text-gray-700">Step {step} of 2</span>
                         <span className="text-sm text-gray-500">{progress}% Complete</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
@@ -420,15 +420,19 @@ export default function DashboardPage() {
                           className="space-y-8"
                         >
                           <div className="text-center mb-8">
-                            <h3 className="text-3xl font-bold text-gray-800 mb-3">Tell us about your email</h3>
-                            <p className="text-gray-600 text-lg">Provide details to help AI create the perfect email</p>
+                            <h3 className="text-3xl font-bold text-gray-800 mb-3">Create your email</h3>
+                            <p className="text-gray-600 text-lg">Provide details and choose your style to generate the perfect email</p>
                           </div>
 
-                          <div className="space-y-6">
-                            <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-3">
-                                What's the purpose of this email?
-                              </label>
+                          <div className="space-y-8">
+                            {/* Email Details Section */}
+                            <div className="space-y-6">
+                              <h4 className="text-lg font-semibold text-gray-800 mb-4">Email Details</h4>
+                              
+                              <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                  What's the purpose of this email?
+                                </label>
                               <textarea
                                 value={campaignData.purpose}
                                 onChange={(e) => setCampaignData(prev => ({ ...prev, purpose: e.target.value }))}
@@ -477,33 +481,8 @@ export default function DashboardPage() {
                                 className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
                               />
                             </div>
-                          </div>
 
-                          <div className="flex justify-end">
-                            <button
-                              onClick={handleNext}
-                              disabled={!campaignData.purpose || !campaignData.businessName}
-                              className="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
-                            >
-                              <span>Next</span>
-                              <ArrowRightIcon className="h-5 w-5" />
-                            </button>
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {step === 2 && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="space-y-8"
-                        >
-                          <div className="text-center mb-8">
-                            <h3 className="text-3xl font-bold text-gray-800 mb-3">Choose your style</h3>
-                            <p className="text-gray-600 text-lg">Select the tone and style that best fits your needs</p>
-                          </div>
-
-                          <div className="space-y-8">
+                            {/* Tone & Style Section */}
                             <div>
                               <h4 className="text-lg font-semibold text-gray-800 mb-4">Tone & Style</h4>
                               <div className="space-y-4">
@@ -561,17 +540,10 @@ export default function DashboardPage() {
                             </div>
                           </div>
 
-                          <div className="flex justify-between">
-                            <button
-                              onClick={handleBack}
-                              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-2xl hover:bg-gray-50 transition-colors flex items-center space-x-2"
-                            >
-                              <ArrowLeftIcon className="h-5 w-5" />
-                              <span>Back</span>
-                            </button>
+                          <div className="flex justify-end">
                             <button
                               onClick={generateEmailContent}
-                              disabled={isGenerating}
+                              disabled={isGenerating || !campaignData.purpose || !campaignData.businessName}
                               className="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
                             >
                               {isGenerating ? (
@@ -581,7 +553,7 @@ export default function DashboardPage() {
                                 </>
                               ) : (
                                 <>
-                                  <CpuChipIcon className="h-5 w-5" />
+                                  <SparklesIcon className="h-5 w-5" />
                                   <span>Generate Email</span>
                                 </>
                               )}
@@ -590,7 +562,8 @@ export default function DashboardPage() {
                         </motion.div>
                       )}
 
-                      {step === 3 && (
+
+                      {step === 2 && (
                         <motion.div
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
