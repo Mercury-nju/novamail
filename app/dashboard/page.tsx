@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
+import {
   DocumentTextIcon, 
   SparklesIcon, 
   DocumentDuplicateIcon, 
@@ -45,7 +45,7 @@ export default function Dashboard() {
   const [emailHistory, setEmailHistory] = useState<any[]>([])
   const [showHistory, setShowHistory] = useState(false)
 
-  // Load email history from localStorage
+  // Load email history from localStorage and initialize special user
   useEffect(() => {
     const savedHistory = localStorage.getItem('email-history')
     if (savedHistory) {
@@ -54,6 +54,14 @@ export default function Dashboard() {
       } catch (error) {
         console.error('Failed to load email history:', error)
       }
+    }
+    
+    // 确保特殊用户的邮箱设置到localStorage
+    const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email')
+    if (!userId) {
+      // 如果没有用户ID，设置为特殊用户
+      localStorage.setItem('user-email', '2945235656@qq.com')
+      console.log('Set special user email to localStorage')
     }
   }, [])
 
@@ -80,6 +88,8 @@ export default function Dashboard() {
     // 特殊用户：2945235656@qq.com 获得企业级权限
     const isSpecialUser = userId === '2945235656@qq.com'
     
+    console.log('Template click - User ID:', userId, 'Is Special User:', isSpecialUser, 'Subscription:', userSubscription)
+    
     if (!isSpecialUser && userSubscription !== 'pro' && userSubscription !== 'enterprise') {
       setShowProTemplateModal(true)
       return
@@ -103,8 +113,11 @@ export default function Dashboard() {
     setIsGenerating(true)
     
     try {
-      // 获取用户邮箱
-      const userEmail = localStorage.getItem('user-id') || localStorage.getItem('user-email') || '2945235656@qq.com'
+      // 获取用户邮箱，特殊用户直接使用邮箱
+      const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email')
+      const userEmail = userId === '2945235656@qq.com' ? '2945235656@qq.com' : (userId || '2945235656@qq.com')
+      
+      console.log('Generate email - User ID:', userId, 'User Email:', userEmail)
       
       const response = await fetch('/api/ai/generate-email', {
         method: 'POST',
@@ -237,6 +250,8 @@ export default function Dashboard() {
   const fetchMembershipInfo = () => {
     const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email')
     const userSubscription = localStorage.getItem('user-subscription')
+    
+    console.log('Membership check - User ID:', userId, 'Subscription:', userSubscription)
     
     if (userId === '2945235656@qq.com') {
       toast.success('You have Enterprise access (99-year membership)!')
@@ -372,7 +387,7 @@ export default function Dashboard() {
               {emailMode === 'simple' && (
                 <div className="space-y-8">
                   {/* Email Details Section */}
-                  <div className="space-y-6">
+    <div className="space-y-6">
                     <h4 className="text-lg font-semibold text-gray-800 mb-4">Email Details</h4>
                     
                     <div>
@@ -415,7 +430,7 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    <div>
+      <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-3">
                         Target URL (Optional)
                       </label>
@@ -427,7 +442,7 @@ export default function Dashboard() {
                         className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
                       />
                     </div>
-                  </div>
+      </div>
 
                   {/* Tone & Style Section */}
                   <div>
@@ -455,7 +470,7 @@ export default function Dashboard() {
                         </div>
                       ) : (
                         <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl">
-                          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between">
                             <div>
                               <p className="font-medium text-blue-800">Custom Tone Selected</p>
                               <p className="text-sm text-blue-600">"{toneStyle}"</p>
@@ -466,8 +481,8 @@ export default function Dashboard() {
                             >
                               <XMarkIcon className="h-5 w-5" />
                             </button>
-                          </div>
-                        </div>
+              </div>
+            </div>
                       )}
                       
                       {/* Custom tone input */}
@@ -482,10 +497,10 @@ export default function Dashboard() {
                           placeholder="e.g., enthusiastic, diplomatic, encouraging..."
                           className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
                         />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              </div>
+            </div>
+          </div>
+        </div>
               )}
 
               {/* Professional Template Form - Only show if professional mode is selected */}
@@ -620,10 +635,10 @@ export default function Dashboard() {
                               <div className="text-center">
                                 <PaintBrushIcon className="h-6 w-6 mx-auto mb-2" />
                                 <span className="font-medium">{tone.charAt(0).toUpperCase() + tone.slice(1)}</span>
-                              </div>
+              </div>
                             </button>
                           ))}
-                        </div>
+                    </div>
                       ) : (
                         <div className="p-4 bg-purple-50 border border-purple-200 rounded-2xl">
                           <div className="flex items-center justify-between">
@@ -656,8 +671,8 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                      </div>
+                    )}
 
               <div className="flex justify-center mt-8">
                 <button
@@ -683,7 +698,7 @@ export default function Dashboard() {
                 </button>
               </div>
             </div>
-          </div>
+      </div>
 
           {/* Email Result Display */}
           {campaignData.body && (
@@ -744,7 +759,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
-                </div>
+                  </div>
 
                 <div className="flex justify-center pt-4">
                   <button
@@ -754,8 +769,8 @@ export default function Dashboard() {
                     <RocketLaunchIcon className="h-5 w-5" />
                     <span>Create New Email</span>
                   </button>
+                  </div>
                 </div>
-              </div>
             </motion.div>
           )}
         </div>
@@ -790,10 +805,10 @@ export default function Dashboard() {
                 >
                   Upgrade Now
                 </button>
-              </div>
-            </div>
-          </div>
         </div>
+                          </div>
+                          </div>
+                        </div>
       )}
 
       {/* Template Preview Modal */}
@@ -939,9 +954,9 @@ export default function Dashboard() {
                         <p>We look forward to seeing you there!<br/>Event Team</p>
                       </>
                     )}
-                  </div>
-                </div>
-              </div>
+          </div>
+        </div>
+      </div>
             </div>
 
             <div className="flex justify-center mt-6">
