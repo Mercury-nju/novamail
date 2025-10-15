@@ -2543,30 +2543,53 @@ Be intelligent, creative, and professional. Create an email that truly serves it
         }
         
         if (!foundSubject || !foundBody) {
-          // 如果还是没找到，检查是否是纯文本内容
-          if (aiContent.includes('<') && aiContent.includes('>')) {
-            // 包含HTML标签，直接使用
-            aiBody = aiContent;
-            console.log('Using raw HTML content as body');
+          // 如果还是没找到，根据邮件模式处理
+          if (emailMode === 'simple') {
+            // 简单模式：强制转换为纯文本
+            aiBody = aiContent.replace(/<[^>]*>/g, '').replace(/\n\s*\n/g, '\n\n').trim();
+            console.log('Simple mode: converted to plain text');
           } else {
-            // 纯文本内容，包装成HTML
-            aiBody = `<p style="color: #333; line-height: 1.6; font-size: 16px;">${aiContent.replace(/\n/g, '<br>')}</p>`;
-            console.log('Wrapped plain text content in HTML');
+            // 专业模式：检查是否是纯文本内容
+            if (aiContent.includes('<') && aiContent.includes('>')) {
+              // 包含HTML标签，直接使用
+              aiBody = aiContent;
+              console.log('Using raw HTML content as body');
+            } else {
+              // 纯文本内容，包装成HTML
+              aiBody = `<p style="color: #333; line-height: 1.6; font-size: 16px;">${aiContent.replace(/\n/g, '<br>')}</p>`;
+              console.log('Wrapped plain text content in HTML');
+            }
           }
         }
       }
       
       // 清理内容：移除markdown符号和无关信息
       aiSubject = aiSubject.replace(/\*\*/g, '').replace(/\*/g, '').replace(/```/g, '').trim();
-      aiBody = aiBody
-        .replace(/\*\*/g, '')  // 移除粗体markdown
-        .replace(/\*/g, '')    // 移除斜体markdown
-        .replace(/```html/g, '')  // 移除代码块标记
-        .replace(/```/g, '')   // 移除代码块标记
-        .replace(/---/g, '')   // 移除分隔线
-        .replace(/^\d+\.\s*/gm, '') // 移除编号列表
-        .replace(/^\*\s*/gm, '')    // 移除项目符号
-        .trim();
+      
+      if (emailMode === 'simple') {
+        // 简单模式：只清理markdown，保持纯文本
+        aiBody = aiBody
+          .replace(/\*\*/g, '')  // 移除粗体markdown
+          .replace(/\*/g, '')    // 移除斜体markdown
+          .replace(/```html/g, '')  // 移除代码块标记
+          .replace(/```/g, '')   // 移除代码块标记
+          .replace(/---/g, '')   // 移除分隔线
+          .replace(/^\d+\.\s*/gm, '') // 移除编号列表
+          .replace(/^\*\s*/gm, '')    // 移除项目符号
+          .replace(/<[^>]*>/g, '')   // 移除任何HTML标签
+          .trim();
+      } else {
+        // 专业模式：清理markdown但保留HTML
+        aiBody = aiBody
+          .replace(/\*\*/g, '')  // 移除粗体markdown
+          .replace(/\*/g, '')    // 移除斜体markdown
+          .replace(/```html/g, '')  // 移除代码块标记
+          .replace(/```/g, '')   // 移除代码块标记
+          .replace(/---/g, '')   // 移除分隔线
+          .replace(/^\d+\.\s*/gm, '') // 移除编号列表
+          .replace(/^\*\s*/gm, '')    // 移除项目符号
+          .trim();
+      }
       
       console.log('Final cleaned subject:', aiSubject);
       console.log('Final cleaned body preview:', aiBody.substring(0, 300) + '...');
