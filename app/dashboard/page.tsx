@@ -42,6 +42,8 @@ export default function DashboardPage() {
   const [showProTemplateModal, setShowProTemplateModal] = useState(false)
   const [showTemplatePreview, setShowTemplatePreview] = useState(false)
   const [previewTemplate, setPreviewTemplate] = useState<string>('')
+  const [showMembershipInfo, setShowMembershipInfo] = useState(false)
+  const [membershipData, setMembershipData] = useState<any>(null)
   const [toneStyle, setToneStyle] = useState<string>('friendly')
   const [showPreview, setShowPreview] = useState(false)
   const emailPreviewRef = useRef<HTMLDivElement>(null)
@@ -263,6 +265,29 @@ export default function DashboardPage() {
     setShowTemplatePreview(true)
   }
 
+  const fetchMembershipInfo = async () => {
+    try {
+      const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email')
+      if (!userId) {
+        toast.error('Please login first')
+        return
+      }
+
+      const response = await fetch(`https://novamail.world/api/user/membership?email=${encodeURIComponent(userId)}`)
+      const data = await response.json()
+
+      if (data.success) {
+        setMembershipData(data.membership)
+        setShowMembershipInfo(true)
+      } else {
+        toast.error('Failed to get membership info')
+      }
+    } catch (error) {
+      console.error('Error fetching membership info:', error)
+      toast.error('Failed to get membership info')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Animated Background Elements */}
@@ -285,6 +310,13 @@ export default function DashboardPage() {
               >
                 <DocumentTextIcon className="h-4 w-4" />
                 <span>History ({emailHistory.length})</span>
+              </button>
+              <button
+                onClick={fetchMembershipInfo}
+                className="flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg hover:from-purple-600 hover:to-pink-700 transition-all duration-200 text-sm"
+              >
+                <SparklesIcon className="h-4 w-4" />
+                <span>Membership</span>
               </button>
               <button
                 onClick={handleNewEmail}
@@ -1204,6 +1236,160 @@ export default function DashboardPage() {
                       Use This Template
                     </button>
                   </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Membership Info Modal */}
+        <AnimatePresence>
+          {showMembershipInfo && membershipData && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+              >
+                <div className="p-6 border-b border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-2xl font-bold text-gray-800">Membership Information</h3>
+                    <button
+                      onClick={() => setShowMembershipInfo(false)}
+                      className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                    >
+                      <XMarkIcon className="h-6 w-6" />
+                    </button>
+                  </div>
+                </div>
+                <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                  <div className="space-y-6">
+                    {/* Membership Status */}
+                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h4 className="text-lg font-bold text-gray-800 capitalize">{membershipData.plan} Plan</h4>
+                          <p className={`text-sm font-medium ${
+                            membershipData.status === 'active' ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            {membershipData.status === 'active' ? '✅ Active' : '❌ Inactive'}
+                          </p>
+                        </div>
+                        {membershipData.isSpecialUser && (
+                          <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                            Special User
+                          </div>
+                        )}
+                      </div>
+                      {membershipData.expiresAt && (
+                        <div className="text-sm text-gray-600">
+                          <p><strong>Activated:</strong> {new Date(membershipData.activatedAt).toLocaleDateString()}</p>
+                          <p><strong>Expires:</strong> {new Date(membershipData.expiresAt).toLocaleDateString()}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Usage Statistics */}
+                    <div className="bg-white border border-gray-200 rounded-2xl p-6">
+                      <h4 className="text-lg font-bold text-gray-800 mb-4">Usage Statistics</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="text-center p-4 bg-blue-50 rounded-xl">
+                          <div className="text-2xl font-bold text-blue-600">
+                            {membershipData.usage.emailsGeneratedThisMonth}
+                          </div>
+                          <div className="text-sm text-gray-600">Emails Generated</div>
+                          <div className="text-xs text-gray-500">This Month</div>
+                        </div>
+                        <div className="text-center p-4 bg-green-50 rounded-xl">
+                          <div className="text-2xl font-bold text-green-600">
+                            {membershipData.usage.contactsUsed}
+                          </div>
+                          <div className="text-sm text-gray-600">Contacts Used</div>
+                          <div className="text-xs text-gray-500">Total</div>
+                        </div>
+                        <div className="text-center p-4 bg-purple-50 rounded-xl">
+                          <div className="text-2xl font-bold text-purple-600">
+                            {membershipData.usage.campaignsCreatedThisMonth}
+                          </div>
+                          <div className="text-sm text-gray-600">Campaigns Created</div>
+                          <div className="text-xs text-gray-500">This Month</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Features */}
+                    <div className="bg-white border border-gray-200 rounded-2xl p-6">
+                      <h4 className="text-lg font-bold text-gray-800 mb-4">Plan Features</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-3 h-3 rounded-full ${
+                              membershipData.features.maxEmailsPerMonth === -1 ? 'bg-green-500' : 'bg-gray-300'
+                            }`}></div>
+                            <span className="text-sm text-gray-700">
+                              {membershipData.features.maxEmailsPerMonth === -1 ? 'Unlimited' : membershipData.features.maxEmailsPerMonth} Emails/Month
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-3 h-3 rounded-full ${
+                              membershipData.features.maxContacts === -1 ? 'bg-green-500' : 'bg-gray-300'
+                            }`}></div>
+                            <span className="text-sm text-gray-700">
+                              {membershipData.features.maxContacts === -1 ? 'Unlimited' : membershipData.features.maxContacts} Contacts
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-3 h-3 rounded-full ${
+                              membershipData.features.maxCampaignsPerMonth === -1 ? 'bg-green-500' : 'bg-gray-300'
+                            }`}></div>
+                            <span className="text-sm text-gray-700">
+                              {membershipData.features.maxCampaignsPerMonth === -1 ? 'Unlimited' : membershipData.features.maxCampaignsPerMonth} Campaigns/Month
+                            </span>
+                          </div>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-3 h-3 rounded-full ${
+                              membershipData.features.professionalTemplates ? 'bg-green-500' : 'bg-gray-300'
+                            }`}></div>
+                            <span className="text-sm text-gray-700">Professional Templates</span>
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-3 h-3 rounded-full ${
+                              membershipData.features.advancedAnalytics ? 'bg-green-500' : 'bg-gray-300'
+                            }`}></div>
+                            <span className="text-sm text-gray-700">Advanced Analytics</span>
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-3 h-3 rounded-full ${
+                              membershipData.features.prioritySupport ? 'bg-green-500' : 'bg-gray-300'
+                            }`}></div>
+                            <span className="text-sm text-gray-700">Priority Support</span>
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-3 h-3 rounded-full ${
+                              membershipData.features.customBranding ? 'bg-green-500' : 'bg-gray-300'
+                            }`}></div>
+                            <span className="text-sm text-gray-700">Custom Branding</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6 border-t border-gray-200 bg-gray-50">
+                  <button
+                    onClick={() => setShowMembershipInfo(false)}
+                    className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200"
+                  >
+                    Close
+                  </button>
                 </div>
               </motion.div>
             </motion.div>

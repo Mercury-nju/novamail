@@ -150,6 +150,8 @@ export default {
         return await handleCampaignSend(request, env);
       } else if (path.startsWith('/api/user/update-usage')) {
         return await handleUpdateUsage(request, env);
+      } else if (path.startsWith('/api/user/membership')) {
+        return await handleUserMembership(request, env);
       } else if (path.startsWith('/api/ai/generate-email')) {
         return await handleAIGenerateEmail(request, env);
       } else if (path.startsWith('/api/test-gmail')) {
@@ -7432,6 +7434,182 @@ async function handleTestOAuth(request, env) {
       error: 'OAuth test failed',
       details: error.message,
       timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 处理用户会员权益信息
+async function handleUserMembership(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 200, headers: corsHeaders });
+  }
+
+  if (request.method !== 'GET') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    const url = new URL(request.url);
+    const email = url.searchParams.get('email');
+    
+    if (!email) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Email parameter is required' 
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    console.log('Getting membership info for:', email);
+
+    // 特殊用户：2945235656@qq.com 获得99年会员权限
+    if (email.toLowerCase() === '2945235656@qq.com') {
+      const membershipInfo = {
+        success: true,
+        membership: {
+          plan: 'enterprise',
+          status: 'active',
+          activatedAt: new Date().toISOString(),
+          expiresAt: new Date(Date.now() + 99 * 365 * 24 * 60 * 60 * 1000).toISOString(), // 99年后
+          features: {
+            maxEmailsPerMonth: -1, // 无限制
+            maxContacts: -1, // 无限制
+            maxCampaignsPerMonth: -1, // 无限制
+            professionalTemplates: true,
+            advancedAnalytics: true,
+            prioritySupport: true,
+            customBranding: true
+          },
+          usage: {
+            emailsGeneratedThisMonth: 0, // 可以从KV存储获取
+            contactsUsed: 0,
+            campaignsCreatedThisMonth: 0
+          },
+          isSpecialUser: true
+        }
+      };
+
+      console.log('Special user membership info:', membershipInfo);
+      return new Response(JSON.stringify(membershipInfo), {
+        status: 200,
+        headers: corsHeaders
+      });
+    }
+
+    // 普通用户检查
+    let userPlan = 'free';
+    let userSubscription = null;
+    let usageStats = {
+      emailsGeneratedThisMonth: 0,
+      contactsUsed: 0,
+      campaignsCreatedThisMonth: 0
+    };
+
+    if (env.USERS_KV) {
+      try {
+        const userKey = `user_${email.toLowerCase()}`;
+        const storedUser = await env.USERS_KV.get(userKey);
+        
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          
+          // 检查订阅状态
+          if (user.subscription && user.subscription.status === 'active') {
+            const expiresAt = new Date(user.subscription.expiresAt);
+            const now = new Date();
+            
+            if (expiresAt > now) {
+              userPlan = user.subscription.plan || user.subscriptionPlan || 'free';
+              userSubscription = user.subscription;
+            }
+          }
+
+          // 获取使用统计
+          if (user.usage) {
+            usageStats = {
+              emailsGeneratedThisMonth: user.usage.emailsGeneratedThisMonth || 0,
+              contactsUsed: user.usage.contactsUsed || 0,
+              campaignsCreatedThisMonth: user.usage.campaignsCreatedThisMonth || 0
+            };
+          }
+        }
+      } catch (error) {
+        console.error('Failed to get user data:', error);
+      }
+    }
+
+    // 根据计划设置限制
+    const limits = {
+      free: {
+        maxEmailsPerMonth: 1000,
+        maxContacts: 500,
+        maxCampaignsPerMonth: 10,
+        professionalTemplates: false,
+        advancedAnalytics: false,
+        prioritySupport: false,
+        customBranding: false
+      },
+      pro: {
+        maxEmailsPerMonth: -1,
+        maxContacts: -1,
+        maxCampaignsPerMonth: -1,
+        professionalTemplates: true,
+        advancedAnalytics: true,
+        prioritySupport: true,
+        customBranding: false
+      },
+      enterprise: {
+        maxEmailsPerMonth: -1,
+        maxContacts: -1,
+        maxCampaignsPerMonth: -1,
+        professionalTemplates: true,
+        advancedAnalytics: true,
+        prioritySupport: true,
+        customBranding: true
+      }
+    };
+
+    const membershipInfo = {
+      success: true,
+      membership: {
+        plan: userPlan,
+        status: userSubscription ? 'active' : 'inactive',
+        activatedAt: userSubscription ? userSubscription.activatedAt : null,
+        expiresAt: userSubscription ? userSubscription.expiresAt : null,
+        features: limits[userPlan],
+        usage: usageStats,
+        isSpecialUser: false
+      }
+    };
+
+    console.log('Membership info for', email, ':', membershipInfo);
+    return new Response(JSON.stringify(membershipInfo), {
+      status: 200,
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    console.error('Error in handleUserMembership:', error);
+    
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to get membership info',
+      details: error.message
     }), {
       status: 500,
       headers: corsHeaders
