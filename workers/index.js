@@ -1851,7 +1851,61 @@ async function handleAIGenerateEmail(request, env) {
     const data = await request.json();
     console.log('AI generation request data:', JSON.stringify(data, null, 2));
     
-    const { emailMode, selectedTemplate, toneStyle, campaignData } = data;
+    const { emailMode, selectedTemplate, toneStyle, campaignData, email } = data;
+    
+    // 用户权限检查 - 从KV存储获取用户订阅信息
+    let userPlan = 'free'; // 默认免费计划
+    
+    // 特殊用户：2945235656@qq.com 获得99年会员权限
+    if (email && email.toLowerCase() === '2945235656@qq.com') {
+      userPlan = 'enterprise';
+      console.log('Special user granted enterprise access:', email);
+    } else if (email && env.USERS_KV) {
+      try {
+        const userKey = `user_${email.toLowerCase()}`;
+        const storedUser = await env.USERS_KV.get(userKey);
+        
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          
+          // 检查订阅是否有效
+          if (user.subscription && user.subscription.status === 'active') {
+            const expiresAt = new Date(user.subscription.expiresAt);
+            const now = new Date();
+            
+            if (expiresAt > now) {
+              userPlan = user.subscription.plan || user.subscriptionPlan || 'free';
+              console.log('User subscription found:', {
+                email: email,
+                plan: userPlan,
+                expiresAt: user.subscription.expiresAt
+              });
+            } else {
+              console.log('User subscription expired:', {
+                email: email,
+                expiresAt: user.subscription.expiresAt
+              });
+            }
+          } else {
+            console.log('No active subscription found for user:', email);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to check user subscription:', error);
+      }
+    }
+    
+    // 检查专业模板权限
+    if (emailMode === 'professional' && userPlan === 'free') {
+      console.log('Professional template access denied for free user:', email);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Professional templates require Pro or Enterprise membership. Please upgrade your account.' 
+      }), {
+        status: 403,
+        headers: corsHeaders
+      });
+    }
     
     if (!campaignData) {
       console.log('Missing campaignData in request');
