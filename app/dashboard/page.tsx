@@ -559,7 +559,7 @@ export default function DashboardPage() {
                         >
                           <div className="text-center mb-8">
                             <h3 className="text-3xl font-bold text-gray-800 mb-3">Your email is ready!</h3>
-                            <p className="text-gray-600 text-lg">Review, preview, and export your AI-generated email</p>
+                            <p className="text-gray-600 text-lg">Here's your AI-generated email</p>
                           </div>
 
                           <div className="space-y-6">
@@ -573,62 +573,38 @@ export default function DashboardPage() {
                               />
                             </div>
 
-                            <div className="flex justify-center">
-                              <button
-                                onClick={() => setShowPreview(!showPreview)}
-                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                              >
-                                {showPreview ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-                                <span>{showPreview ? 'Hide Preview' : 'Show Preview'}</span>
-                              </button>
-                            </div>
-
-                            {showPreview && (
-                              <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg">
-                                <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
-                                  <h4 className="font-semibold text-gray-700">Email Preview</h4>
+                            {/* Direct Email Display */}
+                            <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg">
+                              <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-200">
+                                <div className="flex items-center justify-between">
+                                  <h4 className="font-semibold text-gray-700">Generated Email</h4>
+                                  <div className="flex items-center space-x-2">
+                                    <button
+                                      onClick={copyContent}
+                                      className="flex items-center space-x-1 px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+                                    >
+                                      <DocumentDuplicateIcon className="h-4 w-4" />
+                                      <span>Copy</span>
+                                    </button>
+                                    <button
+                                      onClick={saveAsImage}
+                                      className="flex items-center space-x-1 px-3 py-1 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm"
+                                    >
+                                      <CameraIcon className="h-4 w-4" />
+                                      <span>Save</span>
+                                    </button>
+                                  </div>
                                 </div>
-                                <div
-                                  ref={emailPreviewRef}
-                                  className="p-8 bg-white min-h-[400px]"
-                                  dangerouslySetInnerHTML={{ __html: campaignData.body }}
-                                />
                               </div>
-                            )}
-
-                            <div className="flex flex-wrap gap-4 justify-center">
-                              <button
-                                onClick={saveAsImage}
-                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                              >
-                                <CameraIcon className="h-5 w-5" />
-                                <span>Save as Image</span>
-                              </button>
-                              <button
-                                onClick={copyContent}
-                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                              >
-                                <DocumentDuplicateIcon className="h-5 w-5" />
-                                <span>Copy Content</span>
-                              </button>
-                              <button
-                                onClick={exportHTML}
-                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                              >
-                                <DocumentTextIcon className="h-5 w-5" />
-                                <span>Export HTML</span>
-                              </button>
+                              <div
+                                ref={emailPreviewRef}
+                                className="p-8 bg-white min-h-[500px]"
+                                dangerouslySetInnerHTML={{ __html: campaignData.body }}
+                              />
                             </div>
                           </div>
 
-                          <div className="flex justify-between">
-                            <button
-                              onClick={handleBack}
-                              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-2xl hover:bg-gray-50 transition-colors flex items-center space-x-2"
-                            >
-                              <ArrowLeftIcon className="h-5 w-5" />
-                              <span>Back</span>
-                            </button>
+                          <div className="flex justify-center">
                             <button
                               onClick={handleNewEmail}
                               className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
@@ -751,7 +727,7 @@ export default function DashboardPage() {
                         >
                           <div className="text-center mb-8">
                             <h3 className="text-3xl font-bold text-gray-800 mb-3">Your template is ready!</h3>
-                            <p className="text-gray-600 text-lg">Review, preview, and export your professional template</p>
+                            <p className="text-gray-600 text-lg">Here's your professional template email</p>
                           </div>
 
                           <div className="space-y-6">
@@ -765,62 +741,38 @@ export default function DashboardPage() {
                               />
                             </div>
 
-                            <div className="flex justify-center">
-                              <button
-                                onClick={() => setShowPreview(!showPreview)}
-                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                              >
-                                {showPreview ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-                                <span>{showPreview ? 'Hide Preview' : 'Show Preview'}</span>
-                              </button>
-                            </div>
-
-                            {showPreview && (
-                              <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg">
-                                <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
-                                  <h4 className="font-semibold text-gray-700">Template Preview</h4>
+                            {/* Direct Template Display */}
+                            <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg">
+                              <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-200">
+                                <div className="flex items-center justify-between">
+                                  <h4 className="font-semibold text-gray-700">Professional Template</h4>
+                                  <div className="flex items-center space-x-2">
+                                    <button
+                                      onClick={copyContent}
+                                      className="flex items-center space-x-1 px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+                                    >
+                                      <DocumentDuplicateIcon className="h-4 w-4" />
+                                      <span>Copy</span>
+                                    </button>
+                                    <button
+                                      onClick={saveAsImage}
+                                      className="flex items-center space-x-1 px-3 py-1 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm"
+                                    >
+                                      <CameraIcon className="h-4 w-4" />
+                                      <span>Save</span>
+                                    </button>
+                                  </div>
                                 </div>
-                                <div
-                                  ref={emailPreviewRef}
-                                  className="p-8 bg-white min-h-[400px]"
-                                  dangerouslySetInnerHTML={{ __html: campaignData.body }}
-                                />
                               </div>
-                            )}
-
-                            <div className="flex flex-wrap gap-4 justify-center">
-                              <button
-                                onClick={saveAsImage}
-                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                              >
-                                <CameraIcon className="h-5 w-5" />
-                                <span>Save as Image</span>
-                              </button>
-                              <button
-                                onClick={copyContent}
-                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                              >
-                                <DocumentDuplicateIcon className="h-5 w-5" />
-                                <span>Copy Content</span>
-                              </button>
-                              <button
-                                onClick={exportHTML}
-                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                              >
-                                <DocumentTextIcon className="h-5 w-5" />
-                                <span>Export HTML</span>
-                              </button>
+                              <div
+                                ref={emailPreviewRef}
+                                className="p-8 bg-white min-h-[500px]"
+                                dangerouslySetInnerHTML={{ __html: campaignData.body }}
+                              />
                             </div>
                           </div>
 
-                          <div className="flex justify-between">
-                            <button
-                              onClick={() => setStep(1)}
-                              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-2xl hover:bg-gray-50 transition-colors flex items-center space-x-2"
-                            >
-                              <ArrowLeftIcon className="h-5 w-5" />
-                              <span>Back</span>
-                            </button>
+                          <div className="flex justify-center">
                             <button
                               onClick={handleNewEmail}
                               className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
