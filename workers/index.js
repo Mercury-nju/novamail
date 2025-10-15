@@ -1940,7 +1940,221 @@ async function handleAIGenerateEmail(request, env) {
       
       if (emailMode === 'professional') {
         switch (selectedTemplate) {
-          case 'modern-promo':
+          case 'newsletter':
+            mockBody = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <div style="background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                <h1 style="margin: 0; font-size: 28px;">📰 ${campaignData.businessName || 'Newsletter'}</h1>
+                <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Weekly Updates & Insights</p>
+              </div>
+              
+              <div style="padding: 30px 0;">
+                <h2 style="color: #333; margin-bottom: 20px;">${campaignData.purpose}</h2>
+                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                  Welcome to our latest newsletter! We're excited to share ${campaignData.purpose.toLowerCase()} with you.
+                </p>
+                
+                <div style="background: #EFF6FF; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3B82F6;">
+                  <h3 style="color: #1E40AF; margin-top: 0;">Featured Content</h3>
+                  <p style="color: #666; line-height: 1.6;">
+                    Discover ${campaignData.productService || 'our latest offerings'} and learn how they can benefit your business.
+                  </p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Read More</a>
+                </div>
+              </div>
+              
+              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                <p>Best regards,<br>
+                <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
+              </div>
+            </div>
+          `;
+            break;
+          case 'announcement':
+            mockBody = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <div style="background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                <h1 style="margin: 0; font-size: 28px;">📢 ${campaignData.purpose}</h1>
+                <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Important Announcement</p>
+              </div>
+              
+              <div style="padding: 30px 0;">
+                <h2 style="color: #333; margin-bottom: 20px;">Important Update from ${campaignData.businessName || 'Our Team'}</h2>
+                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                  We're excited to announce ${campaignData.purpose.toLowerCase()}. This represents a significant milestone for our company and our commitment to serving you better.
+                </p>
+                
+                <div style="background: #FDF4FF; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8B5CF6;">
+                  <h3 style="color: #7C3AED; margin-top: 0;">What This Means for You</h3>
+                  <p style="color: #666; line-height: 1.6;">
+                    ${campaignData.productService || 'Our new offering'} will provide enhanced value and improved experience for all our customers.
+                  </p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Learn More</a>
+                </div>
+              </div>
+              
+              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                <p>Best regards,<br>
+                <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
+              </div>
+            </div>
+          `;
+            break;
+          case 'welcome':
+            mockBody = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                <h1 style="margin: 0; font-size: 28px;">👋 Welcome to ${campaignData.businessName || 'Our Platform'}!</h1>
+                <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Onboarding & Greetings</p>
+              </div>
+              
+              <div style="padding: 30px 0;">
+                <h2 style="color: #333; margin-bottom: 20px;">Welcome aboard!</h2>
+                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                  We're absolutely delighted to have you join our community. ${campaignData.purpose.toLowerCase()} is just the beginning of an incredible journey with us.
+                </p>
+                
+                <div style="background: #ECFDF5; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10B981;">
+                  <h3 style="color: #047857; margin-top: 0;">Getting Started</h3>
+                  <ul style="color: #666; line-height: 1.8; margin: 10px 0;">
+                    <li>Complete your profile setup</li>
+                    <li>Explore ${campaignData.productService || 'our platform features'}</li>
+                    <li>Join our community discussions</li>
+                    <li>Attend your first webinar</li>
+                  </ul>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Get Started</a>
+                </div>
+              </div>
+              
+              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                <p>Welcome aboard!<br>
+                <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
+              </div>
+            </div>
+          `;
+            break;
+          case 'follow-up':
+            mockBody = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <div style="background: linear-gradient(135deg, #F97316 0%, #DC2626 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                <h1 style="margin: 0; font-size: 28px;">🔄 ${campaignData.purpose}</h1>
+                <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Customer Engagement</p>
+              </div>
+              
+              <div style="padding: 30px 0;">
+                <h2 style="color: #333; margin-bottom: 20px;">Following up on our conversation</h2>
+                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                  Hi there! I wanted to follow up on ${campaignData.purpose.toLowerCase()} and see how things are progressing. I believe we can provide significant value in several key areas.
+                </p>
+                
+                <div style="background: #FFF7ED; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #F97316;">
+                  <h3 style="color: #C2410C; margin-top: 0;">How We Can Help</h3>
+                  <ul style="color: #666; line-height: 1.8; margin: 10px 0;">
+                    <li>Streamlining your current processes</li>
+                    <li>Reducing operational costs</li>
+                    <li>Improving team productivity</li>
+                    <li>Enhancing ${campaignData.productService || 'your business operations'}</li>
+                  </ul>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #F97316 0%, #DC2626 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Schedule a Call</a>
+                </div>
+              </div>
+              
+              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                <p>Looking forward to hearing from you,<br>
+                <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
+              </div>
+            </div>
+          `;
+            break;
+          case 'promotion':
+            mockBody = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <div style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                <h1 style="margin: 0; font-size: 28px;">🎯 ${campaignData.purpose}</h1>
+                <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Sales & Marketing</p>
+              </div>
+              
+              <div style="padding: 30px 0;">
+                <h2 style="color: #333; margin-bottom: 20px;">Don't miss out on this exclusive offer!</h2>
+                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                  For a limited time only, we're offering an exclusive discount on ${campaignData.productService || 'our premium services'}. This is an opportunity you won't want to miss!
+                </p>
+                
+                <div style="background: #FFFBEB; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #F59E0B;">
+                  <h3 style="color: #B45309; margin-top: 0;">Special Offer Details</h3>
+                  <ul style="color: #666; line-height: 1.8; margin: 10px 0;">
+                    <li>Advanced features and capabilities</li>
+                    <li>Priority customer support</li>
+                    <li>Exclusive tools and resources</li>
+                    <li>Custom integrations and solutions</li>
+                  </ul>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Claim Offer Now</a>
+                </div>
+              </div>
+              
+              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                <p>This is a limited-time offer - act now!<br>
+                <strong>${campaignData.businessName || 'NovaMail'} Sales Team</strong></p>
+              </div>
+            </div>
+          `;
+            break;
+          case 'event':
+            mockBody = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <div style="background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                <h1 style="margin: 0; font-size: 28px;">🎉 ${campaignData.purpose}</h1>
+                <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">You're Invited!</p>
+              </div>
+              
+              <div style="padding: 30px 0;">
+                <h2 style="color: #333; margin-bottom: 20px;">Join us for an exclusive event</h2>
+                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                  We're excited to invite you to an exclusive event hosted by <strong>${campaignData.businessName || 'our team'}</strong>. ${campaignData.productService || 'Join us for an unforgettable experience'}!
+                </p>
+                
+                <div style="background: #FDF4FF; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8B5CF6;">
+                  <h3 style="color: #7C3AED; margin-top: 0;">Event Highlights</h3>
+                  <ul style="color: #666; line-height: 1.8; margin: 10px 0;">
+                    <li>Exclusive networking opportunities</li>
+                    <li>Special presentations and demos</li>
+                    <li>Refreshments and entertainment</li>
+                    <li>Limited seats available</li>
+                  </ul>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">RSVP Now</a>
+                </div>
+                
+                <p style="color: #666; line-height: 1.6;">
+                  Don't miss this opportunity to connect and celebrate with us. We look forward to seeing you there!
+                </p>
+              </div>
+              
+              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                <p>Best regards,<br>
+                <strong>${campaignData.businessName || 'NovaMail'} Event Team</strong></p>
+              </div>
+            </div>
+          `;
+            break;
+          default:
             mockBody = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
               <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
@@ -1976,161 +2190,10 @@ async function handleAIGenerateEmail(request, env) {
               <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
                 <p>Best regards,<br>
                 <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
-                <p style="margin-top: 20px;">
-                  <a href="#" style="color: #667eea; text-decoration: none;">Unsubscribe</a> | 
-                  <a href="#" style="color: #667eea; text-decoration: none;">Contact Us</a>
-                </p>
               </div>
             </div>
           `;
             break;
-          case 'newsletter':
-            mockBody = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <div style="background: #4CAF50; color: white; padding: 20px; text-align: center; border-radius: 8px;">
-                <h1 style="margin: 0; font-size: 24px;">${campaignData.businessName || 'Newsletter'}</h1>
-                <p style="margin: 5px 0 0 0; font-size: 14px;">Professional Newsletter</p>
-              </div>
-              
-              <div style="padding: 30px 0;">
-                <h2 style="color: #333; margin-bottom: 20px;">${campaignData.purpose}</h2>
-                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
-                  Welcome to our latest newsletter! We're excited to share ${campaignData.purpose.toLowerCase()} with you.
-                </p>
-                
-                <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                  <h3 style="color: #2e7d32; margin-top: 0;">Featured Content</h3>
-                  <p style="color: #666; line-height: 1.6;">
-                    Discover ${campaignData.productService || 'our latest offerings'} and learn how they can benefit your business.
-                  </p>
-                </div>
-                
-                <div style="text-align: center; margin: 30px 0;">
-                  <a href="${campaignData.targetUrl || '#'}" style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">Read More</a>
-                </div>
-              </div>
-              
-              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
-                <p>Best regards,<br>
-                <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
-              </div>
-            </div>
-          `;
-            break;
-          case 'ecommerce':
-            mockBody = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <div style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; padding: 20px; text-align: center; border-radius: 8px;">
-                <h1 style="margin: 0; font-size: 24px;">${campaignData.businessName || 'Shop Now'}</h1>
-                <p style="margin: 5px 0 0 0; font-size: 14px;">Exclusive Offers Inside</p>
-              </div>
-              
-              <div style="padding: 30px 0;">
-                <h2 style="color: #333; margin-bottom: 20px;">${campaignData.purpose}</h2>
-                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
-                  Discover ${campaignData.productService || 'our amazing products'} and enjoy special offers just for you!
-                </p>
-                
-                <div style="background: #fff5f5; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #FF6B6B;">
-                  <h3 style="color: #FF6B6B; margin-top: 0;">Special Offer</h3>
-                  <p style="color: #666; line-height: 1.6;">
-                    Shop now and get exclusive discounts on your favorite items. Limited time only!
-                  </p>
-                </div>
-                
-                <div style="text-align: center; margin: 30px 0;">
-                  <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">Shop Now</a>
-                </div>
-              </div>
-              
-              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
-                <p>Best regards,<br>
-                <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
-              </div>
-            </div>
-          `;
-          break;
-        case 'event':
-          mockBody = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <div style="background: linear-gradient(135deg, #F093FB 0%, #F5576C 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
-                <h1 style="margin: 0; font-size: 28px;">🎉 ${campaignData.purpose}</h1>
-                <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">You're Invited!</p>
-              </div>
-              
-              <div style="padding: 30px 0;">
-                <p style="color: #666; line-height: 1.6; font-size: 16px; margin-bottom: 20px;">
-                  Hi [First Name],
-                </p>
-                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
-                  We're excited to invite you to an exclusive event hosted by <strong>${campaignData.businessName || 'our team'}</strong>. ${campaignData.productService || 'Join us for an unforgettable experience'}!
-                </p>
-                
-                <div style="background: #fff0f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                  <h3 style="color: #F5576C; margin-top: 0;">Event Highlights</h3>
-                  <ul style="color: #666; line-height: 1.8; margin: 10px 0;">
-                    <li>Exclusive networking opportunities</li>
-                    <li>Special presentations and demos</li>
-                    <li>Refreshments and entertainment</li>
-                    <li>Limited seats available</li>
-                  </ul>
-                </div>
-                
-                <div style="text-align: center; margin: 30px 0;">
-                  <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #F093FB 0%, #F5576C 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">RSVP Now</a>
-                </div>
-                
-                <p style="color: #666; line-height: 1.6;">
-                  Don't miss this opportunity to connect and celebrate with us. We look forward to seeing you there!
-                </p>
-              </div>
-              
-              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
-                <p>Best regards,<br>
-                <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
-              </div>
-            </div>
-          `;
-          break;
-        case 'announcement':
-          mockBody = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <div style="background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
-                <h1 style="margin: 0; font-size: 28px;">📢 ${campaignData.purpose}</h1>
-                <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Important Announcement</p>
-              </div>
-              
-              <div style="padding: 30px 0;">
-                <p style="color: #666; line-height: 1.6; font-size: 16px; margin-bottom: 20px;">
-                  Dear Valued Customer,
-                </p>
-                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
-                  We have an important announcement regarding ${campaignData.productService || 'our services'}. ${campaignData.purpose} affects how we serve you and your business needs.
-                </p>
-                
-                <div style="background: #f0f4ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #4F46E5;">
-                  <h3 style="color: #4F46E5; margin-top: 0;">Key Information</h3>
-                  <p style="color: #666; line-height: 1.6;">
-                    Please review the following details carefully as they may impact your current usage and future plans.
-                  </p>
-                </div>
-                
-                <div style="text-align: center; margin: 30px 0;">
-                  <a href="${campaignData.targetUrl || '#'}" style="background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Learn More</a>
-                </div>
-                
-                <p style="color: #666; line-height: 1.6;">
-                  We appreciate your understanding and continued trust in ${campaignData.businessName || 'our company'}. If you have any questions, please don't hesitate to contact us.
-                </p>
-              </div>
-              
-              <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
-                <p>Best regards,<br>
-                <strong>${campaignData.businessName || 'NovaMail'} Team</strong></p>
-              </div>
-            </div>
-          `;
-          break;
         case 'welcome':
           mockBody = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
