@@ -15,7 +15,8 @@ import {
   PhotoIcon,
   PlusIcon,
   ClockIcon,
-  DocumentDuplicateIcon
+  DocumentDuplicateIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 
 interface EmailHistory {
