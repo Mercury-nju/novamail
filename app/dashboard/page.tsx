@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-hot-toast'
 import { 
   SparklesIcon, 
@@ -13,7 +13,11 @@ import {
   EyeSlashIcon,
   CameraIcon,
   DocumentDuplicateIcon,
-  PlusIcon
+  PlusIcon,
+  ArrowLeftIcon,
+  CpuChipIcon,
+  PaintBrushIcon,
+  RocketLaunchIcon
 } from '@heroicons/react/24/outline'
 
 interface EmailHistory {
@@ -100,7 +104,7 @@ export default function DashboardPage() {
           subject: result.subject,
           body: result.body
         }))
-        setStep(3)
+        setStep(currentMode === 'text' ? 3 : 2)
         toast.success('Email generated successfully!')
         fetchEmailHistory()
       } else {
@@ -242,647 +246,668 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="w-full h-screen flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {/* Animated Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="relative z-10 w-full h-screen flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
+        <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-8 py-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold">AI Email Generator</h1>
-              <p className="text-blue-100">Create professional emails with AI assistance</p>
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                <CpuChipIcon className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  AI Email Studio
+                </h1>
+                <p className="text-sm text-gray-500">Create stunning emails with AI</p>
+              </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex items-center space-x-3">
               <button
                 onClick={() => setShowHistory(!showHistory)}
-                className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all duration-200 text-gray-700"
               >
-                <DocumentTextIcon className="h-5 w-5" />
-                History ({emailHistory.length})
+                <DocumentTextIcon className="h-4 w-4" />
+                <span className="text-sm font-medium">History ({emailHistory.length})</span>
               </button>
               <button
                 onClick={handleNewEmail}
-                className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                <PlusIcon className="h-5 w-5" />
-                New Email
+                <PlusIcon className="h-4 w-4" />
+                <span className="text-sm font-medium">New Email</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="bg-white flex-1 shadow-lg border border-gray-200 overflow-y-auto">
-          {/* Progress Bar */}
-          <div className="px-6 pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-600">Step {step} of 3</span>
-              <span className="text-sm text-gray-500">{progress}% Complete</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <motion.div
-                className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
-          </div>
-
-          {/* Step Content */}
-          <div className="p-8 flex-1">
-            {!currentMode && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="h-full flex flex-col items-center justify-center"
-              >
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl font-bold text-gray-800 mb-4">Choose Email Generation Mode</h2>
-                  <p className="text-gray-600 text-lg">Select how you'd like to create your email</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full">
-                  {/* Text Email Mode */}
-                  <button
-                    onClick={() => {
-                      setCurrentMode('text')
-                      setEmailMode('simple')
-                    }}
-                    className="group p-8 rounded-2xl border-2 border-gray-200 hover:border-blue-500 transition-all duration-300 hover:shadow-xl bg-gradient-to-br from-blue-50 to-indigo-50"
+        <div className="flex-1 overflow-hidden">
+          <div className="h-full flex items-center justify-center p-8">
+            <div className="w-full max-w-6xl">
+              <AnimatePresence mode="wait">
+                {!currentMode && (
+                  <motion.div
+                    key="mode-selection"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="text-center"
                   >
-                    <div className="text-center">
-                      <div className="w-16 h-16 mx-auto mb-6 bg-blue-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <DocumentTextIcon className="h-8 w-8 text-white" />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-800 mb-3">Text Email Generation</h3>
-                      <p className="text-gray-600 mb-4">Create clean, straightforward text-based emails with AI assistance</p>
-                      <ul className="text-sm text-gray-500 text-left space-y-2">
-                        <li>• Simple text format</li>
-                        <li>• AI-powered content generation</li>
-                        <li>• Customizable tone and style</li>
-                        <li>• Perfect for business communications</li>
-                      </ul>
-                    </div>
-                  </button>
+                    <motion.div
+                      initial={{ scale: 0.9 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                      className="mb-12"
+                    >
+                      <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-800 bg-clip-text text-transparent mb-4">
+                        Choose Your Creation Mode
+                      </h2>
+                      <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                        Select the perfect approach to craft your email masterpiece
+                      </p>
+                    </motion.div>
 
-                  {/* Template Email Mode */}
-                  <button
-                    onClick={() => {
-                      setCurrentMode('template')
-                      setEmailMode('professional')
-                    }}
-                    className="group p-8 rounded-2xl border-2 border-gray-200 hover:border-purple-500 transition-all duration-300 hover:shadow-xl bg-gradient-to-br from-purple-50 to-pink-50"
-                  >
-                    <div className="text-center">
-                      <div className="w-16 h-16 mx-auto mb-6 bg-purple-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <SparklesIcon className="h-8 w-8 text-white" />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-800 mb-3">Professional Template</h3>
-                      <p className="text-gray-600 mb-4">Use rich, branded templates for professional email campaigns</p>
-                      <ul className="text-sm text-gray-500 text-left space-y-2">
-                        <li>• Rich HTML templates</li>
-                        <li>• Branded designs</li>
-                        <li>• Multiple template options</li>
-                        <li>• Pro feature</li>
-                      </ul>
-                    </div>
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
-            {currentMode === 'text' && step === 1 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8 h-full flex flex-col"
-              >
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Tell us about your email</h2>
-                  <p className="text-gray-600">Provide some details to help AI generate the perfect email for you</p>
-                </div>
-
-                <div className="space-y-6 flex-1">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      What's the purpose of this email?
-                    </label>
-                    <textarea
-                      value={campaignData.purpose}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, purpose: e.target.value }))}
-                      placeholder="e.g., Announce our new product launch, Send monthly newsletter, Follow up with customers..."
-                      className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                      rows={4}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Business/Company Name
-                      </label>
-                      <input
-                        type="text"
-                        value={campaignData.businessName}
-                        onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
-                        placeholder="e.g., NovaMail, TechCorp..."
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Product/Service
-                      </label>
-                      <input
-                        type="text"
-                        value={campaignData.productService}
-                        onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
-                        placeholder="e.g., AI Email Generator, SaaS Platform..."
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Target URL (Optional)
-                    </label>
-                    <input
-                      type="url"
-                      value={campaignData.targetUrl}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, targetUrl: e.target.value }))}
-                      placeholder="https://your-website.com"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end mt-8">
-                  <button
-                    onClick={handleNext}
-                    disabled={!campaignData.purpose || !campaignData.businessName}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
-                  >
-                    Next →
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
-            {currentMode === 'template' && step === 1 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-8 h-full flex flex-col"
-              >
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Choose Professional Template</h2>
-                  <p className="text-gray-600">Select a template that matches your brand and purpose</p>
-                </div>
-
-                <div className="space-y-8 flex-1">
-                  {/* Template Selection */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Available Templates</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {['newsletter', 'announcement', 'welcome', 'follow-up', 'promotion', 'event'].map((template) => (
-                        <button
-                          key={template}
-                          onClick={() => handleProTemplateClick(template)}
-                          className={`p-6 rounded-xl border-2 transition-all duration-200 ${
-                            selectedTemplate === template
-                              ? 'border-purple-500 bg-purple-50 shadow-lg'
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <div className="text-center">
-                            <div className="h-16 w-full bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg mb-3 flex items-center justify-center">
-                              <DocumentTextIcon className="h-8 w-8 text-purple-500" />
-                            </div>
-                            <h4 className="font-medium text-gray-800 capitalize">{template.replace('-', ' ')}</h4>
-                            <p className="text-xs text-gray-500 mt-1">Professional template</p>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                      {/* Text Email Mode */}
+                      <motion.button
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                        onClick={() => {
+                          setCurrentMode('text')
+                          setEmailMode('simple')
+                        }}
+                        className="group relative p-8 rounded-3xl bg-white/70 backdrop-blur-xl border border-gray-200/50 hover:border-blue-300/50 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/10"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div className="relative">
+                          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <DocumentTextIcon className="h-10 w-10 text-white" />
                           </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Tone Style */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Tone & Style</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
-                        <button
-                          key={tone}
-                          onClick={() => setToneStyle(tone)}
-                          className={`p-3 rounded-lg border transition-all duration-200 ${
-                            toneStyle === tone
-                              ? 'border-purple-500 bg-purple-50 text-purple-700'
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          {tone.charAt(0).toUpperCase() + tone.slice(1)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-between mt-8">
-                  <button
-                    onClick={() => setCurrentMode(null)}
-                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    ← Back to Mode Selection
-                  </button>
-                  <button
-                    onClick={generateEmailContent}
-                    disabled={isGenerating || !selectedTemplate}
-                    className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
-                  >
-                    {isGenerating ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <SparklesIcon className="h-5 w-5" />
-                        Generate Template Email
-                      </>
-                    )}
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
-            {currentMode === 'template' && step === 2 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-8 h-full flex flex-col"
-              >
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Review & Export Template</h2>
-                  <p className="text-gray-600">Your professional template email is ready!</p>
-                </div>
-
-                <div className="space-y-6 flex-1">
-                  {/* Subject Line */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line</label>
-                    <input
-                      type="text"
-                      value={campaignData.subject}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, subject: e.target.value }))}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    />
-                  </div>
-
-                  {/* Preview Toggle */}
-                  <div className="flex justify-center">
-                    <button
-                      onClick={() => setShowPreview(!showPreview)}
-                      className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
-                    >
-                      {showPreview ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-                      {showPreview ? 'Hide Preview' : 'Show Preview'}
-                    </button>
-                  </div>
-
-                  {/* Email Preview */}
-                  {showPreview && (
-                    <div className="border border-gray-200 rounded-lg overflow-hidden">
-                      <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
-                        <h4 className="font-medium text-gray-700">Template Preview</h4>
-                      </div>
-                      <div
-                        ref={emailPreviewRef}
-                        className="p-6 bg-white min-h-[400px]"
-                        dangerouslySetInnerHTML={{ __html: campaignData.body }}
-                      />
-                    </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex flex-wrap gap-4 justify-center">
-                    <button
-                      onClick={saveAsImage}
-                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      <CameraIcon className="h-5 w-5" />
-                      Save as Image
-                    </button>
-                    <button
-                      onClick={copyContent}
-                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      <DocumentDuplicateIcon className="h-5 w-5" />
-                      Copy Content
-                    </button>
-                    <button
-                      onClick={exportHTML}
-                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      <DocumentTextIcon className="h-5 w-5" />
-                      Export HTML
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex justify-between mt-8">
-                  <button
-                    onClick={() => setStep(1)}
-                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    ← Back
-                  </button>
-                  <button
-                    onClick={handleNewEmail}
-                    className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg hover:shadow-xl"
-                  >
-                    Create New Email
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
-            {currentMode === 'text' && step === 2 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-8 h-full flex flex-col"
-              >
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Choose your style</h2>
-                  <p className="text-gray-600">Select the email mode and style that best fits your needs</p>
-                </div>
-
-                <div className="space-y-8 flex-1">
-                  {/* Email Mode Selection */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Email Mode</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <button
-                        onClick={() => setEmailMode('simple')}
-                        className={`p-6 rounded-xl border-2 transition-all duration-200 ${
-                          emailMode === 'simple'
-                            ? 'border-blue-500 bg-blue-50 shadow-lg'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="text-center">
-                          <DocumentTextIcon className="h-8 w-8 mx-auto mb-2 text-blue-500" />
-                          <h4 className="font-semibold text-gray-800">Simple Email</h4>
-                          <p className="text-sm text-gray-600 mt-1">Clean, straightforward content</p>
-                        </div>
-                      </button>
-                      <button
-                        onClick={() => setEmailMode('professional')}
-                        className={`p-6 rounded-xl border-2 transition-all duration-200 ${
-                          emailMode === 'professional'
-                            ? 'border-purple-500 bg-purple-50 shadow-lg'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="text-center">
-                          <SparklesIcon className="h-8 w-8 mx-auto mb-2 text-purple-500" />
-                          <h4 className="font-semibold text-gray-800">Professional Template</h4>
-                          <p className="text-sm text-gray-600 mt-1">Rich, branded templates</p>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Professional Templates */}
-                  {emailMode === 'professional' && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-4">Choose Template</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {['newsletter', 'announcement', 'welcome', 'follow-up', 'promotion', 'event'].map((template) => (
-                          <button
-                            key={template}
-                            onClick={() => handleProTemplateClick(template)}
-                            className={`p-4 rounded-lg border-2 transition-all duration-200 ${
-                              selectedTemplate === template
-                                ? 'border-purple-500 bg-purple-50 shadow-lg'
-                                : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                          >
-                            <div className="text-center">
-                              <div className="h-12 w-full bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg mb-2 flex items-center justify-center">
-                                <DocumentTextIcon className="h-6 w-6 text-purple-500" />
+                          <h3 className="text-2xl font-bold text-gray-800 mb-3">Text Email</h3>
+                          <p className="text-gray-600 mb-6 text-lg">
+                            Clean, professional text-based emails powered by AI
+                          </p>
+                          <div className="space-y-2 text-left">
+                            {['AI-powered content generation', 'Customizable tone & style', 'Perfect for business communications', 'Export to multiple formats'].map((feature, index) => (
+                              <div key={index} className="flex items-center space-x-2 text-gray-600">
+                                <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                                <span className="text-sm">{feature}</span>
                               </div>
-                              <h4 className="font-medium text-gray-800 capitalize">{template.replace('-', ' ')}</h4>
-                            </div>
-                          </button>
-                        ))}
+                            ))}
+                          </div>
+                        </div>
+                      </motion.button>
+
+                      {/* Template Email Mode */}
+                      <motion.button
+                        initial={{ opacity: 0, x: 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                        onClick={() => {
+                          setCurrentMode('template')
+                          setEmailMode('professional')
+                        }}
+                        className="group relative p-8 rounded-3xl bg-white/70 backdrop-blur-xl border border-gray-200/50 hover:border-purple-300/50 transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/10"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div className="relative">
+                          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <SparklesIcon className="h-10 w-10 text-white" />
+                          </div>
+                          <h3 className="text-2xl font-bold text-gray-800 mb-3">Professional Template</h3>
+                          <p className="text-gray-600 mb-6 text-lg">
+                            Rich, branded HTML templates for stunning campaigns
+                          </p>
+                          <div className="space-y-2 text-left">
+                            {['Rich HTML templates', 'Branded designs', 'Multiple template options', 'Pro feature'].map((feature, index) => (
+                              <div key={index} className="flex items-center space-x-2 text-gray-600">
+                                <CheckCircleIcon className="h-4 w-4 text-purple-500" />
+                                <span className="text-sm">{feature}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Text Email Flow */}
+                {currentMode === 'text' && (
+                  <motion.div
+                    key="text-flow"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-200/50 shadow-2xl shadow-blue-500/5"
+                  >
+                    {/* Progress Bar */}
+                    <div className="px-8 pt-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-semibold text-gray-700">Step {step} of 3</span>
+                        <span className="text-sm text-gray-500">{progress}% Complete</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <motion.div
+                          className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${progress}%` }}
+                          transition={{ duration: 0.5 }}
+                        />
                       </div>
                     </div>
-                  )}
 
-                  {/* Tone Style */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Tone & Style</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
-                        <button
-                          key={tone}
-                          onClick={() => setToneStyle(tone)}
-                          className={`p-3 rounded-lg border transition-all duration-200 ${
-                            toneStyle === tone
-                              ? 'border-blue-500 bg-blue-50 text-blue-700'
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
+                    <div className="p-8">
+                      {step === 1 && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="space-y-8"
                         >
-                          {tone.charAt(0).toUpperCase() + tone.slice(1)}
-                        </button>
-                      ))}
+                          <div className="text-center mb-8">
+                            <h3 className="text-3xl font-bold text-gray-800 mb-3">Tell us about your email</h3>
+                            <p className="text-gray-600 text-lg">Provide details to help AI create the perfect email</p>
+                          </div>
+
+                          <div className="space-y-6">
+                            <div>
+                              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                What's the purpose of this email?
+                              </label>
+                              <textarea
+                                value={campaignData.purpose}
+                                onChange={(e) => setCampaignData(prev => ({ ...prev, purpose: e.target.value }))}
+                                placeholder="e.g., Announce our new product launch, Send monthly newsletter, Follow up with customers..."
+                                className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none bg-gray-50/50"
+                                rows={4}
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                  Business/Company Name
+                                </label>
+                                <input
+                                  type="text"
+                                  value={campaignData.businessName}
+                                  onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
+                                  placeholder="e.g., NovaMail, TechCorp..."
+                                  className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                  Product/Service
+                                </label>
+                                <input
+                                  type="text"
+                                  value={campaignData.productService}
+                                  onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
+                                  placeholder="e.g., AI Email Generator, SaaS Platform..."
+                                  className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                Target URL (Optional)
+                              </label>
+                              <input
+                                type="url"
+                                value={campaignData.targetUrl}
+                                onChange={(e) => setCampaignData(prev => ({ ...prev, targetUrl: e.target.value }))}
+                                placeholder="https://your-website.com"
+                                className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex justify-end">
+                            <button
+                              onClick={handleNext}
+                              disabled={!campaignData.purpose || !campaignData.businessName}
+                              className="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
+                            >
+                              <span>Next</span>
+                              <ArrowRightIcon className="h-5 w-5" />
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {step === 2 && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="space-y-8"
+                        >
+                          <div className="text-center mb-8">
+                            <h3 className="text-3xl font-bold text-gray-800 mb-3">Choose your style</h3>
+                            <p className="text-gray-600 text-lg">Select the tone and style that best fits your needs</p>
+                          </div>
+
+                          <div className="space-y-8">
+                            <div>
+                              <h4 className="text-lg font-semibold text-gray-800 mb-4">Tone & Style</h4>
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
+                                  <button
+                                    key={tone}
+                                    onClick={() => setToneStyle(tone)}
+                                    className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
+                                      toneStyle === tone
+                                        ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-lg'
+                                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                                    }`}
+                                  >
+                                    <div className="text-center">
+                                      <PaintBrushIcon className="h-6 w-6 mx-auto mb-2" />
+                                      <span className="font-medium">{tone.charAt(0).toUpperCase() + tone.slice(1)}</span>
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-between">
+                            <button
+                              onClick={handleBack}
+                              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-2xl hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                            >
+                              <ArrowLeftIcon className="h-5 w-5" />
+                              <span>Back</span>
+                            </button>
+                            <button
+                              onClick={generateEmailContent}
+                              disabled={isGenerating}
+                              className="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
+                            >
+                              {isGenerating ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                  <span>Generating...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <CpuChipIcon className="h-5 w-5" />
+                                  <span>Generate Email</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {step === 3 && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="space-y-8"
+                        >
+                          <div className="text-center mb-8">
+                            <h3 className="text-3xl font-bold text-gray-800 mb-3">Your email is ready!</h3>
+                            <p className="text-gray-600 text-lg">Review, preview, and export your AI-generated email</p>
+                          </div>
+
+                          <div className="space-y-6">
+                            <div>
+                              <label className="block text-sm font-semibold text-gray-700 mb-3">Subject Line</label>
+                              <input
+                                type="text"
+                                value={campaignData.subject}
+                                onChange={(e) => setCampaignData(prev => ({ ...prev, subject: e.target.value }))}
+                                className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50/50"
+                              />
+                            </div>
+
+                            <div className="flex justify-center">
+                              <button
+                                onClick={() => setShowPreview(!showPreview)}
+                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                              >
+                                {showPreview ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                                <span>{showPreview ? 'Hide Preview' : 'Show Preview'}</span>
+                              </button>
+                            </div>
+
+                            {showPreview && (
+                              <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg">
+                                <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
+                                  <h4 className="font-semibold text-gray-700">Email Preview</h4>
+                                </div>
+                                <div
+                                  ref={emailPreviewRef}
+                                  className="p-8 bg-white min-h-[400px]"
+                                  dangerouslySetInnerHTML={{ __html: campaignData.body }}
+                                />
+                              </div>
+                            )}
+
+                            <div className="flex flex-wrap gap-4 justify-center">
+                              <button
+                                onClick={saveAsImage}
+                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                              >
+                                <CameraIcon className="h-5 w-5" />
+                                <span>Save as Image</span>
+                              </button>
+                              <button
+                                onClick={copyContent}
+                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                              >
+                                <DocumentDuplicateIcon className="h-5 w-5" />
+                                <span>Copy Content</span>
+                              </button>
+                              <button
+                                onClick={exportHTML}
+                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                              >
+                                <DocumentTextIcon className="h-5 w-5" />
+                                <span>Export HTML</span>
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-between">
+                            <button
+                              onClick={handleBack}
+                              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-2xl hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                            >
+                              <ArrowLeftIcon className="h-5 w-5" />
+                              <span>Back</span>
+                            </button>
+                            <button
+                              onClick={handleNewEmail}
+                              className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
+                            >
+                              <RocketLaunchIcon className="h-5 w-5" />
+                              <span>Create New Email</span>
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
                     </div>
-                  </div>
-                </div>
+                  </motion.div>
+                )}
 
-                <div className="flex justify-between mt-8">
-                  <button
-                    onClick={handleBack}
-                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                {/* Template Email Flow */}
+                {currentMode === 'template' && (
+                  <motion.div
+                    key="template-flow"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-200/50 shadow-2xl shadow-purple-500/5"
                   >
-                    ← Back
-                  </button>
-                  <button
-                    onClick={generateEmailContent}
-                    disabled={isGenerating}
-                    className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
-                  >
-                    {isGenerating ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <SparklesIcon className="h-5 w-5" />
-                        Generate Email
-                      </>
-                    )}
-                  </button>
-                </div>
-              </motion.div>
-            )}
+                    <div className="p-8">
+                      {step === 1 && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="space-y-8"
+                        >
+                          <div className="text-center mb-8">
+                            <h3 className="text-3xl font-bold text-gray-800 mb-3">Choose Professional Template</h3>
+                            <p className="text-gray-600 text-lg">Select a template that matches your brand and purpose</p>
+                          </div>
 
-            {currentMode === 'text' && step === 3 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-8 h-full flex flex-col"
-              >
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Review & Export</h2>
-                  <p className="text-gray-600">Your AI-generated email is ready!</p>
-                </div>
+                          <div className="space-y-8">
+                            <div>
+                              <h4 className="text-lg font-semibold text-gray-800 mb-6">Available Templates</h4>
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {['newsletter', 'announcement', 'welcome', 'follow-up', 'promotion', 'event'].map((template) => (
+                                  <button
+                                    key={template}
+                                    onClick={() => handleProTemplateClick(template)}
+                                    className={`p-6 rounded-2xl border-2 transition-all duration-200 ${
+                                      selectedTemplate === template
+                                        ? 'border-purple-500 bg-purple-50 shadow-lg'
+                                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                                    }`}
+                                  >
+                                    <div className="text-center">
+                                      <div className="h-16 w-full bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl mb-3 flex items-center justify-center">
+                                        <DocumentTextIcon className="h-8 w-8 text-purple-500" />
+                                      </div>
+                                      <h5 className="font-semibold text-gray-800 capitalize">{template.replace('-', ' ')}</h5>
+                                      <p className="text-xs text-gray-500 mt-1">Professional template</p>
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
 
-                <div className="space-y-6 flex-1">
-                  {/* Subject Line */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line</label>
-                    <input
-                      type="text"
-                      value={campaignData.subject}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, subject: e.target.value }))}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    />
-                  </div>
+                            <div>
+                              <h4 className="text-lg font-semibold text-gray-800 mb-4">Tone & Style</h4>
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
+                                  <button
+                                    key={tone}
+                                    onClick={() => setToneStyle(tone)}
+                                    className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
+                                      toneStyle === tone
+                                        ? 'border-purple-500 bg-purple-50 text-purple-700 shadow-lg'
+                                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                                    }`}
+                                  >
+                                    <div className="text-center">
+                                      <PaintBrushIcon className="h-6 w-6 mx-auto mb-2" />
+                                      <span className="font-medium">{tone.charAt(0).toUpperCase() + tone.slice(1)}</span>
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
 
-                  {/* Preview Toggle */}
-                  <div className="flex justify-center">
-                    <button
-                      onClick={() => setShowPreview(!showPreview)}
-                      className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
-                    >
-                      {showPreview ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-                      {showPreview ? 'Hide Preview' : 'Show Preview'}
-                    </button>
-                  </div>
+                          <div className="flex justify-between">
+                            <button
+                              onClick={() => setCurrentMode(null)}
+                              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-2xl hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                            >
+                              <ArrowLeftIcon className="h-5 w-5" />
+                              <span>Back to Mode Selection</span>
+                            </button>
+                            <button
+                              onClick={generateEmailContent}
+                              disabled={isGenerating || !selectedTemplate}
+                              className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
+                            >
+                              {isGenerating ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                  <span>Generating...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <SparklesIcon className="h-5 w-5" />
+                                  <span>Generate Template Email</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
 
-                  {/* Email Preview */}
-                  {showPreview && (
-                    <div className="border border-gray-200 rounded-lg overflow-hidden">
-                      <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
-                        <h4 className="font-medium text-gray-700">Email Preview</h4>
-                      </div>
-                      <div
-                        ref={emailPreviewRef}
-                        className="p-6 bg-white min-h-[400px]"
-                        dangerouslySetInnerHTML={{ __html: campaignData.body }}
-                      />
+                      {step === 2 && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="space-y-8"
+                        >
+                          <div className="text-center mb-8">
+                            <h3 className="text-3xl font-bold text-gray-800 mb-3">Your template is ready!</h3>
+                            <p className="text-gray-600 text-lg">Review, preview, and export your professional template</p>
+                          </div>
+
+                          <div className="space-y-6">
+                            <div>
+                              <label className="block text-sm font-semibold text-gray-700 mb-3">Subject Line</label>
+                              <input
+                                type="text"
+                                value={campaignData.subject}
+                                onChange={(e) => setCampaignData(prev => ({ ...prev, subject: e.target.value }))}
+                                className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50/50"
+                              />
+                            </div>
+
+                            <div className="flex justify-center">
+                              <button
+                                onClick={() => setShowPreview(!showPreview)}
+                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                              >
+                                {showPreview ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                                <span>{showPreview ? 'Hide Preview' : 'Show Preview'}</span>
+                              </button>
+                            </div>
+
+                            {showPreview && (
+                              <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg">
+                                <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
+                                  <h4 className="font-semibold text-gray-700">Template Preview</h4>
+                                </div>
+                                <div
+                                  ref={emailPreviewRef}
+                                  className="p-8 bg-white min-h-[400px]"
+                                  dangerouslySetInnerHTML={{ __html: campaignData.body }}
+                                />
+                              </div>
+                            )}
+
+                            <div className="flex flex-wrap gap-4 justify-center">
+                              <button
+                                onClick={saveAsImage}
+                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                              >
+                                <CameraIcon className="h-5 w-5" />
+                                <span>Save as Image</span>
+                              </button>
+                              <button
+                                onClick={copyContent}
+                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                              >
+                                <DocumentDuplicateIcon className="h-5 w-5" />
+                                <span>Copy Content</span>
+                              </button>
+                              <button
+                                onClick={exportHTML}
+                                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                              >
+                                <DocumentTextIcon className="h-5 w-5" />
+                                <span>Export HTML</span>
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-between">
+                            <button
+                              onClick={() => setStep(1)}
+                              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-2xl hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                            >
+                              <ArrowLeftIcon className="h-5 w-5" />
+                              <span>Back</span>
+                            </button>
+                            <button
+                              onClick={handleNewEmail}
+                              className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
+                            >
+                              <RocketLaunchIcon className="h-5 w-5" />
+                              <span>Create New Email</span>
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
                     </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex flex-wrap gap-4 justify-center">
-                    <button
-                      onClick={saveAsImage}
-                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      <CameraIcon className="h-5 w-5" />
-                      Save as Image
-                    </button>
-                    <button
-                      onClick={copyContent}
-                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      <DocumentDuplicateIcon className="h-5 w-5" />
-                      Copy Content
-                    </button>
-                    <button
-                      onClick={exportHTML}
-                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      <DocumentTextIcon className="h-5 w-5" />
-                      Export HTML
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex justify-between mt-8">
-                  <button
-                    onClick={handleBack}
-                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    ← Back
-                  </button>
-                  <button
-                    onClick={handleNewEmail}
-                    className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg hover:shadow-xl"
-                  >
-                    Create New Email
-                  </button>
-                </div>
-              </motion.div>
-            )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 
         {/* History Sidebar */}
-        {showHistory && (
-          <motion.div
-            initial={{ opacity: 0, x: 300 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="fixed right-0 top-0 h-full w-80 bg-white shadow-2xl z-50 overflow-y-auto"
-          >
-            <div className="p-6 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-800">Email History</h3>
-                <button
-                  onClick={() => setShowHistory(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  ×
-                </button>
+        <AnimatePresence>
+          {showHistory && (
+            <motion.div
+              initial={{ opacity: 0, x: 300 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 300 }}
+              className="fixed right-0 top-0 h-full w-80 bg-white/90 backdrop-blur-xl shadow-2xl z-50 overflow-y-auto border-l border-gray-200/50"
+            >
+              <div className="p-6 border-b border-gray-200/50">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-gray-800">Email History</h3>
+                  <button
+                    onClick={() => setShowHistory(false)}
+                    className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                  >
+                    <ArrowLeftIcon className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
-            </div>
-            <div className="p-6">
-              {emailHistory.length === 0 ? (
-                <div className="text-center text-gray-500 py-8">
-                  <DocumentTextIcon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                  <p>No emails generated yet</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {emailHistory.map((email) => (
-                    <div key={email.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                      <h4 className="font-medium text-gray-800 mb-1">{email.subject}</h4>
-                      <p className="text-sm text-gray-600 mb-2">{email.businessName}</p>
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <span className={`px-2 py-1 rounded-full ${
-                          email.emailMode === 'professional' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
-                        }`}>
-                          {email.emailMode}
-                        </span>
-                        <span>{new Date(email.createdAt).toLocaleDateString()}</span>
+              <div className="p-6">
+                {emailHistory.length === 0 ? (
+                  <div className="text-center text-gray-500 py-8">
+                    <DocumentTextIcon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p>No emails generated yet</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {emailHistory.map((email) => (
+                      <div key={email.id} className="p-4 border border-gray-200 rounded-2xl hover:bg-gray-50 transition-colors">
+                        <h4 className="font-semibold text-gray-800 mb-1">{email.subject}</h4>
+                        <p className="text-sm text-gray-600 mb-2">{email.businessName}</p>
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <span className={`px-2 py-1 rounded-full ${
+                            email.emailMode === 'professional' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+                          }`}>
+                            {email.emailMode}
+                          </span>
+                          <span>{new Date(email.createdAt).toLocaleDateString()}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
+                    ))}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Pro Template Modal */}
         {showProTemplateModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl p-8 max-w-md mx-4">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-3xl p-8 max-w-md mx-4 shadow-2xl"
+            >
               <div className="text-center">
-                <SparklesIcon className="h-16 w-16 mx-auto mb-4 text-purple-500" />
-                <h3 className="text-xl font-bold text-gray-800 mb-2">Professional Templates</h3>
+                <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center">
+                  <SparklesIcon className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-3">Professional Templates</h3>
                 <p className="text-gray-600 mb-6">
                   Professional templates are available for Pro users. Upgrade to unlock premium email templates and advanced features.
                 </p>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowProTemplateModal(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-2xl hover:bg-gray-50 transition-colors"
                   >
                     Cancel
                   </button>
@@ -891,13 +916,13 @@ export default function DashboardPage() {
                       setShowProTemplateModal(false)
                       router.push('/pricing')
                     }}
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200"
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200"
                   >
                     Upgrade to Pro
                   </button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
       </div>
