@@ -40,6 +40,8 @@ export default function DashboardPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [showProTemplateModal, setShowProTemplateModal] = useState(false)
+  const [showTemplatePreview, setShowTemplatePreview] = useState(false)
+  const [previewTemplate, setPreviewTemplate] = useState<string>('')
   const [toneStyle, setToneStyle] = useState<string>('friendly')
   const [showPreview, setShowPreview] = useState(false)
   const emailPreviewRef = useRef<HTMLDivElement>(null)
@@ -251,6 +253,11 @@ export default function DashboardPage() {
     }
     
     setSelectedTemplate(template)
+  }
+
+  const handleTemplatePreview = (template: string) => {
+    setPreviewTemplate(template)
+    setShowTemplatePreview(true)
   }
 
   return (
@@ -650,23 +657,36 @@ export default function DashboardPage() {
                               <h4 className="text-lg font-semibold text-gray-800 mb-6">Available Templates</h4>
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {['newsletter', 'announcement', 'welcome', 'follow-up', 'promotion', 'event'].map((template) => (
-                                  <button
+                                  <div
                                     key={template}
-                                    onClick={() => handleProTemplateClick(template)}
                                     className={`p-6 rounded-2xl border-2 transition-all duration-200 ${
                                       selectedTemplate === template
                                         ? 'border-purple-500 bg-purple-50 shadow-lg'
                                         : 'border-gray-200 hover:border-gray-300 bg-white'
                                     }`}
                                   >
-                                    <div className="text-center">
+                                    <div className="text-center mb-4">
                                       <div className="h-16 w-full bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl mb-3 flex items-center justify-center">
                                         <DocumentTextIcon className="h-8 w-8 text-purple-500" />
                                       </div>
                                       <h5 className="font-semibold text-gray-800 capitalize">{template.replace('-', ' ')}</h5>
                                       <p className="text-xs text-gray-500 mt-1">Professional template</p>
                                     </div>
-                                  </button>
+                                    <div className="flex space-x-2">
+                                      <button
+                                        onClick={() => handleProTemplateClick(template)}
+                                        className="flex-1 px-3 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm"
+                                      >
+                                        Select
+                                      </button>
+                                      <button
+                                        onClick={() => handleTemplatePreview(template)}
+                                        className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                                      >
+                                        Preview
+                                      </button>
+                                    </div>
+                                  </div>
                                 ))}
                               </div>
                             </div>
@@ -845,6 +865,94 @@ export default function DashboardPage() {
                   </div>
                 )}
               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Template Preview Modal */}
+        <AnimatePresence>
+          {showTemplatePreview && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+              >
+                <div className="p-6 border-b border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-bold text-gray-800 capitalize">
+                      {previewTemplate.replace('-', ' ')} Template Preview
+                    </h3>
+                    <button
+                      onClick={() => setShowTemplatePreview(false)}
+                      className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                    >
+                      <XMarkIcon className="h-6 w-6" />
+                    </button>
+                  </div>
+                </div>
+                <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                  <div className="bg-gray-50 rounded-2xl p-6">
+                    <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                      <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-200">
+                        <h4 className="font-semibold text-gray-700">Email Preview</h4>
+                      </div>
+                      <div className="p-6">
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Subject Line</label>
+                            <div className="p-3 bg-gray-50 rounded-lg text-gray-600">
+                              Sample subject for {previewTemplate.replace('-', ' ')} template
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Email Content</label>
+                            <div className="p-4 bg-gray-50 rounded-lg text-gray-600 min-h-[200px]">
+                              <div className="space-y-3">
+                                <p>Dear [Customer Name],</p>
+                                <p>This is a preview of the {previewTemplate.replace('-', ' ')} template. The actual content will be generated based on your specific requirements and the tone you select.</p>
+                                <p>Key features of this template:</p>
+                                <ul className="list-disc list-inside ml-4 space-y-1">
+                                  <li>Professional design and layout</li>
+                                  <li>Responsive for all devices</li>
+                                  <li>Customizable content sections</li>
+                                  <li>Brand-consistent styling</li>
+                                </ul>
+                                <p>Best regards,<br/>[Your Company]</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6 border-t border-gray-200 bg-gray-50">
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowTemplatePreview(false)}
+                      className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-2xl hover:bg-gray-100 transition-colors"
+                    >
+                      Close Preview
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowTemplatePreview(false)
+                        handleProTemplateClick(previewTemplate)
+                      }}
+                      className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200"
+                    >
+                      Use This Template
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
