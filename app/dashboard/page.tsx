@@ -148,10 +148,13 @@ export default function Dashboard() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to generate email')
+        const errorText = await response.text()
+        console.error('API Error:', response.status, errorText)
+        throw new Error(`API Error: ${response.status} - ${errorText}`)
       }
 
       const data = await response.json()
+      console.log('API Response:', data)
       
       setCampaignData(prev => ({
         ...prev,
@@ -888,107 +891,228 @@ export default function Dashboard() {
                   {previewTemplate === 'event' && 'You\'re Invited: Annual Company Conference 2024'}
                 </p>
 
-                <h5 className="font-semibold text-gray-700 mb-3">Sample Content Preview:</h5>
-                <div className="bg-white rounded-xl p-4 border border-gray-200">
-                  <div className="text-sm text-gray-600 space-y-2">
-                    {previewTemplate === 'newsletter' && (
-                      <>
-                        <p>Dear [Name],</p>
-                        <p>Welcome to this week's newsletter! We're excited to share the latest updates, insights, and news from our team.</p>
-                        <p><strong>This Week's Highlights:</strong></p>
-                        <ul className="list-disc list-inside ml-4 space-y-1">
-                          <li>New feature releases and improvements</li>
-                          <li>Industry insights and trends</li>
-                          <li>Customer success stories</li>
-                          <li>Upcoming events and webinars</li>
-                        </ul>
-                        <p>Thank you for being part of our community!</p>
-                        <p>Best regards,<br/>The Team</p>
-                      </>
-                    )}
-                    {previewTemplate === 'announcement' && (
-                      <>
-                        <p>Dear Team,</p>
-                        <p>We're thrilled to announce an exciting new development that will significantly impact our business and our customers.</p>
-                        <p><strong>What's New:</strong></p>
-                        <p>We're launching a revolutionary new product that addresses the key challenges our customers face. This represents months of research, development, and dedication from our entire team.</p>
-                        <p><strong>Key Benefits:</strong></p>
-                        <ul className="list-disc list-inside ml-4 space-y-1">
-                          <li>Improved efficiency and productivity</li>
-                          <li>Enhanced user experience</li>
-                          <li>Better integration capabilities</li>
-                        </ul>
-                        <p>We're excited to share more details in the coming weeks.</p>
-                        <p>Best regards,<br/>Leadership Team</p>
-                      </>
-                    )}
-                    {previewTemplate === 'welcome' && (
-                      <>
-                        <p>Welcome [Name]!</p>
-                        <p>We're absolutely delighted to have you join our community. You've just taken the first step toward an incredible journey with us.</p>
-                        <p><strong>Getting Started:</strong></p>
-                        <ol className="list-decimal list-inside ml-4 space-y-1">
-                          <li>Complete your profile setup</li>
-                          <li>Explore our platform features</li>
-                          <li>Join our community discussions</li>
-                          <li>Attend your first webinar</li>
-                        </ol>
-                        <p>If you have any questions, our support team is here to help!</p>
-                        <p>Welcome aboard!<br/>The Team</p>
-                      </>
-                    )}
-                    {previewTemplate === 'follow-up' && (
-                      <>
-                        <p>Hi [Name],</p>
-                        <p>I hope this email finds you well. I wanted to follow up on our recent conversation and see how things are progressing.</p>
-                        <p><strong>How We Can Help:</strong></p>
-                        <p>Based on our discussion, I believe we can provide significant value in several key areas:</p>
-                        <ul className="list-disc list-inside ml-4 space-y-1">
-                          <li>Streamlining your current processes</li>
-                          <li>Reducing operational costs</li>
-                          <li>Improving team productivity</li>
-                        </ul>
-                        <p>Would you be available for a brief call this week to discuss next steps?</p>
-                        <p>Looking forward to hearing from you,<br/>[Your Name]</p>
-                      </>
-                    )}
-                    {previewTemplate === 'promotion' && (
-                      <>
-                        <p>Don't Miss Out!</p>
-                        <p>For a limited time only, we're offering an exclusive discount that you won't want to miss.</p>
-                        <p><strong>Special Offer:</strong></p>
-                        <p>Get 50% off our premium features - but hurry, this offer expires soon!</p>
-                        <p><strong>What You Get:</strong></p>
-                        <ul className="list-disc list-inside ml-4 space-y-1">
-                          <li>Advanced analytics and reporting</li>
-                          <li>Priority customer support</li>
-                          <li>Exclusive features and tools</li>
-                          <li>Custom integrations</li>
-                        </ul>
-                        <p>This is a limited-time offer - act now!</p>
-                        <p>Best regards,<br/>Sales Team</p>
-                      </>
-                    )}
-                    {previewTemplate === 'event' && (
-                      <>
-                        <p>You're Invited!</p>
-                        <p>We're excited to invite you to our upcoming event that promises to be both informative and engaging.</p>
-                        <p><strong>Event Details:</strong></p>
-                        <ul className="list-disc list-inside ml-4 space-y-1">
-                          <li><strong>Date:</strong> [Event Date]</li>
-                          <li><strong>Time:</strong> [Event Time]</li>
-                          <li><strong>Location:</strong> [Event Location]</li>
-                          <li><strong>Duration:</strong> [Event Duration]</li>
-                        </ul>
-                        <p><strong>What to Expect:</strong></p>
-                        <p>Join us for an exciting day filled with presentations, networking opportunities, and valuable insights from industry experts.</p>
-                        <p>Please RSVP by [RSVP Date] to secure your spot.</p>
-                        <p>We look forward to seeing you there!<br/>Event Team</p>
-                      </>
-                    )}
-          </div>
-        </div>
-      </div>
+                <h5 className="font-semibold text-gray-700 mb-3">Template Preview:</h5>
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <div 
+                    className="email-preview"
+                    dangerouslySetInnerHTML={{
+                      __html: previewTemplate === 'newsletter' ? `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                          <div style="background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                            <h1 style="margin: 0; font-size: 28px;">📰 Newsletter</h1>
+                            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Weekly Updates & Insights</p>
+                          </div>
+                          
+                          <div style="padding: 30px 0;">
+                            <h2 style="color: #333; margin-bottom: 20px;">Weekly Update: Latest News & Insights</h2>
+                            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                              Welcome to our latest newsletter! We're excited to share the latest updates, insights, and news from our team.
+                            </p>
+                            
+                            <div style="background: #EFF6FF; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3B82F6;">
+                              <h3 style="color: #1E40AF; margin-top: 0;">Featured Content</h3>
+                              <ul style="color: #666; line-height: 1.8; margin: 10px 0;">
+                                <li>New feature releases and improvements</li>
+                                <li>Industry insights and trends</li>
+                                <li>Customer success stories</li>
+                                <li>Upcoming events and webinars</li>
+                              </ul>
+                            </div>
+                            
+                            <div style="text-align: center; margin: 30px 0;">
+                              <a href="#" style="background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Read More</a>
+                            </div>
+                          </div>
+                          
+                          <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                            <p>Best regards,<br>
+                            <strong>NovaMail Team</strong></p>
+                          </div>
+                        </div>
+                      ` : previewTemplate === 'announcement' ? `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                          <div style="background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                            <h1 style="margin: 0; font-size: 28px;">📢 Important Announcement</h1>
+                            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Important Announcement</p>
+                          </div>
+                          
+                          <div style="padding: 30px 0;">
+                            <h2 style="color: #333; margin-bottom: 20px;">Important Update from Our Team</h2>
+                            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                              We're excited to announce an exciting new development that will significantly impact our business and our customers.
+                            </p>
+                            
+                            <div style="background: #FDF4FF; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8B5CF6;">
+                              <h3 style="color: #7C3AED; margin-top: 0;">What's New</h3>
+                              <p style="color: #666; line-height: 1.6;">
+                                We're launching a revolutionary new product that addresses the key challenges our customers face. This represents months of research, development, and dedication from our entire team.
+                              </p>
+                            </div>
+                            
+                            <div style="background: #FDF4FF; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8B5CF6;">
+                              <h3 style="color: #7C3AED; margin-top: 0;">Key Benefits</h3>
+                              <ul style="color: #666; line-height: 1.8; margin: 10px 0;">
+                                <li>Improved efficiency and productivity</li>
+                                <li>Enhanced user experience</li>
+                                <li>Better integration capabilities</li>
+                              </ul>
+                            </div>
+                            
+                            <div style="text-align: center; margin: 30px 0;">
+                              <a href="#" style="background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Learn More</a>
+                            </div>
+                            
+                            <p style="color: #666; line-height: 1.6;">
+                              We're excited to share more details in the coming weeks.
+                            </p>
+                          </div>
+                          
+                          <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                            <p>Best regards,<br>
+                            <strong>Leadership Team</strong></p>
+                          </div>
+                        </div>
+                      ` : previewTemplate === 'welcome' ? `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                          <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                            <h1 style="margin: 0; font-size: 28px;">👋 Welcome to Our Platform!</h1>
+                            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Onboarding & Greetings</p>
+                          </div>
+                          
+                          <div style="padding: 30px 0;">
+                            <h2 style="color: #333; margin-bottom: 20px;">Welcome aboard!</h2>
+                            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                              We're absolutely delighted to have you join our community. You've just taken the first step toward an incredible journey with us.
+                            </p>
+                            
+                            <div style="background: #ECFDF5; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10B981;">
+                              <h3 style="color: #047857; margin-top: 0;">Getting Started</h3>
+                              <ul style="color: #666; line-height: 1.8; margin: 10px 0;">
+                                <li>Complete your profile setup</li>
+                                <li>Explore our platform features</li>
+                                <li>Join our community discussions</li>
+                                <li>Attend your first webinar</li>
+                              </ul>
+                            </div>
+                            
+                            <div style="text-align: center; margin: 30px 0;">
+                              <a href="#" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Get Started</a>
+                            </div>
+                          </div>
+                          
+                          <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                            <p>Welcome aboard!<br>
+                            <strong>NovaMail Team</strong></p>
+                          </div>
+                        </div>
+                      ` : previewTemplate === 'follow-up' ? `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                          <div style="background: linear-gradient(135deg, #F97316 0%, #DC2626 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                            <h1 style="margin: 0; font-size: 28px;">🔄 Following Up</h1>
+                            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Customer Engagement</p>
+                          </div>
+                          
+                          <div style="padding: 30px 0;">
+                            <h2 style="color: #333; margin-bottom: 20px;">Following up on our conversation</h2>
+                            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                              Hi there! I wanted to follow up on our recent conversation and see how things are progressing. I believe we can provide significant value in several key areas.
+                            </p>
+                            
+                            <div style="background: #FFF7ED; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #F97316;">
+                              <h3 style="color: #C2410C; margin-top: 0;">How We Can Help</h3>
+                              <ul style="color: #666; line-height: 1.8; margin: 10px 0;">
+                                <li>Streamlining your current processes</li>
+                                <li>Reducing operational costs</li>
+                                <li>Improving team productivity</li>
+                                <li>Enhancing your business operations</li>
+                              </ul>
+                            </div>
+                            
+                            <div style="text-align: center; margin: 30px 0;">
+                              <a href="#" style="background: linear-gradient(135deg, #F97316 0%, #DC2626 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Schedule a Call</a>
+                            </div>
+                          </div>
+                          
+                          <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                            <p>Looking forward to hearing from you,<br>
+                            <strong>NovaMail Team</strong></p>
+                          </div>
+                        </div>
+                      ` : previewTemplate === 'promotion' ? `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                          <div style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                            <h1 style="margin: 0; font-size: 28px;">🎯 Limited Time Offer</h1>
+                            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Sales & Marketing</p>
+                          </div>
+                          
+                          <div style="padding: 30px 0;">
+                            <h2 style="color: #333; margin-bottom: 20px;">Don't miss out on this exclusive offer!</h2>
+                            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                              For a limited time only, we're offering an exclusive discount on our premium services. This is an opportunity you won't want to miss!
+                            </p>
+                            
+                            <div style="background: #FFFBEB; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #F59E0B;">
+                              <h3 style="color: #B45309; margin-top: 0;">Special Offer Details</h3>
+                              <ul style="color: #666; line-height: 1.8; margin: 10px 0;">
+                                <li>Advanced features and capabilities</li>
+                                <li>Priority customer support</li>
+                                <li>Exclusive tools and resources</li>
+                                <li>Custom integrations and solutions</li>
+                              </ul>
+                            </div>
+                            
+                            <div style="text-align: center; margin: 30px 0;">
+                              <a href="#" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Claim Offer Now</a>
+                            </div>
+                          </div>
+                          
+                          <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                            <p>This is a limited-time offer - act now!<br>
+                            <strong>NovaMail Sales Team</strong></p>
+                          </div>
+                        </div>
+                      ` : previewTemplate === 'event' ? `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                          <div style="background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; padding: 30px; text-align: center; border-radius: 10px;">
+                            <h1 style="margin: 0; font-size: 28px;">🎉 You're Invited!</h1>
+                            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">You're Invited!</p>
+                          </div>
+                          
+                          <div style="padding: 30px 0;">
+                            <h2 style="color: #333; margin-bottom: 20px;">Join us for an exclusive event</h2>
+                            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                              We're excited to invite you to an exclusive event hosted by our team. Join us for an unforgettable experience!
+                            </p>
+                            
+                            <div style="background: #FDF4FF; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8B5CF6;">
+                              <h3 style="color: #7C3AED; margin-top: 0;">Event Highlights</h3>
+                              <ul style="color: #666; line-height: 1.8; margin: 10px 0;">
+                                <li>Exclusive networking opportunities</li>
+                                <li>Special presentations and demos</li>
+                                <li>Refreshments and entertainment</li>
+                                <li>Limited seats available</li>
+                              </ul>
+                            </div>
+                            
+                            <div style="text-align: center; margin: 30px 0;">
+                              <a href="#" style="background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">RSVP Now</a>
+                            </div>
+                            
+                            <p style="color: #666; line-height: 1.6;">
+                              Don't miss this opportunity to connect and celebrate with us. We look forward to seeing you there!
+                            </p>
+                          </div>
+                          
+                          <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 14px;">
+                            <p>Best regards,<br>
+                            <strong>NovaMail Event Team</strong></p>
+                          </div>
+                        </div>
+                      ` : ''
+                    }}
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="flex justify-center mt-6">
