@@ -12,11 +12,8 @@ import {
   EyeIcon,
   EyeSlashIcon,
   CameraIcon,
-  PhotoIcon,
-  PlusIcon,
-  ClockIcon,
   DocumentDuplicateIcon,
-  XMarkIcon
+  PlusIcon
 } from '@heroicons/react/24/outline'
 
 interface EmailHistory {
@@ -35,7 +32,6 @@ export default function DashboardPage() {
   const [step, setStep] = useState(1)
   const [emailMode, setEmailMode] = useState<'simple' | 'professional'>('simple')
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
-  const [previewTemplate, setPreviewTemplate] = useState<string>('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [showProTemplateModal, setShowProTemplateModal] = useState(false)
   const [toneStyle, setToneStyle] = useState<string>('friendly')
@@ -105,7 +101,6 @@ export default function DashboardPage() {
         }))
         setStep(3)
         toast.success('Email generated successfully!')
-        // 刷新历史记录
         fetchEmailHistory()
       } else {
         throw new Error(result.error || 'Generation failed')
@@ -150,670 +145,521 @@ export default function DashboardPage() {
     if (!emailPreviewRef.current) return
 
     try {
-      // 使用浏览器原生的截图API
-      if ('showSaveFilePicker' in window) {
-        // 现代浏览器的文件保存API
-        const canvas = await htmlToCanvas(emailPreviewRef.current)
-        const blob = await canvasToBlob(canvas)
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      const rect = emailPreviewRef.current.getBoundingClientRect()
+      canvas.width = rect.width * 2
+      canvas.height = rect.height * 2
+      ctx.scale(2, 2)
+
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      svg.setAttribute('width', rect.width.toString())
+      svg.setAttribute('height', rect.height.toString())
+      
+      const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject')
+      foreignObject.setAttribute('width', '100%')
+      foreignObject.setAttribute('height', '100%')
+      
+      const clonedContent = emailPreviewRef.current.cloneNode(true) as HTMLElement
+      clonedContent.style.width = rect.width + 'px'
+      clonedContent.style.height = rect.height + 'px'
+      
+      foreignObject.appendChild(clonedContent)
+      svg.appendChild(foreignObject)
+
+      const svgData = new XMLSerializer().serializeToString(svg)
+      const img = new Image()
+      
+      img.onload = () => {
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(img, 0, 0, rect.width, rect.height)
         
-        const fileHandle = await (window as any).showSaveFilePicker({
-          suggestedName: `${campaignData.subject || 'email'}-preview.png`,
-          types: [{
-            description: 'PNG images',
-            accept: { 'image/png': ['.png'] }
-          }]
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `email-${Date.now()}.png`
+            a.click()
+            URL.revokeObjectURL(url)
+            toast.success('Email saved as image!')
+          }
         })
-        
-        const writable = await fileHandle.createWritable()
-        await writable.write(blob)
-        await writable.close()
-        
-        toast.success('Email preview saved as image!')
-      } else {
-        // 降级方案：导出为HTML文件
-        const htmlContent = emailPreviewRef.current.innerHTML
-        const blob = new Blob([`
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <title>${campaignData.subject || 'Email Preview'}</title>
-              <style>
-                body { 
-                  margin: 0; 
-                  padding: 20px; 
-                  font-family: Arial, sans-serif; 
-                  background: white;
-                }
-                img { max-width: 100%; height: auto; }
-                * { box-sizing: border-box; }
-              </style>
-            </head>
-            <body>${htmlContent}</body>
-          </html>
-        `], { type: 'text/html' })
-        
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = `${campaignData.subject || 'email'}-preview.html`
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        URL.revokeObjectURL(url)
-        
-        toast.success('Email exported as HTML file!')
       }
+      
+      img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)))
     } catch (error) {
       console.error('Error saving image:', error)
       toast.error('Failed to save image')
     }
   }
 
-  // 使用Canvas API将HTML转换为图片
-  const htmlToCanvas = async (element: HTMLElement): Promise<HTMLCanvasElement> => {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    
-    if (!ctx) throw new Error('Could not get canvas context')
-    
-    // 设置canvas尺寸
-    const rect = element.getBoundingClientRect()
-    canvas.width = rect.width * 2 // 2x for better quality
-    canvas.height = rect.height * 2
-    
-    // 设置背景色
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-    
-    // 使用SVG foreignObject来渲染HTML
-    const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="${rect.width}" height="${rect.height}">
-        <foreignObject width="100%" height="100%">
-          <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: Arial, sans-serif;">
-            ${element.innerHTML}
-          </div>
-        </foreignObject>
-      </svg>
-    `
-    
-    const img = new Image()
-    const svgBlob = new Blob([svg], { type: 'image/svg+xml' })
-    const svgUrl = URL.createObjectURL(svgBlob)
-    
-    return new Promise((resolve, reject) => {
-      img.onload = () => {
-        ctx.scale(2, 2) // 2x scale for quality
-        ctx.drawImage(img, 0, 0, rect.width, rect.height)
-        URL.revokeObjectURL(svgUrl)
-        resolve(canvas)
-      }
-      img.onerror = reject
-      img.src = svgUrl
-    })
-  }
-
-  // 将Canvas转换为Blob
-  const canvasToBlob = (canvas: HTMLCanvasElement): Promise<Blob> => {
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        if (blob) resolve(blob)
-      }, 'image/png', 0.95)
-    })
-  }
-
-  const getUserLimits = () => {
-    return {
-      maxEmailsPerMonth: -1,
-      maxContacts: -1,
-      canUseProfessionalTemplates: true
+  const copyContent = () => {
+    if (campaignData.body) {
+      navigator.clipboard.writeText(campaignData.body)
+      toast.success('Content copied to clipboard!')
     }
   }
 
-  const templates = {
-    'announcement': {
-      name: 'Announcement',
-      description: 'Perfect for product launches and important updates',
-      preview: 'Important Announcement'
-    },
-    'newsletter': {
-      name: 'Newsletter',
-      description: 'Great for regular updates and content sharing',
-      preview: 'Monthly Newsletter'
-    },
-    'promotional': {
-      name: 'Promotional',
-      description: 'Ideal for sales and marketing campaigns',
-      preview: 'Special Offer Inside'
-    },
-    'welcome': {
-      name: 'Welcome',
-      description: 'Perfect for onboarding new users',
-      preview: 'Welcome to Our Platform'
-    },
-    'follow-up': {
-      name: 'Follow-up',
-      description: 'Great for customer engagement and follow-ups',
-      preview: 'Following Up on Our Conversation'
-    }
+  const exportHTML = () => {
+    const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>${campaignData.subject}</title>
+</head>
+<body>
+    ${campaignData.body}
+</body>
+</html>`
+    
+    const blob = new Blob([htmlContent], { type: 'text/html' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `email-${Date.now()}.html`
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success('HTML exported!')
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
+  const handleProTemplateClick = (template: string) => {
+    const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email')
+    const userSubscription = localStorage.getItem('user-subscription')
+    
+    if (userSubscription !== 'pro' && userSubscription !== 'enterprise') {
+      setShowProTemplateModal(true)
+      return
+    }
+    
+    setSelectedTemplate(template)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-6xl"
-      >
-        {/* Main Dialog Container */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold mb-1">AI Email Generator</h1>
-                <p className="text-blue-100">Create professional emails with AI assistance</p>
-              </div>
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => setShowHistory(!showHistory)}
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors flex items-center space-x-2"
-                >
-                  <ClockIcon className="h-4 w-4" />
-                  <span>History ({emailHistory.length})</span>
-                </button>
-                <button
-                  onClick={handleNewEmail}
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors flex items-center space-x-2"
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  <span>New Email</span>
-                </button>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-2xl p-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold">AI Email Generator</h1>
+              <p className="text-blue-100">Create professional emails with AI assistance</p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowHistory(!showHistory)}
+                className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+              >
+                <DocumentTextIcon className="h-5 w-5" />
+                History ({emailHistory.length})
+              </button>
+              <button
+                onClick={handleNewEmail}
+                className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+              >
+                <PlusIcon className="h-5 w-5" />
+                New Email
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="bg-white/95 backdrop-blur-sm rounded-b-2xl shadow-2xl border border-white/20">
+          {/* Progress Bar */}
+          <div className="px-6 pt-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-600">Step {step} of 3</span>
+              <span className="text-sm text-gray-500">{progress}% Complete</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <motion.div
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.3 }}
+              />
             </div>
           </div>
 
-          {/* Content Area */}
-          <div className="p-8">
-            {/* Enhanced Progress Bar */}
-            <div className="mb-8">
-              <div className="flex justify-between items-center mb-3">
-                <span className="text-sm font-medium text-gray-700">Step {step} of 3</span>
-                <span className="text-sm text-gray-500">{Math.round(progress)}% Complete</span>
-              </div>
-              <div className="bg-gray-200 rounded-full h-2 overflow-hidden">
-                <motion.div 
-                  className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full shadow-sm" 
-                  style={{ width: `${progress}%` }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                />
-              </div>
-            </div>
-
-            {/* Email History Sidebar */}
-            {showHistory && (
+          {/* Step Content */}
+          <div className="p-6">
+            {step === 1 && (
               <motion.div
-                initial={{ opacity: 0, x: -300 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -300 }}
-                className="fixed left-0 top-0 h-full w-80 bg-white/95 backdrop-blur-sm shadow-2xl z-50 overflow-y-auto"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8"
               >
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900">Email History</h3>
-                    <button
-                      onClick={() => setShowHistory(false)}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                    >
-                      <XMarkIcon className="h-5 w-5" />
-                    </button>
+                <div className="text-center mb-8">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Tell us about your email</h2>
+                  <p className="text-gray-600">Provide some details to help AI generate the perfect email for you</p>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      What's the purpose of this email?
+                    </label>
+                    <textarea
+                      value={campaignData.purpose}
+                      onChange={(e) => setCampaignData(prev => ({ ...prev, purpose: e.target.value }))}
+                      placeholder="e.g., Announce our new product launch, Send monthly newsletter, Follow up with customers..."
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                      rows={4}
+                    />
                   </div>
-                  
-                  {emailHistory.length === 0 ? (
-                    <div className="text-center py-8">
-                      <DocumentDuplicateIcon className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-600">No emails generated yet</p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Business/Company Name
+                      </label>
+                      <input
+                        type="text"
+                        value={campaignData.businessName}
+                        onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
+                        placeholder="e.g., NovaMail, TechCorp..."
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
                     </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {emailHistory.map((email) => (
-                        <div
-                          key={email.id}
-                          className="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
-                          onClick={() => {
-                            setCampaignData({
-                              purpose: '',
-                              subject: email.subject,
-                              body: email.body,
-                              businessName: email.businessName,
-                              productService: '',
-                              targetUrl: ''
-                            })
-                            setEmailMode(email.emailMode)
-                            setSelectedTemplate(email.selectedTemplate || '')
-                            setToneStyle(email.toneStyle)
-                            setStep(3)
-                            setShowHistory(false)
-                          }}
-                        >
-                          <h4 className="font-medium text-gray-900 mb-1 line-clamp-2">{email.subject}</h4>
-                          <p className="text-sm text-gray-600 mb-2">{email.businessName}</p>
-                          <div className="flex items-center justify-between text-xs text-gray-500">
-                            <span className="capitalize">{email.toneStyle}</span>
-                            <span>{formatDate(email.createdAt)}</span>
-                          </div>
-                        </div>
-                      ))}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Product/Service
+                      </label>
+                      <input
+                        type="text"
+                        value={campaignData.productService}
+                        onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
+                        placeholder="e.g., AI Email Generator, SaaS Platform..."
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
                     </div>
-                  )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Target URL (Optional)
+                    </label>
+                    <input
+                      type="url"
+                      value={campaignData.targetUrl}
+                      onChange={(e) => setCampaignData(prev => ({ ...prev, targetUrl: e.target.value }))}
+                      placeholder="https://your-website.com"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end mt-8">
+                  <button
+                    onClick={handleNext}
+                    disabled={!campaignData.purpose || !campaignData.businessName}
+                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    Next →
+                  </button>
                 </div>
               </motion.div>
             )}
 
-            {/* Step 1: Campaign Details */}
-            {step === 1 && (
-              <div className="space-y-6">
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Tell us about your email</h2>
-                  <p className="text-gray-600">Provide some details to help AI generate the perfect email for you</p>
-                </div>
-                
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6">
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        What's the purpose of this email?
-                      </label>
-                      <textarea
-                        value={campaignData.purpose}
-                        onChange={(e) => setCampaignData(prev => ({ ...prev, purpose: e.target.value }))}
-                        placeholder="e.g., Announce our new product launch, Send monthly newsletter, Follow up with customers..."
-                        rows={3}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Business/Company Name
-                        </label>
-                        <input
-                          type="text"
-                          value={campaignData.businessName}
-                          onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
-                          placeholder="e.g., NovaMail, TechCorp..."
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Product/Service
-                        </label>
-                        <input
-                          type="text"
-                          value={campaignData.productService}
-                          onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
-                          placeholder="e.g., AI Email Generator, SaaS Platform..."
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Target URL (Optional)
-                      </label>
-                      <input
-                        type="url"
-                        value={campaignData.targetUrl}
-                        onChange={(e) => setCampaignData(prev => ({ ...prev, targetUrl: e.target.value }))}
-                        placeholder="https://your-website.com"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-end">
-                  <button 
-                    onClick={handleNext}
-                    disabled={!campaignData.purpose.trim()}
-                    className="px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2"
-                  >
-                    <span>Next</span>
-                    <ArrowRightIcon className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 2: Email Style & Template */}
             {step === 2 && (
-              <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-8"
+              >
                 <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Choose your email style</h2>
-                  <p className="text-gray-600">Select the perfect template and tone for your message</p>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Choose your style</h2>
+                  <p className="text-gray-600">Select the email mode and style that best fits your needs</p>
                 </div>
-                
-                {/* Email Mode Selection */}
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-200 p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button
-                      onClick={() => setEmailMode('simple')}
-                      className={`p-6 rounded-lg border-2 transition-all ${
-                        emailMode === 'simple'
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="text-center">
-                        <DocumentTextIcon className="h-8 w-8 mx-auto mb-3 text-gray-600" />
-                        <h3 className="font-medium text-gray-900">Simple Email</h3>
-                        <p className="text-sm text-gray-600 mt-1">Clean, straightforward format</p>
-                      </div>
-                    </button>
 
-                    <button
-                      onClick={() => {
-                        const limits = getUserLimits()
-                        if (!limits.canUseProfessionalTemplates) {
-                          setShowProTemplateModal(true)
-                          return
-                        }
-                        setEmailMode('professional')
-                      }}
-                      className={`p-6 rounded-lg border-2 transition-all ${
-                        emailMode === 'professional'
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="text-center">
-                        <SparklesIcon className="h-8 w-8 mx-auto mb-3 text-gray-600" />
-                        <h3 className="font-medium text-gray-900">Professional Template</h3>
-                        <p className="text-sm text-gray-600 mt-1">Beautiful, branded templates</p>
-                      </div>
-                    </button>
+                <div className="space-y-8">
+                  {/* Email Mode Selection */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Email Mode</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <button
+                        onClick={() => setEmailMode('simple')}
+                        className={`p-6 rounded-xl border-2 transition-all duration-200 ${
+                          emailMode === 'simple'
+                            ? 'border-blue-500 bg-blue-50 shadow-lg'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="text-center">
+                          <DocumentTextIcon className="h-8 w-8 mx-auto mb-2 text-blue-500" />
+                          <h4 className="font-semibold text-gray-800">Simple Email</h4>
+                          <p className="text-sm text-gray-600 mt-1">Clean, straightforward content</p>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => setEmailMode('professional')}
+                        className={`p-6 rounded-xl border-2 transition-all duration-200 ${
+                          emailMode === 'professional'
+                            ? 'border-purple-500 bg-purple-50 shadow-lg'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="text-center">
+                          <SparklesIcon className="h-8 w-8 mx-auto mb-2 text-purple-500" />
+                          <h4 className="font-semibold text-gray-800">Professional Template</h4>
+                          <p className="text-sm text-gray-600 mt-1">Rich, branded templates</p>
+                        </div>
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                {/* Professional Templates */}
-                {emailMode === 'professional' && (
-                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200 p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Choose Template</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {Object.entries(templates).map(([key, template]) => (
+                  {/* Professional Templates */}
+                  {emailMode === 'professional' && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-4">Choose Template</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {['newsletter', 'announcement', 'welcome', 'follow-up', 'promotion', 'event'].map((template) => (
+                          <button
+                            key={template}
+                            onClick={() => handleProTemplateClick(template)}
+                            className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                              selectedTemplate === template
+                                ? 'border-purple-500 bg-purple-50 shadow-lg'
+                                : 'border-gray-200 hover:border-gray-300'
+                            }`}
+                          >
+                            <div className="text-center">
+                              <div className="h-12 w-full bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg mb-2 flex items-center justify-center">
+                                <DocumentTextIcon className="h-6 w-6 text-purple-500" />
+                              </div>
+                              <h4 className="font-medium text-gray-800 capitalize">{template.replace('-', ' ')}</h4>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tone Style */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Tone & Style</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
                         <button
-                          key={key}
-                          onClick={() => {
-                            setSelectedTemplate(key)
-                            setPreviewTemplate(template.preview)
-                          }}
-                          className={`p-4 rounded-lg border-2 transition-all text-left ${
-                            selectedTemplate === key
-                              ? 'border-blue-500 bg-blue-50'
+                          key={tone}
+                          onClick={() => setToneStyle(tone)}
+                          className={`p-3 rounded-lg border transition-all duration-200 ${
+                            toneStyle === tone
+                              ? 'border-blue-500 bg-blue-50 text-blue-700'
                               : 'border-gray-200 hover:border-gray-300'
                           }`}
                         >
-                          <h4 className="font-medium text-gray-900">{template.name}</h4>
-                          <p className="text-sm text-gray-600 mt-1">{template.description}</p>
+                          {tone.charAt(0).toUpperCase() + tone.slice(1)}
                         </button>
                       ))}
                     </div>
                   </div>
-                )}
-
-                {/* Tone Style */}
-                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl border border-orange-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Tone Style</h3>
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
-                      <button
-                        key={tone}
-                        onClick={() => setToneStyle(tone)}
-                        className={`px-4 py-2 rounded-lg border transition-all ${
-                          toneStyle === tone
-                            ? 'border-blue-500 bg-blue-50 text-blue-700'
-                            : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                        }`}
-                      >
-                        {tone.charAt(0).toUpperCase() + tone.slice(1)}
-                      </button>
-                    ))}
-                  </div>
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <button onClick={handleBack} className="px-6 py-3 text-gray-600 hover:text-gray-800 transition-colors">← Back</button>
-                  <button 
+                <div className="flex justify-between mt-8">
+                  <button
+                    onClick={handleBack}
+                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    ← Back
+                  </button>
+                  <button
                     onClick={generateEmailContent}
                     disabled={isGenerating}
-                    className="px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2"
+                    className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
                   >
                     {isGenerating ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        <span>Generating...</span>
+                        Generating...
                       </>
                     ) : (
                       <>
-                        <SparklesIcon className="h-4 w-4" />
-                        <span>Generate Email</span>
+                        <SparklesIcon className="h-5 w-5" />
+                        Generate Email
                       </>
                     )}
                   </button>
                 </div>
-              </div>
+              </motion.div>
             )}
 
-            {/* Step 3: Review & Export */}
             {step === 3 && (
-              <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-8"
+              >
                 <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Your email is ready!</h2>
-                  <p className="text-gray-600">Preview and export your AI-generated email</p>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Review & Export</h2>
+                  <p className="text-gray-600">Your AI-generated email is ready!</p>
                 </div>
-                
-                {/* Email Generated Successfully */}
-                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-200 p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">✅ Email Generated Successfully!</h3>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setShowPreview(!showPreview)}
-                        className="px-4 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2"
-                      >
-                        {showPreview ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
-                        <span>{showPreview ? 'Hide Preview' : 'Show Preview'}</span>
-                      </button>
-                    </div>
+
+                <div className="space-y-6">
+                  {/* Subject Line */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line</label>
+                    <input
+                      type="text"
+                      value={campaignData.subject}
+                      onChange={(e) => setCampaignData(prev => ({ ...prev, subject: e.target.value }))}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    />
                   </div>
-                  
-                  <p className="text-gray-600 mb-6">Your AI-generated email is ready. Preview it below and export in your preferred format.</p>
-                
+
+                  {/* Preview Toggle */}
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => setShowPreview(!showPreview)}
+                      className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+                    >
+                      {showPreview ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                      {showPreview ? 'Hide Preview' : 'Show Preview'}
+                    </button>
+                  </div>
+
                   {/* Email Preview */}
-                  {showPreview && campaignData.body && (
-                    <div className="mb-6">
-                      <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-white/40 shadow-lg">
-                        <div className="flex justify-between items-center mb-3">
-                          <h4 className="font-medium text-gray-900">Email Preview</h4>
-                          <button
-                            onClick={saveAsImage}
-                            className="px-3 py-1 text-sm bg-purple-600 text-white hover:bg-purple-700 rounded-lg transition-colors flex items-center space-x-1"
-                          >
-                            <CameraIcon className="h-4 w-4" />
-                            <span>Save as Image</span>
-                          </button>
-                        </div>
-                        <div 
-                          ref={emailPreviewRef}
-                          className="bg-white rounded-lg border border-gray-200 p-4 max-h-96 overflow-y-auto shadow-inner"
-                          dangerouslySetInnerHTML={{ __html: campaignData.body }}
-                        />
+                  {showPreview && (
+                    <div className="border border-gray-200 rounded-lg overflow-hidden">
+                      <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
+                        <h4 className="font-medium text-gray-700">Email Preview</h4>
                       </div>
+                      <div
+                        ref={emailPreviewRef}
+                        className="p-6 bg-white min-h-[400px]"
+                        dangerouslySetInnerHTML={{ __html: campaignData.body }}
+                      />
                     </div>
                   )}
-                
-                  <div className="flex flex-wrap gap-3">
-                    <button 
-                      onClick={() => {
-                        navigator.clipboard.writeText(campaignData.body);
-                        toast.success('Email content copied to clipboard!');
-                      }}
-                      disabled={!campaignData.body.trim()}
-                      className="px-6 py-3 bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2 shadow-lg hover:shadow-xl"
-                    >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                      <span>Copy Content</span>
-                    </button>
-                    
-                    <button 
-                      onClick={() => {
-                        const blob = new Blob([campaignData.body], { type: 'text/html' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${campaignData.subject || 'email'}.html`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                        toast.success('Email exported as HTML file!');
-                      }}
-                      disabled={!campaignData.body.trim()}
-                      className="px-6 py-3 bg-purple-600 text-white hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2 shadow-lg hover:shadow-xl"
-                    >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <span>Export HTML</span>
-                    </button>
 
-                    <button 
-                      onClick={saveAsImage}
-                      disabled={!campaignData.body.trim()}
-                      className="px-6 py-3 bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2 shadow-lg hover:shadow-xl"
-                    >
-                      <PhotoIcon className="h-4 w-4" />
-                      <span>Save as Image</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Campaign Summary */}
-                <div className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-xl border border-slate-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Campaign Summary</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <div className="text-sm font-medium text-gray-700 mb-2">Tone Style</div>
-                      <div className="text-gray-900 capitalize">{toneStyle}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-700 mb-2">Email Style</div>
-                      <div className="text-gray-900">
-                        {emailMode === 'professional' ? 'Professional Template' : 'Simple Email'}
-                        {emailMode === 'professional' && selectedTemplate && (
-                          <span className="text-xs text-blue-600 ml-1">({selectedTemplate.replace('-', ' ')})</span>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-700 mb-2">Business Name</div>
-                      <div className="text-gray-900">{campaignData.businessName || 'Not specified'}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-700 mb-2">Target Link</div>
-                      <div className="text-gray-900 text-sm">
-                        {campaignData.targetUrl ? (
-                          <a href={campaignData.targetUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 break-all">
-                            {campaignData.targetUrl}
-                          </a>
-                        ) : (
-                          'No link specified'
-                        )}
-                      </div>
-                    </div>
-                    <div className="md:col-span-2">
-                      <div className="text-sm font-medium text-gray-700 mb-2">Subject Line</div>
-                      <div className="text-gray-900">{campaignData.subject}</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center mt-8">
-                  <button onClick={handleBack} className="px-6 py-3 text-gray-600 hover:text-gray-800 transition-colors">← Back</button>
-                  <div className="flex space-x-4">
-                    <button onClick={handleNewEmail} className="px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors">Generate New Email</button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Pro Template Modal */}
-            {showProTemplateModal && (
-              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 w-full max-w-md shadow-2xl border border-white/20"
-                >
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium text-gray-900">Upgrade Required</h3>
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap gap-4 justify-center">
                     <button
-                      onClick={() => setShowProTemplateModal(false)}
-                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                      onClick={saveAsImage}
+                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg hover:shadow-xl"
                     >
-                      <XMarkIcon className="h-6 w-6" />
+                      <CameraIcon className="h-5 w-5" />
+                      Save as Image
+                    </button>
+                    <button
+                      onClick={copyContent}
+                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      <DocumentDuplicateIcon className="h-5 w-5" />
+                      Copy Content
+                    </button>
+                    <button
+                      onClick={exportHTML}
+                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      <DocumentTextIcon className="h-5 w-5" />
+                      Export HTML
                     </button>
                   </div>
-                  
-                  <div className="space-y-4">
-                    <p className="text-gray-600">
-                      Professional templates are available for Pro users. Upgrade your plan to access beautiful, branded email templates.
-                    </p>
-                    
-                    <div className="flex justify-end space-x-3">
-                      <button
-                        onClick={() => setShowProTemplateModal(false)}
-                        className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowProTemplateModal(false)
-                          router.push('/pricing')
-                        }}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
-                      >
-                        Upgrade Now
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
+                </div>
+
+                <div className="flex justify-between mt-8">
+                  <button
+                    onClick={handleBack}
+                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    ← Back
+                  </button>
+                  <button
+                    onClick={handleNewEmail}
+                    className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    Create New Email
+                  </button>
+                </div>
+              </motion.div>
             )}
           </div>
         </div>
-      </motion.div>
+
+        {/* History Sidebar */}
+        {showHistory && (
+          <motion.div
+            initial={{ opacity: 0, x: 300 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="fixed right-0 top-0 h-full w-80 bg-white shadow-2xl z-50 overflow-y-auto"
+          >
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-800">Email History</h3>
+                <button
+                  onClick={() => setShowHistory(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
+              {emailHistory.length === 0 ? (
+                <div className="text-center text-gray-500 py-8">
+                  <DocumentTextIcon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p>No emails generated yet</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {emailHistory.map((email) => (
+                    <div key={email.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                      <h4 className="font-medium text-gray-800 mb-1">{email.subject}</h4>
+                      <p className="text-sm text-gray-600 mb-2">{email.businessName}</p>
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <span className={`px-2 py-1 rounded-full ${
+                          email.emailMode === 'professional' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+                        }`}>
+                          {email.emailMode}
+                        </span>
+                        <span>{new Date(email.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Pro Template Modal */}
+        {showProTemplateModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl p-8 max-w-md mx-4">
+              <div className="text-center">
+                <SparklesIcon className="h-16 w-16 mx-auto mb-4 text-purple-500" />
+                <h3 className="text-xl font-bold text-gray-800 mb-2">Professional Templates</h3>
+                <p className="text-gray-600 mb-6">
+                  Professional templates are available for Pro users. Upgrade to unlock premium email templates and advanced features.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowProTemplateModal(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowProTemplateModal(false)
+                      router.push('/pricing')
+                    }}
+                    className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200"
+                  >
+                    Upgrade to Pro
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
