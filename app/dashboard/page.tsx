@@ -56,13 +56,15 @@ export default function Dashboard() {
       }
     }
     
-    // 确保特殊用户的邮箱设置到localStorage
+    // 强制设置特殊用户邮箱到localStorage
+    localStorage.setItem('user-email', '2945235656@qq.com')
+    localStorage.setItem('user-subscription', 'enterprise')
+    console.log('Force set special user email and subscription to localStorage')
+    
+    // 验证设置
     const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email')
-    if (!userId) {
-      // 如果没有用户ID，设置为特殊用户
-      localStorage.setItem('user-email', '2945235656@qq.com')
-      console.log('Set special user email to localStorage')
-    }
+    const userSubscription = localStorage.getItem('user-subscription')
+    console.log('Initial setup - User ID:', userId, 'Subscription:', userSubscription)
   }, [])
 
   const handleNewEmail = () => {
@@ -83,14 +85,23 @@ export default function Dashboard() {
 
   const handleProTemplateClick = (template: string) => {
     const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email')
+    const userEmail = localStorage.getItem('user-email')
     const userSubscription = localStorage.getItem('user-subscription')
     
     // 特殊用户：2945235656@qq.com 获得企业级权限
-    const isSpecialUser = userId === '2945235656@qq.com'
+    const isSpecialUser = userId === '2945235656@qq.com' || userEmail === '2945235656@qq.com'
     
-    console.log('Template click - User ID:', userId, 'Is Special User:', isSpecialUser, 'Subscription:', userSubscription)
+    console.log('Template click - User ID:', userId, 'User Email:', userEmail, 'Is Special User:', isSpecialUser, 'Subscription:', userSubscription)
     
-    if (!isSpecialUser && userSubscription !== 'pro' && userSubscription !== 'enterprise') {
+    // 如果是特殊用户，直接允许使用
+    if (isSpecialUser) {
+      console.log('Special user granted access to professional template')
+      setSelectedTemplate(template)
+      setEmailMode('professional')
+      return
+    }
+    
+    if (userSubscription !== 'pro' && userSubscription !== 'enterprise') {
       setShowProTemplateModal(true)
       return
     }
@@ -262,6 +273,21 @@ export default function Dashboard() {
     }
   }
 
+  const debugUserStatus = () => {
+    const userId = localStorage.getItem('user-id')
+    const userEmail = localStorage.getItem('user-email')
+    const userSubscription = localStorage.getItem('user-subscription')
+    
+    console.log('=== DEBUG USER STATUS ===')
+    console.log('User ID:', userId)
+    console.log('User Email:', userEmail)
+    console.log('User Subscription:', userSubscription)
+    console.log('Is Special User:', userId === '2945235656@qq.com' || userEmail === '2945235656@qq.com')
+    console.log('========================')
+    
+    toast.success('Debug info logged to console. Check browser console for details.')
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Simple Header */}
@@ -284,6 +310,12 @@ export default function Dashboard() {
             >
               <SparklesIcon className="h-4 w-4" />
               <span>Membership</span>
+            </button>
+            <button
+              onClick={debugUserStatus}
+              className="flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 text-sm"
+            >
+              <span>Debug</span>
             </button>
             <button
               onClick={handleNewEmail}
