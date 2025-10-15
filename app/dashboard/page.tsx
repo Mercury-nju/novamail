@@ -261,41 +261,35 @@ export default function DashboardPage() {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
-      <div className="relative z-10 w-full h-screen flex flex-col">
-        {/* Header */}
-        <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-8 py-6">
+      <div className="relative z-10 w-full min-h-screen">
+        {/* Simple Header */}
+        <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                  AI Email Studio
-                </h1>
-                <p className="text-sm text-gray-500">Create stunning emails with AI</p>
-              </div>
-            </div>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              AI Email Studio
+            </h1>
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setShowHistory(!showHistory)}
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all duration-200 text-gray-700"
+                className="flex items-center space-x-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200 text-gray-700 text-sm"
               >
                 <DocumentTextIcon className="h-4 w-4" />
-                <span className="text-sm font-medium">History ({emailHistory.length})</span>
+                <span>History ({emailHistory.length})</span>
               </button>
               <button
                 onClick={handleNewEmail}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 text-sm"
               >
                 <PlusIcon className="h-4 w-4" />
-                <span className="text-sm font-medium">New Email</span>
+                <span>New Email</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 overflow-hidden">
-          <div className="h-full flex items-center justify-center p-8">
-            <div className="w-full max-w-6xl">
+        <div className="p-8">
+          <div className="w-full max-w-6xl mx-auto">
               <AnimatePresence mode="wait">
                 {!currentMode && (
                   <motion.div
@@ -803,7 +797,6 @@ export default function DashboardPage() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
           </div>
         </div>
 
