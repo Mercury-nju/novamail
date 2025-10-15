@@ -29,6 +29,7 @@ interface EmailHistory {
 
 export default function DashboardPage() {
   const router = useRouter()
+  const [currentMode, setCurrentMode] = useState<'text' | 'template' | null>(null)
   const [step, setStep] = useState(1)
   const [emailMode, setEmailMode] = useState<'simple' | 'professional'>('simple')
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
@@ -126,6 +127,7 @@ export default function DashboardPage() {
   }
 
   const handleNewEmail = () => {
+    setCurrentMode(null)
     setStep(1)
     setCampaignData({
       purpose: '',
@@ -288,7 +290,68 @@ export default function DashboardPage() {
 
           {/* Step Content */}
           <div className="p-8 flex-1">
-            {step === 1 && (
+            {!currentMode && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="h-full flex flex-col items-center justify-center"
+              >
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl font-bold text-gray-800 mb-4">Choose Email Generation Mode</h2>
+                  <p className="text-gray-600 text-lg">Select how you'd like to create your email</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full">
+                  {/* Text Email Mode */}
+                  <button
+                    onClick={() => {
+                      setCurrentMode('text')
+                      setEmailMode('simple')
+                    }}
+                    className="group p-8 rounded-2xl border-2 border-gray-200 hover:border-blue-500 transition-all duration-300 hover:shadow-xl bg-gradient-to-br from-blue-50 to-indigo-50"
+                  >
+                    <div className="text-center">
+                      <div className="w-16 h-16 mx-auto mb-6 bg-blue-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <DocumentTextIcon className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-800 mb-3">Text Email Generation</h3>
+                      <p className="text-gray-600 mb-4">Create clean, straightforward text-based emails with AI assistance</p>
+                      <ul className="text-sm text-gray-500 text-left space-y-2">
+                        <li>• Simple text format</li>
+                        <li>• AI-powered content generation</li>
+                        <li>• Customizable tone and style</li>
+                        <li>• Perfect for business communications</li>
+                      </ul>
+                    </div>
+                  </button>
+
+                  {/* Template Email Mode */}
+                  <button
+                    onClick={() => {
+                      setCurrentMode('template')
+                      setEmailMode('professional')
+                    }}
+                    className="group p-8 rounded-2xl border-2 border-gray-200 hover:border-purple-500 transition-all duration-300 hover:shadow-xl bg-gradient-to-br from-purple-50 to-pink-50"
+                  >
+                    <div className="text-center">
+                      <div className="w-16 h-16 mx-auto mb-6 bg-purple-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <SparklesIcon className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-800 mb-3">Professional Template</h3>
+                      <p className="text-gray-600 mb-4">Use rich, branded templates for professional email campaigns</p>
+                      <ul className="text-sm text-gray-500 text-left space-y-2">
+                        <li>• Rich HTML templates</li>
+                        <li>• Branded designs</li>
+                        <li>• Multiple template options</li>
+                        <li>• Pro feature</li>
+                      </ul>
+                    </div>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {currentMode === 'text' && step === 1 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -366,7 +429,185 @@ export default function DashboardPage() {
               </motion.div>
             )}
 
-            {step === 2 && (
+            {currentMode === 'template' && step === 1 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-8 h-full flex flex-col"
+              >
+                <div className="text-center mb-8">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Choose Professional Template</h2>
+                  <p className="text-gray-600">Select a template that matches your brand and purpose</p>
+                </div>
+
+                <div className="space-y-8 flex-1">
+                  {/* Template Selection */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Available Templates</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {['newsletter', 'announcement', 'welcome', 'follow-up', 'promotion', 'event'].map((template) => (
+                        <button
+                          key={template}
+                          onClick={() => handleProTemplateClick(template)}
+                          className={`p-6 rounded-xl border-2 transition-all duration-200 ${
+                            selectedTemplate === template
+                              ? 'border-purple-500 bg-purple-50 shadow-lg'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="text-center">
+                            <div className="h-16 w-full bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg mb-3 flex items-center justify-center">
+                              <DocumentTextIcon className="h-8 w-8 text-purple-500" />
+                            </div>
+                            <h4 className="font-medium text-gray-800 capitalize">{template.replace('-', ' ')}</h4>
+                            <p className="text-xs text-gray-500 mt-1">Professional template</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Tone Style */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Tone & Style</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
+                        <button
+                          key={tone}
+                          onClick={() => setToneStyle(tone)}
+                          className={`p-3 rounded-lg border transition-all duration-200 ${
+                            toneStyle === tone
+                              ? 'border-purple-500 bg-purple-50 text-purple-700'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          {tone.charAt(0).toUpperCase() + tone.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-between mt-8">
+                  <button
+                    onClick={() => setCurrentMode(null)}
+                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    ← Back to Mode Selection
+                  </button>
+                  <button
+                    onClick={generateEmailContent}
+                    disabled={isGenerating || !selectedTemplate}
+                    className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <SparklesIcon className="h-5 w-5" />
+                        Generate Template Email
+                      </>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {currentMode === 'template' && step === 2 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-8 h-full flex flex-col"
+              >
+                <div className="text-center mb-8">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Review & Export Template</h2>
+                  <p className="text-gray-600">Your professional template email is ready!</p>
+                </div>
+
+                <div className="space-y-6 flex-1">
+                  {/* Subject Line */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line</label>
+                    <input
+                      type="text"
+                      value={campaignData.subject}
+                      onChange={(e) => setCampaignData(prev => ({ ...prev, subject: e.target.value }))}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Preview Toggle */}
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => setShowPreview(!showPreview)}
+                      className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+                    >
+                      {showPreview ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                      {showPreview ? 'Hide Preview' : 'Show Preview'}
+                    </button>
+                  </div>
+
+                  {/* Email Preview */}
+                  {showPreview && (
+                    <div className="border border-gray-200 rounded-lg overflow-hidden">
+                      <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
+                        <h4 className="font-medium text-gray-700">Template Preview</h4>
+                      </div>
+                      <div
+                        ref={emailPreviewRef}
+                        className="p-6 bg-white min-h-[400px]"
+                        dangerouslySetInnerHTML={{ __html: campaignData.body }}
+                      />
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap gap-4 justify-center">
+                    <button
+                      onClick={saveAsImage}
+                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      <CameraIcon className="h-5 w-5" />
+                      Save as Image
+                    </button>
+                    <button
+                      onClick={copyContent}
+                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      <DocumentDuplicateIcon className="h-5 w-5" />
+                      Copy Content
+                    </button>
+                    <button
+                      onClick={exportHTML}
+                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      <DocumentTextIcon className="h-5 w-5" />
+                      Export HTML
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex justify-between mt-8">
+                  <button
+                    onClick={() => setStep(1)}
+                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    ← Back
+                  </button>
+                  <button
+                    onClick={handleNewEmail}
+                    className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    Create New Email
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {currentMode === 'text' && step === 2 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -489,7 +730,7 @@ export default function DashboardPage() {
               </motion.div>
             )}
 
-            {step === 3 && (
+            {currentMode === 'text' && step === 3 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
