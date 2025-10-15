@@ -2471,6 +2471,8 @@ Be intelligent, creative, and professional. Create an email that truly serves it
       let aiSubject = `🚀 ${campaignData.purpose} - ${campaignData.businessName || 'Special Offer'}`;
       let aiBody = '';
       
+      console.log('Raw AI content to parse:', aiContent);
+      
       // 尝试解析格式化的响应
       const subjectMatch = aiContent.match(/SUBJECT:\s*(.+?)(?:\n|$)/i);
       const bodyMatch = aiContent.match(/BODY:\s*([\s\S]+)/i);
@@ -2499,9 +2501,16 @@ Be intelligent, creative, and professional. Create an email that truly serves it
         }
         
         if (!foundSubject || !foundBody) {
-          // 如果还是没找到，使用原始内容作为正文
-          aiBody = aiContent;
-          console.log('Using raw content as body - no structured format found');
+          // 如果还是没找到，检查是否是纯文本内容
+          if (aiContent.includes('<') && aiContent.includes('>')) {
+            // 包含HTML标签，直接使用
+            aiBody = aiContent;
+            console.log('Using raw HTML content as body');
+          } else {
+            // 纯文本内容，包装成HTML
+            aiBody = `<p style="color: #333; line-height: 1.6; font-size: 16px;">${aiContent.replace(/\n/g, '<br>')}</p>`;
+            console.log('Wrapped plain text content in HTML');
+          }
         }
       }
       
@@ -2669,6 +2678,12 @@ BODY: [engaging email content that expands on the user's information intelligent
           const fallbackTemplate = getFallbackTemplate('default', campaignData);
           aiSubject = fallbackTemplate.subject;
           aiBody = fallbackTemplate.body;
+        } else {
+          // 确保简单模式的内容是纯文本格式
+          console.log('Converting AI content to plain text for simple mode');
+          // 移除HTML标签，保留纯文本
+          aiBody = aiBody.replace(/<[^>]*>/g, '').replace(/\n\s*\n/g, '\n\n').trim();
+          console.log('Converted to plain text:', aiBody.substring(0, 200) + '...');
         }
       }
 
