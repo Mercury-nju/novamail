@@ -17,7 +17,8 @@ import {
   ArrowLeftIcon,
   CpuChipIcon,
   PaintBrushIcon,
-  RocketLaunchIcon
+  RocketLaunchIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 
 interface EmailHistory {
