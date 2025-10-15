@@ -368,124 +368,188 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="space-y-8">
-                {/* Email Details Section */}
-                <div className="space-y-6">
-                  <h4 className="text-lg font-semibold text-gray-800 mb-4">Email Details</h4>
-                  
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
-                      What's the purpose of this email?
-                    </label>
-                    <textarea
-                      value={campaignData.purpose}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, purpose: e.target.value }))}
-                      placeholder="e.g., Announce our new product launch, Send monthly newsletter, Follow up with customers..."
-                      className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none bg-gray-50/50"
-                      rows={4}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Business/Company Name
-                      </label>
-                      <input
-                        type="text"
-                        value={campaignData.businessName}
-                        onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
-                        placeholder="e.g., NovaMail, TechCorp..."
-                        className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Product/Service
-                      </label>
-                      <input
-                        type="text"
-                        value={campaignData.productService}
-                        onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
-                        placeholder="e.g., AI Email Generator, SaaS Platform..."
-                        className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
-                      Target URL (Optional)
-                    </label>
-                    <input
-                      type="url"
-                      value={campaignData.targetUrl}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, targetUrl: e.target.value }))}
-                      placeholder="https://your-website.com"
-                      className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
-                    />
-                  </div>
-                </div>
-
-                {/* Tone & Style Section */}
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-800 mb-4">Tone & Style</h4>
-                  <div className="space-y-4">
-                    {/* Preset tone buttons - only show if no custom tone is entered */}
-                    {!toneStyle || ['friendly', 'professional', 'casual', 'formal'].includes(toneStyle) ? (
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
-                          <button
-                            key={tone}
-                            onClick={() => setToneStyle(tone)}
-                            className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
-                              toneStyle === tone
-                                ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-lg'
-                                : 'border-gray-200 hover:border-gray-300 bg-white'
-                            }`}
-                          >
-                            <div className="text-center">
-                              <PaintBrushIcon className="h-6 w-6 mx-auto mb-2" />
-                              <span className="font-medium">{tone.charAt(0).toUpperCase() + tone.slice(1)}</span>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-medium text-blue-800">Custom Tone Selected</p>
-                            <p className="text-sm text-blue-600">"{toneStyle}"</p>
-                          </div>
-                          <button
-                            onClick={() => setToneStyle('')}
-                            className="text-blue-600 hover:text-blue-800 transition-colors"
-                          >
-                            <XMarkIcon className="h-5 w-5" />
-                          </button>
-                        </div>
-                      </div>
-                    )}
+              {/* Text Email Form - Only show if simple mode is selected */}
+              {emailMode === 'simple' && (
+                <div className="space-y-8">
+                  {/* Email Details Section */}
+                  <div className="space-y-6">
+                    <h4 className="text-lg font-semibold text-gray-800 mb-4">Email Details</h4>
                     
-                    {/* Custom tone input */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Or enter custom tone description
+                        What's the purpose of this email?
+                      </label>
+                      <textarea
+                        value={campaignData.purpose}
+                        onChange={(e) => setCampaignData(prev => ({ ...prev, purpose: e.target.value }))}
+                        placeholder="e.g., Announce our new product launch, Send monthly newsletter, Follow up with customers..."
+                        className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none bg-gray-50/50"
+                        rows={4}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">
+                          Business/Company Name
+                        </label>
+                        <input
+                          type="text"
+                          value={campaignData.businessName}
+                          onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
+                          placeholder="e.g., NovaMail, TechCorp..."
+                          className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">
+                          Product/Service
+                        </label>
+                        <input
+                          type="text"
+                          value={campaignData.productService}
+                          onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
+                          placeholder="e.g., AI Email Generator, SaaS Platform..."
+                          className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-3">
+                        Target URL (Optional)
                       </label>
                       <input
-                        type="text"
-                        value={toneStyle}
-                        onChange={(e) => setToneStyle(e.target.value)}
-                        placeholder="e.g., enthusiastic, diplomatic, encouraging..."
+                        type="url"
+                        value={campaignData.targetUrl}
+                        onChange={(e) => setCampaignData(prev => ({ ...prev, targetUrl: e.target.value }))}
+                        placeholder="https://your-website.com"
                         className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
                       />
                     </div>
                   </div>
-                </div>
 
-                {/* Professional Templates Section - Only show if professional mode is selected */}
-                {emailMode === 'professional' && (
+                  {/* Tone & Style Section */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-4">Tone & Style</h4>
+                    <div className="space-y-4">
+                      {/* Preset tone buttons - only show if no custom tone is entered */}
+                      {!toneStyle || ['friendly', 'professional', 'casual', 'formal'].includes(toneStyle) ? (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
+                            <button
+                              key={tone}
+                              onClick={() => setToneStyle(tone)}
+                              className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
+                                toneStyle === tone
+                                  ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-lg'
+                                  : 'border-gray-200 hover:border-gray-300 bg-white'
+                              }`}
+                            >
+                              <div className="text-center">
+                                <PaintBrushIcon className="h-6 w-6 mx-auto mb-2" />
+                                <span className="font-medium">{tone.charAt(0).toUpperCase() + tone.slice(1)}</span>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium text-blue-800">Custom Tone Selected</p>
+                              <p className="text-sm text-blue-600">"{toneStyle}"</p>
+                            </div>
+                            <button
+                              onClick={() => setToneStyle('')}
+                              className="text-blue-600 hover:text-blue-800 transition-colors"
+                            >
+                              <XMarkIcon className="h-5 w-5" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Custom tone input */}
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">
+                          Or enter custom tone description
+                        </label>
+                        <input
+                          type="text"
+                          value={toneStyle}
+                          onChange={(e) => setToneStyle(e.target.value)}
+                          placeholder="e.g., enthusiastic, diplomatic, encouraging..."
+                          className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Professional Template Form - Only show if professional mode is selected */}
+              {emailMode === 'professional' && (
+                <div className="space-y-8">
+                  {/* Email Details Section */}
+                  <div className="space-y-6">
+                    <h4 className="text-lg font-semibold text-gray-800 mb-4">Email Details</h4>
+                    
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-3">
+                        What's the purpose of this email?
+                      </label>
+                      <textarea
+                        value={campaignData.purpose}
+                        onChange={(e) => setCampaignData(prev => ({ ...prev, purpose: e.target.value }))}
+                        placeholder="e.g., Announce our new product launch, Send monthly newsletter, Follow up with customers..."
+                        className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none bg-gray-50/50"
+                        rows={4}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">
+                          Business/Company Name
+                        </label>
+                        <input
+                          type="text"
+                          value={campaignData.businessName}
+                          onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
+                          placeholder="e.g., NovaMail, TechCorp..."
+                          className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50/50"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">
+                          Product/Service
+                        </label>
+                        <input
+                          type="text"
+                          value={campaignData.productService}
+                          onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
+                          placeholder="e.g., AI Email Generator, SaaS Platform..."
+                          className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50/50"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-3">
+                        Target URL (Optional)
+                      </label>
+                      <input
+                        type="url"
+                        value={campaignData.targetUrl}
+                        onChange={(e) => setCampaignData(prev => ({ ...prev, targetUrl: e.target.value }))}
+                        placeholder="https://your-website.com"
+                        className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50/50"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Professional Templates Section */}
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800 mb-6">Choose Professional Template</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -535,8 +599,65 @@ export default function Dashboard() {
                       ))}
                     </div>
                   </div>
-                )}
-              </div>
+
+                  {/* Tone & Style Section */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-4">Tone & Style</h4>
+                    <div className="space-y-4">
+                      {/* Preset tone buttons - only show if no custom tone is entered */}
+                      {!toneStyle || ['friendly', 'professional', 'casual', 'formal'].includes(toneStyle) ? (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
+                            <button
+                              key={tone}
+                              onClick={() => setToneStyle(tone)}
+                              className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
+                                toneStyle === tone
+                                  ? 'border-purple-500 bg-purple-50 text-purple-700 shadow-lg'
+                                  : 'border-gray-200 hover:border-gray-300 bg-white'
+                              }`}
+                            >
+                              <div className="text-center">
+                                <PaintBrushIcon className="h-6 w-6 mx-auto mb-2" />
+                                <span className="font-medium">{tone.charAt(0).toUpperCase() + tone.slice(1)}</span>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-4 bg-purple-50 border border-purple-200 rounded-2xl">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium text-purple-800">Custom Tone Selected</p>
+                              <p className="text-sm text-purple-600">"{toneStyle}"</p>
+                            </div>
+                            <button
+                              onClick={() => setToneStyle('')}
+                              className="text-purple-600 hover:text-purple-800 transition-colors"
+                            >
+                              <XMarkIcon className="h-5 w-5" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Custom tone input */}
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">
+                          Or enter custom tone description
+                        </label>
+                        <input
+                          type="text"
+                          value={toneStyle}
+                          onChange={(e) => setToneStyle(e.target.value)}
+                          placeholder="e.g., enthusiastic, diplomatic, encouraging..."
+                          className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50/50"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="flex justify-center mt-8">
                 <button
