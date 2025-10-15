@@ -289,7 +289,83 @@ export default function Dashboard() {
             <div className="p-8">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-800 mb-3">AI Email Generator</h2>
-                <p className="text-gray-600 text-lg">Create professional emails with AI</p>
+                <p className="text-gray-600 text-lg">Choose your email type and create professional emails with AI</p>
+              </div>
+
+              {/* Email Type Selection */}
+              <div className="mb-8">
+                <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">Choose Email Type</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                  {/* Text Email Option */}
+                  <div
+                    className={`p-6 rounded-3xl border-2 transition-all duration-300 cursor-pointer ${
+                      emailMode === 'simple'
+                        ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-xl'
+                        : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-lg'
+                    }`}
+                    onClick={() => {
+                      setEmailMode('simple')
+                      setSelectedTemplate('')
+                    }}
+                  >
+                    <div className="text-center">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center">
+                        <DocumentTextIcon className="h-8 w-8 text-white" />
+                      </div>
+                      <h4 className="text-xl font-bold text-gray-800 mb-2">Text Email</h4>
+                      <p className="text-gray-600 mb-4">Clean, professional text-based emails</p>
+                      <div className="space-y-2 text-sm text-gray-500">
+                        <div className="flex items-center justify-center space-x-2">
+                          <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                          <span>Free to use</span>
+                        </div>
+                        <div className="flex items-center justify-center space-x-2">
+                          <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                          <span>AI-powered content</span>
+                        </div>
+                        <div className="flex items-center justify-center space-x-2">
+                          <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                          <span>Customizable tone</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Professional Template Option */}
+                  <div
+                    className={`p-6 rounded-3xl border-2 transition-all duration-300 cursor-pointer ${
+                      emailMode === 'professional'
+                        ? 'border-purple-500 bg-gradient-to-br from-purple-50 to-pink-50 shadow-xl'
+                        : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-lg'
+                    }`}
+                    onClick={() => {
+                      setEmailMode('professional')
+                      setSelectedTemplate('')
+                    }}
+                  >
+                    <div className="text-center">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center">
+                        <SparklesIcon className="h-8 w-8 text-white" />
+                      </div>
+                      <h4 className="text-xl font-bold text-gray-800 mb-2">Professional Templates</h4>
+                      <p className="text-gray-600 mb-4">Rich, branded HTML templates</p>
+                      <div className="space-y-2 text-sm text-gray-500">
+                        <div className="flex items-center justify-center space-x-2">
+                          <SparklesIcon className="h-4 w-4 text-purple-500" />
+                          <span>Pro/Enterprise required</span>
+                        </div>
+                        <div className="flex items-center justify-center space-x-2">
+                          <SparklesIcon className="h-4 w-4 text-purple-500" />
+                          <span>Multiple templates</span>
+                        </div>
+                        <div className="flex items-center justify-center space-x-2">
+                          <SparklesIcon className="h-4 w-4 text-purple-500" />
+                          <span>Branded designs</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-8">
@@ -408,63 +484,69 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Professional Templates Section */}
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-800 mb-6">Professional Templates</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {[
-                      { id: 'newsletter', name: 'Newsletter', icon: '📰', color: 'from-blue-500 to-cyan-500', bgColor: 'from-blue-50 to-cyan-50', description: 'Weekly updates & insights' },
-                      { id: 'announcement', name: 'Announcement', icon: '📢', color: 'from-purple-500 to-pink-500', bgColor: 'from-purple-50 to-pink-50', description: 'Important company news' },
-                      { id: 'welcome', name: 'Welcome', icon: '👋', color: 'from-green-500 to-emerald-500', bgColor: 'from-green-50 to-emerald-50', description: 'Onboarding & greetings' },
-                      { id: 'follow-up', name: 'Follow-up', icon: '🔄', color: 'from-orange-500 to-red-500', bgColor: 'from-orange-50 to-red-50', description: 'Customer engagement' },
-                      { id: 'promotion', name: 'Promotion', icon: '🎯', color: 'from-yellow-500 to-orange-500', bgColor: 'from-yellow-50 to-orange-50', description: 'Sales & marketing' },
-                      { id: 'event', name: 'Event', icon: '🎉', color: 'from-indigo-500 to-purple-500', bgColor: 'from-indigo-50 to-purple-50', description: 'Events & invitations' }
-                    ].map((template) => (
-                      <div
-                        key={template.id}
-                        className={`group relative p-6 rounded-3xl border-2 transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
-                          selectedTemplate === template.id
-                            ? 'border-purple-500 bg-gradient-to-br from-purple-50 to-pink-50 shadow-xl'
-                            : 'border-gray-200 hover:border-gray-300 bg-white'
-                        }`}
-                      >
-                        {/* Template Header */}
-                        <div className="text-center mb-6">
-                          <div className={`h-20 w-full bg-gradient-to-br ${template.bgColor} rounded-2xl mb-4 flex items-center justify-center relative overflow-hidden`}>
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
-                            <div className="text-4xl relative z-10">{template.icon}</div>
-                            <div className={`absolute top-2 right-2 w-3 h-3 bg-gradient-to-r ${template.color} rounded-full animate-pulse`}></div>
+                {/* Professional Templates Section - Only show if professional mode is selected */}
+                {emailMode === 'professional' && (
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-6">Choose Professional Template</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {[
+                        { id: 'newsletter', name: 'Newsletter', icon: '📰', color: 'from-blue-500 to-cyan-500', bgColor: 'from-blue-50 to-cyan-50', description: 'Weekly updates & insights' },
+                        { id: 'announcement', name: 'Announcement', icon: '📢', color: 'from-purple-500 to-pink-500', bgColor: 'from-purple-50 to-pink-50', description: 'Important company news' },
+                        { id: 'welcome', name: 'Welcome', icon: '👋', color: 'from-green-500 to-emerald-500', bgColor: 'from-green-50 to-emerald-50', description: 'Onboarding & greetings' },
+                        { id: 'follow-up', name: 'Follow-up', icon: '🔄', color: 'from-orange-500 to-red-500', bgColor: 'from-orange-50 to-red-50', description: 'Customer engagement' },
+                        { id: 'promotion', name: 'Promotion', icon: '🎯', color: 'from-yellow-500 to-orange-500', bgColor: 'from-yellow-50 to-orange-50', description: 'Sales & marketing' },
+                        { id: 'event', name: 'Event', icon: '🎉', color: 'from-indigo-500 to-purple-500', bgColor: 'from-indigo-50 to-purple-50', description: 'Events & invitations' }
+                      ].map((template) => (
+                        <div
+                          key={template.id}
+                          className={`group relative p-6 rounded-3xl border-2 transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
+                            selectedTemplate === template.id
+                              ? 'border-purple-500 bg-gradient-to-br from-purple-50 to-pink-50 shadow-xl'
+                              : 'border-gray-200 hover:border-gray-300 bg-white'
+                          }`}
+                        >
+                          {/* Template Header */}
+                          <div className="text-center mb-6">
+                            <div className={`h-20 w-full bg-gradient-to-br ${template.bgColor} rounded-2xl mb-4 flex items-center justify-center relative overflow-hidden`}>
+                              <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+                              <div className="text-4xl relative z-10">{template.icon}</div>
+                              <div className={`absolute top-2 right-2 w-3 h-3 bg-gradient-to-r ${template.color} rounded-full animate-pulse`}></div>
+                            </div>
+                            <h5 className="font-bold text-gray-800 text-lg mb-1">{template.name}</h5>
+                            <p className="text-sm text-gray-500">{template.description}</p>
                           </div>
-                          <h5 className="font-bold text-gray-800 text-lg mb-1">{template.name}</h5>
-                          <p className="text-sm text-gray-500">{template.description}</p>
-                        </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => handleProTemplateClick(template.id)}
-                            className={`flex-1 px-4 py-2 bg-gradient-to-r ${template.color} text-white rounded-xl hover:shadow-lg transition-all duration-200 text-sm font-medium`}
-                          >
-                            Select
-                          </button>
-                          <button
-                            onClick={() => handleTemplatePreview(template.id)}
-                            className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200 text-sm font-medium"
-                          >
-                            Preview
-                          </button>
+                          {/* Action Buttons */}
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleProTemplateClick(template.id)}
+                              className={`flex-1 px-4 py-2 bg-gradient-to-r ${template.color} text-white rounded-xl hover:shadow-lg transition-all duration-200 text-sm font-medium`}
+                            >
+                              Select
+                            </button>
+                            <button
+                              onClick={() => handleTemplatePreview(template.id)}
+                              className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200 text-sm font-medium"
+                            >
+                              Preview
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               <div className="flex justify-center mt-8">
                 <button
                   onClick={generateEmailContent}
-                  disabled={isGenerating || !campaignData.purpose || !campaignData.businessName}
-                  className="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
+                  disabled={isGenerating || !campaignData.purpose || !campaignData.businessName || (emailMode === 'professional' && !selectedTemplate)}
+                  className={`px-8 py-3 text-white rounded-2xl hover:shadow-xl transition-all duration-200 shadow-lg flex items-center space-x-2 ${
+                    emailMode === 'simple'
+                      ? 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700'
+                      : 'bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   {isGenerating ? (
                     <>
@@ -474,7 +556,7 @@ export default function Dashboard() {
                   ) : (
                     <>
                       <SparklesIcon className="h-5 w-5" />
-                      <span>Generate Email</span>
+                      <span>{emailMode === 'simple' ? 'Generate Text Email' : 'Generate Template Email'}</span>
                     </>
                   )}
                 </button>
