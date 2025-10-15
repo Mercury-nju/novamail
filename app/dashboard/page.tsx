@@ -613,8 +613,8 @@ export default function DashboardPage() {
                             </div>
 
                             {/* Editable Email Content */}
-                            <div className="flex-1 flex flex-col">
-                              <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg flex-1 flex flex-col">
+                            <div className="w-full">
+                              <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg">
                                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-200">
                                   <div className="flex items-center justify-between">
                                     <h4 className="font-semibold text-gray-700">Email Content</h4>
@@ -627,12 +627,13 @@ export default function DashboardPage() {
                                     </button>
                                   </div>
                                 </div>
-                                <div className="flex-1 overflow-y-auto">
+                                <div className="bg-white">
                                   <textarea
                                     value={campaignData.body}
                                     onChange={(e) => setCampaignData(prev => ({ ...prev, body: e.target.value }))}
-                                    className="w-full h-full p-6 border-0 resize-none focus:ring-0 focus:outline-none bg-white"
+                                    className="w-full p-6 border-0 resize-none focus:ring-0 focus:outline-none bg-white min-h-[400px]"
                                     placeholder="Your email content will appear here..."
+                                    rows={Math.max(15, campaignData.body.split('\n').length)}
                                   />
                                 </div>
                               </div>
@@ -777,8 +778,8 @@ export default function DashboardPage() {
                             </div>
 
                             {/* Editable Template Display */}
-                            <div className="flex-1 flex flex-col">
-                              <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg flex-1 flex flex-col">
+                            <div className="w-full">
+                              <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg">
                                 <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-200">
                                   <div className="flex items-center justify-between">
                                     <h4 className="font-semibold text-gray-700">Professional Template</h4>
@@ -800,12 +801,13 @@ export default function DashboardPage() {
                                     </div>
                                   </div>
                                 </div>
-                                <div className="flex-1 overflow-y-auto">
+                                <div className="bg-white">
                                   <textarea
                                     value={campaignData.body}
                                     onChange={(e) => setCampaignData(prev => ({ ...prev, body: e.target.value }))}
-                                    className="w-full h-full p-6 border-0 resize-none focus:ring-0 focus:outline-none bg-white"
+                                    className="w-full p-6 border-0 resize-none focus:ring-0 focus:outline-none bg-white min-h-[500px]"
                                     placeholder="Your template content will appear here..."
+                                    rows={Math.max(20, campaignData.body.split('\n').length)}
                                   />
                                 </div>
                               </div>
