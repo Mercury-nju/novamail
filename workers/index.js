@@ -2275,7 +2275,48 @@ async function handleAIGenerateEmail(request, env) {
         ? '请用中文生成邮件内容，保持专业、友好的语调。'
         : 'Please generate email content in English, maintaining a professional and friendly tone.';
 
-      const aiPrompt = `You are an expert email marketing writer. Create a personalized email that directly addresses the user's specific needs and goals.
+      // 根据邮件模式生成不同的提示词
+      let aiPrompt;
+      
+      if (emailMode === 'simple') {
+        // 简单模式：只生成纯文本邮件
+        aiPrompt = `You are an expert email marketing writer. Create a personalized PLAIN TEXT email that directly addresses the user's specific needs and goals.
+
+${languageInstruction}
+
+USER'S SPECIFIC REQUIREMENTS:
+- Purpose/Goal: ${campaignData.purpose}
+- Business Name: ${campaignData.businessName || 'Not provided'}
+- Product/Service: ${campaignData.productService || 'Not provided'}
+- Target URL: ${campaignData.targetUrl || 'Not provided'}
+- Tone Style: ${toneStyle || 'professional'}
+
+CRITICAL INSTRUCTIONS FOR SIMPLE TEXT EMAIL:
+1. READ the user's purpose/goal carefully - this is what they want to achieve
+2. CREATE content that directly serves their stated purpose, not generic marketing content
+3. USE the business name and product/service information provided by the user
+4. MATCH the language of the user's input - if they wrote in Chinese, respond in Chinese
+5. FOCUS on the specific goal: if it's a product launch, write about the launch; if it's customer feedback, ask for feedback
+6. MAKE the subject line relevant to their actual purpose
+7. INCLUDE a clear call-to-action that helps achieve their stated goal
+8. AVOID generic templates - personalize based on their specific information
+9. WRITE IN PLAIN TEXT ONLY - NO HTML, NO CSS, NO MARKDOWN
+10. USE proper email formatting with clear paragraphs and line breaks
+
+EXAMPLES:
+- If purpose is "产品发布会" → Write about the product launch event
+- If purpose is "用户反馈收集" → Ask for user feedback and opinions  
+- If purpose is "促销活动" → Write about the special offer or discount
+- If purpose is "客户维护" → Write about maintaining customer relationships
+
+Generate ONLY:
+SUBJECT: [compelling subject line here]
+BODY: [plain text email body here - NO HTML, just text with proper line breaks]
+
+Be intelligent, creative, and professional. Create a plain text email that truly serves its purpose.`;
+      } else {
+        // 专业模板模式：生成HTML内容
+        aiPrompt = `You are an expert email marketing writer. Create a personalized email that directly addresses the user's specific needs and goals.
 
 ${languageInstruction}
 
@@ -2411,6 +2452,7 @@ SUBJECT: [subject line here]
 BODY: [HTML email body here]
 
 Be intelligent, creative, and professional. Create an email that truly serves its purpose.`;
+      }
 
       console.log('Sending request to DashScope API with key:', env.DASHSCOPE_API_KEY ? 'Key present' : 'Key missing');
       console.log('Detected language:', detectedLanguage);
@@ -2674,10 +2716,19 @@ BODY: [engaging email content that expands on the user's information intelligent
         // 对于简单模式，使用AI生成的内容
         console.log('Simple mode detected, using AI generated content');
         if (!aiBody || aiBody.length < 50) {
-          console.log('AI content too short, using basic fallback');
-          const fallbackTemplate = getFallbackTemplate('default', campaignData);
-          aiSubject = fallbackTemplate.subject;
-          aiBody = fallbackTemplate.body;
+          console.log('AI content too short, using plain text fallback');
+          // 为简单模式创建纯文本fallback
+          aiSubject = campaignData.purpose ? `${campaignData.purpose} - ${campaignData.businessName || 'Important Update'}` : 'Important Update';
+          aiBody = `Dear ${campaignData.businessName ? 'Valued Customer' : 'Friend'},
+
+${campaignData.purpose ? `We're excited to share ${campaignData.purpose.toLowerCase()} with you.` : 'We have an important update to share with you.'}
+
+${campaignData.productService ? `About ${campaignData.productService}: This provides professional solutions tailored to your specific needs.` : ''}
+
+${campaignData.targetUrl ? `For more information, please visit: ${campaignData.targetUrl}` : ''}
+
+Best regards,
+${campaignData.businessName || 'Our Team'}`;
         } else {
           // 确保简单模式的内容是纯文本格式
           console.log('Converting AI content to plain text for simple mode');
