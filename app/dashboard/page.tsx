@@ -205,8 +205,12 @@ export default function DashboardPage() {
 
   const copyContent = () => {
     if (campaignData.body) {
-      navigator.clipboard.writeText(campaignData.body)
-      toast.success('Content copied to clipboard!')
+      // Convert HTML to plain text for text emails
+      const tempDiv = document.createElement('div')
+      tempDiv.innerHTML = campaignData.body
+      const plainText = tempDiv.textContent || tempDiv.innerText || ''
+      navigator.clipboard.writeText(plainText)
+      toast.success('Text content copied to clipboard!')
     }
   }
 
@@ -258,9 +262,6 @@ export default function DashboardPage() {
         <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                <CpuChipIcon className="h-6 w-6 text-white" />
-              </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                   AI Email Studio
@@ -501,23 +502,37 @@ export default function DashboardPage() {
                           <div className="space-y-8">
                             <div>
                               <h4 className="text-lg font-semibold text-gray-800 mb-4">Tone & Style</h4>
-                              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
-                                  <button
-                                    key={tone}
-                                    onClick={() => setToneStyle(tone)}
-                                    className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
-                                      toneStyle === tone
-                                        ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-lg'
-                                        : 'border-gray-200 hover:border-gray-300 bg-white'
-                                    }`}
-                                  >
-                                    <div className="text-center">
-                                      <PaintBrushIcon className="h-6 w-6 mx-auto mb-2" />
-                                      <span className="font-medium">{tone.charAt(0).toUpperCase() + tone.slice(1)}</span>
-                                    </div>
-                                  </button>
-                                ))}
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                  {['friendly', 'professional', 'casual', 'formal'].map((tone) => (
+                                    <button
+                                      key={tone}
+                                      onClick={() => setToneStyle(tone)}
+                                      className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
+                                        toneStyle === tone
+                                          ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-lg'
+                                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                                      }`}
+                                    >
+                                      <div className="text-center">
+                                        <PaintBrushIcon className="h-6 w-6 mx-auto mb-2" />
+                                        <span className="font-medium">{tone.charAt(0).toUpperCase() + tone.slice(1)}</span>
+                                      </div>
+                                    </button>
+                                  ))}
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                    Or enter custom tone description
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={toneStyle}
+                                    onChange={(e) => setToneStyle(e.target.value)}
+                                    placeholder="e.g., enthusiastic, diplomatic, encouraging..."
+                                    className="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50"
+                                  />
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -555,14 +570,14 @@ export default function DashboardPage() {
                         <motion.div
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="space-y-8"
+                          className="space-y-8 h-full flex flex-col"
                         >
                           <div className="text-center mb-8">
                             <h3 className="text-3xl font-bold text-gray-800 mb-3">Your email is ready!</h3>
                             <p className="text-gray-600 text-lg">Here's your AI-generated email</p>
                           </div>
 
-                          <div className="space-y-6">
+                          <div className="space-y-6 flex-1 flex flex-col">
                             <div>
                               <label className="block text-sm font-semibold text-gray-700 mb-3">Subject Line</label>
                               <input
@@ -573,38 +588,34 @@ export default function DashboardPage() {
                               />
                             </div>
 
-                            {/* Direct Email Display */}
-                            <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg">
-                              <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-200">
-                                <div className="flex items-center justify-between">
-                                  <h4 className="font-semibold text-gray-700">Generated Email</h4>
-                                  <div className="flex items-center space-x-2">
+                            {/* Editable Email Content */}
+                            <div className="flex-1 flex flex-col">
+                              <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-lg flex-1 flex flex-col">
+                                <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-200">
+                                  <div className="flex items-center justify-between">
+                                    <h4 className="font-semibold text-gray-700">Email Content</h4>
                                     <button
                                       onClick={copyContent}
                                       className="flex items-center space-x-1 px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
                                     >
                                       <DocumentDuplicateIcon className="h-4 w-4" />
-                                      <span>Copy</span>
-                                    </button>
-                                    <button
-                                      onClick={saveAsImage}
-                                      className="flex items-center space-x-1 px-3 py-1 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm"
-                                    >
-                                      <CameraIcon className="h-4 w-4" />
-                                      <span>Save</span>
+                                      <span>Copy Text</span>
                                     </button>
                                   </div>
                                 </div>
+                                <div className="flex-1 overflow-y-auto">
+                                  <textarea
+                                    value={campaignData.body}
+                                    onChange={(e) => setCampaignData(prev => ({ ...prev, body: e.target.value }))}
+                                    className="w-full h-full p-6 border-0 resize-none focus:ring-0 focus:outline-none bg-white"
+                                    placeholder="Your email content will appear here..."
+                                  />
+                                </div>
                               </div>
-                              <div
-                                ref={emailPreviewRef}
-                                className="p-8 bg-white min-h-[500px]"
-                                dangerouslySetInnerHTML={{ __html: campaignData.body }}
-                              />
                             </div>
                           </div>
 
-                          <div className="flex justify-center">
+                          <div className="flex justify-center pt-4">
                             <button
                               onClick={handleNewEmail}
                               className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
