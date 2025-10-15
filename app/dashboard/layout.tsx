@@ -18,14 +18,12 @@ import {
   CurrencyDollarIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
-import OnboardingTour from '@/components/OnboardingTour'
 import { fetchUserSubscription } from '@/lib/permissions'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
   { name: 'Contacts', href: '/dashboard/contacts', icon: UserGroupIcon },
   { name: 'Campaigns', href: '/dashboard/campaigns', icon: EnvelopeIcon },
-  { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
   { name: 'Billing', href: '/dashboard/billing', icon: CreditCardIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
   { name: 'Pricing', href: '/pricing', icon: CurrencyDollarIcon },
@@ -44,8 +42,6 @@ export default function DashboardLayout({
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   
-  // 用户引导状态
-  const [showOnboarding, setShowOnboarding] = useState(false)
   
   // 订阅状态
   const [userSubscription, setUserSubscription] = useState<any>(null)
@@ -76,16 +72,6 @@ export default function DashboardLayout({
           }
           loadSubscription()
           
-          // 检查是否需要显示用户引导（按用户ID区分）
-          const userId = localStorage.getItem('user-id') || userEmail
-          const hasSeenOnboarding = localStorage.getItem(`has-seen-onboarding-${userId}`)
-          console.log('Onboarding check:', { hasSeenOnboarding, userEmail, userId })
-          if (!hasSeenOnboarding) {
-            console.log('Showing onboarding tour for user:', userId)
-            setShowOnboarding(true)
-          } else {
-            console.log('Onboarding already seen for user:', userId)
-          }
         } else {
           setIsAuthenticated(false)
           console.log('User not authenticated, redirecting to login')
@@ -117,25 +103,6 @@ export default function DashboardLayout({
     return () => clearInterval(subscriptionInterval)
   }, [router])
 
-  // 处理用户引导完成
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false)
-    const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email')
-    if (userId) {
-      localStorage.setItem(`has-seen-onboarding-${userId}`, 'true')
-      console.log('Onboarding completed for user:', userId)
-    }
-  }
-
-  // 手动触发用户引导（用于测试）
-  const triggerOnboarding = () => {
-    const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email')
-    if (userId) {
-      localStorage.removeItem(`has-seen-onboarding-${userId}`)
-      console.log('Manually triggering onboarding for user:', userId)
-      setShowOnboarding(true)
-    }
-  }
 
   // 显示加载状态
   if (isLoading) {
@@ -337,13 +304,6 @@ export default function DashboardLayout({
                     )
                   )}
                 </div>
-                <button
-                  onClick={triggerOnboarding}
-                  className="text-blue-500 hover:text-blue-700 text-xs px-2 py-1 rounded-md hover:bg-blue-50 transition-colors"
-                  title="Show onboarding tour again"
-                >
-                  Guide
-                </button>
               </div>
             </div>
           </div>
@@ -357,12 +317,6 @@ export default function DashboardLayout({
         </main>
       </div>
 
-      {/* 用户引导 */}
-      <OnboardingTour
-        isOpen={showOnboarding}
-        onClose={() => setShowOnboarding(false)}
-        onComplete={handleOnboardingComplete}
-      />
     </div>
   )
 }
