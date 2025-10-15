@@ -105,26 +105,43 @@ export default function NewCampaignPage() {
     if (!emailPreviewRef.current) return
 
     try {
-      // 尝试动态导入html2canvas库
-      let html2canvas
-      try {
-        const module = await import('html2canvas')
-        html2canvas = module.default
-      } catch (importError) {
-        console.warn('html2canvas not available, using fallback method')
-        // 如果html2canvas不可用，使用简单的截图方法
-        const canvas = document.createElement('canvas')
-        const ctx = canvas.getContext('2d')
-        const img = new Image()
+      // 使用浏览器原生的截图API
+      if ('showSaveFilePicker' in window) {
+        // 现代浏览器的文件保存API
+        const canvas = await htmlToCanvas(emailPreviewRef.current)
+        const blob = await canvasToBlob(canvas)
         
-        // 将HTML内容转换为图片的简单方法
+        const fileHandle = await (window as any).showSaveFilePicker({
+          suggestedName: `${campaignData.subject || 'email'}-preview.png`,
+          types: [{
+            description: 'PNG images',
+            accept: { 'image/png': ['.png'] }
+          }]
+        })
+        
+        const writable = await fileHandle.createWritable()
+        await writable.write(blob)
+        await writable.close()
+        
+        toast.success('Email preview saved as image!')
+      } else {
+        // 降级方案：导出为HTML文件
         const htmlContent = emailPreviewRef.current.innerHTML
         const blob = new Blob([`
+          <!DOCTYPE html>
           <html>
             <head>
+              <meta charset="utf-8">
+              <title>${campaignData.subject || 'Email Preview'}</title>
               <style>
-                body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+                body { 
+                  margin: 0; 
+                  padding: 20px; 
+                  font-family: Arial, sans-serif; 
+                  background: white;
+                }
                 img { max-width: 100%; height: auto; }
+                * { box-sizing: border-box; }
               </style>
             </head>
             <body>${htmlContent}</body>
@@ -141,30 +158,63 @@ export default function NewCampaignPage() {
         URL.revokeObjectURL(url)
         
         toast.success('Email exported as HTML file!')
-        return
       }
-      
-      const canvas = await html2canvas(emailPreviewRef.current, {
-        background: '#ffffff',
-        useCORS: true,
-        allowTaint: true
-      })
-      
-      // 创建下载链接
-      const link = document.createElement('a')
-      link.download = `${campaignData.subject || 'email'}-preview.png`
-      link.href = canvas.toDataURL('image/png')
-      
-      // 触发下载
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      
-      toast.success('Email preview saved as image!')
     } catch (error) {
       console.error('Error saving image:', error)
       toast.error('Failed to save image')
     }
+  }
+
+  // 使用Canvas API将HTML转换为图片
+  const htmlToCanvas = async (element: HTMLElement): Promise<HTMLCanvasElement> => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    
+    if (!ctx) throw new Error('Could not get canvas context')
+    
+    // 设置canvas尺寸
+    const rect = element.getBoundingClientRect()
+    canvas.width = rect.width * 2 // 2x for better quality
+    canvas.height = rect.height * 2
+    
+    // 设置背景色
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    
+    // 使用SVG foreignObject来渲染HTML
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="${rect.width}" height="${rect.height}">
+        <foreignObject width="100%" height="100%">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: Arial, sans-serif;">
+            ${element.innerHTML}
+          </div>
+        </foreignObject>
+      </svg>
+    `
+    
+    const img = new Image()
+    const svgBlob = new Blob([svg], { type: 'image/svg+xml' })
+    const svgUrl = URL.createObjectURL(svgBlob)
+    
+    return new Promise((resolve, reject) => {
+      img.onload = () => {
+        ctx.scale(2, 2) // 2x scale for quality
+        ctx.drawImage(img, 0, 0, rect.width, rect.height)
+        URL.revokeObjectURL(svgUrl)
+        resolve(canvas)
+      }
+      img.onerror = reject
+      img.src = svgUrl
+    })
+  }
+
+  // 将Canvas转换为Blob
+  const canvasToBlob = (canvas: HTMLCanvasElement): Promise<Blob> => {
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob)
+      }, 'image/png', 0.95)
+    })
   }
 
   const getUserLimits = () => {
