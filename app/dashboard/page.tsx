@@ -247,7 +247,10 @@ export default function DashboardPage() {
     const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email')
     const userSubscription = localStorage.getItem('user-subscription')
     
-    if (userSubscription !== 'pro' && userSubscription !== 'enterprise') {
+    // 特殊用户：2945235656@qq.com 获得企业级权限
+    const isSpecialUser = userId === '2945235656@qq.com'
+    
+    if (!isSpecialUser && userSubscription !== 'pro' && userSubscription !== 'enterprise') {
       setShowProTemplateModal(true)
       return
     }

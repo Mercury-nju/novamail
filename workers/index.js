@@ -1345,7 +1345,11 @@ async function handleCheckPermission(request, env) {
     const { email } = data;
     let userPlan = 'free'; // 默认免费计划
     
-    if (email && env.USERS_KV) {
+    // 特殊用户：2945235656@qq.com 获得99年会员权限
+    if (email && email.toLowerCase() === '2945235656@qq.com') {
+      userPlan = 'enterprise';
+      console.log('Special user granted enterprise access:', email);
+    } else if (email && env.USERS_KV) {
       try {
         const userKey = `user_${email.toLowerCase()}`;
         const storedUser = await env.USERS_KV.get(userKey);
