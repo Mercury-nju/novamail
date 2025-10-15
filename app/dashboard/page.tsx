@@ -240,10 +240,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <div className="w-full h-screen flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-2xl p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold">AI Email Generator</h1>
@@ -269,7 +269,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Main Content */}
-        <div className="bg-white rounded-b-2xl shadow-lg border border-gray-200">
+        <div className="bg-white flex-1 shadow-lg border border-gray-200 overflow-y-auto">
           {/* Progress Bar */}
           <div className="px-6 pt-6">
             <div className="flex items-center justify-between mb-2">
@@ -287,19 +287,19 @@ export default function DashboardPage() {
           </div>
 
           {/* Step Content */}
-          <div className="p-6">
+          <div className="p-8 flex-1">
             {step === 1 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8"
+                className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8 h-full flex flex-col"
               >
                 <div className="text-center mb-8">
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">Tell us about your email</h2>
                   <p className="text-gray-600">Provide some details to help AI generate the perfect email for you</p>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-6 flex-1">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       What's the purpose of this email?
@@ -370,14 +370,14 @@ export default function DashboardPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-8"
+                className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-8 h-full flex flex-col"
               >
                 <div className="text-center mb-8">
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">Choose your style</h2>
                   <p className="text-gray-600">Select the email mode and style that best fits your needs</p>
                 </div>
 
-                <div className="space-y-8">
+                <div className="space-y-8 flex-1">
                   {/* Email Mode Selection */}
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Email Mode</h3>
@@ -493,14 +493,14 @@ export default function DashboardPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-8"
+                className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-8 h-full flex flex-col"
               >
                 <div className="text-center mb-8">
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">Review & Export</h2>
                   <p className="text-gray-600">Your AI-generated email is ready!</p>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-6 flex-1">
                   {/* Subject Line */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line</label>
