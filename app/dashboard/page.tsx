@@ -240,7 +240,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4">
+    <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-2xl p-6 text-white">
@@ -269,7 +269,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Main Content */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-b-2xl shadow-2xl border border-white/20">
+        <div className="bg-white rounded-b-2xl shadow-lg border border-gray-200">
           {/* Progress Bar */}
           <div className="px-6 pt-6">
             <div className="flex items-center justify-between mb-2">
