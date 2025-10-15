@@ -656,32 +656,146 @@ export default function DashboardPage() {
                             <div>
                               <h4 className="text-lg font-semibold text-gray-800 mb-6">Available Templates</h4>
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {['newsletter', 'announcement', 'welcome', 'follow-up', 'promotion', 'event'].map((template) => (
+                                {[
+                                  { id: 'newsletter', name: 'Newsletter', icon: '📰', color: 'from-blue-500 to-cyan-500', bgColor: 'from-blue-50 to-cyan-50', description: 'Weekly updates & insights' },
+                                  { id: 'announcement', name: 'Announcement', icon: '📢', color: 'from-purple-500 to-pink-500', bgColor: 'from-purple-50 to-pink-50', description: 'Important company news' },
+                                  { id: 'welcome', name: 'Welcome', icon: '👋', color: 'from-green-500 to-emerald-500', bgColor: 'from-green-50 to-emerald-50', description: 'Onboarding & greetings' },
+                                  { id: 'follow-up', name: 'Follow-up', icon: '🔄', color: 'from-orange-500 to-red-500', bgColor: 'from-orange-50 to-red-50', description: 'Customer engagement' },
+                                  { id: 'promotion', name: 'Promotion', icon: '🎯', color: 'from-yellow-500 to-orange-500', bgColor: 'from-yellow-50 to-orange-50', description: 'Sales & marketing' },
+                                  { id: 'event', name: 'Event', icon: '🎉', color: 'from-indigo-500 to-purple-500', bgColor: 'from-indigo-50 to-purple-50', description: 'Events & invitations' }
+                                ].map((template) => (
                                   <div
-                                    key={template}
-                                    className={`p-6 rounded-2xl border-2 transition-all duration-200 ${
-                                      selectedTemplate === template
-                                        ? 'border-purple-500 bg-purple-50 shadow-lg'
+                                    key={template.id}
+                                    className={`group relative p-6 rounded-3xl border-2 transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
+                                      selectedTemplate === template.id
+                                        ? 'border-purple-500 bg-gradient-to-br from-purple-50 to-pink-50 shadow-xl'
                                         : 'border-gray-200 hover:border-gray-300 bg-white'
                                     }`}
                                   >
-                                    <div className="text-center mb-4">
-                                      <div className="h-16 w-full bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl mb-3 flex items-center justify-center">
-                                        <DocumentTextIcon className="h-8 w-8 text-purple-500" />
+                                    {/* Template Header */}
+                                    <div className="text-center mb-6">
+                                      <div className={`h-20 w-full bg-gradient-to-br ${template.bgColor} rounded-2xl mb-4 flex items-center justify-center relative overflow-hidden`}>
+                                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+                                        <div className="text-4xl relative z-10">{template.icon}</div>
+                                        <div className={`absolute top-2 right-2 w-3 h-3 bg-gradient-to-r ${template.color} rounded-full animate-pulse`}></div>
                                       </div>
-                                      <h5 className="font-semibold text-gray-800 capitalize">{template.replace('-', ' ')}</h5>
-                                      <p className="text-xs text-gray-500 mt-1">Professional template</p>
+                                      <h5 className="font-bold text-gray-800 text-lg mb-1">{template.name}</h5>
+                                      <p className="text-sm text-gray-500">{template.description}</p>
                                     </div>
+
+                                    {/* Template Features */}
+                                    <div className="mb-6">
+                                      <div className="space-y-2">
+                                        {template.id === 'newsletter' && (
+                                          <>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                                              <span>Multi-section layout</span>
+                                            </div>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                                              <span>News & updates format</span>
+                                            </div>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                                              <span>Professional branding</span>
+                                            </div>
+                                          </>
+                                        )}
+                                        {template.id === 'announcement' && (
+                                          <>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-purple-400 rounded-full mr-2"></div>
+                                              <span>Bold headline design</span>
+                                            </div>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-purple-400 rounded-full mr-2"></div>
+                                              <span>Clear call-to-action</span>
+                                            </div>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-purple-400 rounded-full mr-2"></div>
+                                              <span>Executive tone</span>
+                                            </div>
+                                          </>
+                                        )}
+                                        {template.id === 'welcome' && (
+                                          <>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                                              <span>Warm & friendly tone</span>
+                                            </div>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                                              <span>Onboarding checklist</span>
+                                            </div>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                                              <span>Next steps guidance</span>
+                                            </div>
+                                          </>
+                                        )}
+                                        {template.id === 'follow-up' && (
+                                          <>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+                                              <span>Personalized approach</span>
+                                            </div>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+                                              <span>Value-driven content</span>
+                                            </div>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+                                              <span>Relationship building</span>
+                                            </div>
+                                          </>
+                                        )}
+                                        {template.id === 'promotion' && (
+                                          <>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div>
+                                              <span>Eye-catching design</span>
+                                            </div>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div>
+                                              <span>Urgency & scarcity</span>
+                                            </div>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div>
+                                              <span>Strong CTAs</span>
+                                            </div>
+                                          </>
+                                        )}
+                                        {template.id === 'event' && (
+                                          <>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-indigo-400 rounded-full mr-2"></div>
+                                              <span>Event details layout</span>
+                                            </div>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-indigo-400 rounded-full mr-2"></div>
+                                              <span>RSVP integration</span>
+                                            </div>
+                                            <div className="flex items-center text-xs text-gray-600">
+                                              <div className="w-2 h-2 bg-indigo-400 rounded-full mr-2"></div>
+                                              <span>Calendar integration</span>
+                                            </div>
+                                          </>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Action Buttons */}
                                     <div className="flex space-x-2">
                                       <button
-                                        onClick={() => handleProTemplateClick(template)}
-                                        className="flex-1 px-3 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm"
+                                        onClick={() => handleProTemplateClick(template.id)}
+                                        className={`flex-1 px-4 py-2 bg-gradient-to-r ${template.color} text-white rounded-xl hover:shadow-lg transition-all duration-200 text-sm font-medium`}
                                       >
                                         Select
                                       </button>
                                       <button
-                                        onClick={() => handleTemplatePreview(template)}
-                                        className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                                        onClick={() => handleTemplatePreview(template.id)}
+                                        className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200 text-sm font-medium"
                                       >
                                         Preview
                                       </button>
@@ -908,24 +1022,160 @@ export default function DashboardPage() {
                           <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-2">Subject Line</label>
                             <div className="p-3 bg-gray-50 rounded-lg text-gray-600">
-                              Sample subject for {previewTemplate.replace('-', ' ')} template
+                              {previewTemplate === 'newsletter' && '📰 Weekly Newsletter: Industry Insights & Company Updates'}
+                              {previewTemplate === 'announcement' && '📢 Important Announcement: New Product Launch'}
+                              {previewTemplate === 'welcome' && '👋 Welcome to Our Team! Getting Started Guide'}
+                              {previewTemplate === 'follow-up' && '🔄 Following Up: How Can We Help You Succeed?'}
+                              {previewTemplate === 'promotion' && '🎯 Limited Time Offer: 50% Off Premium Features'}
+                              {previewTemplate === 'event' && '🎉 You\'re Invited: Annual Company Conference 2024'}
                             </div>
                           </div>
                           <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-2">Email Content</label>
-                            <div className="p-4 bg-gray-50 rounded-lg text-gray-600 min-h-[200px]">
-                              <div className="space-y-3">
-                                <p>Dear [Customer Name],</p>
-                                <p>This is a preview of the {previewTemplate.replace('-', ' ')} template. The actual content will be generated based on your specific requirements and the tone you select.</p>
-                                <p>Key features of this template:</p>
-                                <ul className="list-disc list-inside ml-4 space-y-1">
-                                  <li>Professional design and layout</li>
-                                  <li>Responsive for all devices</li>
-                                  <li>Customizable content sections</li>
-                                  <li>Brand-consistent styling</li>
-                                </ul>
-                                <p>Best regards,<br/>[Your Company]</p>
-                              </div>
+                            <div className="p-4 bg-gray-50 rounded-lg text-gray-600 min-h-[300px]">
+                              {previewTemplate === 'newsletter' && (
+                                <div className="space-y-4">
+                                  <div className="border-l-4 border-blue-500 pl-4">
+                                    <h3 className="font-bold text-gray-800 mb-2">📰 Weekly Newsletter</h3>
+                                    <p className="text-sm">Dear [Subscriber Name],</p>
+                                    <p className="text-sm">Welcome to this week's newsletter! Here are the key highlights:</p>
+                                  </div>
+                                  <div className="bg-white p-4 rounded-lg">
+                                    <h4 className="font-semibold text-gray-800 mb-2">🏢 Company News</h4>
+                                    <p className="text-sm mb-2">• New product features launched</p>
+                                    <p className="text-sm mb-2">• Team expansion updates</p>
+                                    <p className="text-sm">• Upcoming events calendar</p>
+                                  </div>
+                                  <div className="bg-white p-4 rounded-lg">
+                                    <h4 className="font-semibold text-gray-800 mb-2">📊 Industry Insights</h4>
+                                    <p className="text-sm">Market trends and analysis from our experts...</p>
+                                  </div>
+                                  <p className="text-sm">Best regards,<br/>The Newsletter Team</p>
+                                </div>
+                              )}
+                              {previewTemplate === 'announcement' && (
+                                <div className="space-y-4">
+                                  <div className="text-center bg-gradient-to-r from-purple-100 to-pink-100 p-6 rounded-lg">
+                                    <h3 className="font-bold text-gray-800 text-lg mb-2">📢 Important Announcement</h3>
+                                    <p className="text-sm font-semibold">New Product Launch</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-sm mb-3">Dear Team,</p>
+                                    <p className="text-sm mb-3">We're excited to announce the launch of our latest product that will revolutionize the industry.</p>
+                                    <div className="bg-white p-4 rounded-lg border-l-4 border-purple-500">
+                                      <h4 className="font-semibold text-gray-800 mb-2">Key Features:</h4>
+                                      <ul className="text-sm space-y-1">
+                                        <li>• Advanced AI capabilities</li>
+                                        <li>• Enhanced user experience</li>
+                                        <li>• Improved security measures</li>
+                                      </ul>
+                                    </div>
+                                    <p className="text-sm mt-3">This announcement marks a significant milestone in our company's growth.</p>
+                                    <p className="text-sm mt-3">Best regards,<br/>Executive Team</p>
+                                  </div>
+                                </div>
+                              )}
+                              {previewTemplate === 'welcome' && (
+                                <div className="space-y-4">
+                                  <div className="text-center bg-gradient-to-r from-green-100 to-emerald-100 p-6 rounded-lg">
+                                    <h3 className="font-bold text-gray-800 text-lg mb-2">👋 Welcome Aboard!</h3>
+                                    <p className="text-sm">We're thrilled to have you join our team</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-sm mb-3">Hi [New Employee Name],</p>
+                                    <p className="text-sm mb-3">Welcome to [Company Name]! We're excited to have you as part of our growing team.</p>
+                                    <div className="bg-white p-4 rounded-lg">
+                                      <h4 className="font-semibold text-gray-800 mb-2">Getting Started Checklist:</h4>
+                                      <ul className="text-sm space-y-1">
+                                        <li>✅ Complete your profile setup</li>
+                                        <li>✅ Attend orientation session</li>
+                                        <li>✅ Meet your team members</li>
+                                        <li>✅ Review company policies</li>
+                                      </ul>
+                                    </div>
+                                    <p className="text-sm mt-3">Your manager will reach out soon to schedule your first team meeting.</p>
+                                    <p className="text-sm mt-3">Welcome to the team!<br/>HR Department</p>
+                                  </div>
+                                </div>
+                              )}
+                              {previewTemplate === 'follow-up' && (
+                                <div className="space-y-4">
+                                  <div className="border-l-4 border-orange-500 pl-4">
+                                    <h3 className="font-bold text-gray-800 mb-2">🔄 Follow-up</h3>
+                                    <p className="text-sm">Continuing our conversation...</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-sm mb-3">Hi [Customer Name],</p>
+                                    <p className="text-sm mb-3">I wanted to follow up on our recent discussion about [Topic]. I hope you've had a chance to review the information I shared.</p>
+                                    <div className="bg-white p-4 rounded-lg">
+                                      <h4 className="font-semibold text-gray-800 mb-2">Next Steps:</h4>
+                                      <ul className="text-sm space-y-1">
+                                        <li>• Schedule a demo call</li>
+                                        <li>• Review pricing options</li>
+                                        <li>• Discuss implementation timeline</li>
+                                      </ul>
+                                    </div>
+                                    <p className="text-sm mt-3">I'm here to answer any questions you might have. Let's schedule a call to move forward.</p>
+                                    <p className="text-sm mt-3">Best regards,<br/>[Your Name]</p>
+                                  </div>
+                                </div>
+                              )}
+                              {previewTemplate === 'promotion' && (
+                                <div className="space-y-4">
+                                  <div className="text-center bg-gradient-to-r from-yellow-100 to-orange-100 p-6 rounded-lg">
+                                    <h3 className="font-bold text-gray-800 text-lg mb-2">🎯 Special Offer</h3>
+                                    <p className="text-sm font-semibold text-orange-600">Limited Time: 50% OFF</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-sm mb-3">Dear [Customer Name],</p>
+                                    <p className="text-sm mb-3">Don't miss out on this exclusive offer! For a limited time, you can get 50% off our premium features.</p>
+                                    <div className="bg-white p-4 rounded-lg border-2 border-yellow-300">
+                                      <h4 className="font-semibold text-gray-800 mb-2">What's Included:</h4>
+                                      <ul className="text-sm space-y-1">
+                                        <li>• Advanced analytics dashboard</li>
+                                        <li>• Priority customer support</li>
+                                        <li>• Custom integrations</li>
+                                        <li>• Unlimited usage</li>
+                                      </ul>
+                                    </div>
+                                    <p className="text-sm mt-3 font-semibold text-orange-600">⏰ Offer expires in 48 hours!</p>
+                                    <p className="text-sm mt-3">Act now to secure your discount.</p>
+                                    <p className="text-sm mt-3">Best regards,<br/>Sales Team</p>
+                                  </div>
+                                </div>
+                              )}
+                              {previewTemplate === 'event' && (
+                                <div className="space-y-4">
+                                  <div className="text-center bg-gradient-to-r from-indigo-100 to-purple-100 p-6 rounded-lg">
+                                    <h3 className="font-bold text-gray-800 text-lg mb-2">🎉 You're Invited!</h3>
+                                    <p className="text-sm">Annual Company Conference 2024</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-sm mb-3">Dear [Attendee Name],</p>
+                                    <p className="text-sm mb-3">We're excited to invite you to our Annual Company Conference!</p>
+                                    <div className="bg-white p-4 rounded-lg">
+                                      <h4 className="font-semibold text-gray-800 mb-2">Event Details:</h4>
+                                      <ul className="text-sm space-y-1">
+                                        <li>📅 Date: March 15-17, 2024</li>
+                                        <li>📍 Location: Convention Center</li>
+                                        <li>⏰ Time: 9:00 AM - 6:00 PM</li>
+                                        <li>🎯 Theme: Innovation & Growth</li>
+                                      </ul>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-lg">
+                                      <h4 className="font-semibold text-gray-800 mb-2">What to Expect:</h4>
+                                      <ul className="text-sm space-y-1">
+                                        <li>• Keynote presentations</li>
+                                        <li>• Networking sessions</li>
+                                        <li>• Product demonstrations</li>
+                                        <li>• Awards ceremony</li>
+                                      </ul>
+                                    </div>
+                                    <p className="text-sm mt-3">Please RSVP by March 1st to secure your spot.</p>
+                                    <p className="text-sm mt-3">Looking forward to seeing you there!<br/>Event Team</p>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
