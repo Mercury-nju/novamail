@@ -4,9 +4,9 @@ import { motion } from 'framer-motion'
 import {
   SparklesIcon,
   ArrowRightIcon,
-  EnvelopeIcon,
   RocketLaunchIcon,
-  StarIcon
+  StarIcon,
+  EnvelopeIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 
@@ -40,15 +40,6 @@ export default function Dashboard() {
           >
             {/* Hero Section */}
             <div className="mb-12">
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-                className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg"
-              >
-                <EnvelopeIcon className="h-10 w-10 text-white" />
-              </motion.div>
-              
               <h2 className="text-6xl font-bold text-gray-900 mb-6 tracking-tight">
                 Create
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Professional</span>
