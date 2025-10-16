@@ -29,7 +29,7 @@ function GoogleCallbackContent() {
           
           try {
             // 1. 调用后端API处理Google OAuth
-            const tokenResponse = await fetch('https://novamail.world/api/auth/google-callback', {
+            const tokenResponse = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/google', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

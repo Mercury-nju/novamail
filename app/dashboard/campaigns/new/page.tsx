@@ -43,7 +43,7 @@ export default function NewCampaignPage() {
     setIsGenerating(true)
     
     try {
-      const response = await fetch('https://novamail.world/api/ai/generate-email', {
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/ai/generate-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

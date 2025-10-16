@@ -25,7 +25,7 @@ function LoginForm() {
     
     try {
       // 调用邮箱登录API
-      const response = await fetch('https://novamail.world/api/auth/login', {
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

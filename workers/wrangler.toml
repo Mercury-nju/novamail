@@ -1,5 +1,5 @@
 name = "novamail-api"
-main = "index.js"
+main = "index-simple.js"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 

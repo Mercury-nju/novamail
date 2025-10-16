@@ -26,7 +26,7 @@ export default function AnalyticsPage() {
     try {
       setLoading(true)
       
-      const response = await fetch(`https://novamail.world/api/analytics?timeRange=${timeRange}`)
+      const response = await fetch(`https://novamail-api.lihongyangnju.workers.dev/api/analytics?timeRange=${timeRange}`)
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)

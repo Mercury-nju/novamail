@@ -58,7 +58,7 @@ export default function ContactsPage() {
       params.append('limit', '100')
       
       const userEmail = localStorage.getItem('user-email') || 'anonymous@example.com';
-      const response = await fetch(`https://novamail.world/api/contacts?${params}`, {
+      const response = await fetch(`https://novamail-api.lihongyangnju.workers.dev/api/contacts?${params}`, {
         headers: {
           'x-user-email': userEmail
         }
@@ -119,7 +119,7 @@ export default function ContactsPage() {
         const formData = new FormData()
         formData.append('csvFile', file)
 
-        const response = await fetch('https://novamail.world/api/contacts/import', {
+        const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/contacts/import', {
         method: 'POST',
           body: formData
       })
@@ -250,7 +250,7 @@ export default function ContactsPage() {
       setAdding(true)
       
       const userEmail = localStorage.getItem('user-email') || 'anonymous@example.com';
-      const response = await fetch('https://novamail.world/api/contacts', {
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/contacts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

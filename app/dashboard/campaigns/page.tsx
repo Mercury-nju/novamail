@@ -41,7 +41,7 @@ export default function CampaignsPage() {
       // 获取用户ID
       const userId = localStorage.getItem('user-id') || localStorage.getItem('user-email') || 'default_user'
       
-      const response = await fetch(`https://novamail.world/api/campaigns/history?userId=${userId}`)
+      const response = await fetch(`https://novamail-api.lihongyangnju.workers.dev/api/campaigns/history?userId=${userId}`)
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
