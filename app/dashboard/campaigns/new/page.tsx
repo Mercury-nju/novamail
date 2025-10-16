@@ -11,7 +11,8 @@ import {
   XMarkIcon,
   RocketLaunchIcon,
   PencilIcon,
-  EyeIcon
+  EyeIcon,
+  CheckIcon
 } from '@heroicons/react/24/outline'
 
 interface ProfessionalTemplate {
@@ -19,7 +20,8 @@ interface ProfessionalTemplate {
   name: string
   category: string
   description: string
-  body: string
+  subject: string
+  htmlContent: string
   features: string[]
   isPopular: boolean
   isNew: boolean
@@ -42,6 +44,7 @@ export default function NewCampaignPage() {
   const searchParams = useSearchParams()
   const [currentTemplateIndex, setCurrentTemplateIndex] = useState(0)
   const [showPreview, setShowPreview] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [campaignData, setCampaignData] = useState<CampaignData>({
     templateId: '',
     subject: '',
@@ -60,28 +63,65 @@ export default function NewCampaignPage() {
       name: 'Product Launch Announcement',
       category: 'Marketing',
       description: 'Professional product launch email with compelling CTA and brand storytelling',
-      body: `Dear [Customer Name],
-
-I'm excited to announce the launch of [Product Name], a revolutionary solution that will transform how you [solve problem].
-
-**What makes [Product Name] special:**
-• [Key Benefit 1]
-• [Key Benefit 2] 
-• [Key Benefit 3]
-
-**Early Bird Offer:**
-For the first 100 customers, we're offering [Product Name] at 50% off the regular price. This exclusive offer expires in 48 hours.
-
-[Call to Action Button: Get [Product Name] Now]
-
-**Why now?**
-[Social proof or urgency reason]
-
-Don't miss out on this opportunity to be among the first to experience the future.
-
-Best regards,
-[Your Name]
-[Company Name]`,
+      subject: '🚀 Introducing [Product Name] - The Future is Here',
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">🚀 Introducing [Product Name]</h1>
+            <p style="color: white; margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">The Future is Here</p>
+          </div>
+          
+          <div style="padding: 40px 30px;">
+            <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+              Dear [Customer Name],
+            </p>
+            
+            <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+              I'm excited to announce the launch of <strong>[Product Name]</strong>, a revolutionary solution that will transform how you [solve problem].
+            </p>
+            
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin: 25px 0;">
+              <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">What makes [Product Name] special:</h3>
+              <ul style="color: #555; margin: 0; padding-left: 20px;">
+                <li style="margin-bottom: 8px;">[Key Benefit 1]</li>
+                <li style="margin-bottom: 8px;">[Key Benefit 2]</li>
+                <li style="margin-bottom: 8px;">[Key Benefit 3]</li>
+              </ul>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #ff6b6b, #ee5a24); padding: 25px; border-radius: 8px; text-align: center; margin: 25px 0;">
+              <h3 style="color: white; margin: 0 0 10px 0; font-size: 20px;">🎯 Early Bird Offer</h3>
+              <p style="color: white; margin: 0; font-size: 16px;">
+                For the first 100 customers, we're offering [Product Name] at <strong>50% off</strong> the regular price.
+              </p>
+              <p style="color: white; margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">
+                This exclusive offer expires in 48 hours.
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="[Target URL]" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 16px;">
+                Get [Product Name] Now
+              </a>
+            </div>
+            
+            <div style="background: #e8f4fd; padding: 20px; border-radius: 8px; margin: 25px 0;">
+              <h4 style="color: #333; margin: 0 0 10px 0; font-size: 16px;">Why now?</h4>
+              <p style="color: #555; margin: 0; font-size: 14px;">[Social proof or urgency reason]</p>
+            </div>
+            
+            <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 25px 0;">
+              Don't miss out on this opportunity to be among the first to experience the future.
+            </p>
+            
+            <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 30px 0 0 0;">
+              Best regards,<br>
+              [Your Name]<br>
+              [Company Name]
+            </p>
+          </div>
+        </div>
+      `,
       features: ['Brand Storytelling', 'Product Showcase', 'Strong CTA', 'Social Proof'],
       isPopular: true,
       isNew: false
@@ -91,29 +131,82 @@ Best regards,
       name: 'Customer Onboarding Series',
       category: 'Welcome',
       description: 'Comprehensive onboarding sequence to guide new customers through your platform',
-      body: `Hi [Customer Name],
-
-Welcome to [Company Name]! We're thrilled to have you on board.
-
-**Your journey starts here:**
-
-1. **Complete your profile** - Help us personalize your experience
-2. **Explore our features** - Take a tour of what [Company Name] can do for you
-3. **Connect with our community** - Join thousands of successful users
-
-**Quick Start Guide:**
-[Step-by-step instructions]
-
-**Need help?**
-Our support team is here 24/7. Just reply to this email or visit our help center.
-
-**Pro tip:** [Helpful tip for new users]
-
-We're excited to see what you'll accomplish with [Company Name]!
-
-Welcome aboard,
-[Your Name]
-[Company Name] Team`,
+      subject: 'Welcome to [Company Name] - Let\'s Get Started!',
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <div style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); padding: 40px 20px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">👋 Welcome to [Company Name]</h1>
+            <p style="color: white; margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Let's Get Started!</p>
+          </div>
+          
+          <div style="padding: 40px 30px;">
+            <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+              Hi [Customer Name],
+            </p>
+            
+            <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+              Welcome to <strong>[Company Name]</strong>! We're thrilled to have you on board.
+            </p>
+            
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin: 25px 0;">
+              <h3 style="color: #333; margin: 0 0 20px 0; font-size: 18px;">Your journey starts here:</h3>
+              
+              <div style="margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                  <div style="width: 30px; height: 30px; background: #4ecdc4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                    <span style="color: white; font-weight: bold;">1</span>
+                  </div>
+                  <div>
+                    <h4 style="color: #333; margin: 0; font-size: 16px;">Complete your profile</h4>
+                    <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Help us personalize your experience</p>
+                  </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                  <div style="width: 30px; height: 30px; background: #4ecdc4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                    <span style="color: white; font-weight: bold;">2</span>
+                  </div>
+                  <div>
+                    <h4 style="color: #333; margin: 0; font-size: 16px;">Explore our features</h4>
+                    <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Take a tour of what [Company Name] can do for you</p>
+                  </div>
+                </div>
+                
+                <div style="display: flex; align-items: center;">
+                  <div style="width: 30px; height: 30px; background: #4ecdc4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                    <span style="color: white; font-weight: bold;">3</span>
+                  </div>
+                  <div>
+                    <h4 style="color: #333; margin: 0; font-size: 16px;">Connect with our community</h4>
+                    <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Join thousands of successful users</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="background: #e8f4fd; padding: 20px; border-radius: 8px; margin: 25px 0;">
+              <h4 style="color: #333; margin: 0 0 10px 0; font-size: 16px;">💡 Pro tip:</h4>
+              <p style="color: #555; margin: 0; font-size: 14px;">[Helpful tip for new users]</p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="[Target URL]" style="display: inline-block; background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 16px;">
+                Get Started Now
+              </a>
+            </div>
+            
+            <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 25px 0;">
+              We're excited to see what you'll accomplish with [Company Name]!
+            </p>
+            
+            <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 30px 0 0 0;">
+              Welcome aboard,<br>
+              [Your Name]<br>
+              [Company Name] Team
+            </p>
+          </div>
+        </div>
+      `,
       features: ['Step-by-step Guide', 'Resource Links', 'Personal Touch', 'Next Steps'],
       isPopular: true,
       isNew: false
@@ -123,161 +216,63 @@ Welcome aboard,
       name: 'Professional Newsletter',
       category: 'Newsletter',
       description: 'Clean, professional newsletter template for business communications',
-      body: `Dear [Subscriber Name],
-
-Welcome to our [Month Year] newsletter! Here's what's happening at [Company Name]:
-
-**📈 This Month's Highlights:**
-• [Key Achievement 1]
-• [Key Achievement 2]
-• [Key Achievement 3]
-
-**🔍 Industry Insights:**
-[Industry news or insights]
-
-**💡 Featured Content:**
-[Link to featured article or resource]
-
-**🎯 What's Next:**
-[Upcoming events, product updates, or initiatives]
-
-**📊 Success Story:**
-[Customer success story or case study]
-
-Thank you for being part of our community. We value your feedback and suggestions.
-
-Best regards,
-[Your Name]
-[Company Name]`,
+      subject: '[Company Name] Monthly Newsletter - [Month Year]',
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">📰 [Company Name]</h1>
+            <p style="color: white; margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Monthly Newsletter - [Month Year]</p>
+          </div>
+          
+          <div style="padding: 40px 30px;">
+            <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+              Dear [Subscriber Name],
+            </p>
+            
+            <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+              Welcome to our <strong>[Month Year]</strong> newsletter! Here's what's happening at [Company Name]:
+            </p>
+            
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin: 25px 0;">
+              <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">📈 This Month's Highlights:</h3>
+              <ul style="color: #555; margin: 0; padding-left: 20px;">
+                <li style="margin-bottom: 8px;">[Key Achievement 1]</li>
+                <li style="margin-bottom: 8px;">[Key Achievement 2]</li>
+                <li style="margin-bottom: 8px;">[Key Achievement 3]</li>
+              </ul>
+            </div>
+            
+            <div style="border-left: 4px solid #667eea; padding-left: 20px; margin: 25px 0;">
+              <h3 style="color: #333; margin: 0 0 10px 0; font-size: 18px;">🔍 Industry Insights:</h3>
+              <p style="color: #555; margin: 0; font-size: 14px;">[Industry news or insights]</p>
+            </div>
+            
+            <div style="background: #e8f4fd; padding: 20px; border-radius: 8px; margin: 25px 0;">
+              <h4 style="color: #333; margin: 0 0 10px 0; font-size: 16px;">💡 Featured Content:</h4>
+              <p style="color: #555; margin: 0; font-size: 14px;">[Link to featured article or resource]</p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="[Target URL]" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 16px;">
+                Read More
+              </a>
+            </div>
+            
+            <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 25px 0;">
+              Thank you for being part of our community. We value your feedback and suggestions.
+            </p>
+            
+            <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 30px 0 0 0;">
+              Best regards,<br>
+              [Your Name]<br>
+              [Company Name]
+            </p>
+          </div>
+        </div>
+      `,
       features: ['Clean Layout', 'Industry Insights', 'Company Updates', 'Exclusive Content'],
       isPopular: false,
       isNew: true
-    },
-    {
-      id: 'sales-pitch',
-      name: 'Sales Pitch Email',
-      category: 'Sales',
-      description: 'High-converting sales email with proven psychological triggers',
-      body: `Hi [Prospect Name],
-
-I noticed you're looking for a solution to [pain point]. I might be able to help.
-
-**The problem:** [Describe the pain point in detail]
-
-**The solution:** [Your product/service] has helped [X] companies like yours solve this exact problem.
-
-**Here's how it works:**
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-
-**Results you can expect:**
-• [Result 1]
-• [Result 2]
-• [Result 3]
-
-**Social proof:** [Customer testimonial or case study]
-
-**Next steps:**
-Would you be interested in a 15-minute call to discuss how this could work for your business?
-
-[Call to Action Button: Schedule a Call]
-
-If this isn't the right time, no worries. I'll follow up in a few weeks.
-
-Best,
-[Your Name]
-[Company Name]`,
-      features: ['Pain Point Focus', 'Solution Presentation', 'Social Proof', 'Urgency'],
-      isPopular: true,
-      isNew: false
-    },
-    {
-      id: 'customer-retention',
-      name: 'Customer Retention Campaign',
-      category: 'Retention',
-      description: 'Strategic email to re-engage inactive customers and prevent churn',
-      body: `Hi [Customer Name],
-
-We noticed you haven't been active on [Company Name] lately, and we wanted to check in.
-
-**What you've been missing:**
-• [New feature or update]
-• [Recent improvement]
-• [New content or resource]
-
-**We're here to help:**
-If you're facing any challenges or have questions, our support team is ready to assist.
-
-**Special offer for returning users:**
-[Exclusive offer or incentive]
-
-**Quick ways to get back on track:**
-1. [Action 1]
-2. [Action 2]
-3. [Action 3]
-
-**Success story:** [Recent customer success story]
-
-We'd love to have you back and help you achieve your goals.
-
-[Call to Action Button: Get Back on Track]
-
-If you have any feedback or suggestions, we'd love to hear from you.
-
-Best regards,
-[Your Name]
-[Company Name]`,
-      features: ['Personal Touch', 'Value Reminder', 'Re-engagement Offer', 'Easy Return'],
-      isPopular: false,
-      isNew: true
-    },
-    {
-      id: 'event-invitation',
-      name: 'Event Invitation',
-      category: 'Events',
-      description: 'Elegant event invitation with clear details and compelling reasons to attend',
-      body: `Dear [Invitee Name],
-
-You're cordially invited to [Event Name], an exclusive event that you won't want to miss.
-
-**Event Details:**
-📅 Date: [Event Date]
-🕐 Time: [Event Time]
-📍 Location: [Event Location/Virtual Link]
-🎯 Focus: [Event Topic/Purpose]
-
-**What to expect:**
-• [Key speaker or session 1]
-• [Key speaker or session 2]
-• [Networking opportunities]
-• [Special announcements]
-
-**Why attend:**
-[Compelling reasons to attend]
-
-**Featured speakers:**
-[Speaker highlights]
-
-**Agenda highlights:**
-[Key agenda items]
-
-**RSVP:**
-Please confirm your attendance by [RSVP deadline].
-
-[Call to Action Button: RSVP Now]
-
-**Questions?**
-Contact us at [contact information].
-
-We look forward to seeing you there!
-
-Best regards,
-[Your Name]
-[Company Name]`,
-      features: ['Clear Event Details', 'Speaker Highlights', 'Networking Benefits', 'Easy RSVP'],
-      isPopular: false,
-      isNew: false
     }
   ]
 
@@ -317,13 +312,23 @@ Best regards,
     setCampaignData(prev => ({
       ...prev,
       templateId: currentTemplate.id,
-      body: currentTemplate.body
+      subject: currentTemplate.subject,
+      body: currentTemplate.htmlContent
     }))
     router.push(`/dashboard/campaigns/customize?template=${currentTemplate.id}`)
   }
 
   const handleBack = () => {
     router.push('/dashboard')
+  }
+
+  const handleEditTemplate = () => {
+    setIsEditing(true)
+  }
+
+  const handleSaveEdit = () => {
+    setIsEditing(false)
+    toast.success('Template updated successfully!')
   }
 
   return (
@@ -341,7 +346,7 @@ Best regards,
               </button>
               <div className="flex items-center space-x-2">
                 <SparklesIcon className="h-8 w-8 text-blue-600" />
-                <h1 className="text-2xl font-bold text-gray-900">Choose Template</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Professional Templates</h1>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -353,9 +358,9 @@ Best regards,
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Professional Email Templates</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Select from our collection of professionally designed email templates</h2>
           <p className="text-lg text-gray-600">Swipe to browse our collection of expertly crafted templates</p>
         </div>
 
@@ -438,11 +443,33 @@ Best regards,
 
               {/* Template Preview */}
               <div className="bg-gray-50 p-8 lg:p-12">
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Email Preview</h4>
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                  <div className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">
-                    {currentTemplate.body}
-                  </div>
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-semibold text-gray-900">Email Preview</h4>
+                  {isEditing && (
+                    <button
+                      onClick={handleSaveEdit}
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-600 hover:text-green-700"
+                    >
+                      <CheckIcon className="h-4 w-4 mr-1" />
+                      Save
+                    </button>
+                  )}
+                </div>
+                
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                  {showPreview ? (
+                    <div 
+                      className="p-4"
+                      dangerouslySetInnerHTML={{ __html: currentTemplate.htmlContent }}
+                    />
+                  ) : (
+                    <div className="p-4">
+                      <div className="text-sm text-gray-500 mb-2">Subject: {currentTemplate.subject}</div>
+                      <div className="text-sm text-gray-700">
+                        Click "Preview" to see the full email design
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
