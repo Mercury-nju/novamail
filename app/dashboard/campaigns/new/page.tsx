@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-hot-toast'
 import { 
@@ -15,20 +15,24 @@ import {
   XMarkIcon,
   RocketLaunchIcon,
   TagIcon,
-  UserGroupIcon
+  StarIcon,
+  FireIcon
 } from '@heroicons/react/24/outline'
 
-interface Template {
+interface ProfessionalTemplate {
   id: string
   name: string
-  description: string
   category: string
-  preview: string
-  isAI: boolean
+  description: string
+  subject: string
+  body: string
+  features: string[]
+  isPopular: boolean
+  isNew: boolean
 }
 
 interface CampaignData {
-  purpose: string
+  templateId: string
   subject: string
   body: string
   businessName: string
@@ -36,140 +40,323 @@ interface CampaignData {
   targetUrl: string
   tone: string
   targetAudience: string
+  customizations: Record<string, string>
 }
 
 export default function NewCampaignPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [step, setStep] = useState(1)
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('')
+  const [selectedTemplate, setSelectedTemplate] = useState<ProfessionalTemplate | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
   const [campaignData, setCampaignData] = useState<CampaignData>({
-    purpose: '',
+    templateId: '',
     subject: '',
     body: '',
     businessName: '',
     productService: '',
     targetUrl: '',
-    tone: 'friendly',
-    targetAudience: ''
+    tone: 'professional',
+    targetAudience: '',
+    customizations: {}
   })
 
-  const templates: Template[] = [
+  const professionalTemplates: ProfessionalTemplate[] = [
     {
       id: 'product-launch',
-      name: '产品发布',
-      description: '新产品发布通知，包含产品介绍和优惠信息',
-      category: '营销',
-      preview: '🎉 新产品发布！限时优惠等你来',
-      isAI: true
+      name: 'Product Launch Announcement',
+      category: 'Marketing',
+      description: 'Professional product launch email with compelling CTA and brand storytelling',
+      subject: '🚀 Introducing [Product Name] - The Future is Here',
+      body: `Dear [Customer Name],
+
+I'm excited to announce the launch of [Product Name], a revolutionary solution that will transform how you [solve problem].
+
+**What makes [Product Name] special:**
+• [Key Benefit 1]
+• [Key Benefit 2] 
+• [Key Benefit 3]
+
+**Early Bird Offer:**
+For the first 100 customers, we're offering [Product Name] at 50% off the regular price. This exclusive offer expires in 48 hours.
+
+[Call to Action Button: Get [Product Name] Now]
+
+**Why now?**
+[Social proof or urgency reason]
+
+Don't miss out on this opportunity to be among the first to experience the future.
+
+Best regards,
+[Your Name]
+[Company Name]`,
+      features: ['Brand Storytelling', 'Product Showcase', 'Strong CTA', 'Social Proof'],
+      isPopular: true,
+      isNew: false
     },
     {
-      id: 'customer-care',
-      name: '客户关怀',
-      description: '客户关怀邮件，提升客户满意度和忠诚度',
-      category: '客户关怀',
-      preview: '感谢您的支持，专属优惠为您准备',
-      isAI: true
+      id: 'customer-onboarding',
+      name: 'Customer Onboarding Series',
+      category: 'Welcome',
+      description: 'Comprehensive onboarding sequence to guide new customers through your platform',
+      subject: 'Welcome to [Company Name] - Let\'s Get Started!',
+      body: `Hi [Customer Name],
+
+Welcome to [Company Name]! We're thrilled to have you on board.
+
+**Your journey starts here:**
+
+1. **Complete your profile** - Help us personalize your experience
+2. **Explore our features** - Take a tour of what [Company Name] can do for you
+3. **Connect with our community** - Join thousands of successful users
+
+**Quick Start Guide:**
+[Step-by-step instructions]
+
+**Need help?**
+Our support team is here 24/7. Just reply to this email or visit our help center.
+
+**Pro tip:** [Helpful tip for new users]
+
+We're excited to see what you'll accomplish with [Company Name]!
+
+Welcome aboard,
+[Your Name]
+[Company Name] Team`,
+      features: ['Step-by-step Guide', 'Resource Links', 'Personal Touch', 'Next Steps'],
+      isPopular: true,
+      isNew: false
     },
     {
-      id: 'holiday-greeting',
-      name: '节日祝福',
-      description: '节日祝福邮件，营造温馨氛围',
-      category: '节日',
-      preview: '🎊 新年快乐！新年特惠活动开始',
-      isAI: true
+      id: 'newsletter-professional',
+      name: 'Professional Newsletter',
+      category: 'Newsletter',
+      description: 'Clean, professional newsletter template for business communications',
+      subject: '[Company Name] Monthly Newsletter - [Month Year]',
+      body: `Dear [Subscriber Name],
+
+Welcome to our [Month Year] newsletter! Here's what's happening at [Company Name]:
+
+**📈 This Month's Highlights:**
+• [Key Achievement 1]
+• [Key Achievement 2]
+• [Key Achievement 3]
+
+**🔍 Industry Insights:**
+[Industry news or insights]
+
+**💡 Featured Content:**
+[Link to featured article or resource]
+
+**🎯 What's Next:**
+[Upcoming events, product updates, or initiatives]
+
+**📊 Success Story:**
+[Customer success story or case study]
+
+Thank you for being part of our community. We value your feedback and suggestions.
+
+Best regards,
+[Your Name]
+[Company Name]`,
+      features: ['Clean Layout', 'Industry Insights', 'Company Updates', 'Exclusive Content'],
+      isPopular: false,
+      isNew: true
     },
     {
-      id: 'newsletter',
-      name: '新闻通讯',
-      description: '定期新闻通讯，分享行业动态和公司新闻',
-      category: '通讯',
-      preview: '📰 本月新闻：行业动态与公司更新',
-      isAI: true
+      id: 'sales-pitch',
+      name: 'Sales Pitch Email',
+      category: 'Sales',
+      description: 'High-converting sales email with proven psychological triggers',
+      subject: 'Quick question about [Pain Point] - Can I help?',
+      body: `Hi [Prospect Name],
+
+I noticed you're looking for a solution to [pain point]. I might be able to help.
+
+**The problem:** [Describe the pain point in detail]
+
+**The solution:** [Your product/service] has helped [X] companies like yours solve this exact problem.
+
+**Here's how it works:**
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+**Results you can expect:**
+• [Result 1]
+• [Result 2]
+• [Result 3]
+
+**Social proof:** [Customer testimonial or case study]
+
+**Next steps:**
+Would you be interested in a 15-minute call to discuss how this could work for your business?
+
+[Call to Action Button: Schedule a Call]
+
+If this isn't the right time, no worries. I'll follow up in a few weeks.
+
+Best,
+[Your Name]
+[Company Name]`,
+      features: ['Pain Point Focus', 'Solution Presentation', 'Social Proof', 'Urgency'],
+      isPopular: true,
+      isNew: false
     },
     {
-      id: 'promotion',
-      name: '促销活动',
-      description: '促销活动通知，吸引客户参与',
-      category: '营销',
-      preview: '🔥 限时促销！错过再等一年',
-      isAI: true
+      id: 'customer-retention',
+      name: 'Customer Retention Campaign',
+      category: 'Retention',
+      description: 'Strategic email to re-engage inactive customers and prevent churn',
+      subject: 'We Miss You - Here\'s What You\'ve Been Missing',
+      body: `Hi [Customer Name],
+
+We noticed you haven't been active on [Company Name] lately, and we wanted to check in.
+
+**What you've been missing:**
+• [New feature or update]
+• [Recent improvement]
+• [New content or resource]
+
+**We're here to help:**
+If you're facing any challenges or have questions, our support team is ready to assist.
+
+**Special offer for returning users:**
+[Exclusive offer or incentive]
+
+**Quick ways to get back on track:**
+1. [Action 1]
+2. [Action 2]
+3. [Action 3]
+
+**Success story:** [Recent customer success story]
+
+We'd love to have you back and help you achieve your goals.
+
+[Call to Action Button: Get Back on Track]
+
+If you have any feedback or suggestions, we'd love to hear from you.
+
+Best regards,
+[Your Name]
+[Company Name]`,
+      features: ['Personal Touch', 'Value Reminder', 'Re-engagement Offer', 'Easy Return'],
+      isPopular: false,
+      isNew: true
     },
     {
-      id: 'welcome',
-      name: '欢迎邮件',
-      description: '新用户欢迎邮件，介绍产品和服务',
-      category: '欢迎',
-      preview: '👋 欢迎加入我们！开始您的旅程',
-      isAI: true
+      id: 'event-invitation',
+      name: 'Event Invitation',
+      category: 'Events',
+      description: 'Elegant event invitation with clear details and compelling reasons to attend',
+      subject: 'You\'re Invited: [Event Name] - [Date]',
+      body: `Dear [Invitee Name],
+
+You're cordially invited to [Event Name], an exclusive event that you won't want to miss.
+
+**Event Details:**
+📅 Date: [Event Date]
+🕐 Time: [Event Time]
+📍 Location: [Event Location/Virtual Link]
+🎯 Focus: [Event Topic/Purpose]
+
+**What to expect:**
+• [Key speaker or session 1]
+• [Key speaker or session 2]
+• [Networking opportunities]
+• [Special announcements]
+
+**Why attend:**
+[Compelling reasons to attend]
+
+**Featured speakers:**
+[Speaker highlights]
+
+**Agenda highlights:**
+[Key agenda items]
+
+**RSVP:**
+Please confirm your attendance by [RSVP deadline].
+
+[Call to Action Button: RSVP Now]
+
+**Questions?**
+Contact us at [contact information].
+
+We look forward to seeing you there!
+
+Best regards,
+[Your Name]
+[Company Name]`,
+      features: ['Clear Event Details', 'Speaker Highlights', 'Networking Benefits', 'Easy RSVP'],
+      isPopular: false,
+      isNew: false
     }
   ]
 
   const tones = [
-    { value: 'friendly', label: '友好亲切', description: '温暖、亲切的语调' },
-    { value: 'professional', label: '专业正式', description: '正式、专业的商务语调' },
-    { value: 'casual', label: '轻松随意', description: '轻松、随意的日常语调' },
-    { value: 'enthusiastic', label: '热情洋溢', description: '充满活力和热情的语调' },
-    { value: 'persuasive', label: '说服力强', description: '具有说服力和吸引力的语调' }
+    { value: 'professional', label: 'Professional', description: 'Formal and business-appropriate' },
+    { value: 'friendly', label: 'Friendly', description: 'Warm and approachable' },
+    { value: 'casual', label: 'Casual', description: 'Relaxed and conversational' },
+    { value: 'persuasive', label: 'Persuasive', description: 'Compelling and action-oriented' },
+    { value: 'authoritative', label: 'Authoritative', description: 'Confident and expert-like' }
   ]
+
+  useEffect(() => {
+    const templateId = searchParams.get('template')
+    if (templateId) {
+      const template = professionalTemplates.find(t => t.id === templateId)
+      if (template) {
+        setSelectedTemplate(template)
+        setCampaignData(prev => ({
+          ...prev,
+          templateId: template.id,
+          subject: template.subject,
+          body: template.body
+        }))
+        setStep(2)
+      }
+    }
+  }, [searchParams])
 
   const progress = ((step - 1) / 3) * 100
 
-  const generateEmailContent = async () => {
-    if (!selectedTemplate || !campaignData.purpose || !campaignData.businessName) {
-      toast.error('请填写必要信息')
-      return
-    }
-
-    setIsGenerating(true)
-    
-    try {
-      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/ai/generate-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          template: selectedTemplate,
-          purpose: campaignData.purpose,
-          businessName: campaignData.businessName,
-          productService: campaignData.productService,
-          targetUrl: campaignData.targetUrl,
-          tone: campaignData.tone,
-          targetAudience: campaignData.targetAudience
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const result = await response.json()
-
-      if (result.success) {
-        setCampaignData(prev => ({
-          ...prev,
-          subject: result.subject,
-          body: result.body
-        }))
-        setStep(3)
-        toast.success('AI 邮件生成成功！')
-      } else {
-        throw new Error(result.error || '生成失败')
-      }
-    } catch (error) {
-      console.error('Generate email error:', error)
-      toast.error('AI 邮件生成失败，请重试')
-    } finally {
-      setIsGenerating(false)
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'Marketing': return 'bg-blue-100 text-blue-800'
+      case 'Welcome': return 'bg-green-100 text-green-800'
+      case 'Newsletter': return 'bg-purple-100 text-purple-800'
+      case 'Sales': return 'bg-red-100 text-red-800'
+      case 'Retention': return 'bg-yellow-100 text-yellow-800'
+      case 'Events': return 'bg-indigo-100 text-indigo-800'
+      default: return 'bg-gray-100 text-gray-800'
     }
   }
 
-  const handleNext = () => {
-    if (step < 3) {
-      setStep(step + 1)
-    }
+  const handleTemplateSelect = (template: ProfessionalTemplate) => {
+    setSelectedTemplate(template)
+    setCampaignData(prev => ({
+      ...prev,
+      templateId: template.id,
+      subject: template.subject,
+      body: template.body
+    }))
+    setStep(2)
+  }
+
+  const handleCustomize = () => {
+    setStep(3)
+  }
+
+  const handleSave = () => {
+    toast.success('Campaign saved as draft!')
+    router.push('/dashboard/campaigns')
+  }
+
+  const handleSend = () => {
+    toast.success('Email sent successfully!')
+    router.push('/dashboard/campaigns')
   }
 
   const handleBack = () => {
@@ -180,21 +367,9 @@ export default function NewCampaignPage() {
     }
   }
 
-  const handleSave = () => {
-    toast.success('邮件已保存为草稿！')
-    router.push('/dashboard/campaigns')
-  }
-
-  const handleSend = () => {
-    toast.success('邮件发送成功！')
-    router.push('/dashboard/campaigns')
-  }
-
-  const selectedTemplateData = templates.find(t => t.id === selectedTemplate)
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Header */}
+          {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -207,12 +382,12 @@ export default function NewCampaignPage() {
               </button>
               <div className="flex items-center space-x-2">
                 <SparklesIcon className="h-8 w-8 text-blue-600" />
-                <h1 className="text-2xl font-bold text-gray-900">AI 邮件生成</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Professional Email Templates</h1>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-600">
-                步骤 {step} / 3
+                Step {step} / 3
               </div>
             </div>
           </div>
@@ -230,10 +405,10 @@ export default function NewCampaignPage() {
               transition={{ duration: 0.3 }}
             />
           </div>
-        </div>
-      </div>
+            </div>
+          </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <AnimatePresence mode="wait">
           {/* Step 1: Template Selection */}
           {step === 1 && (
@@ -245,63 +420,69 @@ export default function NewCampaignPage() {
               className="space-y-8"
             >
               <div className="text-center">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">选择邮件模板</h2>
-                <p className="text-lg text-gray-600">AI 将根据您选择的模板生成精美的邮件内容</p>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Template</h2>
+                <p className="text-lg text-gray-600">Select from our collection of professionally designed email templates</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {templates.map((template) => (
-                  <motion.div
+                {professionalTemplates.map((template) => (
+                <motion.div 
                     key={template.id}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setSelectedTemplate(template.id)}
-                    className={`relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
-                      selectedTemplate === template.id
-                        ? 'border-blue-500 bg-blue-50 shadow-lg'
-                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
-                    }`}
+                    onClick={() => handleTemplateSelect(template)}
+                    className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-200 cursor-pointer"
                   >
-                    {template.isAI && (
-                      <div className="absolute top-4 right-4">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          <SparklesIcon className="h-3 w-3 mr-1" />
-                          AI
-                        </span>
-                      </div>
-                    )}
-                    
-                    <div className="mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{template.name}</h3>
-                      <p className="text-sm text-gray-600 mb-3">{template.description}</p>
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        <TagIcon className="h-3 w-3 mr-1" />
+                    <div className="flex items-start justify-between mb-4">
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(template.category)}`}>
                         {template.category}
                       </span>
+                      <div className="flex space-x-1">
+                        {template.isPopular && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                            <FireIcon className="h-3 w-3 mr-1" />
+                            Popular
+                          </span>
+                        )}
+                        {template.isNew && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            New
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-sm text-gray-700 font-medium">{template.preview}</p>
+
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{template.name}</h3>
+                    <p className="text-sm text-gray-600 mb-4">{template.description}</p>
+
+                    <div className="mb-4">
+                      <p className="text-xs font-medium text-gray-500 mb-1">Subject:</p>
+                      <p className="text-sm text-gray-800 font-medium">{template.subject}</p>
                     </div>
+
+                    <div className="mb-4">
+                      <p className="text-xs font-medium text-gray-500 mb-2">Features:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {template.features.map((feature, index) => (
+                          <span key={index} className="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-700">
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <button className="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                      <PencilIcon className="h-4 w-4 mr-2" />
+                      Use This Template
+                    </button>
                   </motion.div>
                 ))}
-              </div>
-
-              <div className="flex justify-end">
-                <button
-                  onClick={handleNext}
-                  disabled={!selectedTemplate}
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
-                >
-                  下一步
-                  <ArrowRightIcon className="h-5 w-5 ml-2" />
-                </button>
               </div>
             </motion.div>
           )}
 
-          {/* Step 2: Campaign Details */}
-          {step === 2 && (
+          {/* Step 2: Template Details */}
+          {step === 2 && selectedTemplate && (
             <motion.div
               key="step2"
               initial={{ opacity: 0, x: 20 }}
@@ -310,103 +491,109 @@ export default function NewCampaignPage() {
               className="space-y-8"
             >
               <div className="text-center">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">填写邮件信息</h2>
-                <p className="text-lg text-gray-600">提供详细信息，AI 将为您生成个性化邮件内容</p>
-              </div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Template Details</h2>
+                <p className="text-lg text-gray-600">Review and customize your selected template</p>
+            </div>
 
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-lg border border-white/20">
-                <div className="space-y-6">
-                  {/* Template Info */}
-                  {selectedTemplateData && (
-                    <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                      <div className="flex items-center space-x-3">
-                        <SparklesIcon className="h-6 w-6 text-blue-600" />
-                        <div>
-                          <h3 className="font-semibold text-blue-900">已选择模板：{selectedTemplateData.name}</h3>
-                          <p className="text-sm text-blue-700">{selectedTemplateData.description}</p>
-                        </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Template Info */}
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(selectedTemplate.category)}`}>
+                      {selectedTemplate.category}
+                    </span>
+                    {selectedTemplate.isPopular && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                        <FireIcon className="h-3 w-3 mr-1" />
+                        Popular
+                      </span>
+                    )}
+                </div>
+                
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{selectedTemplate.name}</h3>
+                  <p className="text-gray-600 mb-4">{selectedTemplate.description}</p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Business Name</label>
+                        <input
+                          type="text"
+                          value={campaignData.businessName}
+                          onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Your company name"
+                        />
                       </div>
-                    </div>
-                  )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Product/Service</label>
+                        <input
+                          type="text"
+                          value={campaignData.productService}
+                          onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Product or service name"
+                        />
+                    </div>
+
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">邮件目的 *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Target URL</label>
                       <input
-                        type="text"
-                        value={campaignData.purpose}
-                        onChange={(e) => setCampaignData(prev => ({ ...prev, purpose: e.target.value }))}
+                        type="url"
+                        value={campaignData.targetUrl}
+                        onChange={(e) => setCampaignData(prev => ({ ...prev, targetUrl: e.target.value }))}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="例如：推广新产品、客户关怀、节日祝福"
+                        placeholder="https://example.com"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">公司/品牌名称 *</label>
-                      <input
-                        type="text"
-                        value={campaignData.businessName}
-                        onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Tone</label>
+                      <select
+                        value={campaignData.tone}
+                        onChange={(e) => setCampaignData(prev => ({ ...prev, tone: e.target.value }))}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="您的公司或品牌名称"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">产品/服务</label>
-                    <input
-                      type="text"
-                      value={campaignData.productService}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="要推广的产品或服务"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">目标链接</label>
-                    <input
-                      type="url"
-                      value={campaignData.targetUrl}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, targetUrl: e.target.value }))}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="https://example.com"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">目标受众</label>
-                    <input
-                      type="text"
-                      value={campaignData.targetAudience}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, targetAudience: e.target.value }))}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="例如：年轻用户、企业客户、VIP会员"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">邮件语调</label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {tones.map((tone) => (
-                        <button
-                          key={tone.value}
-                          onClick={() => setCampaignData(prev => ({ ...prev, tone: tone.value }))}
-                          className={`p-3 rounded-lg border-2 text-left transition-all duration-200 ${
-                            campaignData.tone === tone.value
-                              ? 'border-blue-500 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <div className="font-medium text-gray-900">{tone.label}</div>
-                          <div className="text-sm text-gray-600">{tone.description}</div>
-                        </button>
-                      ))}
+                      >
+                        {tones.map((tone) => (
+                          <option key={tone.value} value={tone.value}>
+                            {tone.label} - {tone.description}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </div>
-              </div>
+
+                {/* Template Preview */}
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Template Preview</h3>
+                  
+                  <div className="border border-gray-200 rounded-lg p-4 bg-white">
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Subject Line</label>
+                      <p className="text-sm text-gray-800 font-medium">{selectedTemplate.subject}</p>
+                </div>
+                
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Email Content</label>
+                      <div className="text-sm text-gray-700 whitespace-pre-line max-h-64 overflow-y-auto">
+                        {selectedTemplate.body}
+                      </div>
+                      </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-medium text-gray-500 mb-2">Template Features:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {selectedTemplate.features.map((feature, index) => (
+                        <span key={index} className="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-700">
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  </div>
+                </div>
 
               <div className="flex justify-between">
                 <button
@@ -414,31 +601,22 @@ export default function NewCampaignPage() {
                   className="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <ArrowLeftIcon className="h-5 w-5 mr-2" />
-                  上一步
+                  Back
                 </button>
-                <button
-                  onClick={generateEmailContent}
-                  disabled={isGenerating || !campaignData.purpose || !campaignData.businessName}
+                <button 
+                  onClick={handleCustomize}
+                  disabled={!campaignData.businessName}
                   className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                 >
-                  {isGenerating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                      AI 生成中...
-                    </>
-                  ) : (
-                    <>
-                      <SparklesIcon className="h-5 w-5 mr-2" />
-                      生成邮件
-                    </>
-                  )}
+                  Customize Template
+                  <ArrowRightIcon className="h-5 w-5 ml-2" />
                 </button>
               </div>
             </motion.div>
           )}
 
-          {/* Step 3: Review and Edit */}
-          {step === 3 && (
+          {/* Step 3: Customization */}
+          {step === 3 && selectedTemplate && (
             <motion.div
               key="step3"
               initial={{ opacity: 0, x: 20 }}
@@ -447,92 +625,61 @@ export default function NewCampaignPage() {
               className="space-y-8"
             >
               <div className="text-center">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">预览和编辑</h2>
-                <p className="text-lg text-gray-600">AI 已为您生成邮件内容，您可以进一步编辑和优化</p>
-              </div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Customize Your Email</h2>
+                <p className="text-lg text-gray-600">Edit the content to match your specific needs</p>
+                    </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Email Preview */}
+                {/* Editor */}
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Email Content</h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line</label>
+                      <input
+                        type="text"
+                        value={campaignData.subject}
+                        onChange={(e) => setCampaignData(prev => ({ ...prev, subject: e.target.value }))}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Email Body</label>
+                      <textarea
+                        value={campaignData.body}
+                        onChange={(e) => setCampaignData(prev => ({ ...prev, body: e.target.value }))}
+                        rows={20}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preview */}
                 <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">邮件预览</h3>
-                    <button
+                    <h3 className="text-lg font-semibold text-gray-900">Live Preview</h3>
+                    <button 
                       onClick={() => setShowPreview(!showPreview)}
                       className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-700"
                     >
                       <EyeIcon className="h-4 w-4 mr-1" />
-                      {showPreview ? '隐藏' : '显示'}预览
+                      {showPreview ? 'Hide' : 'Show'} Preview
                     </button>
                   </div>
 
                   {showPreview && (
                     <div className="border border-gray-200 rounded-lg p-4 bg-white">
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">主题</label>
-                        <input
-                          type="text"
-                          value={campaignData.subject}
-                          onChange={(e) => setCampaignData(prev => ({ ...prev, subject: e.target.value }))}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">内容</label>
-                        <textarea
-                          value={campaignData.body}
-                          onChange={(e) => setCampaignData(prev => ({ ...prev, body: e.target.value }))}
-                          rows={12}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      </div>
+                      <div className="mb-4 p-3 bg-gray-50 rounded">
+                        <p className="text-sm font-medium text-gray-800">{campaignData.subject}</p>
+              </div>
+                      <div className="text-sm text-gray-700 whitespace-pre-line">
+                        {campaignData.body}
+                  </div>
                     </div>
                   )}
-                </div>
-
-                {/* Actions */}
-                <div className="space-y-6">
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">操作选项</h3>
-                    <div className="space-y-4">
-                      <button
-                        onClick={handleSave}
-                        className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-                      >
-                        <DocumentTextIcon className="h-5 w-5 mr-2" />
-                        保存为草稿
-                      </button>
-                      
-                      <button
-                        onClick={handleSend}
-                        className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white font-medium rounded-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                      >
-                        <RocketLaunchIcon className="h-5 w-5 mr-2" />
-                        立即发送
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">邮件信息</h3>
-                    <div className="space-y-3 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">模板：</span>
-                        <span className="font-medium">{selectedTemplateData?.name}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">目的：</span>
-                        <span className="font-medium">{campaignData.purpose}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">语调：</span>
-                        <span className="font-medium">{tones.find(t => t.value === campaignData.tone)?.label}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">品牌：</span>
-                        <span className="font-medium">{campaignData.businessName}</span>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -542,29 +689,29 @@ export default function NewCampaignPage() {
                   className="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <ArrowLeftIcon className="h-5 w-5 mr-2" />
-                  上一步
-                </button>
+                  Back
+                    </button>
                 <div className="flex space-x-4">
-                  <button
+                      <button
                     onClick={handleSave}
                     className="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-                  >
+                      >
                     <DocumentTextIcon className="h-5 w-5 mr-2" />
-                    保存草稿
-                  </button>
-                  <button
+                    Save Draft
+                      </button>
+                      <button
                     onClick={handleSend}
                     className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white font-medium rounded-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
                     <RocketLaunchIcon className="h-5 w-5 mr-2" />
-                    发送邮件
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
+                    Send Email
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+            )}
         </AnimatePresence>
-      </div>
+        </div>
     </div>
   )
 }

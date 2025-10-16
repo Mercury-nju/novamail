@@ -14,7 +14,8 @@ import {
   PencilIcon,
   TrashIcon,
   RocketLaunchIcon,
-  TagIcon
+  TagIcon,
+  StarIcon
 } from '@heroicons/react/24/outline'
 
 interface Campaign {
@@ -45,13 +46,13 @@ export default function CampaignsPage() {
   }, [])
 
   const loadCampaigns = () => {
-    // 模拟数据
+    // Mock data
     const mockCampaigns: Campaign[] = [
       {
         id: '1',
-        subject: '🎉 新产品发布！限时优惠等你来',
+        subject: '🚀 Introducing [Product Name] - The Future is Here',
         template: 'product-launch',
-        templateName: '产品发布',
+        templateName: 'Product Launch',
         status: 'sent',
         createdAt: '2024-01-15T10:30:00Z',
         sentAt: '2024-01-15T10:30:00Z',
@@ -59,14 +60,14 @@ export default function CampaignsPage() {
         openRate: 24.5,
         clickRate: 8.2,
         businessName: 'NovaMail',
-        purpose: '推广新产品',
+        purpose: 'Product Launch',
         tone: 'enthusiastic'
       },
       {
         id: '2',
-        subject: '感谢您的支持，专属优惠为您准备',
-        template: 'customer-care',
-        templateName: '客户关怀',
+        subject: 'Welcome to [Company Name] - Let\'s Get Started!',
+        template: 'customer-onboarding',
+        templateName: 'Customer Onboarding',
         status: 'sent',
         createdAt: '2024-01-14T14:20:00Z',
         sentAt: '2024-01-14T14:20:00Z',
@@ -74,31 +75,31 @@ export default function CampaignsPage() {
         openRate: 32.1,
         clickRate: 12.5,
         businessName: 'NovaMail',
-        purpose: '客户关怀',
+        purpose: 'Customer Onboarding',
         tone: 'friendly'
       },
       {
         id: '3',
-        subject: '🎊 新年快乐！新年特惠活动开始',
-        template: 'holiday-greeting',
-        templateName: '节日祝福',
+        subject: 'You\'re Invited: [Event Name] - [Date]',
+        template: 'event-invitation',
+        templateName: 'Event Invitation',
         status: 'draft',
         createdAt: '2024-01-13T09:15:00Z',
         recipients: 0,
         businessName: 'NovaMail',
-        purpose: '节日祝福',
-        tone: 'friendly'
+        purpose: 'Event Invitation',
+        tone: 'professional'
       },
       {
         id: '4',
-        subject: '📰 本月新闻：行业动态与公司更新',
-        template: 'newsletter',
-        templateName: '新闻通讯',
+        subject: '[Company Name] Monthly Newsletter - [Month Year]',
+        template: 'newsletter-professional',
+        templateName: 'Professional Newsletter',
         status: 'scheduled',
         createdAt: '2024-01-12T16:45:00Z',
         recipients: 2100,
         businessName: 'NovaMail',
-        purpose: '新闻通讯',
+        purpose: 'Newsletter',
         tone: 'professional'
       }
     ]
@@ -114,7 +115,7 @@ export default function CampaignsPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString('zh-CN', {
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -139,30 +140,31 @@ export default function CampaignsPage() {
   const getStatusText = (status: string) => {
     switch (status) {
       case 'sent':
-        return '已发送'
+        return 'Sent'
       case 'draft':
-        return '草稿'
+        return 'Draft'
       case 'scheduled':
-        return '已安排'
+        return 'Scheduled'
       default:
-        return '未知'
+        return 'Unknown'
     }
   }
 
   const getToneText = (tone: string) => {
     const tones: Record<string, string> = {
-      'friendly': '友好亲切',
-      'professional': '专业正式',
-      'casual': '轻松随意',
-      'enthusiastic': '热情洋溢',
-      'persuasive': '说服力强'
+      'friendly': 'Friendly',
+      'professional': 'Professional',
+      'casual': 'Casual',
+      'enthusiastic': 'Enthusiastic',
+      'persuasive': 'Persuasive',
+      'authoritative': 'Authoritative'
     }
     return tones[tone] || tone
   }
 
   const handleDeleteCampaign = (campaignId: string) => {
     setCampaigns(prev => prev.filter(c => c.id !== campaignId))
-    toast.success('活动已删除')
+    toast.success('Campaign deleted successfully')
   }
 
   const handleSendCampaign = (campaignId: string) => {
@@ -171,7 +173,7 @@ export default function CampaignsPage() {
         ? { ...c, status: 'sent' as const, sentAt: new Date().toISOString() }
         : c
     ))
-    toast.success('邮件发送成功！')
+    toast.success('Email sent successfully!')
   }
 
   if (loading) {
@@ -179,7 +181,7 @@ export default function CampaignsPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">加载活动中...</p>
+          <p className="mt-4 text-gray-600">Loading campaigns...</p>
         </div>
       </div>
     )
@@ -194,7 +196,7 @@ export default function CampaignsPage() {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <SparklesIcon className="h-8 w-8 text-blue-600" />
-                <h1 className="text-2xl font-bold text-gray-900">邮件活动</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Email Campaigns</h1>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -203,7 +205,7 @@ export default function CampaignsPage() {
                 className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <PlusIcon className="h-4 w-4 mr-2" />
-                创建新活动
+                Create Campaign
               </button>
             </div>
           </div>
@@ -223,7 +225,7 @@ export default function CampaignsPage() {
                 <DocumentTextIcon className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">总活动</p>
+                <p className="text-sm font-medium text-gray-600">Total Campaigns</p>
                 <p className="text-2xl font-bold text-gray-900">{campaigns.length}</p>
               </div>
             </div>
@@ -240,7 +242,7 @@ export default function CampaignsPage() {
                 <RocketLaunchIcon className="h-6 w-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">已发送</p>
+                <p className="text-sm font-medium text-gray-600">Sent</p>
                 <p className="text-2xl font-bold text-gray-900">{campaigns.filter(c => c.status === 'sent').length}</p>
               </div>
             </div>
@@ -257,7 +259,7 @@ export default function CampaignsPage() {
                 <ClockIcon className="h-6 w-6 text-yellow-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">草稿</p>
+                <p className="text-sm font-medium text-gray-600">Drafts</p>
                 <p className="text-2xl font-bold text-gray-900">{campaigns.filter(c => c.status === 'draft').length}</p>
               </div>
             </div>
@@ -274,7 +276,7 @@ export default function CampaignsPage() {
                 <SparklesIcon className="h-6 w-6 text-purple-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">AI 生成</p>
+                <p className="text-sm font-medium text-gray-600">AI Generated</p>
                 <p className="text-2xl font-bold text-gray-900">{campaigns.length}</p>
               </div>
             </div>
@@ -289,7 +291,7 @@ export default function CampaignsPage() {
           className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20 mb-8"
         >
           <div className="flex items-center space-x-4">
-            <span className="text-sm font-medium text-gray-700">筛选：</span>
+            <span className="text-sm font-medium text-gray-700">Filter:</span>
             {(['all', 'draft', 'sent', 'scheduled'] as const).map((filterType) => (
               <button
                 key={filterType}
@@ -300,7 +302,7 @@ export default function CampaignsPage() {
                     : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
                 }`}
               >
-                {filterType === 'all' ? '全部' : getStatusText(filterType)}
+                {filterType === 'all' ? 'All' : getStatusText(filterType)}
               </button>
             ))}
           </div>
@@ -326,7 +328,7 @@ export default function CampaignsPage() {
                     <div className="flex items-center space-x-2">
                       <SparklesIcon className="h-5 w-5 text-blue-600" />
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        AI 生成
+                        AI Generated
                       </span>
                     </div>
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(campaign.status)}`}>
@@ -342,15 +344,15 @@ export default function CampaignsPage() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
                     <div>
-                      <span className="font-medium">目的：</span>
+                      <span className="font-medium">Purpose:</span>
                       {campaign.purpose}
                     </div>
                     <div>
-                      <span className="font-medium">语调：</span>
+                      <span className="font-medium">Tone:</span>
                       {getToneText(campaign.tone)}
                     </div>
                     <div>
-                      <span className="font-medium">品牌：</span>
+                      <span className="font-medium">Brand:</span>
                       {campaign.businessName}
                     </div>
                   </div>
@@ -358,15 +360,15 @@ export default function CampaignsPage() {
                   {campaign.status === 'sent' && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-sm">
                       <div className="flex items-center space-x-2">
-                        <span className="text-gray-600">收件人：</span>
+                        <span className="text-gray-600">Recipients:</span>
                         <span className="font-medium">{campaign.recipients.toLocaleString()}</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className="text-gray-600">打开率：</span>
+                        <span className="text-gray-600">Open Rate:</span>
                         <span className="font-medium text-green-600">{campaign.openRate}%</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className="text-gray-600">点击率：</span>
+                        <span className="text-gray-600">Click Rate:</span>
                         <span className="font-medium text-blue-600">{campaign.clickRate}%</span>
                       </div>
                     </div>
@@ -375,12 +377,12 @@ export default function CampaignsPage() {
                   <div className="flex items-center space-x-4 mt-4 text-sm text-gray-500">
                     <div className="flex items-center space-x-1">
                       <CalendarIcon className="h-4 w-4" />
-                      <span>创建于 {formatDate(campaign.createdAt)}</span>
+                      <span>Created {formatDate(campaign.createdAt)}</span>
                     </div>
                     {campaign.sentAt && (
                       <div className="flex items-center space-x-1">
                         <RocketLaunchIcon className="h-4 w-4" />
-                        <span>发送于 {formatDate(campaign.sentAt)}</span>
+                        <span>Sent {formatDate(campaign.sentAt)}</span>
                       </div>
                     )}
                   </div>
@@ -390,7 +392,7 @@ export default function CampaignsPage() {
                   <button
                     onClick={() => setShowPreview(showPreview === campaign.id ? null : campaign.id)}
                     className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                    title="预览"
+                    title="Preview"
                   >
                     <EyeIcon className="h-5 w-5" />
                   </button>
@@ -399,7 +401,7 @@ export default function CampaignsPage() {
                     <button
                       onClick={() => router.push(`/dashboard/campaigns/edit/${campaign.id}`)}
                       className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                      title="编辑"
+                      title="Edit"
                     >
                       <PencilIcon className="h-5 w-5" />
                     </button>
@@ -409,7 +411,7 @@ export default function CampaignsPage() {
                     <button
                       onClick={() => handleSendCampaign(campaign.id)}
                       className="p-2 text-green-400 hover:text-green-600 transition-colors"
-                      title="发送"
+                      title="Send"
                     >
                       <RocketLaunchIcon className="h-5 w-5" />
                     </button>
@@ -418,7 +420,7 @@ export default function CampaignsPage() {
                   <button
                     onClick={() => handleDeleteCampaign(campaign.id)}
                     className="p-2 text-gray-400 hover:text-red-600 transition-colors"
-                    title="删除"
+                    title="Delete"
                   >
                     <TrashIcon className="h-5 w-5" />
                   </button>
@@ -435,10 +437,10 @@ export default function CampaignsPage() {
                     className="mt-6 pt-6 border-t border-gray-200"
                   >
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="font-medium text-gray-900 mb-2">邮件预览</h4>
+                      <h4 className="font-medium text-gray-900 mb-2">Email Preview</h4>
                       <div className="text-sm text-gray-600">
-                        <p className="font-medium mb-1">主题：{campaign.subject}</p>
-                        <p className="text-gray-500">这是一封由 AI 生成的 {campaign.templateName} 邮件...</p>
+                        <p className="font-medium mb-1">Subject: {campaign.subject}</p>
+                        <p className="text-gray-500">This is an AI-generated {campaign.templateName} email...</p>
                       </div>
                     </div>
                   </motion.div>
@@ -455,14 +457,14 @@ export default function CampaignsPage() {
             className="text-center py-12"
           >
             <SparklesIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">还没有邮件活动</h3>
-            <p className="text-gray-600 mb-6">使用 AI 创建您的第一个邮件活动</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No email campaigns yet</h3>
+            <p className="text-gray-600 mb-6">Create your first professional email campaign using AI</p>
             <button
               onClick={() => router.push('/dashboard/campaigns/new')}
               className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               <SparklesIcon className="h-5 w-5 mr-2" />
-              创建新活动
+              Create Campaign
             </button>
           </motion.div>
         )}
