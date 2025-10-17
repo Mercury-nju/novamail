@@ -442,18 +442,20 @@ async function handleAIGenerateEmail(request, env) {
       templateDescription
     } = data;
 
-    // 生成真实的邮件内容
-    const mockResponse = {
-      subject: generateEmailSubject(userRequest, businessName, productService),
-      htmlContent: generateProfessionalEmailContent(userRequest, businessName, productService, targetAudience, tone),
+    // 使用真实的DashScope AI生成邮件内容
+    const aiResponse = await callDashScopeAI(userRequest, businessName, productService, targetAudience, tone);
+    
+    const response = {
+      subject: aiResponse.subject,
+      htmlContent: aiResponse.htmlContent,
       message: `I've created professional email content based on your request: "${userRequest}". The content has been tailored for ${businessName || 'your business'} and is designed to appeal to ${targetAudience || 'your target audience'}.`
     };
     
     return new Response(JSON.stringify({
       success: true,
-      subject: mockResponse.subject,
-      htmlContent: mockResponse.htmlContent,
-      message: mockResponse.message,
+      subject: response.subject,
+      htmlContent: response.htmlContent,
+      message: response.message,
       timestamp: new Date().toISOString()
     }), {
       headers: corsHeaders
@@ -470,6 +472,114 @@ async function handleAIGenerateEmail(request, env) {
       status: 500,
       headers: corsHeaders
     });
+  }
+}
+
+// 调用DashScope AI生成邮件内容
+async function callDashScopeAI(userRequest, businessName, productService, targetAudience, tone) {
+  const apiKey = 'sk-9bf19547ddbd4be1a87a7a43cf251097';
+  const prompt = buildEmailPrompt(userRequest, businessName, productService, targetAudience, tone);
+  
+  try {
+    const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'qwen-turbo',
+        input: {
+          messages: [
+            {
+              role: 'user',
+              content: prompt
+            }
+          ]
+        },
+        parameters: {
+          temperature: 0.7,
+          max_tokens: 2000
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`DashScope API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return parseAIResponse(data);
+  } catch (error) {
+    console.error('DashScope AI call failed:', error);
+    // 回退到本地生成
+    return {
+      subject: generateEmailSubject(userRequest, businessName, productService),
+      htmlContent: generateProfessionalEmailContent(userRequest, businessName, productService, targetAudience, tone)
+    };
+  }
+}
+
+// 构建AI提示词
+function buildEmailPrompt(userRequest, businessName, productService, targetAudience, tone) {
+  return `你是一个专业的邮件营销专家。请根据以下信息生成一封专业的HTML邮件：
+
+用户需求：${userRequest}
+公司名称：${businessName || 'Your Business'}
+产品/服务：${productService || 'Your Product/Service'}
+目标受众：${targetAudience || 'Your Customers'}
+语调：${tone || 'professional'}
+
+请生成：
+1. 一个吸引人的邮件主题（不超过50个字符）
+2. 完整的HTML邮件内容，包含：
+   - 专业的邮件头部设计
+   - 清晰的内容结构
+   - 行动号召按钮
+   - 专业的邮件签名
+   - 响应式设计
+
+要求：
+- 使用现代、专业的HTML和CSS样式
+- 内容要符合用户需求
+- 语调要${tone || 'professional'}
+- 包含渐变背景和现代设计元素
+- 确保邮件在各种设备上都能正常显示
+
+请以JSON格式返回：
+{
+  "subject": "邮件主题",
+  "htmlContent": "完整的HTML邮件内容"
+}`;
+}
+
+// 解析AI响应
+function parseAIResponse(data) {
+  try {
+    if (data.output && data.output.text) {
+      const content = data.output.text;
+      // 尝试解析JSON
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        return {
+          subject: parsed.subject || 'AI Generated Email',
+          htmlContent: parsed.htmlContent || generateProfessionalEmailContent('', '', '', '', '')
+        };
+      }
+    }
+    
+    // 如果解析失败，使用默认生成
+    return {
+      subject: generateEmailSubject('', '', ''),
+      htmlContent: generateProfessionalEmailContent('', '', '', '', '')
+    };
+  } catch (error) {
+    console.error('Failed to parse AI response:', error);
+    return {
+      subject: generateEmailSubject('', '', ''),
+      htmlContent: generateProfessionalEmailContent('', '', '', '', '')
+    };
   }
 }
 

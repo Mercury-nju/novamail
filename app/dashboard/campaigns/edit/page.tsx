@@ -809,8 +809,8 @@ export default function EditCampaignPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="space-y-6">
-          {/* Email Template Panel */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Panel - Email Template */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             {/* Fixed Header */}
             <div className="p-4 border-b border-gray-200">
@@ -853,13 +853,13 @@ export default function EditCampaignPage() {
             {/* Fixed Footer */}
             <div className="p-3 border-t border-gray-200">
               <p className="text-xs text-gray-500 text-center">
-                💡 Accept AI-generated content from the chat below to apply it here. You can also click to edit directly.
+                💡 Accept AI-generated content from the chat to apply it here. You can also click to edit directly.
               </p>
             </div>
           </div>
 
-          {/* AI Chat Panel - Below Template */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+          {/* Right Panel - AI Chat */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col">
             {/* Fixed Header */}
             <div className="p-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
@@ -871,8 +871,8 @@ export default function EditCampaignPage() {
               </div>
             </div>
             
-            {/* Chat History - Larger Height */}
-            <div className="h-80 overflow-y-auto p-4 space-y-3">
+            {/* Chat History - Flexible Height */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 py-4">
                   <SparklesIcon className="h-6 w-6 mx-auto mb-2 text-gray-300" />
@@ -953,8 +953,13 @@ export default function EditCampaignPage() {
               )}
             </div>
             
-            {/* Fixed Chat Input */}
-            <div className="p-4 border-t border-gray-200">
+            {/* Chat Input - Positioned Lower */}
+            <div className="mt-auto p-4 border-t border-gray-200">
+              <div className="mb-3">
+                <p className="text-sm text-gray-600 text-center">
+                  💡 告诉AI您想要什么样的邮件内容，AI将为您生成专业的邮件模板
+                </p>
+              </div>
               <form onSubmit={handleChatSubmit} className="flex space-x-2">
                   <input
                     type="text"
