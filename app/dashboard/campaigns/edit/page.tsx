@@ -315,7 +315,7 @@ export default function EditCampaignPage() {
       htmlContent: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15);">
           <div style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57); padding: 40px 30px; text-align: center; position: relative;">
-            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"20\" cy=\"20\" r=\"3\" fill=\"white\" opacity=\"0.3\"/><circle cx=\"80\" cy=\"80\" r=\"2\" fill=\"white\" opacity=\"0.3\"/><circle cx=\"40\" cy=\"60\" r=\"4\" fill=\"white\" opacity=\"0.2\"/><circle cx=\"70\" cy=\"30\" r=\"2\" fill=\"white\" opacity=\"0.3\"/></svg>'); opacity: 0.4;"></div>
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.2) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.15) 0%, transparent 50%), radial-gradient(circle at 40% 60%, rgba(255,255,255,0.1) 0%, transparent 50%); opacity: 0.6;"></div>
             <h1 style="color: white; margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.5px; position: relative; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">🎨 Creative Workshop</h1>
             <p style="color: white; margin: 12px 0 0 0; font-size: 16px; font-weight: 500; position: relative; z-index: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">Unleash Your Creative Potential</p>
           </div>
@@ -502,75 +502,6 @@ export default function EditCampaignPage() {
       `,
       features: ['Calming Colors', 'Wellness Focus', 'Clean Design', 'Health Oriented'],
       isPopular: false,
-      isNew: false
-    },
-    {
-      id: 'fashion-trendy',
-      name: 'Fashion Trendy',
-      category: 'Creative',
-      description: 'Stylish, trendy design perfect for fashion, beauty, and lifestyle brands',
-      subject: '✨ New Collection Alert: [Collection Name] - Shop the Latest Trends',
-      htmlContent: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 0; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
-          <div style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); padding: 50px 30px; text-align: center; position: relative;">
-            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"25\" cy=\"25\" r=\"2\" fill=\"white\" opacity=\"0.2\"/><circle cx=\"75\" cy=\"75\" r=\"3\" fill=\"white\" opacity=\"0.15\"/><circle cx=\"50\" cy=\"10\" r=\"1\" fill=\"white\" opacity=\"0.3\"/><circle cx=\"10\" cy=\"60\" r=\"2\" fill=\"white\" opacity=\"0.2\"/></svg>'); opacity: 0.6;"></div>
-            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px; position: relative; z-index: 1;">✨ New Collection</h1>
-            <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0 0; font-size: 18px; font-weight: 300; position: relative; z-index: 1;">Shop the Latest Trends</p>
-          </div>
-          
-          <div style="padding: 40px 30px;">
-            <p style="color: #1f2937; font-size: 16px; line-height: 1.6; margin-bottom: 25px; font-weight: 500;">
-              Hey [Fashionista]! 👗
-            </p>
-            
-            <p style="color: #4b5563; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
-              Get ready to fall in love with our newest <strong style="color: #ec4899;">[Collection Name]</strong>! We've curated the most stunning pieces that will make you feel confident and stylish.
-            </p>
-            
-            <div style="background: #fdf2f8; padding: 25px; border-radius: 12px; margin: 25px 0; border: 1px solid #fce7f3;">
-              <h3 style="color: #be185d; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">👗 Collection Highlights</h3>
-              <ul style="color: #831843; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
-                <li style="margin-bottom: 8px;">✨ Trendy statement pieces</li>
-                <li style="margin-bottom: 8px;">💎 Premium quality materials</li>
-                <li style="margin-bottom: 8px;">🎨 Exclusive color palettes</li>
-                <li style="margin-bottom: 8px;">🌟 Limited edition designs</li>
-              </ul>
-            </div>
-            
-            <div style="background: linear-gradient(135deg, #ec4899, #be185d); padding: 25px; border-radius: 12px; text-align: center; margin: 25px 0; position: relative; overflow: hidden;">
-              <div style="position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-              <div style="position: absolute; bottom: -15px; left: -15px; width: 50px; height: 50px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-              <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px; font-weight: 600; position: relative; z-index: 1;">🛍️ Early Access</h3>
-              <p style="color: white; margin: 0; font-size: 15px; position: relative; z-index: 1;">
-                VIP members get <strong>20% off</strong> + free shipping on all orders!
-              </p>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="#" style="display: inline-block; background: linear-gradient(135deg, #ec4899, #be185d); color: white; padding: 18px 36px; text-decoration: none; border-radius: 25px; font-weight: 600; font-size: 16px; box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
-                Shop Now ✨
-              </a>
-            </div>
-            
-            <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f59e0b;">
-              <h4 style="color: #92400e; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">💝 Style Tip</h4>
-              <p style="color: #92400e; margin: 0; font-size: 14px; line-height: 1.5;">Mix and match pieces from this collection to create multiple looks. Versatility is key to a great wardrobe!</p>
-            </div>
-            
-            <p style="color: #4b5563; font-size: 15px; line-height: 1.6; margin: 25px 0; text-align: center;">
-              You deserve to look and feel amazing! ✨👗
-            </p>
-            
-            <p style="color: #1f2937; font-size: 15px; line-height: 1.6; margin: 30px 0 0 0;">
-              With love,<br>
-              <strong style="color: #ec4899;">The Fashion Team</strong><br>
-              <span style="color: #be185d;">[Brand Name]</span>
-            </p>
-          </div>
-        </div>
-      `,
-      features: ['Trendy Design', 'Fashion Focus', 'Bold Colors', 'Style Oriented'],
-      isPopular: true,
       isNew: false
     }
   ]
