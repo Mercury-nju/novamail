@@ -20,7 +20,7 @@ export const getLanguageByCountry = (countryCode: string): string => {
     'JP': 'ja',
     'KR': 'ko',
     'ES': 'es', 'MX': 'es', 'AR': 'es', 'CO': 'es',
-    'FR': 'fr', 'BE': 'fr', 'CH': 'fr', 'CA': 'fr',
+    'FR': 'fr', 'BE': 'fr',
     'DE': 'de', 'AT': 'de', 'CH': 'de'
   }
   
