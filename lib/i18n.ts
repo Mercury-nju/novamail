@@ -127,7 +127,10 @@ function getHardcodedTranslations(locale: string) {
         error: '错误', 
         success: '成功', 
         save: '保存', 
-        cancel: '取消' 
+        cancel: '取消',
+        email: '邮箱',
+        password: '密码',
+        alreadyHaveAccount: '已有账户？'
       }
     }
   }
@@ -263,13 +266,16 @@ function getHardcodedTranslations(locale: string) {
       chatPlaceholder: 'Describe the email content you want to create...', 
       saveDraft: 'Save Draft' 
     },
-    common: { 
-      loading: 'Loading...', 
-      error: 'Error', 
-      success: 'Success', 
-      save: 'Save', 
-      cancel: 'Cancel' 
-    }
+  common: { 
+    loading: 'Loading...', 
+    error: 'Error', 
+    success: 'Success', 
+    save: 'Save', 
+    cancel: 'Cancel',
+    email: 'Email',
+    password: 'Password',
+    alreadyHaveAccount: 'Already have an account?'
+  }
   }
 }
 

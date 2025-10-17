@@ -5,6 +5,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
+import { useTranslation } from '@/lib/i18n'
 
 function LoginForm() {
   const [email, setEmail] = useState('')
@@ -15,6 +16,7 @@ function LoginForm() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
   const error = searchParams.get('error')
+  const { t } = useTranslation()
 
   useEffect(() => {
     setMounted(true)
@@ -100,7 +102,7 @@ function LoginForm() {
             </div>
           </div>
           <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-3">
-            Sign in to your account
+            {t('nav.login', 'Sign in to your account')}
           </h2>
           <p className="text-center text-sm text-gray-600 mb-8">
             Welcome back to NovaMail
@@ -112,7 +114,7 @@ function LoginForm() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-800 mb-2">
-                Email address
+                {t('common.email', 'Email address')}
               </label>
               <div>
                 <input
@@ -131,7 +133,7 @@ function LoginForm() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-800 mb-2">
-                Password
+                {t('common.password', 'Password')}
               </label>
               <div>
                 <input
@@ -203,7 +205,7 @@ function LoginForm() {
                 disabled={loading}
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-xl text-sm font-medium text-white bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-blue-800 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
-                {loading ? 'Signing in...' : 'Sign in with Email'}
+                {loading ? t('common.loading', 'Signing in...') : t('nav.login', 'Sign in with Email')}
               </button>
             </div>
           </form>
@@ -219,7 +221,7 @@ function LoginForm() {
             <p className="text-sm text-gray-700">
               Or{' '}
               <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-300">
-                Don't have an account? Sign up
+                {t('nav.register', 'Don\'t have an account? Sign up')}
               </Link>
             </p>
           </div>
