@@ -48,6 +48,7 @@ export default function EditCampaignPage() {
   const [isEditingTemplate, setIsEditingTemplate] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSending, setIsSending] = useState(false)
+  const [previewMode, setPreviewMode] = useState(false)
   const [campaignData, setCampaignData] = useState<CampaignData>({
     templateId: templateId || '',
     subject: '',
@@ -775,6 +776,17 @@ export default function EditCampaignPage() {
                 <h3 className="text-lg font-semibold text-gray-900">Email Template Editor</h3>
                 <div className="flex space-x-2">
                   <button
+                    onClick={() => setPreviewMode(!previewMode)}
+                    className={`inline-flex items-center px-3 py-1 text-sm font-medium border rounded-md transition-all duration-200 ${
+                      previewMode 
+                        ? 'text-blue-600 border-blue-200 bg-blue-50' 
+                        : 'text-gray-600 hover:text-gray-700 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <EyeIcon className="h-4 w-4 mr-1" />
+                    {previewMode ? 'Edit Mode' : 'Preview Mode'}
+                  </button>
+                  <button
                     onClick={handleGenerateWithAI}
                     disabled={isGenerating}
                     className={`inline-flex items-center px-3 py-1 text-sm font-medium border rounded-md transition-all duration-200 ${
@@ -827,54 +839,109 @@ export default function EditCampaignPage() {
               
               {/* Live Email Preview with Inline Editing */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email Preview (Click text to edit):</label>
-                <div 
-                  className="bg-white border border-gray-200 rounded-md p-4 max-h-96 overflow-y-auto"
-                  style={{ 
-                    userSelect: 'none',
-                    '--preview-mode': 'true'
-                  } as React.CSSProperties}
-                >
-                  <div 
-                    className="w-full pointer-events-none"
-                    dangerouslySetInnerHTML={{ 
-                      __html: campaignData.body.replace(
-                        /<a\s+([^>]*?)>/gi, 
-                        '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">'
-                      )
-                    }}
-                  />
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {previewMode ? 'Email Preview:' : 'Email Content Editor:'}
+                </label>
+                {editingField === 'content' ? (
+                  <div className="space-y-3">
+                    <textarea
+                      value={editedContent}
+                      onChange={(e) => setEditedContent(e.target.value)}
+                      className="w-full h-96 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                      placeholder="Edit your email content here..."
+                    />
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={handleSaveEdit}
+                        className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                      >
+                        <CheckIcon className="h-4 w-4 mr-1" />
+                        Save Changes
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                      >
+                        <XMarkIcon className="h-4 w-4 mr-1" />
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div 
+                      className={`bg-white border border-gray-200 rounded-md p-4 max-h-96 overflow-y-auto transition-colors ${
+                        previewMode 
+                          ? 'cursor-default' 
+                          : 'cursor-pointer hover:bg-gray-50'
+                      }`}
+                      onClick={previewMode ? undefined : () => handleEditField('content')}
+                      title={previewMode ? 'Preview mode - switch to edit mode to edit' : 'Click to edit email content'}
+                    >
+                      <div 
+                        className="w-full"
+                        dangerouslySetInnerHTML={{ 
+                          __html: campaignData.body.replace(
+                            /<a\s+([^>]*?)>/gi, 
+                            '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">'
+                          )
+                        }}
+                      />
+                    </div>
+                    {!previewMode && (
+                      <p className="text-sm text-gray-500 text-center">
+                        Click on the email content above to edit it directly
+                      </p>
+                    )}
+                    {previewMode && (
+                      <p className="text-sm text-blue-600 text-center">
+                        Preview mode - Click "Edit Mode" to enable editing
+                      </p>
+                    )}
+                  </div>
+                )}
                 
                 {/* Quick Edit Buttons */}
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <button
-                    onClick={() => handleEditField('subject')}
-                    className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-700 border border-blue-200 rounded-md hover:bg-blue-50"
-                  >
-                    <PencilIcon className="h-4 w-4 mr-1" />
-                    Edit Subject
-                  </button>
-                  <button
-                    onClick={handleGenerateWithAI}
-                    disabled={isGenerating}
-                    className={`inline-flex items-center px-3 py-1 text-sm font-medium border rounded-md transition-all duration-200 ${
-                      isGenerating 
-                        ? 'text-gray-400 border-gray-200 bg-gray-50 cursor-not-allowed' 
-                        : 'text-green-600 hover:text-green-700 border-green-200 hover:bg-green-50'
-                    }`}
-                  >
-                    <SparklesIcon className={`h-4 w-4 mr-1 ${isGenerating ? 'animate-spin' : ''}`} />
-                    {isGenerating ? 'Generating...' : 'AI Generate'}
-                  </button>
-                </div>
+                {editingField !== 'content' && !previewMode && (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <button
+                      onClick={() => handleEditField('subject')}
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-700 border border-blue-200 rounded-md hover:bg-blue-50"
+                    >
+                      <PencilIcon className="h-4 w-4 mr-1" />
+                      Edit Subject
+                    </button>
+                    <button
+                      onClick={() => handleEditField('content')}
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-purple-600 hover:text-purple-700 border border-purple-200 rounded-md hover:bg-purple-50"
+                    >
+                      <PencilIcon className="h-4 w-4 mr-1" />
+                      Edit Content
+                    </button>
+                    <button
+                      onClick={handleGenerateWithAI}
+                      disabled={isGenerating}
+                      className={`inline-flex items-center px-3 py-1 text-sm font-medium border rounded-md transition-all duration-200 ${
+                        isGenerating 
+                          ? 'text-gray-400 border-gray-200 bg-gray-50 cursor-not-allowed' 
+                          : 'text-green-600 hover:text-green-700 border-green-200 hover:bg-green-50'
+                      }`}
+                    >
+                      <SparklesIcon className={`h-4 w-4 mr-1 ${isGenerating ? 'animate-spin' : ''}`} />
+                      {isGenerating ? 'Generating...' : 'AI Generate'}
+                    </button>
+                  </div>
+                )}
               </div>
               
               {/* Real-time Updates Info */}
               <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                 <p className="text-sm text-blue-700">
-                  💡 <strong>Tip:</strong> Changes to business information above will automatically update the email template. 
-                  Use the buttons below to edit the subject line or generate new content with AI.
+                  💡 <strong>Editing Tips:</strong> 
+                  <br />• Fill in business information above to auto-update placeholders
+                  <br />• Click on the email content to edit it directly in HTML
+                  <br />• Use AI Generate to create personalized content
+                  <br />• Edit subject line by clicking on it or using the button
                 </p>
               </div>
             </div>
