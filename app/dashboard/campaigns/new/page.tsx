@@ -351,9 +351,9 @@ export default function NewCampaignPage() {
             </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Select from our collection of professionally designed email templates</h2>
-          <p className="text-lg text-gray-600">Swipe to browse our collection of expertly crafted templates</p>
+                <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Choose Your Perfect Email Template</h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">Browse our collection of professionally designed templates. Each one is crafted to help you create stunning emails that engage your audience.</p>
                 </div>
                 
         {/* Template Carousel */}
@@ -385,72 +385,46 @@ export default function NewCampaignPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
               {/* Template Info */}
               <div className="p-8 lg:p-12">
-                <div className="flex items-center space-x-3 mb-6">
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(currentTemplate.category)}`}>
-                    {currentTemplate.category}
-                  </span>
-                  {currentTemplate.isPopular && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                      Popular
+                <div className="text-center mb-8">
+                  <div className="flex justify-center space-x-2 mb-4">
+                    {currentTemplate.isNew && (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        ✨ New
+                      </span>
+                    )}
+                    {currentTemplate.isPopular && (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                        🔥 Popular
+                      </span>
+                    )}
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(currentTemplate.category)}`}>
+                      {currentTemplate.category}
                     </span>
-                  )}
-                  {currentTemplate.isNew && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      New
-                    </span>
-                  )}
+                  </div>
+                  
+                  <h3 className="text-3xl font-bold text-gray-900 mb-4">{currentTemplate.name}</h3>
+                  <p className="text-gray-600 text-lg leading-relaxed max-w-md mx-auto">
+                    {currentTemplate.description}
+                  </p>
                 </div>
 
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">{currentTemplate.name}</h3>
-                <p className="text-gray-600 mb-6">{currentTemplate.description}</p>
-
-                <div className="mb-6">
-                  <p className="text-sm font-medium text-gray-700 mb-3">Template Features:</p>
-                  <div className="flex flex-wrap gap-2">
+                <div className="mb-8">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4 text-center">Key Features</h4>
+                  <div className="grid grid-cols-1 gap-3">
                     {currentTemplate.features.map((feature, index) => (
-                      <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700">
-                        {feature}
-                      </span>
+                      <div
+                        key={index}
+                        className="flex items-center px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200"
+                      >
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                        <span className="text-sm font-medium text-gray-800">
+                          {feature}
+                        </span>
+                      </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Business Information */}
-                <div className="space-y-4 mb-6">
-                  <h4 className="text-lg font-semibold text-gray-900">Business Information</h4>
-                  <div className="grid grid-cols-1 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
-                        <input
-                          type="text"
-                          value={campaignData.businessName}
-                          onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Your Business Name"
-                        />
-                      </div>
-                      <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Product/Service</label>
-                        <input
-                          type="text"
-                          value={campaignData.productService}
-                          onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Your Product or Service"
-                        />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Target Audience</label>
-                      <input
-                        type="text"
-                        value={campaignData.targetAudience}
-                        onChange={(e) => setCampaignData(prev => ({ ...prev, targetAudience: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Your Target Customers"
-                      />
-                    </div>
-                  </div>
-                </div>
 
                 <button 
                   onClick={handleUseTemplate}
@@ -462,28 +436,38 @@ export default function NewCampaignPage() {
                   </div>
                   
               {/* Template Preview */}
-              <div className="bg-gray-50 p-8 lg:p-12">
-                <div className="flex items-center justify-between mb-4">
-                  <h4 className="text-lg font-semibold text-gray-900">Email Preview</h4>
-                  <div className="text-sm text-gray-500">
-                    Preview only - Edit after selecting template
-                  </div>
-                </div>
-
-                {/* Subject Line */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line:</label>
-                  <div className="px-3 py-2 bg-white border border-gray-200 rounded-md text-gray-900">
-                    {currentTemplate.subject}
-            </div>
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 lg:p-12">
+                <div className="text-center mb-6">
+                  <h4 className="text-xl font-semibold text-gray-900 mb-2">Live Preview</h4>
+                  <p className="text-sm text-gray-500">See how your email will look</p>
                 </div>
                 
-                {/* Email Content */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                  <div 
-                    className="w-full"
-                    dangerouslySetInnerHTML={{ __html: currentTemplate.htmlContent }}
-                  />
+                {/* Subject Line Preview */}
+                    <div className="mb-6">
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <div className="text-sm text-gray-500 mb-1">Subject Line</div>
+                    <div className="text-gray-900 font-medium">
+                      {currentTemplate.subject}
+                    </div>
+                  </div>
+              </div>
+
+                {/* Email Content Preview */}
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                  <div className="bg-gray-100 px-4 py-2 border-b border-gray-200">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                      <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                      <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                      <div className="text-xs text-gray-500 ml-2">Email Preview</div>
+                    </div>
+                  </div>
+                  <div className="p-4 max-h-96 overflow-y-auto">
+                    <div 
+                      className="w-full transform scale-90 origin-top"
+                      dangerouslySetInnerHTML={{ __html: currentTemplate.htmlContent }}
+                    />
+                  </div>
                   </div>
                 </div>
             </div>
@@ -491,17 +475,22 @@ export default function NewCampaignPage() {
                   </div>
                   
         {/* Template Indicators */}
-        <div className="flex justify-center mt-8 space-x-2">
-          {professionalTemplates.map((_, index) => (
-                      <button
+        <div className="flex justify-center mt-12 space-x-3">
+          {professionalTemplates.map((template, index) => (
+            <button
               key={index}
               onClick={() => setCurrentTemplateIndex(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-200 ${
+              className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-200 ${
                 index === currentTemplateIndex
-                  ? 'bg-blue-600 scale-125'
-                  : 'bg-gray-300 hover:bg-gray-400'
+                  ? 'bg-blue-600 text-white shadow-lg'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
-            />
+            >
+              <div className={`w-2 h-2 rounded-full ${
+                index === currentTemplateIndex ? 'bg-white' : 'bg-gray-400'
+              }`}></div>
+              <span className="text-sm font-medium">{template.name}</span>
+            </button>
           ))}
         </div>
       </div>
