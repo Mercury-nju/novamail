@@ -436,7 +436,7 @@ export default function NewCampaignPage() {
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-semibold text-gray-900">Email Preview</h4>
                   {isEditing && (
-                          <button
+                    <button
                       onClick={handleSaveEdit}
                       className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-600 hover:text-green-700"
                     >
@@ -444,18 +444,15 @@ export default function NewCampaignPage() {
                       Save
                     </button>
                   )}
-              </div>
-
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="max-h-96 overflow-y-auto">
-                    <div 
-                      className="transform scale-75 origin-top"
-                      style={{ width: '133.33%' }}
-                      dangerouslySetInnerHTML={{ __html: currentTemplate.htmlContent }}
-                    />
-                  </div>
-                  </div>
                 </div>
+                
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                  <div 
+                    className="w-full"
+                    dangerouslySetInnerHTML={{ __html: currentTemplate.htmlContent }}
+                  />
+                </div>
+              </div>
             </div>
           </motion.div>
                   </div>
