@@ -43,12 +43,10 @@ export default function EditCampaignPage() {
   const searchParams = useSearchParams()
   const templateId = searchParams.get('template')
   
-  const [editingField, setEditingField] = useState<'subject' | 'content' | null>(null)
-  const [editedContent, setEditedContent] = useState('')
-  const [isEditingTemplate, setIsEditingTemplate] = useState(false)
+  const [editingElement, setEditingElement] = useState<string | null>(null)
+  const [editingValue, setEditingValue] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSending, setIsSending] = useState(false)
-  const [previewMode, setPreviewMode] = useState(false)
   const [campaignData, setCampaignData] = useState<CampaignData>({
     templateId: templateId || '',
     subject: '',
@@ -547,40 +545,62 @@ export default function EditCampaignPage() {
     }
   }, [currentTemplate, campaignData.businessName, campaignData.productService, campaignData.targetAudience, campaignData.targetUrl])
 
-  const handleEditField = (field: 'subject' | 'content') => {
-    setEditingField(field)
-    setIsEditingTemplate(true)
-    if (field === 'subject') {
-      setEditedContent(campaignData.subject)
-    } else {
-      setEditedContent(campaignData.body)
+  // Add global edit handler
+  useEffect(() => {
+    const handleGlobalEdit = (elementId: string, currentValue: string) => {
+      handleStartEdit(elementId, currentValue)
     }
+    
+    // @ts-ignore
+    window.startEdit = handleGlobalEdit
+    
+    return () => {
+      // @ts-ignore
+      delete window.startEdit
+    }
+  }, [])
+
+  const handleStartEdit = (elementId: string, currentValue: string) => {
+    setEditingElement(elementId)
+    setEditingValue(currentValue)
   }
 
   const handleSaveEdit = () => {
-    if (editingField === 'subject') {
-      setCampaignData(prev => ({ ...prev, subject: editedContent }))
-    } else if (editingField === 'content') {
-      setCampaignData(prev => ({ ...prev, body: editedContent }))
+    if (editingElement === 'subject') {
+      setCampaignData(prev => ({ ...prev, subject: editingValue }))
+    } else if (editingElement?.startsWith('content-')) {
+      // For now, we'll update the entire body with the new content
+      // In a more sophisticated implementation, we'd track which specific element was edited
+      setCampaignData(prev => ({ ...prev, body: editingValue }))
     }
     
-    setEditingField(null)
-    setEditedContent('')
-    setIsEditingTemplate(false)
+    setEditingElement(null)
+    setEditingValue('')
     toast.success('Changes saved successfully!')
   }
 
   const handleCancelEdit = () => {
-    setEditingField(null)
-    setEditedContent('')
-    setIsEditingTemplate(false)
+    setEditingElement(null)
+    setEditingValue('')
   }
 
-  const handleDirectEdit = (field: 'subject' | 'content', newValue: string) => {
-    if (field === 'subject') {
-      setCampaignData(prev => ({ ...prev, subject: newValue }))
-    } else if (field === 'content') {
-      setCampaignData(prev => ({ ...prev, body: newValue }))
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSaveEdit()
+    } else if (e.key === 'Escape') {
+      handleCancelEdit()
+    }
+  }
+
+  const handleContentClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement
+    if (target.getAttribute('data-editable') === 'true') {
+      e.preventDefault()
+      e.stopPropagation()
+      const text = target.textContent || ''
+      const elementId = `content-${Date.now()}`
+      handleStartEdit(elementId, text)
     }
   }
 
@@ -699,250 +719,163 @@ export default function EditCampaignPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Panel - Business Information */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Business Information</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
-                  <input
-                    type="text"
-                    value={campaignData.businessName}
-                    onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Your Business Name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Product/Service</label>
-                  <input
-                    type="text"
-                    value={campaignData.productService}
-                    onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Your Product or Service"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Target Audience</label>
-                  <input
-                    type="text"
-                    value={campaignData.targetAudience}
-                    onChange={(e) => setCampaignData(prev => ({ ...prev, targetAudience: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Your Target Customers"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Target URL</label>
-                  <input
-                    type="url"
-                    value={campaignData.targetUrl}
-                    onChange={(e) => setCampaignData(prev => ({ ...prev, targetUrl: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://your-website.com"
-                  />
-                </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-6">
+          {/* Template Header */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">{currentTemplate.name}</h2>
+                <p className="text-gray-600 mt-1">{currentTemplate.description}</p>
               </div>
-            </div>
-
-            {/* Template Info */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Template Information</h3>
-              <div className="space-y-3">
-                <div>
-                  <span className="text-sm font-medium text-gray-500">Template:</span>
-                  <p className="text-gray-900">{currentTemplate.name}</p>
-                </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-500">Category:</span>
-                  <p className="text-gray-900">{currentTemplate.category}</p>
-                </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-500">Description:</span>
-                  <p className="text-gray-900">{currentTemplate.description}</p>
-                </div>
+              <div className="flex space-x-3">
+                <button
+                  onClick={handleGenerateWithAI}
+                  disabled={isGenerating}
+                  className={`inline-flex items-center px-4 py-2 text-sm font-medium border rounded-lg transition-all duration-200 ${
+                    isGenerating 
+                      ? 'text-gray-400 border-gray-200 bg-gray-50 cursor-not-allowed' 
+                      : 'text-green-600 hover:text-green-700 border-green-200 hover:bg-green-50'
+                  }`}
+                >
+                  <SparklesIcon className={`h-4 w-4 mr-2 ${isGenerating ? 'animate-spin' : ''}`} />
+                  {isGenerating ? 'Generating...' : 'AI Generate'}
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Right Panel - Live Email Editor */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Email Template Editor</h3>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => setPreviewMode(!previewMode)}
-                    className={`inline-flex items-center px-3 py-1 text-sm font-medium border rounded-md transition-all duration-200 ${
-                      previewMode 
-                        ? 'text-blue-600 border-blue-200 bg-blue-50' 
-                        : 'text-gray-600 hover:text-gray-700 border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    <EyeIcon className="h-4 w-4 mr-1" />
-                    {previewMode ? 'Edit Mode' : 'Preview Mode'}
-                  </button>
-                  <button
-                    onClick={handleGenerateWithAI}
-                    disabled={isGenerating}
-                    className={`inline-flex items-center px-3 py-1 text-sm font-medium border rounded-md transition-all duration-200 ${
-                      isGenerating 
-                        ? 'text-gray-400 border-gray-200 bg-gray-50 cursor-not-allowed' 
-                        : 'text-green-600 hover:text-green-700 border-green-200 hover:bg-green-50'
-                    }`}
-                  >
-                    <SparklesIcon className={`h-4 w-4 mr-1 ${isGenerating ? 'animate-spin' : ''}`} />
-                    {isGenerating ? 'Generating...' : 'AI Generate'}
-                  </button>
-                </div>
+          {/* Subject Line Editor */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Email Subject Line:</label>
+            {editingElement === 'subject' ? (
+              <div className="flex space-x-3">
+                <input
+                  type="text"
+                  value={editingValue}
+                  onChange={(e) => setEditingValue(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+                  placeholder="Enter email subject..."
+                  autoFocus
+                />
+                <button
+                  onClick={handleSaveEdit}
+                  className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <CheckIcon className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
               </div>
-              
-              {/* Subject Line Editor */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line:</label>
-                {editingField === 'subject' ? (
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      value={editedContent}
-                      onChange={(e) => setEditedContent(e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Enter email subject..."
+            ) : (
+              <div 
+                className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 cursor-pointer hover:bg-gray-100 transition-colors text-lg"
+                onClick={() => handleStartEdit('subject', campaignData.subject)}
+                title="Click to edit subject line"
+              >
+                {campaignData.subject || 'Click to add subject line...'}
+              </div>
+            )}
+          </div>
+
+          {/* Email Content Editor */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Email Content (Click any text to edit):</label>
+            
+            {editingElement?.startsWith('content-') ? (
+              <div className="space-y-4">
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="bg-white p-6 max-h-[400px] overflow-y-auto">
+                    <div 
+                      className="w-full"
+                      dangerouslySetInnerHTML={{ 
+                        __html: campaignData.body
+                          .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+                      }}
                     />
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <label className="block text-sm font-medium text-gray-700">Edit Content:</label>
+                  <textarea
+                    value={editingValue}
+                    onChange={(e) => setEditingValue(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    className="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Edit your content here..."
+                    autoFocus
+                  />
+                  <div className="flex space-x-3">
                     <button
                       onClick={handleSaveEdit}
-                      className="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                      className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                     >
-                      <CheckIcon className="h-4 w-4" />
+                      <CheckIcon className="h-4 w-4 mr-2" />
+                      Save Changes
                     </button>
                     <button
                       onClick={handleCancelEdit}
-                      className="px-3 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                      className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
                     >
-                      <XMarkIcon className="h-4 w-4" />
+                      <XMarkIcon className="h-4 w-4 mr-2" />
+                      Cancel
                     </button>
                   </div>
-                ) : (
+                </div>
+              </div>
+            ) : (
+              <div className="border border-gray-200 rounded-lg overflow-hidden">
+                <div 
+                  className="bg-white p-6 max-h-[600px] overflow-y-auto"
+                  onClick={handleContentClick}
+                  style={{ 
+                    userSelect: 'none',
+                    pointerEvents: 'auto'
+                  }}
+                >
                   <div 
-                    className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-900 cursor-pointer hover:bg-gray-100 transition-colors"
-                    onClick={() => handleEditField('subject')}
-                    title="Click to edit subject line"
-                  >
-                    {campaignData.subject}
-                  </div>
-                )}
+                    className="w-full"
+                    dangerouslySetInnerHTML={{ 
+                      __html: campaignData.body
+                        .replace(/<h1([^>]*)>([^<]*)<\/h1>/gi, '<h1$1 class="cursor-pointer hover:bg-blue-50 p-1 rounded transition-colors border border-transparent hover:border-blue-200" data-editable="true">$2</h1>')
+                        .replace(/<h2([^>]*)>([^<]*)<\/h2>/gi, '<h2$1 class="cursor-pointer hover:bg-blue-50 p-1 rounded transition-colors border border-transparent hover:border-blue-200" data-editable="true">$2</h2>')
+                        .replace(/<h3([^>]*)>([^<]*)<\/h3>/gi, '<h3$1 class="cursor-pointer hover:bg-blue-50 p-1 rounded transition-colors border border-transparent hover:border-blue-200" data-editable="true">$3</h3>')
+                        .replace(/<p([^>]*)>([^<]*)<\/p>/gi, '<p$1 class="cursor-pointer hover:bg-blue-50 p-1 rounded transition-colors border border-transparent hover:border-blue-200" data-editable="true">$2</p>')
+                        .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+                    }}
+                  />
+                </div>
               </div>
-              
-              {/* Live Email Preview with Inline Editing */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {previewMode ? 'Email Preview:' : 'Email Content Editor:'}
-                </label>
-                {editingField === 'content' ? (
-                  <div className="space-y-3">
-                    <textarea
-                      value={editedContent}
-                      onChange={(e) => setEditedContent(e.target.value)}
-                      className="w-full h-96 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
-                      placeholder="Edit your email content here..."
-                    />
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={handleSaveEdit}
-                        className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                      >
-                        <CheckIcon className="h-4 w-4 mr-1" />
-                        Save Changes
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-                      >
-                        <XMarkIcon className="h-4 w-4 mr-1" />
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div 
-                      className={`bg-white border border-gray-200 rounded-md p-4 max-h-96 overflow-y-auto transition-colors ${
-                        previewMode 
-                          ? 'cursor-default' 
-                          : 'cursor-pointer hover:bg-gray-50'
-                      }`}
-                      onClick={previewMode ? undefined : () => handleEditField('content')}
-                      title={previewMode ? 'Preview mode - switch to edit mode to edit' : 'Click to edit email content'}
-                    >
-                      <div 
-                        className="w-full"
-                        dangerouslySetInnerHTML={{ 
-                          __html: campaignData.body.replace(
-                            /<a\s+([^>]*?)>/gi, 
-                            '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">'
-                          )
-                        }}
-                      />
-                    </div>
-                    {!previewMode && (
-                      <p className="text-sm text-gray-500 text-center">
-                        Click on the email content above to edit it directly
-                      </p>
-                    )}
-                    {previewMode && (
-                      <p className="text-sm text-blue-600 text-center">
-                        Preview mode - Click "Edit Mode" to enable editing
-                      </p>
-                    )}
-                  </div>
-                )}
-                
-                {/* Quick Edit Buttons */}
-                {editingField !== 'content' && !previewMode && (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <button
-                      onClick={() => handleEditField('subject')}
-                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-700 border border-blue-200 rounded-md hover:bg-blue-50"
-                    >
-                      <PencilIcon className="h-4 w-4 mr-1" />
-                      Edit Subject
-                    </button>
-                    <button
-                      onClick={() => handleEditField('content')}
-                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-purple-600 hover:text-purple-700 border border-purple-200 rounded-md hover:bg-purple-50"
-                    >
-                      <PencilIcon className="h-4 w-4 mr-1" />
-                      Edit Content
-                    </button>
-                    <button
-                      onClick={handleGenerateWithAI}
-                      disabled={isGenerating}
-                      className={`inline-flex items-center px-3 py-1 text-sm font-medium border rounded-md transition-all duration-200 ${
-                        isGenerating 
-                          ? 'text-gray-400 border-gray-200 bg-gray-50 cursor-not-allowed' 
-                          : 'text-green-600 hover:text-green-700 border-green-200 hover:bg-green-50'
-                      }`}
-                    >
-                      <SparklesIcon className={`h-4 w-4 mr-1 ${isGenerating ? 'animate-spin' : ''}`} />
-                      {isGenerating ? 'Generating...' : 'AI Generate'}
-                    </button>
-                  </div>
-                )}
+            )}
+            
+            <p className="text-sm text-gray-500 mt-3 text-center">
+              💡 Click on any text in the email above to edit it directly
+            </p>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-blue-900 mb-3">Quick Actions</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-2xl mb-2">✏️</div>
+                <h4 className="font-medium text-blue-900">Direct Editing</h4>
+                <p className="text-sm text-blue-700">Click any text to edit it directly</p>
               </div>
-              
-              {/* Real-time Updates Info */}
-              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                <p className="text-sm text-blue-700">
-                  💡 <strong>Editing Tips:</strong> 
-                  <br />• Fill in business information above to auto-update placeholders
-                  <br />• Click on the email content to edit it directly in HTML
-                  <br />• Use AI Generate to create personalized content
-                  <br />• Edit subject line by clicking on it or using the button
-                </p>
+              <div className="text-center">
+                <div className="text-2xl mb-2">🤖</div>
+                <h4 className="font-medium text-blue-900">AI Generation</h4>
+                <p className="text-sm text-blue-700">Generate personalized content with AI</p>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl mb-2">📧</div>
+                <h4 className="font-medium text-blue-900">Send Campaign</h4>
+                <p className="text-sm text-blue-700">Send your email to your audience</p>
               </div>
             </div>
           </div>
