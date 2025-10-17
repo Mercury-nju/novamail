@@ -809,8 +809,8 @@ export default function EditCampaignPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Panel - Email Template */}
+        <div className="space-y-6">
+          {/* Email Template Panel */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             {/* Fixed Header */}
             <div className="p-4 border-b border-gray-200">
@@ -832,8 +832,8 @@ export default function EditCampaignPage() {
               />
             </div>
             
-            {/* Email Content - Limited Height */}
-            <div className="h-96 overflow-y-auto p-4">
+            {/* Email Content - Larger Height */}
+            <div className="h-[500px] overflow-y-auto p-4">
               <div 
                 className="focus:outline-none focus:ring-2 focus:ring-blue-500"
                 contentEditable
@@ -841,7 +841,7 @@ export default function EditCampaignPage() {
                 suppressContentEditableWarning={true}
                 style={{ 
                   outline: 'none',
-                  minHeight: '300px'
+                  minHeight: '400px'
                 }}
                 dangerouslySetInnerHTML={{ 
                   __html: campaignData.body
@@ -853,12 +853,12 @@ export default function EditCampaignPage() {
             {/* Fixed Footer */}
             <div className="p-3 border-t border-gray-200">
               <p className="text-xs text-gray-500 text-center">
-                💡 Accept AI-generated content from the chat to apply it here. You can also click to edit directly.
+                💡 Accept AI-generated content from the chat below to apply it here. You can also click to edit directly.
               </p>
             </div>
           </div>
 
-          {/* Right Panel - AI Chat */}
+          {/* AI Chat Panel - Below Template */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             {/* Fixed Header */}
             <div className="p-4 border-b border-gray-200">
@@ -871,8 +871,8 @@ export default function EditCampaignPage() {
               </div>
             </div>
             
-            {/* Chat History - Limited Height */}
-            <div className="h-64 overflow-y-auto p-4 space-y-3">
+            {/* Chat History - Larger Height */}
+            <div className="h-80 overflow-y-auto p-4 space-y-3">
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 py-4">
                   <SparklesIcon className="h-6 w-6 mx-auto mb-2 text-gray-300" />
