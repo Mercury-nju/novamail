@@ -65,56 +65,56 @@ export default function NewCampaignPage() {
       description: 'Professional product launch email with compelling CTA and brand storytelling',
       subject: '🚀 Introducing [Product Name] - The Future is Here',
       htmlContent: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">🚀 Introducing [Product Name]</h1>
-            <p style="color: white; margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">The Future is Here</p>
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 20px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">🚀 Introducing [Product Name]</h1>
+            <p style="color: white; margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">The Future is Here</p>
           </div>
           
-          <div style="padding: 40px 30px;">
-            <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          <div style="padding: 30px 20px;">
+            <p style="color: #333; font-size: 14px; line-height: 1.5; margin-bottom: 15px;">
               Dear [Customer Name],
             </p>
             
-            <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+            <p style="color: #333; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
               I'm excited to announce the launch of <strong>[Product Name]</strong>, a revolutionary solution that will transform how you [solve problem].
             </p>
             
-            <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin: 25px 0;">
-              <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">What makes [Product Name] special:</h3>
-              <ul style="color: #555; margin: 0; padding-left: 20px;">
-                <li style="margin-bottom: 8px;">[Key Benefit 1]</li>
-                <li style="margin-bottom: 8px;">[Key Benefit 2]</li>
-                <li style="margin-bottom: 8px;">[Key Benefit 3]</li>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0;">
+              <h3 style="color: #333; margin: 0 0 12px 0; font-size: 16px;">What makes [Product Name] special:</h3>
+              <ul style="color: #555; margin: 0; padding-left: 16px; font-size: 13px;">
+                <li style="margin-bottom: 6px;">[Key Benefit 1]</li>
+                <li style="margin-bottom: 6px;">[Key Benefit 2]</li>
+                <li style="margin-bottom: 6px;">[Key Benefit 3]</li>
               </ul>
             </div>
             
-            <div style="background: linear-gradient(135deg, #ff6b6b, #ee5a24); padding: 25px; border-radius: 8px; text-align: center; margin: 25px 0;">
-              <h3 style="color: white; margin: 0 0 10px 0; font-size: 20px;">🎯 Early Bird Offer</h3>
-              <p style="color: white; margin: 0; font-size: 16px;">
+            <div style="background: linear-gradient(135deg, #ff6b6b, #ee5a24); padding: 20px; border-radius: 6px; text-align: center; margin: 20px 0;">
+              <h3 style="color: white; margin: 0 0 8px 0; font-size: 16px;">🎯 Early Bird Offer</h3>
+              <p style="color: white; margin: 0; font-size: 13px;">
                 For the first 100 customers, we're offering [Product Name] at <strong>50% off</strong> the regular price.
               </p>
-              <p style="color: white; margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">
+              <p style="color: white; margin: 8px 0 0 0; font-size: 12px; opacity: 0.9;">
                 This exclusive offer expires in 48 hours.
               </p>
             </div>
             
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="[Target URL]" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 16px;">
+            <div style="text-align: center; margin: 25px 0;">
+              <a href="[Target URL]" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 14px;">
                 Get [Product Name] Now
               </a>
             </div>
             
-            <div style="background: #e8f4fd; padding: 20px; border-radius: 8px; margin: 25px 0;">
-              <h4 style="color: #333; margin: 0 0 10px 0; font-size: 16px;">Why now?</h4>
-              <p style="color: #555; margin: 0; font-size: 14px;">[Social proof or urgency reason]</p>
+            <div style="background: #e8f4fd; padding: 16px; border-radius: 6px; margin: 20px 0;">
+              <h4 style="color: #333; margin: 0 0 8px 0; font-size: 14px;">Why now?</h4>
+              <p style="color: #555; margin: 0; font-size: 12px;">[Social proof or urgency reason]</p>
             </div>
             
-            <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 25px 0;">
+            <p style="color: #333; font-size: 14px; line-height: 1.5; margin: 20px 0;">
               Don't miss out on this opportunity to be among the first to experience the future.
             </p>
             
-            <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 30px 0 0 0;">
+            <p style="color: #333; font-size: 14px; line-height: 1.5; margin: 25px 0 0 0;">
               Best regards,<br>
               [Your Name]<br>
               [Company Name]
@@ -133,10 +133,10 @@ export default function NewCampaignPage() {
       description: 'Comprehensive onboarding sequence to guide new customers through your platform',
       subject: 'Welcome to [Company Name] - Let\'s Get Started!',
       htmlContent: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); padding: 40px 20px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">👋 Welcome to [Company Name]</h1>
-            <p style="color: white; margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Let's Get Started!</p>
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          <div style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); padding: 30px 20px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">👋 Welcome to [Company Name]</h1>
+            <p style="color: white; margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">Let's Get Started!</p>
           </div>
           
           <div style="padding: 40px 30px;">
@@ -218,10 +218,10 @@ export default function NewCampaignPage() {
       description: 'Clean, professional newsletter template for business communications',
       subject: '[Company Name] Monthly Newsletter - [Month Year]',
       htmlContent: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">📰 [Company Name]</h1>
-            <p style="color: white; margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Monthly Newsletter - [Month Year]</p>
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 20px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">📰 [Company Name]</h1>
+            <p style="color: white; margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">Monthly Newsletter - [Month Year]</p>
           </div>
           
           <div style="padding: 40px 30px;">
@@ -333,7 +333,7 @@ export default function NewCampaignPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
+          {/* Header */}
       <div className="border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -354,32 +354,32 @@ export default function NewCampaignPage() {
                 {currentTemplateIndex + 1} of {professionalTemplates.length}
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+                    </div>
+                  </div>
+                </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-8">
+                <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Select from our collection of professionally designed email templates</h2>
           <p className="text-lg text-gray-600">Swipe to browse our collection of expertly crafted templates</p>
-        </div>
-
+                </div>
+                
         {/* Template Carousel */}
         <div className="relative">
           {/* Navigation Arrows */}
-          <button
+                    <button
             onClick={handlePrevTemplate}
             className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-gray-900 hover:shadow-xl transition-all duration-200"
           >
             <ArrowLeftIcon className="h-6 w-6" />
-          </button>
-          
-          <button
+                    </button>
+
+                    <button
             onClick={handleNextTemplate}
             className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-gray-900 hover:shadow-xl transition-all duration-200"
           >
             <ArrowRightIcon className="h-6 w-6" />
-          </button>
+                    </button>
 
           {/* Template Display */}
           <motion.div
@@ -424,29 +424,29 @@ export default function NewCampaignPage() {
                 </div>
 
                 <div className="flex space-x-4">
-                  <button
+                <button 
                     onClick={handleUseTemplate}
                     className="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
                     <PencilIcon className="h-5 w-5 mr-2" />
                     Use This Template
-                  </button>
-                  <button
-                    onClick={() => setShowPreview(!showPreview)}
+                </button>
+                      <button
+                        onClick={() => setShowPreview(!showPreview)}
                     className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-colors"
-                  >
+                      >
                     <EyeIcon className="h-5 w-5 mr-2" />
                     Preview
-                  </button>
-                </div>
-              </div>
-
+                      </button>
+                    </div>
+                  </div>
+                  
               {/* Template Preview */}
               <div className="bg-gray-50 p-8 lg:p-12">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-semibold text-gray-900">Email Preview</h4>
                   {isEditing && (
-                    <button
+                          <button
                       onClick={handleSaveEdit}
                       className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-600 hover:text-green-700"
                     >
@@ -454,32 +454,35 @@ export default function NewCampaignPage() {
                       Save
                     </button>
                   )}
-                </div>
-                
+              </div>
+
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                   {showPreview ? (
-                    <div 
-                      className="p-4"
-                      dangerouslySetInnerHTML={{ __html: currentTemplate.htmlContent }}
-                    />
+                    <div className="max-h-96 overflow-y-auto">
+                      <div 
+                        className="transform scale-75 origin-top"
+                        style={{ width: '133.33%' }}
+                        dangerouslySetInnerHTML={{ __html: currentTemplate.htmlContent }}
+                      />
+                    </div>
                   ) : (
                     <div className="p-4">
                       <div className="text-sm text-gray-500 mb-2">Subject: {currentTemplate.subject}</div>
                       <div className="text-sm text-gray-700">
                         Click "Preview" to see the full email design
-                      </div>
+                  </div>
                     </div>
                   )}
+                  </div>
                 </div>
-              </div>
             </div>
           </motion.div>
-        </div>
-
+                  </div>
+                  
         {/* Template Indicators */}
         <div className="flex justify-center mt-8 space-x-2">
           {professionalTemplates.map((_, index) => (
-            <button
+                      <button
               key={index}
               onClick={() => setCurrentTemplateIndex(index)}
               className={`w-3 h-3 rounded-full transition-all duration-200 ${
