@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Login",
+    "register": "Register",
+    "dashboard": "Dashboard"
+  },
+  "hero": {
+    "title": "AI-Powered Email Marketing Assistant",
+    "subtitle": "Create stunning professional email templates with AI and send them to your audience",
+    "cta": "Get Started Free",
+    "learnMore": "Learn More"
+  },
+  "features": {
+    "title": "Powerful Features",
+    "aiTemplates": {
+      "title": "AI-Generated Templates",
+      "description": "Create professional email templates with AI assistance"
+    },
+    "easyEditing": {
+      "title": "Easy Editing",
+      "description": "Edit templates directly with our intuitive interface"
+    },
+    "analytics": {
+      "title": "Advanced Analytics",
+      "description": "Track your email performance with detailed insights"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to NovaMail",
+    "createEmail": "Create Email",
+    "recentCampaigns": "Recent Campaigns",
+    "contacts": "Contacts",
+    "analytics": "Analytics",
+    "templates": "Templates"
+  },
+  "templates": {
+    "title": "Professional Templates",
+    "selectTemplate": "Select a Template",
+    "useTemplate": "Use This Template",
+    "editTemplate": "Edit Template",
+    "preview": "Preview",
+    "categories": {
+      "modern": "Modern",
+      "minimal": "Minimal",
+      "corporate": "Corporate",
+      "elegant": "Elegant",
+      "creative": "Creative"
+    }
+  },
+  "editor": {
+    "title": "Email Editor",
+    "aiAssistant": "AI Assistant",
+    "chatPlaceholder": "Describe the email content you want to create...",
+    "send": "Send",
+    "subject": "Subject",
+    "content": "Content",
+    "saveDraft": "Save Draft",
+    "sendEmail": "Send Email Campaign",
+    "cancel": "Cancel",
+    "aiPrompt": "Tell AI what email content you want to create",
+    "aiExamples": {
+      "productLaunch": "Write a product launch email for my new app",
+      "welcome": "Create a welcome email for new customers",
+      "promotion": "Generate a promotional email for Black Friday sale",
+      "newsletter": "Write a newsletter about company updates"
+    }
+  },
+  "contacts": {
+    "title": "Contact Management",
+    "addContact": "Add Contact",
+    "importContacts": "Import Contacts",
+    "exportContacts": "Export Contacts",
+    "search": "Search contacts...",
+    "tags": {
+      "new": "New Users",
+      "active": "Active Users",
+      "silent": "Silent Users"
+    }
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember Me",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "googleSignIn": "Sign in with Google",
+    "verificationCode": "Verification Code",
+    "sendCode": "Send Code",
+    "verifyCode": "Verify Code",
+    "resendCode": "Resend Code"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  }
+}

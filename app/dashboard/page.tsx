@@ -9,8 +9,11 @@ import {
   EnvelopeIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function Dashboard() {
+  const { t } = useTranslation()
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -21,14 +24,15 @@ export default function Dashboard() {
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                 <SparklesIcon className="h-5 w-5 text-white" />
               </div>
-                    <div>
+              <div>
                 <h1 className="text-lg font-medium text-gray-900">NovaMail</h1>
-                <p className="text-xs text-gray-500">Professional Email Marketing</p>
+                <p className="text-xs text-gray-500">{t('dashboard.title')}</p>
               </div>
             </div>
+            <LanguageSwitcher />
           </div>
         </div>
-                    </div>
+      </div>
 
       {/* Main Content */}
       <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] px-4">
@@ -41,13 +45,13 @@ export default function Dashboard() {
             {/* Hero Section */}
             <div className="mb-16">
               <h2 className="text-4xl font-light text-gray-900 mb-4">
-                Create <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent font-medium">Professional</span> Email Templates
+                {t('hero.title')}
               </h2>
               
               <p className="text-gray-500 mb-12 max-w-lg mx-auto">
-                Design stunning emails with our collection of professionally crafted templates.
+                {t('hero.subtitle')}
               </p>
-      </div>
+            </div>
 
             {/* CTA Button */}
             <motion.div
@@ -59,7 +63,7 @@ export default function Dashboard() {
                 href="/dashboard/campaigns/new"
                 className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-md hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                Start Creating
+                {t('dashboard.createEmail')}
                 <ArrowRightIcon className="h-4 w-4 ml-2" />
               </Link>
             </motion.div>
@@ -74,7 +78,7 @@ export default function Dashboard() {
             <div className="text-center">
                 <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center mx-auto mb-3">
                   <RocketLaunchIcon className="h-5 w-5 text-blue-600" />
-                </div>
+              </div>
                 <h3 className="font-medium text-gray-900 mb-2">Professional Templates</h3>
                 <p className="text-sm text-gray-500">Expertly designed templates for every business need</p>
             </div>

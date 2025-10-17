@@ -13,6 +13,8 @@ import {
   PaperAirplaneIcon,
   EyeIcon
 } from '@heroicons/react/24/outline'
+import { useTranslation } from '@/lib/i18n'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 interface ProfessionalTemplate {
   id: string
@@ -42,6 +44,7 @@ export default function EditCampaignPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const templateId = searchParams.get('template')
+  const { t } = useTranslation()
   
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSending, setIsSending] = useState(false)
@@ -571,7 +574,7 @@ export default function EditCampaignPage() {
 
     try {
       setIsGenerating(true)
-      toast.loading('🤖 AI is generating content...', { id: 'ai-chat' })
+      toast.loading('🤖 AI is generating email content...', { id: 'ai-chat' })
       
       const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/ai/generate-email', {
         method: 'POST',
@@ -586,35 +589,48 @@ export default function EditCampaignPage() {
           businessName: campaignData.businessName || 'Your Business',
           productService: campaignData.productService || 'Your Product/Service',
           targetAudience: campaignData.targetAudience || 'Your Customers',
-          tone: campaignData.tone
+          tone: campaignData.tone,
+          templateName: currentTemplate.name,
+          templateDescription: currentTemplate.description
         })
       })
 
       if (response.ok) {
         const result = await response.json()
         
-        // Update campaign data with AI response
-        setCampaignData(prev => ({
-          ...prev,
-          subject: result.subject || prev.subject,
-          body: result.htmlContent || prev.body
-        }))
+        // Update campaign data with AI generated content
+        if (result.subject) {
+          setCampaignData(prev => ({
+            ...prev,
+            subject: result.subject
+          }))
+        }
+        
+        if (result.htmlContent) {
+          setCampaignData(prev => ({
+            ...prev,
+            body: result.htmlContent
+          }))
+        }
         
         // Add AI response to chat history
+        const aiResponse = result.message || result.response || 'I\'ve updated your email content based on your request. The changes have been applied to the template on the right.'
         setChatHistory(prev => [...prev, {
           type: 'ai',
-          message: result.message || 'Content has been updated successfully!',
+          message: aiResponse,
           timestamp: new Date()
         }])
         
-        toast.success('✨ AI content generated and applied!', { id: 'ai-chat' })
+        toast.success('✨ Email content generated and updated!', { id: 'ai-chat' })
       } else {
-        throw new Error('Failed to generate content')
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Failed to generate content')
       }
     } catch (error) {
+      console.error('AI generation error:', error)
       setChatHistory(prev => [...prev, {
         type: 'ai',
-        message: 'Sorry, I encountered an error while generating content. Please try again.',
+        message: `Sorry, I encountered an error: ${error.message}. Please try again with a different request.`,
         timestamp: new Date()
       }])
       toast.error('❌ Failed to generate content. Please try again.', { id: 'ai-chat' })
@@ -736,12 +752,13 @@ export default function EditCampaignPage() {
                 <ArrowLeftIcon className="h-6 w-6" />
               </button>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">Edit Email Campaign</h1>
+                <h1 className="text-xl font-semibold text-gray-900">{t('editor.title')}</h1>
                 <p className="text-sm text-gray-500">{currentTemplate.name}</p>
               </div>
             </div>
             
             <div className="flex items-center space-x-3">
+              <LanguageSwitcher />
               <motion.button
                 onClick={handleSaveDraft}
                 disabled={isSaving}
@@ -756,7 +773,7 @@ export default function EditCampaignPage() {
                 <svg className={`h-4 w-4 mr-2 ${isSaving ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                {isSaving ? 'Saving...' : 'Save Draft'}
+                {isSaving ? t('common.loading') : t('editor.saveDraft')}
               </motion.button>
             </div>
           </div>
@@ -771,7 +788,7 @@ export default function EditCampaignPage() {
             {/* Fixed Header */}
             <div className="p-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('editor.aiAssistant')}</h3>
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span className="text-sm text-gray-500">Online</span>
@@ -784,11 +801,12 @@ export default function EditCampaignPage() {
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 py-4">
                   <SparklesIcon className="h-6 w-6 mx-auto mb-2 text-gray-300" />
-                  <p className="text-sm mb-2">Start a conversation with AI</p>
+                  <p className="text-sm mb-2">Tell AI what email content you want to create</p>
                   <div className="space-y-1 text-xs text-gray-400">
-                    <p>Try: "Make this email more professional"</p>
-                    <p>Or: "Change the tone to be more friendly"</p>
-                    <p>Or: "Add a call-to-action button"</p>
+                    <p>Try: "Write a product launch email for my new app"</p>
+                    <p>Or: "Create a welcome email for new customers"</p>
+                    <p>Or: "Generate a promotional email for Black Friday sale"</p>
+                    <p>Or: "Write a newsletter about company updates"</p>
                   </div>
                 </div>
               ) : (
@@ -824,14 +842,14 @@ export default function EditCampaignPage() {
             {/* Fixed Chat Input */}
             <div className="p-4 border-t border-gray-200">
               <form onSubmit={handleChatSubmit} className="flex space-x-2">
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  placeholder="Describe what you want to change..."
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                  disabled={isGenerating}
-                />
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    placeholder={t('editor.chatPlaceholder')}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    disabled={isGenerating}
+                  />
                 <button
                   type="submit"
                   disabled={!chatInput.trim() || isGenerating}
@@ -890,7 +908,7 @@ export default function EditCampaignPage() {
             {/* Fixed Footer */}
             <div className="p-3 border-t border-gray-200">
               <p className="text-xs text-gray-500 text-center">
-                💡 Click anywhere in the email to edit directly. AI changes will appear here automatically.
+                💡 AI-generated content will appear here automatically. You can also click to edit directly.
               </p>
             </div>
           </div>

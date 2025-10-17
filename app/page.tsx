@@ -14,9 +14,11 @@ import {
   CheckIcon,
   EyeIcon
 } from '@heroicons/react/24/outline'
+import { useAutoLanguageDetection } from '@/lib/i18n'
 
 export default function HomePage() {
   const router = useRouter()
+  useAutoLanguageDetection() // 自动检测用户语言
   const { scrollYProgress } = useScroll()
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
   const scrollContainerRef = useRef<HTMLDivElement>(null)

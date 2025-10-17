@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "首页",
+    "features": "功能",
+    "pricing": "价格",
+    "about": "关于",
+    "contact": "联系",
+    "login": "登录",
+    "register": "注册",
+    "dashboard": "控制台"
+  },
+  "hero": {
+    "title": "AI驱动的邮件营销助手",
+    "subtitle": "使用AI创建精美的专业邮件模板并发送给您的受众",
+    "cta": "免费开始",
+    "learnMore": "了解更多"
+  },
+  "features": {
+    "title": "强大功能",
+    "aiTemplates": {
+      "title": "AI生成模板",
+      "description": "使用AI助手创建专业邮件模板"
+    },
+    "easyEditing": {
+      "title": "轻松编辑",
+      "description": "使用直观界面直接编辑模板"
+    },
+    "analytics": {
+      "title": "高级分析",
+      "description": "通过详细洞察跟踪邮件表现"
+    }
+  },
+  "dashboard": {
+    "title": "控制台",
+    "welcome": "欢迎使用NovaMail",
+    "createEmail": "创建邮件",
+    "recentCampaigns": "最近活动",
+    "contacts": "联系人",
+    "analytics": "分析",
+    "templates": "模板"
+  },
+  "templates": {
+    "title": "专业模板",
+    "selectTemplate": "选择模板",
+    "useTemplate": "使用此模板",
+    "editTemplate": "编辑模板",
+    "preview": "预览",
+    "categories": {
+      "modern": "现代",
+      "minimal": "简约",
+      "corporate": "企业",
+      "elegant": "优雅",
+      "creative": "创意"
+    }
+  },
+  "editor": {
+    "title": "邮件编辑器",
+    "aiAssistant": "AI助手",
+    "chatPlaceholder": "描述您想要创建的邮件内容...",
+    "send": "发送",
+    "subject": "主题",
+    "content": "内容",
+    "saveDraft": "保存草稿",
+    "sendEmail": "发送邮件活动",
+    "cancel": "取消",
+    "aiPrompt": "告诉AI您想要创建什么邮件内容",
+    "aiExamples": {
+      "productLaunch": "为我的新应用写一封产品发布邮件",
+      "welcome": "为新客户创建欢迎邮件",
+      "promotion": "生成黑色星期五促销邮件",
+      "newsletter": "写一份公司更新通讯"
+    }
+  },
+  "contacts": {
+    "title": "联系人管理",
+    "addContact": "添加联系人",
+    "importContacts": "导入联系人",
+    "exportContacts": "导出联系人",
+    "search": "搜索联系人...",
+    "tags": {
+      "new": "新用户",
+      "active": "活跃用户",
+      "silent": "沉默用户"
+    }
+  },
+  "auth": {
+    "login": "登录",
+    "register": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "forgotPassword": "忘记密码？",
+    "rememberMe": "记住我",
+    "signIn": "登录",
+    "signUp": "注册",
+    "googleSignIn": "使用Google登录",
+    "verificationCode": "验证码",
+    "sendCode": "发送验证码",
+    "verifyCode": "验证验证码",
+    "resendCode": "重新发送验证码"
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "close": "关闭",
+    "confirm": "确认",
+    "yes": "是",
+    "no": "否"
+  }
+}
