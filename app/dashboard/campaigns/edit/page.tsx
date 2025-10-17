@@ -251,6 +251,327 @@ export default function EditCampaignPage() {
       features: ['Clean Layout', 'Industry Insights', 'Professional Tone', 'Call-to-Action'],
       isPopular: false,
       isNew: true
+    },
+    {
+      id: 'elegant-luxury',
+      name: 'Elegant Luxury',
+      category: 'Elegant',
+      description: 'Sophisticated design with premium aesthetics and refined typography',
+      subject: 'Exclusive Invitation: [Event Name] - A Night of Elegance',
+      htmlContent: `
+        <div style="font-family: 'Georgia', 'Times New Roman', serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 0; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+          <div style="background: #1a1a1a; padding: 50px 40px; text-align: center; position: relative;">
+            <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 60px; height: 2px; background: linear-gradient(90deg, transparent, #d4af37, transparent);"></div>
+            <h1 style="color: #d4af37; margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase;">Exclusive Invitation</h1>
+            <p style="color: #ffffff; margin: 20px 0 0 0; font-size: 16px; font-weight: 300; letter-spacing: 1px;">A Night of Elegance & Sophistication</p>
+          </div>
+          
+          <div style="padding: 50px 40px; background: #fafafa;">
+            <p style="color: #2c2c2c; font-size: 16px; line-height: 1.8; margin-bottom: 30px; font-weight: 300;">
+              Dear [Guest Name],
+            </p>
+            
+            <p style="color: #4a4a4a; font-size: 16px; line-height: 1.8; margin-bottom: 35px; font-weight: 300;">
+              We are delighted to extend a personal invitation to you for an exclusive evening of elegance and sophistication. Join us for an unforgettable experience that celebrates the finest in [Industry/Theme].
+            </p>
+            
+            <div style="background: #ffffff; padding: 30px; margin: 35px 0; border-left: 4px solid #d4af37; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+              <h3 style="color: #1a1a1a; margin: 0 0 20px 0; font-size: 20px; font-weight: 400; letter-spacing: 0.5px;">Event Details</h3>
+              <div style="color: #4a4a4a; font-size: 15px; line-height: 1.6;">
+                <p style="margin: 0 0 8px 0;"><strong>Date:</strong> [Event Date]</p>
+                <p style="margin: 0 0 8px 0;"><strong>Time:</strong> [Event Time]</p>
+                <p style="margin: 0 0 8px 0;"><strong>Venue:</strong> [Venue Name]</p>
+                <p style="margin: 0;"><strong>Dress Code:</strong> Black Tie Optional</p>
+              </div>
+            </div>
+            
+            <div style="text-align: center; margin: 40px 0;">
+              <a href="#" style="display: inline-block; background: #1a1a1a; color: #d4af37; padding: 18px 40px; text-decoration: none; border: 2px solid #d4af37; font-weight: 300; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease;">
+                Accept Invitation
+              </a>
+            </div>
+            
+            <p style="color: #4a4a4a; font-size: 14px; line-height: 1.6; margin: 35px 0; font-weight: 300; text-align: center;">
+              We look forward to welcoming you to this exclusive gathering.
+            </p>
+            
+            <p style="color: #2c2c2c; font-size: 15px; line-height: 1.8; margin: 40px 0 0 0; font-weight: 300;">
+              With warm regards,<br>
+              <strong style="color: #1a1a1a;">The [Organization] Team</strong>
+            </p>
+          </div>
+        </div>
+      `,
+      features: ['Premium Aesthetics', 'Elegant Typography', 'Luxury Branding', 'Sophisticated Layout'],
+      isPopular: true,
+      isNew: false
+    },
+    {
+      id: 'creative-vibrant',
+      name: 'Creative Vibrant',
+      category: 'Creative',
+      description: 'Bold, colorful design perfect for creative industries and artistic brands',
+      subject: '🎨 Creative Workshop: [Workshop Name] - Unleash Your Creativity',
+      htmlContent: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15);">
+          <div style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57); padding: 40px 30px; text-align: center; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"20\" cy=\"20\" r=\"3\" fill=\"white\" opacity=\"0.3\"/><circle cx=\"80\" cy=\"80\" r=\"2\" fill=\"white\" opacity=\"0.3\"/><circle cx=\"40\" cy=\"60\" r=\"4\" fill=\"white\" opacity=\"0.2\"/><circle cx=\"70\" cy=\"30\" r=\"2\" fill=\"white\" opacity=\"0.3\"/></svg>'); opacity: 0.4;"></div>
+            <h1 style="color: white; margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.5px; position: relative; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">🎨 Creative Workshop</h1>
+            <p style="color: white; margin: 12px 0 0 0; font-size: 16px; font-weight: 500; position: relative; z-index: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">Unleash Your Creative Potential</p>
+          </div>
+          
+          <div style="padding: 40px 30px;">
+            <p style="color: #2d3748; font-size: 16px; line-height: 1.6; margin-bottom: 25px; font-weight: 500;">
+              Hey [Creative Name]! 👋
+            </p>
+            
+            <p style="color: #4a5568; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
+              Ready to dive into a world of creativity? We're excited to invite you to our exclusive <strong style="color: #ff6b6b;">[Workshop Name]</strong> - where imagination meets innovation!
+            </p>
+            
+            <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 25px; border-radius: 12px; margin: 25px 0; border: 2px solid #e2e8f0;">
+              <h3 style="color: #2d3748; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">✨ What You'll Learn:</h3>
+              <ul style="color: #4a5568; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
+                <li style="margin-bottom: 8px;">🎯 Creative problem-solving techniques</li>
+                <li style="margin-bottom: 8px;">🎨 Advanced design principles</li>
+                <li style="margin-bottom: 8px;">💡 Innovation methodologies</li>
+                <li style="margin-bottom: 8px;">🚀 Portfolio development strategies</li>
+              </ul>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #ff6b6b, #4ecdc4); padding: 25px; border-radius: 12px; text-align: center; margin: 25px 0; position: relative; overflow: hidden;">
+              <div style="position: absolute; top: -20px; right: -20px; width: 60px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+              <div style="position: absolute; bottom: -30px; left: -30px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+              <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px; font-weight: 600; position: relative; z-index: 1;">🎉 Special Offer</h3>
+              <p style="color: white; margin: 0; font-size: 15px; position: relative; z-index: 1;">
+                Early bird pricing: <strong>30% off</strong> for the first 20 participants!
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="#" style="display: inline-block; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; padding: 16px 32px; text-decoration: none; border-radius: 25px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4); transition: all 0.3s ease;">
+                Join the Workshop 🚀
+              </a>
+            </div>
+            
+            <p style="color: #4a5568; font-size: 15px; line-height: 1.6; margin: 25px 0; text-align: center;">
+              Let's create something amazing together! 🎨✨
+            </p>
+            
+            <p style="color: #2d3748; font-size: 15px; line-height: 1.6; margin: 30px 0 0 0;">
+              Creative regards,<br>
+              <strong style="color: #ff6b6b;">The Creative Team</strong><br>
+              <span style="color: #4ecdc4;">[Organization Name]</span>
+            </p>
+          </div>
+        </div>
+      `,
+      features: ['Bold Colors', 'Creative Layout', 'Vibrant Design', 'Artistic Elements'],
+      isPopular: true,
+      isNew: true
+    },
+    {
+      id: 'tech-modern',
+      name: 'Tech Modern',
+      category: 'Modern',
+      description: 'Clean, tech-focused design with modern aesthetics and digital elements',
+      subject: 'Tech Update: [Product Name] v2.0 - Now Live!',
+      htmlContent: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+          <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 40px 30px; text-align: center; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(45deg, transparent 49%, rgba(59, 130, 246, 0.1) 50%, transparent 51%); background-size: 20px 20px;"></div>
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; position: relative; z-index: 1;">Tech Update</h1>
+            <p style="color: #94a3b8; margin: 12px 0 0 0; font-size: 16px; font-weight: 400; position: relative; z-index: 1;">Version 2.0 is Now Live</p>
+          </div>
+          
+          <div style="padding: 40px 30px;">
+            <p style="color: #1e293b; font-size: 16px; line-height: 1.6; margin-bottom: 25px; font-weight: 500;">
+              Hello [Developer Name],
+            </p>
+            
+            <p style="color: #475569; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
+              We're excited to announce that <strong style="color: #3b82f6;">[Product Name] v2.0</strong> is now live! This major update brings powerful new features and significant performance improvements.
+            </p>
+            
+            <div style="background: #f8fafc; padding: 25px; border-radius: 8px; margin: 25px 0; border: 1px solid #e2e8f0;">
+              <h3 style="color: #1e293b; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">🚀 New Features</h3>
+              <ul style="color: #475569; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
+                <li style="margin-bottom: 8px;">⚡ 3x faster processing speed</li>
+                <li style="margin-bottom: 8px;">🔧 Enhanced API endpoints</li>
+                <li style="margin-bottom: 8px;">📊 Real-time analytics dashboard</li>
+                <li style="margin-bottom: 8px;">🔒 Advanced security protocols</li>
+              </ul>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 25px; border-radius: 8px; text-align: center; margin: 25px 0;">
+              <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">📈 Performance Boost</h3>
+              <p style="color: white; margin: 0; font-size: 15px;">
+                Experience <strong>300% faster</strong> response times and improved reliability.
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="#" style="display: inline-block; background: #3b82f6; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);">
+                Explore New Features
+              </a>
+            </div>
+            
+            <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f59e0b;">
+              <h4 style="color: #92400e; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">⚠️ Breaking Changes</h4>
+              <p style="color: #92400e; margin: 0; font-size: 14px; line-height: 1.5;">Please review our migration guide for any breaking changes that may affect your implementation.</p>
+            </div>
+            
+            <p style="color: #475569; font-size: 15px; line-height: 1.6; margin: 25px 0;">
+              Thank you for being part of our developer community. We're committed to providing you with the best tools and experience.
+            </p>
+            
+            <p style="color: #1e293b; font-size: 15px; line-height: 1.6; margin: 30px 0 0 0;">
+              Best regards,<br>
+              <strong>The Development Team</strong><br>
+              <span style="color: #3b82f6;">[Company Name]</span>
+            </p>
+          </div>
+        </div>
+      `,
+      features: ['Tech Aesthetics', 'Modern Layout', 'Performance Focus', 'Developer Friendly'],
+      isPopular: false,
+      isNew: true
+    },
+    {
+      id: 'health-wellness',
+      name: 'Health & Wellness',
+      category: 'Minimal',
+      description: 'Clean, calming design perfect for health, wellness, and lifestyle brands',
+      subject: 'Wellness Wednesday: [Topic] - Your Health Journey Starts Here',
+      htmlContent: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+          <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.1) 0%, transparent 60%);"></div>
+            <h1 style="color: white; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.3px; position: relative; z-index: 1;">🌱 Wellness Wednesday</h1>
+            <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0 0; font-size: 16px; font-weight: 400; position: relative; z-index: 1;">Your Health Journey Starts Here</p>
+          </div>
+          
+          <div style="padding: 40px 30px;">
+            <p style="color: #1f2937; font-size: 16px; line-height: 1.6; margin-bottom: 25px; font-weight: 400;">
+              Hi [Wellness Seeker],
+            </p>
+            
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
+              This week, we're focusing on <strong style="color: #10b981;">[Wellness Topic]</strong> - a key component of your overall health and wellbeing journey.
+            </p>
+            
+            <div style="background: #f0fdf4; padding: 25px; border-radius: 10px; margin: 25px 0; border: 1px solid #bbf7d0;">
+              <h3 style="color: #166534; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">💚 This Week's Focus</h3>
+              <ul style="color: #15803d; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
+                <li style="margin-bottom: 8px;">🧘‍♀️ Mindful breathing exercises</li>
+                <li style="margin-bottom: 8px;">🥗 Nutritious meal planning</li>
+                <li style="margin-bottom: 8px;">🚶‍♀️ Daily movement goals</li>
+                <li style="margin-bottom: 8px;">😴 Quality sleep strategies</li>
+              </ul>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 25px; border-radius: 10px; text-align: center; margin: 25px 0;">
+              <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">🌟 Wellness Tip</h3>
+              <p style="color: white; margin: 0; font-size: 15px;">
+                Start your day with 5 minutes of gratitude practice for a positive mindset.
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="#" style="display: inline-block; background: #10b981; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 16px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
+                Start Your Journey 🌱
+              </a>
+            </div>
+            
+            <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f59e0b;">
+              <h4 style="color: #92400e; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">💡 Remember</h4>
+              <p style="color: #92400e; margin: 0; font-size: 14px; line-height: 1.5;">Small, consistent steps lead to big changes. Be patient and kind to yourself on this journey.</p>
+            </div>
+            
+            <p style="color: #4b5563; font-size: 15px; line-height: 1.6; margin: 25px 0; text-align: center;">
+              Your wellness matters. Take care of yourself today. 💚
+            </p>
+            
+            <p style="color: #1f2937; font-size: 15px; line-height: 1.6; margin: 30px 0 0 0;">
+              With care,<br>
+              <strong style="color: #10b981;">The Wellness Team</strong><br>
+              <span style="color: #059669;">[Organization Name]</span>
+            </p>
+          </div>
+        </div>
+      `,
+      features: ['Calming Colors', 'Wellness Focus', 'Clean Design', 'Health Oriented'],
+      isPopular: false,
+      isNew: false
+    },
+    {
+      id: 'fashion-trendy',
+      name: 'Fashion Trendy',
+      category: 'Creative',
+      description: 'Stylish, trendy design perfect for fashion, beauty, and lifestyle brands',
+      subject: '✨ New Collection Alert: [Collection Name] - Shop the Latest Trends',
+      htmlContent: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 0; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+          <div style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); padding: 50px 30px; text-align: center; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"25\" cy=\"25\" r=\"2\" fill=\"white\" opacity=\"0.2\"/><circle cx=\"75\" cy=\"75\" r=\"3\" fill=\"white\" opacity=\"0.15\"/><circle cx=\"50\" cy=\"10\" r=\"1\" fill=\"white\" opacity=\"0.3\"/><circle cx=\"10\" cy=\"60\" r=\"2\" fill=\"white\" opacity=\"0.2\"/></svg>'); opacity: 0.6;"></div>
+            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px; position: relative; z-index: 1;">✨ New Collection</h1>
+            <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0 0; font-size: 18px; font-weight: 300; position: relative; z-index: 1;">Shop the Latest Trends</p>
+          </div>
+          
+          <div style="padding: 40px 30px;">
+            <p style="color: #1f2937; font-size: 16px; line-height: 1.6; margin-bottom: 25px; font-weight: 500;">
+              Hey [Fashionista]! 👗
+            </p>
+            
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
+              Get ready to fall in love with our newest <strong style="color: #ec4899;">[Collection Name]</strong>! We've curated the most stunning pieces that will make you feel confident and stylish.
+            </p>
+            
+            <div style="background: #fdf2f8; padding: 25px; border-radius: 12px; margin: 25px 0; border: 1px solid #fce7f3;">
+              <h3 style="color: #be185d; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">👗 Collection Highlights</h3>
+              <ul style="color: #831843; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
+                <li style="margin-bottom: 8px;">✨ Trendy statement pieces</li>
+                <li style="margin-bottom: 8px;">💎 Premium quality materials</li>
+                <li style="margin-bottom: 8px;">🎨 Exclusive color palettes</li>
+                <li style="margin-bottom: 8px;">🌟 Limited edition designs</li>
+              </ul>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #ec4899, #be185d); padding: 25px; border-radius: 12px; text-align: center; margin: 25px 0; position: relative; overflow: hidden;">
+              <div style="position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+              <div style="position: absolute; bottom: -15px; left: -15px; width: 50px; height: 50px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+              <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px; font-weight: 600; position: relative; z-index: 1;">🛍️ Early Access</h3>
+              <p style="color: white; margin: 0; font-size: 15px; position: relative; z-index: 1;">
+                VIP members get <strong>20% off</strong> + free shipping on all orders!
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="#" style="display: inline-block; background: linear-gradient(135deg, #ec4899, #be185d); color: white; padding: 18px 36px; text-decoration: none; border-radius: 25px; font-weight: 600; font-size: 16px; box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
+                Shop Now ✨
+              </a>
+            </div>
+            
+            <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f59e0b;">
+              <h4 style="color: #92400e; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">💝 Style Tip</h4>
+              <p style="color: #92400e; margin: 0; font-size: 14px; line-height: 1.5;">Mix and match pieces from this collection to create multiple looks. Versatility is key to a great wardrobe!</p>
+            </div>
+            
+            <p style="color: #4b5563; font-size: 15px; line-height: 1.6; margin: 25px 0; text-align: center;">
+              You deserve to look and feel amazing! ✨👗
+            </p>
+            
+            <p style="color: #1f2937; font-size: 15px; line-height: 1.6; margin: 30px 0 0 0;">
+              With love,<br>
+              <strong style="color: #ec4899;">The Fashion Team</strong><br>
+              <span style="color: #be185d;">[Brand Name]</span>
+            </p>
+          </div>
+        </div>
+      `,
+      features: ['Trendy Design', 'Fashion Focus', 'Bold Colors', 'Style Oriented'],
+      isPopular: true,
+      isNew: false
     }
   ]
 
