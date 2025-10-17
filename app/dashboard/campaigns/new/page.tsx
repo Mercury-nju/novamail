@@ -304,13 +304,13 @@ export default function NewCampaignPage() {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Modern': return 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800'
-      case 'Minimal': return 'bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800'
-      case 'Corporate': return 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800'
-      case 'Creative': return 'bg-gradient-to-r from-orange-100 to-yellow-100 text-orange-800'
-      case 'Elegant': return 'bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800'
-      case 'Bold': return 'bg-gradient-to-r from-red-100 to-rose-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'Modern': return 'bg-gray-100 text-gray-700'
+      case 'Minimal': return 'bg-gray-100 text-gray-700'
+      case 'Corporate': return 'bg-gray-100 text-gray-700'
+      case 'Creative': return 'bg-gray-100 text-gray-700'
+      case 'Elegant': return 'bg-gray-100 text-gray-700'
+      case 'Bold': return 'bg-gray-100 text-gray-700'
+      default: return 'bg-gray-100 text-gray-700'
     }
   }
 
@@ -367,20 +367,9 @@ export default function NewCampaignPage() {
             </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Choose Your Perfect Email Template</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-4">Browse our collection of professionally designed templates. Each one is crafted to help you create stunning emails that engage your audience.</p>
-          <div className="flex justify-center space-x-6 text-sm text-gray-500">
-            <span className="flex items-center">
-              <kbd className="px-2 py-1 bg-gray-100 rounded text-xs mr-1">←</kbd>
-              <kbd className="px-2 py-1 bg-gray-100 rounded text-xs mr-1">→</kbd>
-              Navigate
-            </span>
-            <span className="flex items-center">
-              <kbd className="px-2 py-1 bg-gray-100 rounded text-xs mr-1">Enter</kbd>
-              Select
-            </span>
-          </div>
+                <div className="text-center mb-16">
+          <h2 className="text-3xl font-light text-gray-900 mb-3">Choose Your Template</h2>
+          <p className="text-gray-500 max-w-lg mx-auto">Select a design style that matches your brand</p>
                 </div>
                 
         {/* Template Carousel */}
@@ -388,16 +377,16 @@ export default function NewCampaignPage() {
           {/* Navigation Arrows */}
                     <button
             onClick={handlePrevTemplate}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full shadow-xl flex items-center justify-center text-gray-600 hover:text-blue-600 hover:shadow-2xl hover:scale-110 transition-all duration-300 group"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-gray-400 hover:text-gray-600 hover:shadow-md transition-all duration-200"
           >
-            <ArrowLeftIcon className="h-6 w-6 group-hover:scale-110 transition-transform duration-200" />
+            <ArrowLeftIcon className="h-5 w-5" />
                     </button>
 
                     <button
             onClick={handleNextTemplate}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full shadow-xl flex items-center justify-center text-gray-600 hover:text-blue-600 hover:shadow-2xl hover:scale-110 transition-all duration-300 group"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-gray-400 hover:text-gray-600 hover:shadow-md transition-all duration-200"
           >
-            <ArrowRightIcon className="h-6 w-6 group-hover:scale-110 transition-transform duration-200" />
+            <ArrowRightIcon className="h-5 w-5" />
                     </button>
 
           {/* Template Display */}
@@ -410,44 +399,33 @@ export default function NewCampaignPage() {
               duration: 0.4,
               ease: [0.4, 0, 0.2, 1]
             }}
-            className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden hover:shadow-2xl transition-shadow duration-300"
+            className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200"
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
               {/* Template Info */}
-              <div className="p-8 lg:p-12">
+              <div className="p-8 lg:p-10">
                 <div className="text-center mb-8">
-                  <div className="flex justify-center space-x-2 mb-4">
-                    {currentTemplate.isNew && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                        ✨ New
-                      </span>
-                    )}
-                    {currentTemplate.isPopular && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
-                        🔥 Popular
-                      </span>
-                    )}
+                  <div className="mb-4">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(currentTemplate.category)}`}>
                       {currentTemplate.category}
                     </span>
                   </div>
                   
-                  <h3 className="text-3xl font-bold text-gray-900 mb-4">{currentTemplate.name}</h3>
-                  <p className="text-gray-600 text-lg leading-relaxed max-w-md mx-auto">
+                  <h3 className="text-2xl font-light text-gray-900 mb-3">{currentTemplate.name}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed max-w-sm mx-auto">
                     {currentTemplate.description}
                   </p>
                 </div>
 
                 <div className="mb-8">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4 text-center">Key Features</h4>
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="space-y-2">
                     {currentTemplate.features.map((feature, index) => (
                       <div
                         key={index}
-                        className="flex items-center px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200"
+                        className="flex items-center px-3 py-2 bg-gray-50 rounded-md"
                       >
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                        <span className="text-sm font-medium text-gray-800">
+                        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-600">
                           {feature}
                         </span>
                       </div>
@@ -458,46 +436,44 @@ export default function NewCampaignPage() {
 
                 <motion.button 
                   onClick={handleUseTemplate}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-2xl group"
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-gray-900 text-white font-medium rounded-md hover:bg-gray-800 transition-all duration-200"
                 >
-                  <PencilIcon className="h-5 w-5 mr-2 group-hover:rotate-12 transition-transform duration-200" />
                   <span>Use This Template</span>
-                  <ArrowRightIcon className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
+                  <ArrowRightIcon className="h-4 w-4 ml-2" />
                 </motion.button>
                   </div>
                   
               {/* Template Preview */}
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 lg:p-12">
+              <div className="bg-gray-50 p-6 lg:p-8">
                 <div className="text-center mb-6">
-                  <h4 className="text-xl font-semibold text-gray-900 mb-2">Live Preview</h4>
-                  <p className="text-sm text-gray-500">See how your email will look</p>
+                  <h4 className="text-lg font-medium text-gray-900 mb-1">Preview</h4>
+                  <p className="text-xs text-gray-500">Email design preview</p>
                 </div>
                 
                 {/* Subject Line Preview */}
-                    <div className="mb-6">
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                    <div className="text-sm text-gray-500 mb-1">Subject Line</div>
-                    <div className="text-gray-900 font-medium">
+                <div className="mb-4">
+                  <div className="bg-white rounded border border-gray-200 p-3">
+                    <div className="text-xs text-gray-400 mb-1">Subject</div>
+                    <div className="text-sm text-gray-900">
                       {currentTemplate.subject}
                     </div>
                   </div>
               </div>
 
                 {/* Email Content Preview */}
-                <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                  <div className="bg-gray-100 px-4 py-2 border-b border-gray-200">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                      <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                      <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                      <div className="text-xs text-gray-500 ml-2">Email Preview</div>
+                <div className="bg-white rounded border border-gray-200 overflow-hidden">
+                  <div className="bg-gray-100 px-3 py-2 border-b border-gray-200">
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                     </div>
                   </div>
-                  <div className="p-4 max-h-96 overflow-y-auto">
+                  <div className="p-3 max-h-80 overflow-y-auto">
                     <div 
-                      className="w-full transform scale-90 origin-top pointer-events-none"
+                      className="w-full transform scale-75 origin-top pointer-events-none"
                       dangerouslySetInnerHTML={{ 
                         __html: currentTemplate.htmlContent.replace(
                           /<a\s+([^>]*?)>/gi, 
@@ -517,34 +493,17 @@ export default function NewCampaignPage() {
                   </div>
                   
         {/* Template Indicators */}
-        <div className="flex justify-center mt-12 space-x-3">
+        <div className="flex justify-center mt-8 space-x-2">
           {professionalTemplates.map((template, index) => (
-            <motion.button
+                      <button
               key={index}
               onClick={() => setCurrentTemplateIndex(index)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
+              className={`w-2 h-2 rounded-full transition-all duration-200 ${
                 index === currentTemplateIndex
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:shadow-md'
+                  ? 'bg-gray-900'
+                  : 'bg-gray-300 hover:bg-gray-400'
               }`}
-            >
-              <motion.div 
-                className={`w-2 h-2 rounded-full ${
-                  index === currentTemplateIndex ? 'bg-white' : 'bg-gray-400'
-                }`}
-                animate={{
-                  scale: index === currentTemplateIndex ? [1, 1.2, 1] : 1
-                }}
-                transition={{
-                  duration: 0.6,
-                  repeat: index === currentTemplateIndex ? Infinity : 0,
-                  repeatDelay: 2
-                }}
-              ></motion.div>
-              <span className="text-sm font-medium">{template.name}</span>
-            </motion.button>
+            />
           ))}
         </div>
       </div>
