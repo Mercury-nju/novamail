@@ -71,6 +71,7 @@ export const useTranslation = () => {
         console.log('Loaded translations:', data)
         setTranslations(data)
         setLocale(targetLocale)
+        console.log(`Successfully set locale to: ${targetLocale}`)
       } catch (error) {
         console.error('Failed to load translations:', error)
         // 回退到英文
@@ -81,6 +82,7 @@ export const useTranslation = () => {
             const data = await response.json()
             setTranslations(data)
             setLocale('en')
+            console.log('Successfully loaded English translations')
           } else {
             // 如果连英文都加载失败，使用硬编码的英文翻译
             console.log('Using hardcoded English translations')
@@ -103,6 +105,7 @@ export const useTranslation = () => {
     // 监听语言变化事件
     const handleLanguageChange = (event: CustomEvent) => {
       const newLocale = event.detail.locale
+      console.log(`Language change event received: ${newLocale}`)
       setLoading(true)
       loadTranslations(newLocale)
     }
@@ -158,10 +161,12 @@ export const changeLanguage = (locale: string) => {
   // 只在客户端运行
   if (typeof window === 'undefined') return
   
+  console.log(`Changing language to: ${locale}`)
   // 保存到localStorage
   localStorage.setItem('novaMail-locale', locale)
   // 触发自定义事件来通知组件重新加载翻译
   window.dispatchEvent(new CustomEvent('languageChanged', { detail: { locale } }))
+  console.log(`Language change event dispatched for: ${locale}`)
 }
 
 // 自动检测并设置语言
