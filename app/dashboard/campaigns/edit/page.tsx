@@ -654,9 +654,10 @@ export default function EditCampaignPage() {
       }
     } catch (error) {
       console.error('AI generation error:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
       setChatHistory(prev => [...prev, {
         type: 'ai',
-        message: `Sorry, I encountered an error: ${error.message}. Please try again with a different request.`,
+        message: `Sorry, I encountered an error: ${errorMessage}. Please try again with a different request.`,
         timestamp: new Date()
       }])
       toast.error('❌ Failed to generate content. Please try again.', { id: 'ai-chat' })
