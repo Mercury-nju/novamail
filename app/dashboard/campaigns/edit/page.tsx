@@ -738,155 +738,149 @@ export default function EditCampaignPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-120px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Panel - AI Chat */}
-          <div className="flex flex-col">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex-1 flex flex-col">
-              {/* Fixed Header */}
-              <div className="p-4 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm text-gray-500">Online</span>
-                  </div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+            {/* Fixed Header */}
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-gray-500">Online</span>
                 </div>
               </div>
-              
-              {/* Chat History - Scrollable */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                {chatHistory.length === 0 ? (
-                  <div className="text-center text-gray-500 py-6">
-                    <SparklesIcon className="h-8 w-8 mx-auto mb-2 text-gray-300" />
-                    <p className="text-sm mb-3">Start a conversation with AI</p>
-                    <div className="space-y-1 text-xs text-gray-400">
-                      <p>Try: "Make this email more professional"</p>
-                      <p>Or: "Change the tone to be more friendly"</p>
-                      <p>Or: "Add a call-to-action button"</p>
-                    </div>
+            </div>
+            
+            {/* Chat History - Limited Height */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 py-4">
+                  <SparklesIcon className="h-6 w-6 mx-auto mb-2 text-gray-300" />
+                  <p className="text-sm mb-2">Start a conversation with AI</p>
+                  <div className="space-y-1 text-xs text-gray-400">
+                    <p>Try: "Make this email more professional"</p>
+                    <p>Or: "Change the tone to be more friendly"</p>
+                    <p>Or: "Add a call-to-action button"</p>
                   </div>
-                ) : (
-                  chatHistory.map((message, index) => (
-                    <div key={index} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[85%] p-2 rounded-lg ${
-                        message.type === 'user' 
-                          ? 'bg-blue-600 text-white' 
-                          : 'bg-gray-100 text-gray-900'
+                </div>
+              ) : (
+                chatHistory.map((message, index) => (
+                  <div key={index} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[85%] p-2 rounded-lg ${
+                      message.type === 'user' 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-100 text-gray-900'
+                    }`}>
+                      <p className="text-sm">{message.message}</p>
+                      <p className={`text-xs mt-1 ${
+                        message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
                       }`}>
-                        <p className="text-sm">{message.message}</p>
-                        <p className={`text-xs mt-1 ${
-                          message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
-                        }`}>
-                          {message.timestamp.toLocaleTimeString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                )}
-                {isGenerating && (
-                  <div className="flex justify-start">
-                    <div className="bg-gray-100 text-gray-900 p-2 rounded-lg">
-                      <div className="flex items-center space-x-2">
-                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600"></div>
-                        <span className="text-sm">AI is thinking...</span>
-                      </div>
+                        {message.timestamp.toLocaleTimeString()}
+                      </p>
                     </div>
                   </div>
-                )}
-              </div>
-              
-              {/* Fixed Chat Input */}
-              <div className="p-4 border-t border-gray-200">
-                <form onSubmit={handleChatSubmit} className="flex space-x-2">
-                  <input
-                    type="text"
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    placeholder="Describe what you want to change..."
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                    disabled={isGenerating}
-                  />
-                  <button
-                    type="submit"
-                    disabled={!chatInput.trim() || isGenerating}
-                    className={`px-3 py-2 rounded-lg font-medium transition-colors ${
-                      !chatInput.trim() || isGenerating
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
-                    }`}
-                  >
-                    <SparklesIcon className="h-4 w-4" />
-                  </button>
-                </form>
-              </div>
+                ))
+              )}
+              {isGenerating && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-100 text-gray-900 p-2 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600"></div>
+                      <span className="text-sm">AI is thinking...</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Fixed Chat Input */}
+            <div className="p-4 border-t border-gray-200">
+              <form onSubmit={handleChatSubmit} className="flex space-x-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder="Describe what you want to change..."
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  disabled={isGenerating}
+                />
+                <button
+                  type="submit"
+                  disabled={!chatInput.trim() || isGenerating}
+                  className={`px-3 py-2 rounded-lg font-medium transition-colors ${
+                    !chatInput.trim() || isGenerating
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
+                >
+                  <SparklesIcon className="h-4 w-4" />
+                </button>
+              </form>
             </div>
           </div>
 
           {/* Right Panel - Email Template */}
-          <div className="flex flex-col">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex-1 flex flex-col">
-              {/* Fixed Header */}
-              <div className="p-4 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{currentTemplate.name}</h3>
-                    <p className="text-sm text-gray-500">{currentTemplate.description}</p>
-                  </div>
-                  <motion.button
-                    onClick={handleSendCampaign}
-                    disabled={isSending}
-                    whileHover={!isSending ? { scale: 1.05 } : {}}
-                    whileTap={!isSending ? { scale: 0.95 } : {}}
-                    className={`inline-flex items-center px-4 py-2 font-semibold rounded-lg transition-all duration-200 shadow-lg ${
-                      isSending 
-                        ? 'bg-gray-400 text-white cursor-not-allowed' 
-                        : 'bg-gradient-to-r from-green-600 to-blue-600 text-white hover:from-green-700 hover:to-blue-700 hover:shadow-xl'
-                    }`}
-                  >
-                    <PaperAirplaneIcon className={`h-4 w-4 mr-2 ${isSending ? 'animate-bounce' : ''}`} />
-                    {isSending ? 'Sending...' : 'Send Email'}
-                  </motion.button>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+            {/* Fixed Header */}
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">{currentTemplate.name}</h3>
+                  <p className="text-sm text-gray-500">{currentTemplate.description}</p>
                 </div>
+                <motion.button
+                  onClick={handleSendCampaign}
+                  disabled={isSending}
+                  whileHover={!isSending ? { scale: 1.05 } : {}}
+                  whileTap={!isSending ? { scale: 0.95 } : {}}
+                  className={`inline-flex items-center px-4 py-2 font-semibold rounded-lg transition-all duration-200 shadow-lg ${
+                    isSending 
+                      ? 'bg-gray-400 text-white cursor-not-allowed' 
+                      : 'bg-gradient-to-r from-green-600 to-blue-600 text-white hover:from-green-700 hover:to-blue-700 hover:shadow-xl'
+                  }`}
+                >
+                  <PaperAirplaneIcon className={`h-4 w-4 mr-2 ${isSending ? 'animate-bounce' : ''}`} />
+                  {isSending ? 'Sending...' : 'Send Email'}
+                </motion.button>
               </div>
-              
-              {/* Subject Line - Fixed */}
-              <div className="p-4 border-b border-gray-200">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line:</label>
-                <input
-                  type="text"
-                  value={campaignData.subject}
-                  onChange={handleSubjectChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                  placeholder="Enter email subject..."
-                />
-              </div>
-              
-              {/* Email Content - Scrollable */}
-              <div className="flex-1 flex flex-col">
-                <div className="p-4 border-b border-gray-200">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email Content:</label>
-                </div>
-                <div className="flex-1 overflow-hidden">
-                  <div 
-                    className="h-full p-4 overflow-y-auto focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    contentEditable
-                    onInput={handleContentChange}
-                    suppressContentEditableWarning={true}
-                    style={{ 
-                      outline: 'none'
-                    }}
-                    dangerouslySetInnerHTML={{ 
-                      __html: campaignData.body
-                        .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                    }}
-                  />
-                </div>
-                <div className="p-2 border-t border-gray-200">
-                  <p className="text-xs text-gray-500 text-center">
-                    💡 Click anywhere in the email to edit directly. AI changes will appear here automatically.
-                  </p>
-                </div>
-              </div>
+            </div>
+            
+            {/* Subject Line - Fixed */}
+            <div className="p-4 border-b border-gray-200">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line:</label>
+              <input
+                type="text"
+                value={campaignData.subject}
+                onChange={handleSubjectChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                placeholder="Enter email subject..."
+              />
+            </div>
+            
+            {/* Email Content - Limited Height */}
+            <div className="h-96 overflow-y-auto p-4">
+              <div 
+                className="focus:outline-none focus:ring-2 focus:ring-blue-500"
+                contentEditable
+                onInput={handleContentChange}
+                suppressContentEditableWarning={true}
+                style={{ 
+                  outline: 'none',
+                  minHeight: '300px'
+                }}
+                dangerouslySetInnerHTML={{ 
+                  __html: campaignData.body
+                    .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+                }}
+              />
+            </div>
+            
+            {/* Fixed Footer */}
+            <div className="p-3 border-t border-gray-200">
+              <p className="text-xs text-gray-500 text-center">
+                💡 Click anywhere in the email to edit directly. AI changes will appear here automatically.
+              </p>
             </div>
           </div>
         </div>
