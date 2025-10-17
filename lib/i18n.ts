@@ -130,6 +130,10 @@ function getHardcodedTranslations(locale: string) {
       testimonials: {
         title: '用户评价'
       },
+      test: {
+        title: '语言测试页面',
+        currentLanguage: '当前语言'
+      },
       common: { 
         loading: '加载中...', 
         error: '错误', 
@@ -281,6 +285,10 @@ function getHardcodedTranslations(locale: string) {
       },
       testimonials: {
         title: 'What Our Users Say'
+      },
+      test: {
+        title: 'Language Test Page',
+        currentLanguage: 'Current Language'
       },
       common: { 
         loading: 'Loading...', 
