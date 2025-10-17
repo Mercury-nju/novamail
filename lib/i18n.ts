@@ -50,27 +50,60 @@ export const useTranslation = () => {
     const savedLocale = localStorage.getItem('novaMail-locale') || 'en'
     setLocale(savedLocale)
     
-    const loadTranslations = async () => {
+    const loadTranslations = async (targetLocale: string) => {
       try {
-        const response = await fetch(`/locales/${savedLocale}/common.json`)
+        console.log(`Loading translations for locale: ${targetLocale}`)
+        const response = await fetch(`/locales/${targetLocale}/common.json`)
+        
+        if (!response.ok) {
+          throw new Error(`Failed to load translations: ${response.status}`)
+        }
+        
         const data = await response.json()
+        console.log('Loaded translations:', data)
         setTranslations(data)
+        setLocale(targetLocale)
       } catch (error) {
         console.error('Failed to load translations:', error)
         // 回退到英文
         try {
+          console.log('Falling back to English translations')
           const response = await fetch('/locales/en/common.json')
-          const data = await response.json()
-          setTranslations(data)
+          if (response.ok) {
+            const data = await response.json()
+            setTranslations(data)
+            setLocale('en')
+          } else {
+            // 如果连英文都加载失败，使用硬编码的英文翻译
+            console.log('Using hardcoded English translations')
+            setTranslations(getHardcodedTranslations('en'))
+            setLocale('en')
+          }
         } catch (fallbackError) {
           console.error('Failed to load fallback translations:', fallbackError)
+          setTranslations(getHardcodedTranslations('en'))
+          setLocale('en')
         }
       } finally {
         setLoading(false)
       }
     }
 
-    loadTranslations()
+    // 初始加载
+    loadTranslations(savedLocale)
+
+    // 监听语言变化事件
+    const handleLanguageChange = (event: CustomEvent) => {
+      const newLocale = event.detail.locale
+      setLoading(true)
+      loadTranslations(newLocale)
+    }
+
+    window.addEventListener('languageChanged', handleLanguageChange as EventListener)
+    
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange as EventListener)
+    }
   }, [])
 
   const t = (key: string, fallback?: string): string => {
@@ -91,12 +124,33 @@ export const useTranslation = () => {
   return { t, loading, locale }
 }
 
+// 硬编码的英文翻译作为后备
+function getHardcodedTranslations(locale: string) {
+  if (locale === 'zh') {
+    return {
+      nav: { home: '首页', features: '功能', pricing: '价格', about: '关于', contact: '联系', login: '登录', register: '注册', dashboard: '控制台' },
+      hero: { title: 'AI驱动的邮件营销助手', subtitle: '使用AI创建精美的专业邮件模板并发送给您的受众', cta: '免费开始', learnMore: '了解更多' },
+      dashboard: { title: '控制台', welcome: '欢迎使用NovaMail', createEmail: '创建邮件' },
+      editor: { title: '邮件编辑器', aiAssistant: 'AI助手', chatPlaceholder: '描述您想要创建的邮件内容...', saveDraft: '保存草稿' },
+      common: { loading: '加载中...', error: '错误', success: '成功', save: '保存', cancel: '取消' }
+    }
+  }
+  
+  return {
+    nav: { home: 'Home', features: 'Features', pricing: 'Pricing', about: 'About', contact: 'Contact', login: 'Login', register: 'Register', dashboard: 'Dashboard' },
+    hero: { title: 'AI-Powered Email Marketing Assistant', subtitle: 'Create stunning professional email templates with AI and send them to your audience', cta: 'Get Started Free', learnMore: 'Learn More' },
+    dashboard: { title: 'Dashboard', welcome: 'Welcome to NovaMail', createEmail: 'Create Email' },
+    editor: { title: 'Email Editor', aiAssistant: 'AI Assistant', chatPlaceholder: 'Describe the email content you want to create...', saveDraft: 'Save Draft' },
+    common: { loading: 'Loading...', error: 'Error', success: 'Success', save: 'Save', cancel: 'Cancel' }
+  }
+}
+
 // 语言切换函数
 export const changeLanguage = (locale: string) => {
   // 保存到localStorage
   localStorage.setItem('novaMail-locale', locale)
-  // 重新加载页面以应用新语言
-  window.location.reload()
+  // 触发自定义事件来通知组件重新加载翻译
+  window.dispatchEvent(new CustomEvent('languageChanged', { detail: { locale } }))
 }
 
 // 自动检测并设置语言
@@ -115,14 +169,9 @@ export const useAutoLanguageDetection = () => {
         const suggestedLanguage = getLanguageByCountry(countryCode)
         
         if (suggestedLanguage !== 'en' && supportedLocales.some(l => l.code === suggestedLanguage)) {
-          // 询问用户是否切换到检测到的语言
-          const shouldSwitch = confirm(
-            `We detected you're from ${countryCode}. Would you like to switch to ${supportedLocales.find(l => l.code === suggestedLanguage)?.name}?`
-          )
-          
-          if (shouldSwitch) {
-            changeLanguage(suggestedLanguage)
-          }
+          // 直接自动切换到检测到的语言
+          console.log(`Auto-switching to ${suggestedLanguage} for country ${countryCode}`)
+          changeLanguage(suggestedLanguage)
         }
       } catch (error) {
         console.error('Language detection failed:', error)
