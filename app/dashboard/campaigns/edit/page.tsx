@@ -584,16 +584,16 @@ export default function EditCampaignPage() {
     toast.success('✨ Content applied to template!')
   }
 
-  const handleAdjustContent = (message: string) => {
-    // Add user's adjustment request to chat
+  const handleAdjustContent = (originalMessage: string) => {
+    // Set the original message back to the input for editing
+    setChatInput(originalMessage)
+    
+    // Add a system message to indicate adjustment mode
     setChatHistory(prev => [...prev, {
-      type: 'user',
-      message: `Adjust: ${message}`,
+      type: 'ai',
+      message: 'Please modify your request and I\'ll generate new content for you.',
       timestamp: new Date()
     }])
-    
-    // Trigger new AI generation with adjustment request
-    setChatInput(message)
   }
 
   const handleChatSubmit = async (e: React.FormEvent) => {
@@ -875,10 +875,7 @@ export default function EditCampaignPage() {
                               ✅ Accept
                             </button>
                             <button
-                              onClick={() => {
-                                const adjustment = prompt('What would you like to adjust?')
-                                if (adjustment) handleAdjustContent(adjustment)
-                              }}
+                              onClick={() => handleAdjustContent(chatHistory[chatHistory.length - 2]?.message || '')}
                               className="flex-1 px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
                             >
                               🔄 Adjust
