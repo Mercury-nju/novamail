@@ -386,19 +386,19 @@ export default function NewCampaignPage() {
         {/* Template Carousel */}
         <div className="relative">
           {/* Navigation Arrows */}
-          <button
+                    <button
             onClick={handlePrevTemplate}
             className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full shadow-xl flex items-center justify-center text-gray-600 hover:text-blue-600 hover:shadow-2xl hover:scale-110 transition-all duration-300 group"
           >
             <ArrowLeftIcon className="h-6 w-6 group-hover:scale-110 transition-transform duration-200" />
-          </button>
+                    </button>
 
-          <button
+                    <button
             onClick={handleNextTemplate}
             className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full shadow-xl flex items-center justify-center text-gray-600 hover:text-blue-600 hover:shadow-2xl hover:scale-110 transition-all duration-300 group"
           >
             <ArrowRightIcon className="h-6 w-6 group-hover:scale-110 transition-transform duration-200" />
-          </button>
+                    </button>
 
           {/* Template Display */}
           <motion.div
@@ -497,8 +497,17 @@ export default function NewCampaignPage() {
                   </div>
                   <div className="p-4 max-h-96 overflow-y-auto">
                     <div 
-                      className="w-full transform scale-90 origin-top"
-                      dangerouslySetInnerHTML={{ __html: currentTemplate.htmlContent }}
+                      className="w-full transform scale-90 origin-top pointer-events-none"
+                      dangerouslySetInnerHTML={{ 
+                        __html: currentTemplate.htmlContent.replace(
+                          /<a\s+([^>]*?)>/gi, 
+                          '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">'
+                        )
+                      }}
+                      style={{ 
+                        userSelect: 'none',
+                        '--preview-mode': 'true'
+                      } as React.CSSProperties}
                     />
                   </div>
                   </div>

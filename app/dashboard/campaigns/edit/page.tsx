@@ -616,8 +616,17 @@ export default function EditCampaignPage() {
                     title="Click to edit email content"
                   >
                     <div 
-                      className="w-full"
-                      dangerouslySetInnerHTML={{ __html: campaignData.body }}
+                      className="w-full pointer-events-none"
+                      dangerouslySetInnerHTML={{ 
+                        __html: campaignData.body.replace(
+                          /<a\s+([^>]*?)>/gi, 
+                          '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">'
+                        )
+                      }}
+                      style={{ 
+                        userSelect: 'none',
+                        '--preview-mode': 'true'
+                      } as React.CSSProperties}
                     />
                   </div>
                 )}
