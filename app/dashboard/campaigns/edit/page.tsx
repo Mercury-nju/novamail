@@ -45,6 +45,7 @@ export default function EditCampaignPage() {
   
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSending, setIsSending] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const [chatHistory, setChatHistory] = useState<Array<{type: 'user' | 'ai', message: string, timestamp: Date}>>([])
   const [campaignData, setCampaignData] = useState<CampaignData>({
@@ -662,6 +663,30 @@ export default function EditCampaignPage() {
     }
   }
 
+  const handleSaveDraft = async () => {
+    if (isSaving) return
+    
+    try {
+      setIsSaving(true)
+      toast.loading('💾 Saving draft...', { id: 'save-draft' })
+      
+      // Save to localStorage for now (in a real app, this would be saved to a database)
+      const draftData = {
+        ...campaignData,
+        chatHistory,
+        savedAt: new Date().toISOString()
+      }
+      
+      localStorage.setItem(`draft-${templateId}`, JSON.stringify(draftData))
+      
+      toast.success('✅ Draft saved successfully!', { id: 'save-draft' })
+    } catch (error) {
+      toast.error('❌ Failed to save draft. Please try again.', { id: 'save-draft' })
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   const handleSendCampaign = async () => {
     if (isSending) return
     
@@ -718,18 +743,20 @@ export default function EditCampaignPage() {
             
             <div className="flex items-center space-x-3">
               <motion.button
-                onClick={handleSendCampaign}
-                disabled={isSending}
-                whileHover={!isSending ? { scale: 1.05 } : {}}
-                whileTap={!isSending ? { scale: 0.95 } : {}}
-                className={`inline-flex items-center px-6 py-3 font-semibold rounded-lg transition-all duration-200 shadow-lg ${
-                  isSending 
+                onClick={handleSaveDraft}
+                disabled={isSaving}
+                whileHover={!isSaving ? { scale: 1.05 } : {}}
+                whileTap={!isSaving ? { scale: 0.95 } : {}}
+                className={`inline-flex items-center px-4 py-2 font-medium rounded-lg transition-all duration-200 ${
+                  isSaving 
                     ? 'bg-gray-400 text-white cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-green-600 to-blue-600 text-white hover:from-green-700 hover:to-blue-700 hover:shadow-xl'
+                    : 'bg-gray-600 text-white hover:bg-gray-700'
                 }`}
               >
-                <PaperAirplaneIcon className={`h-5 w-5 mr-2 ${isSending ? 'animate-bounce' : ''}`} />
-                {isSending ? 'Sending...' : 'Send Campaign'}
+                <svg className={`h-4 w-4 mr-2 ${isSaving ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                {isSaving ? 'Saving...' : 'Save Draft'}
               </motion.button>
             </div>
           </div>
@@ -824,25 +851,9 @@ export default function EditCampaignPage() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             {/* Fixed Header */}
             <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{currentTemplate.name}</h3>
-                  <p className="text-sm text-gray-500">{currentTemplate.description}</p>
-                </div>
-                <motion.button
-                  onClick={handleSendCampaign}
-                  disabled={isSending}
-                  whileHover={!isSending ? { scale: 1.05 } : {}}
-                  whileTap={!isSending ? { scale: 0.95 } : {}}
-                  className={`inline-flex items-center px-4 py-2 font-semibold rounded-lg transition-all duration-200 shadow-lg ${
-                    isSending 
-                      ? 'bg-gray-400 text-white cursor-not-allowed' 
-                      : 'bg-gradient-to-r from-green-600 to-blue-600 text-white hover:from-green-700 hover:to-blue-700 hover:shadow-xl'
-                  }`}
-                >
-                  <PaperAirplaneIcon className={`h-4 w-4 mr-2 ${isSending ? 'animate-bounce' : ''}`} />
-                  {isSending ? 'Sending...' : 'Send Email'}
-                </motion.button>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">{currentTemplate.name}</h3>
+                <p className="text-sm text-gray-500">{currentTemplate.description}</p>
               </div>
             </div>
             
@@ -881,6 +892,37 @@ export default function EditCampaignPage() {
               <p className="text-xs text-gray-500 text-center">
                 💡 Click anywhere in the email to edit directly. AI changes will appear here automatically.
               </p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Bottom Action Bar */}
+        <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-gray-500">
+              Ready to send your email campaign?
+            </div>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={handleBack}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <motion.button
+                onClick={handleSendCampaign}
+                disabled={isSending}
+                whileHover={!isSending ? { scale: 1.05 } : {}}
+                whileTap={!isSending ? { scale: 0.95 } : {}}
+                className={`inline-flex items-center px-6 py-3 font-semibold rounded-lg transition-all duration-200 shadow-lg ${
+                  isSending 
+                    ? 'bg-gray-400 text-white cursor-not-allowed' 
+                    : 'bg-gradient-to-r from-green-600 to-blue-600 text-white hover:from-green-700 hover:to-blue-700 hover:shadow-xl'
+                }`}
+              >
+                <PaperAirplaneIcon className={`h-5 w-5 mr-2 ${isSending ? 'animate-bounce' : ''}`} />
+                {isSending ? 'Sending...' : 'Send Email Campaign'}
+              </motion.button>
             </div>
           </div>
         </div>
