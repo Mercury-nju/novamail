@@ -13,7 +13,13 @@ import { useTranslation } from '@/lib/i18n'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function Dashboard() {
-  const { t } = useTranslation()
+  const { t, loading, locale } = useTranslation()
+  
+  // Debug info
+  console.log('Dashboard - Current locale:', locale)
+  console.log('Dashboard - Loading:', loading)
+  console.log('Dashboard - Translation test:', t('nav.home'))
+  
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -27,6 +33,7 @@ export default function Dashboard() {
               <div>
                 <h1 className="text-lg font-medium text-gray-900">NovaMail</h1>
                 <p className="text-xs text-gray-500">{t('dashboard.title')}</p>
+                <p className="text-xs text-red-500">Debug: {locale} | Loading: {loading ? 'Yes' : 'No'}</p>
               </div>
             </div>
             <LanguageSwitcher />

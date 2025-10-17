@@ -14,12 +14,13 @@ import {
   CheckIcon,
   EyeIcon
 } from '@heroicons/react/24/outline'
-import { useAutoLanguageDetection } from '@/lib/i18n'
+import { useAutoLanguageDetection, useTranslation } from '@/lib/i18n'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function HomePage() {
   const router = useRouter()
   useAutoLanguageDetection() // 自动检测用户语言
+  const { t, loading, locale } = useTranslation() // 添加翻译功能
   const { scrollYProgress } = useScroll()
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -245,7 +246,7 @@ export default function HomePage() {
                 whileTap={{ scale: 0.98 }}
               >
                 <Link href="/pricing" className="text-gray-700 hover:text-gray-900 transition-all duration-300 py-2 px-4 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/25 hover:border-white/40 shadow-xl hover:shadow-2xl">
-                  Pricing
+                  {t('nav.pricing', 'Pricing')}
                 </Link>
               </motion.div>
               <motion.div 
@@ -277,7 +278,7 @@ export default function HomePage() {
                 whileTap={{ scale: 0.98 }}
               >
                 <Link href="/login" className="text-gray-700 hover:text-gray-900 transition-all duration-300 py-2 px-4 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/25 hover:border-white/40 shadow-xl hover:shadow-2xl">
-                  Sign In
+                  {t('nav.login', 'Sign In')}
                 </Link>
               </motion.div>
               <motion.div 
@@ -303,7 +304,7 @@ export default function HomePage() {
                 onClick={handleGetStarted}
               >
                 <button className="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-blue-800 hover:to-purple-700 text-white px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 cursor-pointer">
-                  Get Started
+                  {t('hero.cta', 'Get Started')}
                 </button>
               </motion.div>
             </div>
@@ -480,6 +481,10 @@ export default function HomePage() {
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center flex flex-col justify-center min-h-[60vh]">
+            {/* Debug Info */}
+            <div className="mb-4 p-2 bg-red-100 rounded text-xs text-red-600">
+              Debug: Locale={locale} | Loading={loading ? 'Yes' : 'No'} | Test={t('nav.home', 'Home')}
+            </div>
             <motion.h1 
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}

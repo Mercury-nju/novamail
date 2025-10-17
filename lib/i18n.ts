@@ -41,11 +41,17 @@ export const getUserLocation = async (): Promise<string> => {
 
 // 翻译函数
 export const useTranslation = () => {
-  const [translations, setTranslations] = useState<any>({})
+  const [translations, setTranslations] = useState<any>(getHardcodedTranslations('en'))
   const [loading, setLoading] = useState(true)
   const [locale, setLocale] = useState('en')
 
   useEffect(() => {
+    // 只在客户端运行
+    if (typeof window === 'undefined') {
+      setLoading(false)
+      return
+    }
+    
     // 从localStorage获取保存的语言设置
     const savedLocale = localStorage.getItem('novaMail-locale') || 'en'
     setLocale(savedLocale)
@@ -53,6 +59,8 @@ export const useTranslation = () => {
     const loadTranslations = async (targetLocale: string) => {
       try {
         console.log(`Loading translations for locale: ${targetLocale}`)
+        
+        // 在客户端使用相对路径
         const response = await fetch(`/locales/${targetLocale}/common.json`)
         
         if (!response.ok) {
@@ -68,7 +76,7 @@ export const useTranslation = () => {
         // 回退到英文
         try {
           console.log('Falling back to English translations')
-          const response = await fetch('/locales/en/common.json')
+          const response = await fetch(`/locales/en/common.json`)
           if (response.ok) {
             const data = await response.json()
             setTranslations(data)
@@ -114,11 +122,14 @@ export const useTranslation = () => {
       if (value && typeof value === 'object' && k in value) {
         value = value[k]
       } else {
+        console.log(`Translation key not found: ${key}, using fallback: ${fallback || key}`)
         return fallback || key
       }
     }
     
-    return typeof value === 'string' ? value : (fallback || key)
+    const result = typeof value === 'string' ? value : (fallback || key)
+    console.log(`Translation for ${key}: ${result}`)
+    return result
   }
 
   return { t, loading, locale }
