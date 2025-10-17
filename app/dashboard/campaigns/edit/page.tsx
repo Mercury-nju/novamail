@@ -50,7 +50,15 @@ export default function EditCampaignPage() {
   const [isSending, setIsSending] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [chatInput, setChatInput] = useState('')
-  const [chatHistory, setChatHistory] = useState<Array<{type: 'user' | 'ai', message: string, timestamp: Date}>>([])
+  const [chatHistory, setChatHistory] = useState<Array<{
+    type: 'user' | 'ai'
+    message: string
+    timestamp: Date
+    generatedContent?: {
+      subject: string
+      htmlContent: string
+    }
+  }>>([])
   const [campaignData, setCampaignData] = useState<CampaignData>({
     templateId: templateId || '',
     subject: '',
@@ -558,6 +566,36 @@ export default function EditCampaignPage() {
     setCampaignData(prev => ({ ...prev, body: newContent }))
   }
 
+  const handleAcceptContent = (generatedContent: { subject: string; htmlContent: string }) => {
+    // Apply the generated content to the template
+    setCampaignData(prev => ({
+      ...prev,
+      subject: generatedContent.subject,
+      body: generatedContent.htmlContent
+    }))
+    
+    // Add acceptance message to chat
+    setChatHistory(prev => [...prev, {
+      type: 'ai',
+      message: '✅ Content has been applied to the template! You can continue editing or make new requests.',
+      timestamp: new Date()
+    }])
+    
+    toast.success('✨ Content applied to template!')
+  }
+
+  const handleAdjustContent = (message: string) => {
+    // Add user's adjustment request to chat
+    setChatHistory(prev => [...prev, {
+      type: 'user',
+      message: `Adjust: ${message}`,
+      timestamp: new Date()
+    }])
+    
+    // Trigger new AI generation with adjustment request
+    setChatInput(message)
+  }
+
   const handleChatSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!chatInput.trim() || isGenerating) return
@@ -598,30 +636,18 @@ export default function EditCampaignPage() {
       if (response.ok) {
         const result = await response.json()
         
-        // Update campaign data with AI generated content
-        if (result.subject) {
-          setCampaignData(prev => ({
-            ...prev,
-            subject: result.subject
-          }))
-        }
-        
-        if (result.htmlContent) {
-          setCampaignData(prev => ({
-            ...prev,
-            body: result.htmlContent
-          }))
-        }
-        
-        // Add AI response to chat history
-        const aiResponse = result.message || result.response || 'I\'ve updated your email content based on your request. The changes have been applied to the template on the right.'
+        // Add AI response to chat history with generated content
         setChatHistory(prev => [...prev, {
           type: 'ai',
-          message: aiResponse,
-          timestamp: new Date()
+          message: `I've created email content based on your request: "${userMessage}". Here's what I generated:`,
+          timestamp: new Date(),
+          generatedContent: {
+            subject: result.subject,
+            htmlContent: result.htmlContent
+          }
         }])
         
-        toast.success('✨ Email content generated and updated!', { id: 'ai-chat' })
+        toast.success('✨ Email content generated! Review and accept to apply.', { id: 'ai-chat' })
       } else {
         const errorData = await response.json().catch(() => ({}))
         throw new Error(errorData.error || 'Failed to generate content')
@@ -808,17 +834,59 @@ export default function EditCampaignPage() {
                     <p>Or: "Generate a promotional email for Black Friday sale"</p>
                     <p>Or: "Write a newsletter about company updates"</p>
                   </div>
+                  <div className="mt-3 p-2 bg-blue-50 rounded text-xs text-blue-700">
+                    💡 AI will show you the generated content. Click "Accept" to apply it to the template, or "Adjust" to make changes.
+                  </div>
                 </div>
               ) : (
                 chatHistory.map((message, index) => (
                   <div key={index} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] p-2 rounded-lg ${
+                    <div className={`max-w-[85%] p-3 rounded-lg ${
                       message.type === 'user' 
                         ? 'bg-blue-600 text-white' 
                         : 'bg-gray-100 text-gray-900'
                     }`}>
                       <p className="text-sm">{message.message}</p>
-                      <p className={`text-xs mt-1 ${
+                      
+                      {/* Show generated content if available */}
+                      {message.generatedContent && (
+                        <div className="mt-3 p-3 bg-white rounded border border-gray-200">
+                          <div className="mb-2">
+                            <label className="text-xs font-medium text-gray-500">Subject:</label>
+                            <p className="text-sm font-medium text-gray-900">{message.generatedContent.subject}</p>
+                          </div>
+                          <div className="mb-3">
+                            <label className="text-xs font-medium text-gray-500">Content Preview:</label>
+                            <div 
+                              className="text-xs text-gray-700 mt-1 max-h-20 overflow-hidden"
+                              dangerouslySetInnerHTML={{ 
+                                __html: message.generatedContent.htmlContent.substring(0, 200) + '...' 
+                              }}
+                            />
+                          </div>
+                          
+                          {/* Action buttons */}
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleAcceptContent(message.generatedContent!)}
+                              className="flex-1 px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 transition-colors"
+                            >
+                              ✅ Accept
+                            </button>
+                            <button
+                              onClick={() => {
+                                const adjustment = prompt('What would you like to adjust?')
+                                if (adjustment) handleAdjustContent(adjustment)
+                              }}
+                              className="flex-1 px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
+                            >
+                              🔄 Adjust
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <p className={`text-xs mt-2 ${
                         message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
                       }`}>
                         {message.timestamp.toLocaleTimeString()}
@@ -908,7 +976,7 @@ export default function EditCampaignPage() {
             {/* Fixed Footer */}
             <div className="p-3 border-t border-gray-200">
               <p className="text-xs text-gray-500 text-center">
-                💡 AI-generated content will appear here automatically. You can also click to edit directly.
+                💡 Accept AI-generated content from the chat to apply it here. You can also click to edit directly.
               </p>
             </div>
           </div>
