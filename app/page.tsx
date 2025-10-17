@@ -277,18 +277,6 @@ export default function HomePage() {
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Link href="/login" className="text-gray-700 hover:text-gray-900 transition-all duration-300 py-2 px-4 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/25 hover:border-white/40 shadow-xl hover:shadow-2xl">
-                  {t('nav.login', 'Sign In')}
-                </Link>
-              </motion.div>
-              <motion.div 
-                whileHover={{ 
-                  scale: 1.05,
-                  y: -2,
-                  transition: { type: "spring", stiffness: 300 }
-                }}
-                whileTap={{ scale: 0.98 }}
-              >
                 <div className="text-gray-700 hover:text-gray-900 transition-all duration-300 py-2 px-4 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/25 hover:border-white/40 shadow-xl hover:shadow-2xl">
                   <LanguageSwitcher />
                 </div>

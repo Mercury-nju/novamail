@@ -101,9 +101,6 @@ export default function AboutPage() {
               <Link href="/contact" className="text-gray-600 hover:text-gray-900">
                 Contact
               </Link>
-              <Link href="/login" className="text-gray-600 hover:text-gray-900">
-                Sign In
-              </Link>
               <Link href="/register" className="btn-primary">
                 Get Started
               </Link>
