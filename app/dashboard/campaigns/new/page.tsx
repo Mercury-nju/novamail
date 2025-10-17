@@ -63,59 +63,61 @@ export default function NewCampaignPage() {
       description: 'Contemporary design with vibrant gradients and bold typography',
       subject: '🚀 Introducing [Product Name] - The Future is Here',
       htmlContent: `
-        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 20px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">🚀 Introducing [Product Name]</h1>
-            <p style="color: white; margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">The Future is Here</p>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><defs><pattern id=\"grain\" width=\"100\" height=\"100\" patternUnits=\"userSpaceOnUse\"><circle cx=\"25\" cy=\"25\" r=\"1\" fill=\"white\" opacity=\"0.1\"/><circle cx=\"75\" cy=\"75\" r=\"1\" fill=\"white\" opacity=\"0.1\"/><circle cx=\"50\" cy=\"10\" r=\"0.5\" fill=\"white\" opacity=\"0.1\"/></pattern></defs><rect width=\"100\" height=\"100\" fill=\"url(%23grain)\"/></svg>'); opacity: 0.3;"></div>
+            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px; position: relative; z-index: 1;">Introducing NovaAI</h1>
+            <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0 0; font-size: 16px; font-weight: 300; position: relative; z-index: 1;">The Future of Email Marketing</p>
           </div>
           
-          <div style="padding: 30px 20px;">
-            <p style="color: #333; font-size: 14px; line-height: 1.5; margin-bottom: 15px;">
-              Dear [Customer Name],
+          <div style="padding: 40px 30px;">
+            <p style="color: #1a202c; font-size: 16px; line-height: 1.6; margin-bottom: 20px; font-weight: 400;">
+              Hi [Customer Name],
             </p>
             
-            <p style="color: #333; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
-              I'm excited to announce the launch of <strong>[Product Name]</strong>, a revolutionary solution that will transform how you [solve problem].
+            <p style="color: #2d3748; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
+              We're thrilled to announce the launch of <strong style="color: #667eea;">NovaAI</strong>, our revolutionary AI-powered email marketing platform that will transform how you connect with your audience.
             </p>
             
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0;">
-              <h3 style="color: #333; margin: 0 0 12px 0; font-size: 16px;">What makes [Product Name] special:</h3>
-              <ul style="color: #555; margin: 0; padding-left: 16px; font-size: 13px;">
-                <li style="margin-bottom: 6px;">[Key Benefit 1]</li>
-                <li style="margin-bottom: 6px;">[Key Benefit 2]</li>
-                <li style="margin-bottom: 6px;">[Key Benefit 3]</li>
+            <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 24px; border-radius: 12px; margin: 24px 0; border-left: 4px solid #667eea;">
+              <h3 style="color: #2d3748; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">What makes NovaAI special:</h3>
+              <ul style="color: #4a5568; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
+                <li style="margin-bottom: 8px;">AI-powered content generation that writes like a human</li>
+                <li style="margin-bottom: 8px;">Advanced personalization that increases engagement by 300%</li>
+                <li style="margin-bottom: 8px;">Smart analytics that predict customer behavior</li>
               </ul>
             </div>
             
-            <div style="background: linear-gradient(135deg, #ff6b6b, #ee5a24); padding: 20px; border-radius: 6px; text-align: center; margin: 20px 0;">
-              <h3 style="color: white; margin: 0 0 8px 0; font-size: 16px;">🎯 Early Bird Offer</h3>
-              <p style="color: white; margin: 0; font-size: 13px;">
-                For the first 100 customers, we're offering [Product Name] at <strong>50% off</strong> the regular price.
+            <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); padding: 24px; border-radius: 12px; text-align: center; margin: 24px 0; position: relative; overflow: hidden;">
+              <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); animation: pulse 2s infinite;"></div>
+              <h3 style="color: white; margin: 0 0 12px 0; font-size: 18px; font-weight: 600; position: relative; z-index: 1;">🎯 Early Access Offer</h3>
+              <p style="color: white; margin: 0; font-size: 15px; position: relative; z-index: 1;">
+                Join 10,000+ marketers already using NovaAI. Get <strong>50% off</strong> your first year.
               </p>
-              <p style="color: white; margin: 8px 0 0 0; font-size: 12px; opacity: 0.9;">
-                This exclusive offer expires in 48 hours.
+              <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 13px; position: relative; z-index: 1;">
+                Limited time offer - expires in 48 hours
               </p>
             </div>
             
-            <div style="text-align: center; margin: 25px 0;">
-              <a href="[Target URL]" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 14px;">
-                Get [Product Name] Now
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="#" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4); transition: all 0.3s ease;">
+                Start Your Free Trial
               </a>
             </div>
             
-            <div style="background: #e8f4fd; padding: 16px; border-radius: 6px; margin: 20px 0;">
-              <h4 style="color: #333; margin: 0 0 8px 0; font-size: 14px;">Why now?</h4>
-              <p style="color: #555; margin: 0; font-size: 12px;">[Social proof or urgency reason]</p>
+            <div style="background: #e6fffa; padding: 20px; border-radius: 8px; margin: 24px 0; border: 1px solid #b2f5ea;">
+              <h4 style="color: #234e52; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">Why choose NovaAI?</h4>
+              <p style="color: #2c7a7b; margin: 0; font-size: 14px; line-height: 1.5;">Over 10,000 businesses trust NovaAI to power their email marketing. Join industry leaders like Shopify, Stripe, and Notion.</p>
             </div>
             
-            <p style="color: #333; font-size: 14px; line-height: 1.5; margin: 20px 0;">
-              Don't miss out on this opportunity to be among the first to experience the future.
+            <p style="color: #4a5568; font-size: 15px; line-height: 1.6; margin: 24px 0;">
+              Ready to revolutionize your email marketing? Let's get started.
             </p>
             
-            <p style="color: #333; font-size: 14px; line-height: 1.5; margin: 25px 0 0 0;">
+            <p style="color: #2d3748; font-size: 15px; line-height: 1.6; margin: 32px 0 0 0;">
               Best regards,<br>
-              [Your Name]<br>
-              [Company Name]
+              <strong>The NovaAI Team</strong><br>
+              <span style="color: #667eea;">NovaMail</span>
             </p>
           </div>
         </div>
@@ -131,76 +133,49 @@ export default function NewCampaignPage() {
       description: 'Clean, minimalist design with plenty of white space and elegant typography',
       subject: 'Welcome to [Company Name] - Let\'s Get Started!',
       htmlContent: `
-        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <div style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); padding: 30px 20px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">👋 Welcome to [Company Name]</h1>
-            <p style="color: white; margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">Let's Get Started!</p>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          <div style="background: #ffffff; padding: 60px 40px 40px 40px; text-align: center; border-bottom: 1px solid #f0f0f0;">
+            <h1 style="color: #1a1a1a; margin: 0; font-size: 28px; font-weight: 300; letter-spacing: -0.5px;">Welcome to NovaMail</h1>
+            <p style="color: #666666; margin: 16px 0 0 0; font-size: 16px; font-weight: 300;">Let's get you started</p>
           </div>
           
-          <div style="padding: 40px 30px;">
-            <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          <div style="padding: 60px 40px;">
+            <p style="color: #1a1a1a; font-size: 16px; line-height: 1.6; margin-bottom: 32px; font-weight: 300;">
               Hi [Customer Name],
             </p>
             
-            <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
-              Welcome to <strong>[Company Name]</strong>! We're thrilled to have you on board.
+            <p style="color: #333333; font-size: 16px; line-height: 1.7; margin-bottom: 40px; font-weight: 300;">
+              Welcome to NovaMail. We're excited to have you join thousands of businesses already using our platform to create beautiful, effective email campaigns.
             </p>
             
-            <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin: 25px 0;">
-              <h3 style="color: #333; margin: 0 0 20px 0; font-size: 18px;">Your journey starts here:</h3>
-              
-              <div style="margin-bottom: 20px;">
-                <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                  <div style="width: 30px; height: 30px; background: #4ecdc4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                    <span style="color: white; font-weight: bold;">1</span>
-                  </div>
-                  <div>
-                    <h4 style="color: #333; margin: 0; font-size: 16px;">Complete your profile</h4>
-                    <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Help us personalize your experience</p>
-                  </div>
-                </div>
-                
-                <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                  <div style="width: 30px; height: 30px; background: #4ecdc4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                    <span style="color: white; font-weight: bold;">2</span>
-                  </div>
-                  <div>
-                    <h4 style="color: #333; margin: 0; font-size: 16px;">Explore our features</h4>
-                    <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Take a tour of what [Company Name] can do for you</p>
-                  </div>
-                </div>
-                
-                <div style="display: flex; align-items: center;">
-                  <div style="width: 30px; height: 30px; background: #4ecdc4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                    <span style="color: white; font-weight: bold;">3</span>
-                  </div>
-                  <div>
-                    <h4 style="color: #333; margin: 0; font-size: 16px;">Connect with our community</h4>
-                    <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Join thousands of successful users</p>
-                  </div>
-                </div>
-              </div>
+            <div style="background: #fafafa; padding: 32px; margin: 40px 0; border-left: 2px solid #e0e0e0;">
+              <h3 style="color: #1a1a1a; margin: 0 0 20px 0; font-size: 18px; font-weight: 400;">Your next steps</h3>
+              <ol style="color: #555555; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6; font-weight: 300;">
+                <li style="margin-bottom: 12px;">Complete your profile setup</li>
+                <li style="margin-bottom: 12px;">Choose your first template</li>
+                <li style="margin-bottom: 12px;">Import your contact list</li>
+                <li style="margin-bottom: 12px;">Send your first campaign</li>
+              </ol>
             </div>
             
-            <div style="background: #e8f4fd; padding: 20px; border-radius: 8px; margin: 25px 0;">
-              <h4 style="color: #333; margin: 0 0 10px 0; font-size: 16px;">💡 Pro tip:</h4>
-              <p style="color: #555; margin: 0; font-size: 14px;">[Helpful tip for new users]</p>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="[Target URL]" style="display: inline-block; background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 16px;">
-                Get Started Now
+            <div style="text-align: center; margin: 48px 0;">
+              <a href="#" style="display: inline-block; background: #1a1a1a; color: white; padding: 16px 32px; text-decoration: none; border-radius: 0; font-weight: 400; font-size: 16px; letter-spacing: 0.5px;">
+                Get Started
               </a>
             </div>
             
-            <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 25px 0;">
-              We're excited to see what you'll accomplish with [Company Name]!
+            <div style="border-left: 2px solid #e0e0e0; padding-left: 24px; margin: 40px 0;">
+              <h3 style="color: #1a1a1a; margin: 0 0 12px 0; font-size: 16px; font-weight: 400;">Need help?</h3>
+              <p style="color: #666666; margin: 0; font-size: 14px; line-height: 1.5; font-weight: 300;">Visit our help center for guides, tutorials, and best practices.</p>
+            </div>
+            
+            <p style="color: #555555; font-size: 15px; line-height: 1.6; margin: 40px 0; font-weight: 300;">
+              We're here to help you succeed. If you have any questions, just reply to this email.
             </p>
             
-            <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 30px 0 0 0;">
-              Welcome aboard,<br>
-              [Your Name]<br>
-              [Company Name] Team
+            <p style="color: #1a1a1a; font-size: 15px; line-height: 1.6; margin: 48px 0 0 0; font-weight: 300;">
+              Best,<br>
+              The NovaMail Team
             </p>
           </div>
         </div>
@@ -216,54 +191,54 @@ export default function NewCampaignPage() {
       description: 'Professional business design with structured layout and corporate colors',
       subject: '[Company Name] Monthly Newsletter - [Month Year]',
       htmlContent: `
-        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 20px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">📰 [Company Name]</h1>
-            <p style="color: white; margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">Monthly Newsletter - [Month Year]</p>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 0; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <div style="background: #1e293b; padding: 40px 30px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">NovaMail</h1>
+            <p style="color: #94a3b8; margin: 8px 0 0 0; font-size: 14px; font-weight: 400;">Monthly Newsletter - December 2024</p>
           </div>
           
           <div style="padding: 40px 30px;">
-            <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+            <p style="color: #1e293b; font-size: 16px; line-height: 1.6; margin-bottom: 24px; font-weight: 400;">
               Dear [Subscriber Name],
             </p>
             
-            <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
-              Welcome to our <strong>[Month Year]</strong> newsletter! Here's what's happening at [Company Name]:
+            <p style="color: #334155; font-size: 16px; line-height: 1.7; margin-bottom: 32px; font-weight: 400;">
+              Welcome to our <strong>December 2024</strong> newsletter. This month, we're excited to share significant updates and insights from the NovaMail platform.
             </p>
             
-            <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin: 25px 0;">
-              <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">📈 This Month's Highlights:</h3>
-              <ul style="color: #555; margin: 0; padding-left: 20px;">
-                <li style="margin-bottom: 8px;">[Key Achievement 1]</li>
-                <li style="margin-bottom: 8px;">[Key Achievement 2]</li>
-                <li style="margin-bottom: 8px;">[Key Achievement 3]</li>
+            <div style="background: #f8fafc; padding: 24px; border-radius: 8px; margin: 24px 0; border: 1px solid #e2e8f0;">
+              <h3 style="color: #1e293b; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">This Month's Highlights</h3>
+              <ul style="color: #475569; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
+                <li style="margin-bottom: 8px;">Launched AI-powered email personalization features</li>
+                <li style="margin-bottom: 8px;">Achieved 99.9% email delivery rate across all campaigns</li>
+                <li style="margin-bottom: 8px;">Expanded integration support for 15+ CRM platforms</li>
               </ul>
             </div>
             
-            <div style="border-left: 4px solid #667eea; padding-left: 20px; margin: 25px 0;">
-              <h3 style="color: #333; margin: 0 0 10px 0; font-size: 18px;">🔍 Industry Insights:</h3>
-              <p style="color: #555; margin: 0; font-size: 14px;">[Industry news or insights]</p>
+            <div style="border-left: 4px solid #3b82f6; padding-left: 20px; margin: 24px 0;">
+              <h3 style="color: #1e293b; margin: 0 0 12px 0; font-size: 18px; font-weight: 600;">Industry Insights</h3>
+              <p style="color: #475569; margin: 0; font-size: 15px; line-height: 1.6;">Email marketing ROI increased by 42% in 2024, with personalized campaigns showing the highest engagement rates across all industries.</p>
             </div>
             
-            <div style="background: #e8f4fd; padding: 20px; border-radius: 8px; margin: 25px 0;">
-              <h4 style="color: #333; margin: 0 0 10px 0; font-size: 16px;">💡 Featured Content:</h4>
-              <p style="color: #555; margin: 0; font-size: 14px;">[Link to featured article or resource]</p>
+            <div style="background: #eff6ff; padding: 20px; border-radius: 8px; margin: 24px 0; border: 1px solid #bfdbfe;">
+              <h4 style="color: #1e40af; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">Featured Content</h4>
+              <p style="color: #1e40af; margin: 0; font-size: 14px; line-height: 1.5;">Read our latest case study: "How TechCorp Increased Email Engagement by 300% with NovaMail"</p>
             </div>
             
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="[Target URL]" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 16px;">
-                Read More
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="#" style="display: inline-block; background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px;">
+                Read Full Report
               </a>
             </div>
             
-            <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 25px 0;">
-              Thank you for being part of our community. We value your feedback and suggestions.
+            <p style="color: #475569; font-size: 15px; line-height: 1.6; margin: 24px 0; font-weight: 400;">
+              Thank you for being part of our community. We value your feedback and suggestions for improving our platform.
             </p>
             
-            <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 30px 0 0 0;">
+            <p style="color: #1e293b; font-size: 15px; line-height: 1.6; margin: 32px 0 0 0; font-weight: 400;">
               Best regards,<br>
-              [Your Name]<br>
-              [Company Name]
+              <strong>The NovaMail Team</strong><br>
+              <span style="color: #64748b; font-size: 14px;">Marketing Department</span>
             </p>
           </div>
         </div>
