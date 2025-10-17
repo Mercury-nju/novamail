@@ -176,8 +176,115 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* Our Values */}
+      {/* Technology Stack */}
       <div className="bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Technology Stack</h2>
+            <p className="text-lg text-gray-600">Built with modern, scalable technologies</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Frontend */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="bg-gray-50 rounded-lg p-6"
+            >
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Frontend</h3>
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">Next.js 14</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">React 18</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">TypeScript</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">Tailwind CSS</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">Framer Motion</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Backend */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="bg-gray-50 rounded-lg p-6"
+            >
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Backend & Infrastructure</h3>
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">Cloudflare Workers</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">Cloudflare KV</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">Prisma ORM</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">SQLite Database</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">Edge Computing</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* AI & Services */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="bg-gray-50 rounded-lg p-6"
+            >
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">AI & External Services</h3>
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">DashScope AI</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">Resend API</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">Google OAuth</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">Creem Payment</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                  <span className="text-gray-700">Stripe Integration</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* Our Values */}
+      <div className="bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Values</h2>
@@ -204,7 +311,8 @@ export default function AboutPage() {
       </div>
 
       {/* Our Team */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
           <p className="text-lg text-gray-600">The passionate people behind NovaMail</p>
@@ -225,10 +333,11 @@ export default function AboutPage() {
             </motion.div>
           ))}
         </div>
+        </div>
       </div>
 
       {/* Timeline */}
-      <div className="bg-white">
+      <div className="bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Journey</h2>
@@ -261,7 +370,8 @@ export default function AboutPage() {
       </div>
 
       {/* Stats */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -295,6 +405,7 @@ export default function AboutPage() {
             <div className="text-3xl font-bold text-primary-600 mb-2">24/7</div>
             <div className="text-gray-600">Support</div>
           </motion.div>
+        </div>
         </div>
       </div>
 
