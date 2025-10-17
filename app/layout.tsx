@@ -23,6 +23,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script 
+          src="https://analytics.ahrefs.com/analytics.js" 
+          data-key="8ipI/r5zRTqBj/vH7uxp+w" 
+          async
+        />
+      </head>
       <body className={inter.className}>
         <Providers>
           {children}
