@@ -57,10 +57,10 @@ export default function NewCampaignPage() {
 
   const professionalTemplates: ProfessionalTemplate[] = [
     {
-      id: 'product-launch',
-      name: 'Product Launch Announcement',
-      category: 'Marketing',
-      description: 'Professional product launch email with compelling CTA and brand storytelling',
+      id: 'modern-gradient',
+      name: 'Modern Gradient',
+      category: 'Modern',
+      description: 'Contemporary design with vibrant gradients and bold typography',
       subject: '🚀 Introducing [Product Name] - The Future is Here',
       htmlContent: `
         <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -120,15 +120,15 @@ export default function NewCampaignPage() {
           </div>
         </div>
       `,
-      features: ['Brand Storytelling', 'Product Showcase', 'Strong CTA', 'Social Proof'],
+      features: ['Vibrant Gradients', 'Bold Typography', 'Modern Layout', 'Strong CTA'],
       isPopular: true,
       isNew: false
     },
     {
-      id: 'customer-onboarding',
-      name: 'Customer Onboarding Series',
-      category: 'Welcome',
-      description: 'Comprehensive onboarding sequence to guide new customers through your platform',
+      id: 'minimal-clean',
+      name: 'Minimal Clean',
+      category: 'Minimal',
+      description: 'Clean, minimalist design with plenty of white space and elegant typography',
       subject: 'Welcome to [Company Name] - Let\'s Get Started!',
       htmlContent: `
         <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -205,15 +205,15 @@ export default function NewCampaignPage() {
           </div>
         </div>
       `,
-      features: ['Step-by-step Guide', 'Resource Links', 'Personal Touch', 'Next Steps'],
+      features: ['Clean Typography', 'White Space', 'Elegant Layout', 'Subtle Colors'],
       isPopular: true,
       isNew: false
     },
     {
-      id: 'newsletter-professional',
-      name: 'Professional Newsletter',
-      category: 'Newsletter',
-      description: 'Clean, professional newsletter template for business communications',
+      id: 'corporate-professional',
+      name: 'Corporate Professional',
+      category: 'Corporate',
+      description: 'Professional business design with structured layout and corporate colors',
       subject: '[Company Name] Monthly Newsletter - [Month Year]',
       htmlContent: `
         <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -268,7 +268,7 @@ export default function NewCampaignPage() {
           </div>
         </div>
       `,
-      features: ['Clean Layout', 'Industry Insights', 'Company Updates', 'Exclusive Content'],
+      features: ['Structured Layout', 'Corporate Colors', 'Professional Tone', 'Business Focus'],
       isPopular: false,
       isNew: true
     }
@@ -304,12 +304,12 @@ export default function NewCampaignPage() {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Marketing': return 'bg-blue-100 text-blue-800'
-      case 'Welcome': return 'bg-green-100 text-green-800'
-      case 'Newsletter': return 'bg-purple-100 text-purple-800'
-      case 'Sales': return 'bg-red-100 text-red-800'
-      case 'Retention': return 'bg-yellow-100 text-yellow-800'
-      case 'Events': return 'bg-indigo-100 text-indigo-800'
+      case 'Modern': return 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800'
+      case 'Minimal': return 'bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800'
+      case 'Corporate': return 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800'
+      case 'Creative': return 'bg-gradient-to-r from-orange-100 to-yellow-100 text-orange-800'
+      case 'Elegant': return 'bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800'
+      case 'Bold': return 'bg-gradient-to-r from-red-100 to-rose-100 text-red-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }

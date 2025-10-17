@@ -62,9 +62,9 @@ export default function EditCampaignPage() {
 
   const professionalTemplates: ProfessionalTemplate[] = [
     {
-      id: 'product-launch',
-      name: 'Product Launch Announcement',
-      category: 'Marketing',
+      id: 'modern-gradient',
+      name: 'Modern Gradient',
+      category: 'Modern',
       description: 'Professional product launch email with compelling CTA and brand storytelling',
       subject: '🚀 Introducing [Product Name] - The Future is Here',
       htmlContent: `
@@ -130,9 +130,9 @@ export default function EditCampaignPage() {
       isNew: false
     },
     {
-      id: 'customer-onboarding',
-      name: 'Customer Onboarding Series',
-      category: 'Welcome',
+      id: 'minimal-clean',
+      name: 'Minimal Clean',
+      category: 'Minimal',
       description: 'Comprehensive onboarding sequence to guide new customers through your platform',
       subject: 'Welcome to [Company Name] - Let\'s Get Started!',
       htmlContent: `
@@ -189,9 +189,9 @@ export default function EditCampaignPage() {
       isNew: false
     },
     {
-      id: 'newsletter-professional',
-      name: 'Professional Newsletter',
-      category: 'Newsletter',
+      id: 'corporate-professional',
+      name: 'Corporate Professional',
+      category: 'Corporate',
       description: 'Clean, professional newsletter template for business communications',
       subject: '[Company Name] Monthly Newsletter - [Month Year]',
       htmlContent: `
