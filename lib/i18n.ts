@@ -155,6 +155,9 @@ function getHardcodedTranslations(locale: string) {
 
 // 语言切换函数
 export const changeLanguage = (locale: string) => {
+  // 只在客户端运行
+  if (typeof window === 'undefined') return
+  
   // 保存到localStorage
   localStorage.setItem('novaMail-locale', locale)
   // 触发自定义事件来通知组件重新加载翻译
@@ -166,6 +169,9 @@ export const useAutoLanguageDetection = () => {
   const [detecting, setDetecting] = useState(false)
 
   useEffect(() => {
+    // 只在客户端运行
+    if (typeof window === 'undefined') return
+    
     const detectAndSetLanguage = async () => {
       // 检查是否已经设置过语言
       const savedLocale = localStorage.getItem('novaMail-locale')
