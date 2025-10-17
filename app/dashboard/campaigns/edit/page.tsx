@@ -46,6 +46,8 @@ export default function EditCampaignPage() {
   const [editingField, setEditingField] = useState<'subject' | 'content' | null>(null)
   const [editedContent, setEditedContent] = useState('')
   const [isEditingTemplate, setIsEditingTemplate] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [isSending, setIsSending] = useState(false)
   const [campaignData, setCampaignData] = useState<CampaignData>({
     templateId: templateId || '',
     subject: '',
@@ -324,8 +326,11 @@ export default function EditCampaignPage() {
   }
 
   const handleGenerateWithAI = async () => {
+    if (isGenerating) return
+    
     try {
-      toast.loading('Generating personalized content with AI...', { id: 'ai-generate' })
+      setIsGenerating(true)
+      toast.loading('🤖 AI is crafting your personalized content...', { id: 'ai-generate' })
       
       const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/ai/generate-email', {
         method: 'POST',
@@ -349,18 +354,23 @@ export default function EditCampaignPage() {
           subject: result.subject || prev.subject,
           body: result.htmlContent || prev.body
         }))
-        toast.success('AI-generated content applied!', { id: 'ai-generate' })
+        toast.success('✨ AI-generated content applied successfully!', { id: 'ai-generate' })
       } else {
         throw new Error('Failed to generate content')
       }
     } catch (error) {
-      toast.error('Failed to generate AI content. Please try again.', { id: 'ai-generate' })
+      toast.error('❌ Failed to generate AI content. Please try again.', { id: 'ai-generate' })
+    } finally {
+      setIsGenerating(false)
     }
   }
 
   const handleSendCampaign = async () => {
+    if (isSending) return
+    
     try {
-      toast.loading('Sending campaign...', { id: 'send-campaign' })
+      setIsSending(true)
+      toast.loading('📧 Sending your campaign...', { id: 'send-campaign' })
       
       const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/campaigns/send', {
         method: 'POST',
@@ -371,13 +381,18 @@ export default function EditCampaignPage() {
       })
 
       if (response.ok) {
-        toast.success('Campaign sent successfully!', { id: 'send-campaign' })
-        router.push('/dashboard/campaigns')
+        toast.success('🎉 Campaign sent successfully!', { id: 'send-campaign' })
+        // Add a small delay for better UX
+        setTimeout(() => {
+          router.push('/dashboard/campaigns')
+        }, 1000)
       } else {
         throw new Error('Failed to send campaign')
       }
     } catch (error) {
-      toast.error('Failed to send campaign. Please try again.', { id: 'send-campaign' })
+      toast.error('❌ Failed to send campaign. Please try again.', { id: 'send-campaign' })
+    } finally {
+      setIsSending(false)
     }
   }
 
@@ -405,13 +420,20 @@ export default function EditCampaignPage() {
             </div>
             
             <div className="flex items-center space-x-3">
-              <button
+              <motion.button
                 onClick={handleSendCampaign}
-                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-blue-600 text-white font-semibold rounded-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                disabled={isSending}
+                whileHover={!isSending ? { scale: 1.05 } : {}}
+                whileTap={!isSending ? { scale: 0.95 } : {}}
+                className={`inline-flex items-center px-6 py-3 font-semibold rounded-lg transition-all duration-200 shadow-lg ${
+                  isSending 
+                    ? 'bg-gray-400 text-white cursor-not-allowed' 
+                    : 'bg-gradient-to-r from-green-600 to-blue-600 text-white hover:from-green-700 hover:to-blue-700 hover:shadow-xl'
+                }`}
               >
-                <PaperAirplaneIcon className="h-5 w-5 mr-2" />
-                Send Campaign
-              </button>
+                <PaperAirplaneIcon className={`h-5 w-5 mr-2 ${isSending ? 'animate-bounce' : ''}`} />
+                {isSending ? 'Sending...' : 'Send Campaign'}
+              </motion.button>
             </div>
           </div>
         </div>
@@ -510,10 +532,15 @@ export default function EditCampaignPage() {
                   </button>
                   <button
                     onClick={handleGenerateWithAI}
-                    className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-600 hover:text-green-700 border border-green-200 rounded-md hover:bg-green-50"
+                    disabled={isGenerating}
+                    className={`inline-flex items-center px-3 py-1 text-sm font-medium border rounded-md transition-all duration-200 ${
+                      isGenerating 
+                        ? 'text-gray-400 border-gray-200 bg-gray-50 cursor-not-allowed' 
+                        : 'text-green-600 hover:text-green-700 border-green-200 hover:bg-green-50'
+                    }`}
                   >
-                    <SparklesIcon className="h-4 w-4 mr-1" />
-                    AI Generate
+                    <SparklesIcon className={`h-4 w-4 mr-1 ${isGenerating ? 'animate-spin' : ''}`} />
+                    {isGenerating ? 'Generating...' : 'AI Generate'}
                   </button>
                 </div>
               </div>
