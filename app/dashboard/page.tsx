@@ -18,7 +18,7 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                 <SparklesIcon className="h-5 w-5 text-white" />
               </div>
                     <div>
@@ -41,7 +41,7 @@ export default function Dashboard() {
             {/* Hero Section */}
             <div className="mb-16">
               <h2 className="text-4xl font-light text-gray-900 mb-4">
-                Create Professional Email Templates
+                Create <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent font-medium">Professional</span> Email Templates
               </h2>
               
               <p className="text-gray-500 mb-12 max-w-lg mx-auto">
@@ -57,7 +57,7 @@ export default function Dashboard() {
             >
               <Link
                 href="/dashboard/campaigns/new"
-                className="inline-flex items-center px-6 py-3 bg-gray-900 text-white font-medium rounded-md hover:bg-gray-800 transition-all duration-200"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-md hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 Start Creating
                 <ArrowRightIcon className="h-4 w-4 ml-2" />
@@ -72,24 +72,24 @@ export default function Dashboard() {
               className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8"
             >
             <div className="text-center">
-                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <RocketLaunchIcon className="h-5 w-5 text-gray-600" />
+                <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <RocketLaunchIcon className="h-5 w-5 text-blue-600" />
                 </div>
                 <h3 className="font-medium text-gray-900 mb-2">Professional Templates</h3>
                 <p className="text-sm text-gray-500">Expertly designed templates for every business need</p>
             </div>
             
               <div className="text-center">
-                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <StarIcon className="h-5 w-5 text-gray-600" />
+                <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <StarIcon className="h-5 w-5 text-purple-600" />
                 </div>
                 <h3 className="font-medium text-gray-900 mb-2">Easy Customization</h3>
                 <p className="text-sm text-gray-500">Customize templates to match your brand perfectly</p>
               </div>
 
               <div className="text-center">
-                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <EnvelopeIcon className="h-5 w-5 text-gray-600" />
+                <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <EnvelopeIcon className="h-5 w-5 text-green-600" />
                 </div>
                 <h3 className="font-medium text-gray-900 mb-2">High Engagement</h3>
                 <p className="text-sm text-gray-500">Optimized for maximum open and click rates</p>

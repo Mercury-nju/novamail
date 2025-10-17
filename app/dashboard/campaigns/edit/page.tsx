@@ -520,22 +520,8 @@ export default function EditCampaignPage() {
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Live Email Editor</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Email Template Editor</h3>
                 <div className="flex space-x-2">
-                  <button
-                    onClick={() => handleEditField('subject')}
-                    className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-700 border border-blue-200 rounded-md hover:bg-blue-50"
-                  >
-                    <PencilIcon className="h-4 w-4 mr-1" />
-                    Edit Subject
-                  </button>
-                  <button
-                    onClick={() => handleEditField('content')}
-                    className="inline-flex items-center px-3 py-1 text-sm font-medium text-purple-600 hover:text-purple-700 border border-purple-200 rounded-md hover:bg-purple-50"
-                  >
-                    <PencilIcon className="h-4 w-4 mr-1" />
-                    Edit Content
-                  </button>
                   <button
                     onClick={handleGenerateWithAI}
                     disabled={isGenerating}
@@ -589,60 +575,54 @@ export default function EditCampaignPage() {
               
               {/* Live Email Preview with Inline Editing */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email Preview (Click to Edit):</label>
-                {editingField === 'content' ? (
-                  <div className="space-y-2">
-                    <textarea
-                      value={editedContent}
-                      onChange={(e) => setEditedContent(e.target.value)}
-                      className="w-full h-96 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono text-sm"
-                      placeholder="Enter HTML content..."
-                    />
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={handleSaveEdit}
-                        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                      >
-                        <CheckIcon className="h-4 w-4 mr-1 inline" />
-                        Save Changes
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-                      >
-                        <XMarkIcon className="h-4 w-4 mr-1 inline" />
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : (
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email Preview (Click text to edit):</label>
+                <div 
+                  className="bg-white border border-gray-200 rounded-md p-4 max-h-96 overflow-y-auto"
+                  style={{ 
+                    userSelect: 'none',
+                    '--preview-mode': 'true'
+                  } as React.CSSProperties}
+                >
                   <div 
-                    className="bg-gray-50 border border-gray-200 rounded-md p-4 max-h-96 overflow-y-auto cursor-pointer hover:bg-gray-100 transition-colors"
-                    onClick={() => handleEditField('content')}
-                    title="Click to edit email content"
+                    className="w-full pointer-events-none"
+                    dangerouslySetInnerHTML={{ 
+                      __html: campaignData.body.replace(
+                        /<a\s+([^>]*?)>/gi, 
+                        '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">'
+                      )
+                    }}
+                  />
+                </div>
+                
+                {/* Quick Edit Buttons */}
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <button
+                    onClick={() => handleEditField('subject')}
+                    className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-700 border border-blue-200 rounded-md hover:bg-blue-50"
                   >
-                    <div 
-                      className="w-full pointer-events-none"
-                      dangerouslySetInnerHTML={{ 
-                        __html: campaignData.body.replace(
-                          /<a\s+([^>]*?)>/gi, 
-                          '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">'
-                        )
-                      }}
-                      style={{ 
-                        userSelect: 'none',
-                        '--preview-mode': 'true'
-                      } as React.CSSProperties}
-                    />
-                  </div>
-                )}
+                    <PencilIcon className="h-4 w-4 mr-1" />
+                    Edit Subject
+                  </button>
+                  <button
+                    onClick={handleGenerateWithAI}
+                    disabled={isGenerating}
+                    className={`inline-flex items-center px-3 py-1 text-sm font-medium border rounded-md transition-all duration-200 ${
+                      isGenerating 
+                        ? 'text-gray-400 border-gray-200 bg-gray-50 cursor-not-allowed' 
+                        : 'text-green-600 hover:text-green-700 border-green-200 hover:bg-green-50'
+                    }`}
+                  >
+                    <SparklesIcon className={`h-4 w-4 mr-1 ${isGenerating ? 'animate-spin' : ''}`} />
+                    {isGenerating ? 'Generating...' : 'AI Generate'}
+                  </button>
+                </div>
               </div>
               
               {/* Real-time Updates Info */}
               <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                 <p className="text-sm text-blue-700">
                   💡 <strong>Tip:</strong> Changes to business information above will automatically update the email template. 
-                  Click on the subject line or email content to edit directly.
+                  Use the buttons below to edit the subject line or generate new content with AI.
                 </p>
               </div>
             </div>
