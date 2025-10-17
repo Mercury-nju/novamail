@@ -493,23 +493,7 @@ export default function HomePage() {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="text-gray-900"
               >
-                Your AI Copilot for 
-              </motion.span>
-              <motion.span 
-                initial={{ opacity: 0, scale: 0.8, rotateX: -90 }}
-                animate={{ 
-                  opacity: 1, 
-                  scale: 1,
-                  rotateX: 0
-                }}
-                transition={{ 
-                  duration: 1, 
-                  delay: 0.4,
-                  ease: "easeOut"
-                }}
-                className="bg-gradient-to-r from-primary-600 via-blue-600 to-purple-600 bg-clip-text text-transparent"
-              >
-                {' '}Email Marketing
+                {t('hero.title', 'Your AI Copilot for Email Marketing')}
               </motion.span>
             </motion.h1>
             
@@ -524,15 +508,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.9 }}
             >
-                Writes, designs, and sends stunning campaigns — all in minutes.
-            </motion.p>
-              <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.1 }}
-                className="text-lg md:text-xl"
-              >
-                Track results instantly and grow your audience effortlessly.
+                {t('hero.subtitle', 'Writes, designs, and sends stunning campaigns — all in minutes. Track results instantly and grow your audience effortlessly.')}
               </motion.p>
             </motion.div>
 
@@ -735,11 +711,10 @@ export default function HomePage() {
               transition={{ duration: 0.6 }}
               className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-6"
             >
-              Why Choose NovaMail
+              {t('features.title', 'Why Choose NovaMail')}
             </motion.span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              Everything you need to 
-              <span className="text-primary-600"> grow your business</span>
+              {t('features.subtitle', 'Everything you need to grow your business')}
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
               Powerful AI-driven features designed for modern email marketing. 
@@ -959,7 +934,7 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="inline-block px-4 py-2 bg-green-100 text-green-800 text-sm font-medium rounded-full mb-6"
             >
-              Simple & Effective
+              {t('features.simple', 'Simple & Effective')}
             </motion.span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
               Create <span className="text-green-600">Professional</span> Emails in Minutes
@@ -1330,7 +1305,7 @@ export default function HomePage() {
               transition={{ duration: 0.8 }}
               className="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
             >
-              What Our Users Say
+              {t('testimonials.title', 'What Our Users Say')}
             </motion.h2>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}

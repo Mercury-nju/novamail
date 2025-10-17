@@ -25,7 +25,7 @@ const notifyUpdate = () => {
 
 // 翻译Hook
 export const useTranslation = () => {
-  const [, forceUpdate] = useState({})
+  const [updateTrigger, setUpdateTrigger] = useState(0)
 
   useEffect(() => {
     // 只在客户端运行
@@ -37,7 +37,7 @@ export const useTranslation = () => {
     currentTranslations = getHardcodedTranslations(savedLocale)
 
     // 添加更新回调
-    const updateCallback = () => forceUpdate({})
+    const updateCallback = () => setUpdateTrigger(prev => prev + 1)
     updateCallbacks.push(updateCallback)
 
     return () => {
@@ -121,6 +121,14 @@ function getHardcodedTranslations(locale: string) {
         aiAssistant: 'AI助手', 
         chatPlaceholder: '描述您想要创建的邮件内容...', 
         saveDraft: '保存草稿' 
+      },
+      features: {
+        title: '为什么选择NovaMail',
+        subtitle: '发展业务所需的一切',
+        simple: '简单有效'
+      },
+      testimonials: {
+        title: '用户评价'
       },
       common: { 
         loading: '加载中...', 
@@ -266,16 +274,24 @@ function getHardcodedTranslations(locale: string) {
       chatPlaceholder: 'Describe the email content you want to create...', 
       saveDraft: 'Save Draft' 
     },
-  common: { 
-    loading: 'Loading...', 
-    error: 'Error', 
-    success: 'Success', 
-    save: 'Save', 
-    cancel: 'Cancel',
-    email: 'Email',
-    password: 'Password',
-    alreadyHaveAccount: 'Already have an account?'
-  }
+      features: {
+        title: 'Why Choose NovaMail',
+        subtitle: 'Everything you need to grow your business',
+        simple: 'Simple & Effective'
+      },
+      testimonials: {
+        title: 'What Our Users Say'
+      },
+      common: { 
+        loading: 'Loading...', 
+        error: 'Error', 
+        success: 'Success', 
+        save: 'Save', 
+        cancel: 'Cancel',
+        email: 'Email',
+        password: 'Password',
+        alreadyHaveAccount: 'Already have an account?'
+      }
   }
 }
 
