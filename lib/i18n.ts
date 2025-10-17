@@ -1,5 +1,6 @@
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+'use client'
+
+import { useState, useEffect } from 'react'
 
 // 支持的语言列表
 export const supportedLocales = [
@@ -12,114 +13,41 @@ export const supportedLocales = [
   { code: 'de', name: 'Deutsch', flag: '🇩🇪' }
 ]
 
-// 根据国家代码获取语言
-export const getLanguageByCountry = (countryCode: string): string => {
-  const countryLanguageMap: { [key: string]: string } = {
-    'US': 'en', 'GB': 'en', 'AU': 'en', 'CA': 'en',
-    'CN': 'zh', 'TW': 'zh', 'HK': 'zh', 'SG': 'zh',
-    'JP': 'ja',
-    'KR': 'ko',
-    'ES': 'es', 'MX': 'es', 'AR': 'es', 'CO': 'es',
-    'FR': 'fr', 'BE': 'fr',
-    'DE': 'de', 'AT': 'de', 'CH': 'de'
-  }
-  
-  return countryLanguageMap[countryCode] || 'en'
+// 全局状态
+let currentLocale = 'en'
+let currentTranslations = getHardcodedTranslations('en')
+let updateCallbacks: Array<() => void> = []
+
+// 通知所有组件更新
+const notifyUpdate = () => {
+  updateCallbacks.forEach(callback => callback())
 }
 
-// 获取用户地理位置
-export const getUserLocation = async (): Promise<string> => {
-  try {
-    const response = await fetch('https://ipapi.co/json/')
-    const data = await response.json()
-    return data.country_code || 'US'
-  } catch (error) {
-    console.error('Failed to get user location:', error)
-    return 'US'
-  }
-}
-
-// 翻译函数
+// 翻译Hook
 export const useTranslation = () => {
-  const [translations, setTranslations] = useState<any>(getHardcodedTranslations('en'))
-  const [loading, setLoading] = useState(true)
-  const [locale, setLocale] = useState('en')
+  const [, forceUpdate] = useState({})
 
   useEffect(() => {
     // 只在客户端运行
-    if (typeof window === 'undefined') {
-      setLoading(false)
-      return
-    }
-    
+    if (typeof window === 'undefined') return
+
     // 从localStorage获取保存的语言设置
     const savedLocale = localStorage.getItem('novaMail-locale') || 'en'
-    setLocale(savedLocale)
-    
-    const loadTranslations = async (targetLocale: string) => {
-      try {
-        console.log(`Loading translations for locale: ${targetLocale}`)
-        
-        // 在客户端使用相对路径
-        const response = await fetch(`/locales/${targetLocale}/common.json`)
-        
-        if (!response.ok) {
-          throw new Error(`Failed to load translations: ${response.status}`)
-        }
-        
-        const data = await response.json()
-        console.log('Loaded translations:', data)
-        setTranslations(data)
-        setLocale(targetLocale)
-        console.log(`Successfully set locale to: ${targetLocale}`)
-      } catch (error) {
-        console.error('Failed to load translations:', error)
-        // 回退到英文
-        try {
-          console.log('Falling back to English translations')
-          const response = await fetch(`/locales/en/common.json`)
-          if (response.ok) {
-            const data = await response.json()
-            setTranslations(data)
-            setLocale('en')
-            console.log('Successfully loaded English translations')
-          } else {
-            // 如果连英文都加载失败，使用硬编码的英文翻译
-            console.log('Using hardcoded English translations')
-            setTranslations(getHardcodedTranslations('en'))
-            setLocale('en')
-          }
-        } catch (fallbackError) {
-          console.error('Failed to load fallback translations:', fallbackError)
-          setTranslations(getHardcodedTranslations('en'))
-          setLocale('en')
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
+    currentLocale = savedLocale
+    currentTranslations = getHardcodedTranslations(savedLocale)
 
-    // 初始加载
-    loadTranslations(savedLocale)
+    // 添加更新回调
+    const updateCallback = () => forceUpdate({})
+    updateCallbacks.push(updateCallback)
 
-    // 监听语言变化事件
-    const handleLanguageChange = (event: CustomEvent) => {
-      const newLocale = event.detail.locale
-      console.log(`Language change event received: ${newLocale}`)
-      setLoading(true)
-      loadTranslations(newLocale)
-    }
-
-    window.addEventListener('languageChanged', handleLanguageChange as EventListener)
-    
     return () => {
-      window.removeEventListener('languageChanged', handleLanguageChange as EventListener)
+      updateCallbacks = updateCallbacks.filter(cb => cb !== updateCallback)
     }
   }, [])
 
   const t = (key: string, fallback?: string): string => {
     const keys = key.split('.')
-    let value = translations
+    let value: any = currentTranslations
     
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
@@ -132,28 +60,7 @@ export const useTranslation = () => {
     return typeof value === 'string' ? value : (fallback || key)
   }
 
-  return { t, loading, locale }
-}
-
-// 硬编码的英文翻译作为后备
-function getHardcodedTranslations(locale: string) {
-  if (locale === 'zh') {
-    return {
-      nav: { home: '首页', features: '功能', pricing: '价格', about: '关于', contact: '联系', login: '登录', register: '注册', dashboard: '控制台' },
-      hero: { title: 'AI驱动的邮件营销助手', subtitle: '使用AI创建精美的专业邮件模板并发送给您的受众', cta: '免费开始', learnMore: '了解更多' },
-      dashboard: { title: '控制台', welcome: '欢迎使用NovaMail', createEmail: '创建邮件' },
-      editor: { title: '邮件编辑器', aiAssistant: 'AI助手', chatPlaceholder: '描述您想要创建的邮件内容...', saveDraft: '保存草稿' },
-      common: { loading: '加载中...', error: '错误', success: '成功', save: '保存', cancel: '取消' }
-    }
-  }
-  
-  return {
-    nav: { home: 'Home', features: 'Features', pricing: 'Pricing', about: 'About', contact: 'Contact', login: 'Login', register: 'Register', dashboard: 'Dashboard' },
-    hero: { title: 'AI-Powered Email Marketing Assistant', subtitle: 'Create stunning professional email templates with AI and send them to your audience', cta: 'Get Started Free', learnMore: 'Learn More' },
-    dashboard: { title: 'Dashboard', welcome: 'Welcome to NovaMail', createEmail: 'Create Email' },
-    editor: { title: 'Email Editor', aiAssistant: 'AI Assistant', chatPlaceholder: 'Describe the email content you want to create...', saveDraft: 'Save Draft' },
-    common: { loading: 'Loading...', error: 'Error', success: 'Success', save: 'Save', cancel: 'Cancel' }
-  }
+  return { t, locale: currentLocale, loading: false }
 }
 
 // 语言切换函数
@@ -162,11 +69,208 @@ export const changeLanguage = (locale: string) => {
   if (typeof window === 'undefined') return
   
   console.log(`Changing language to: ${locale}`)
+  
+  // 更新全局状态
+  currentLocale = locale
+  currentTranslations = getHardcodedTranslations(locale)
+  
   // 保存到localStorage
   localStorage.setItem('novaMail-locale', locale)
-  // 触发自定义事件来通知组件重新加载翻译
-  window.dispatchEvent(new CustomEvent('languageChanged', { detail: { locale } }))
-  console.log(`Language change event dispatched for: ${locale}`)
+  
+  // 通知所有组件更新
+  notifyUpdate()
+  
+  console.log(`Language changed to: ${locale}`)
+}
+
+// 硬编码的翻译
+function getHardcodedTranslations(locale: string) {
+  if (locale === 'zh') {
+    return {
+      nav: { 
+        home: '首页', 
+        features: '功能', 
+        pricing: '价格', 
+        about: '关于', 
+        contact: '联系', 
+        login: '登录', 
+        register: '注册', 
+        dashboard: '控制台' 
+      },
+      hero: { 
+        title: 'AI驱动的邮件营销助手', 
+        subtitle: '使用AI创建精美的专业邮件模板并发送给您的受众', 
+        cta: '免费开始', 
+        learnMore: '了解更多' 
+      },
+      dashboard: { 
+        title: '控制台', 
+        welcome: '欢迎使用NovaMail', 
+        createEmail: '创建邮件',
+        subtitle: 'AI驱动的专业邮件营销平台',
+        professionalTemplates: '专业模板',
+        contactManagement: '联系人管理',
+        analytics: '数据分析',
+        aiAssistant: 'AI助手',
+        templateGeneration: '模板生成',
+        personalizedContent: '个性化内容',
+        performanceTracking: '性能跟踪'
+      },
+      editor: { 
+        title: '邮件编辑器', 
+        aiAssistant: 'AI助手', 
+        chatPlaceholder: '描述您想要创建的邮件内容...', 
+        saveDraft: '保存草稿' 
+      },
+      common: { 
+        loading: '加载中...', 
+        error: '错误', 
+        success: '成功', 
+        save: '保存', 
+        cancel: '取消' 
+      }
+    }
+  }
+  
+  if (locale === 'ja') {
+    return {
+      nav: { 
+        home: 'ホーム', 
+        features: '機能', 
+        pricing: '料金', 
+        about: 'について', 
+        contact: 'お問い合わせ', 
+        login: 'ログイン', 
+        register: '登録', 
+        dashboard: 'ダッシュボード' 
+      },
+      hero: { 
+        title: 'AI駆動のメールマーケティングアシスタント', 
+        subtitle: 'AIを使用して美しいプロフェッショナルなメールテンプレートを作成し、オーディエンスに送信', 
+        cta: '無料で始める', 
+        learnMore: '詳細を見る' 
+      },
+      dashboard: { 
+        title: 'ダッシュボード', 
+        welcome: 'NovaMailへようこそ', 
+        createEmail: 'メール作成',
+        subtitle: 'AI駆動のプロフェッショナルメールマーケティングプラットフォーム',
+        professionalTemplates: 'プロフェッショナルテンプレート',
+        contactManagement: '連絡先管理',
+        analytics: 'データ分析',
+        aiAssistant: 'AIアシスタント',
+        templateGeneration: 'テンプレート生成',
+        personalizedContent: 'パーソナライズコンテンツ',
+        performanceTracking: 'パフォーマンス追跡'
+      },
+      editor: { 
+        title: 'メールエディター', 
+        aiAssistant: 'AIアシスタント', 
+        chatPlaceholder: '作成したいメールコンテンツを説明してください...', 
+        saveDraft: '下書き保存' 
+      },
+      common: { 
+        loading: '読み込み中...', 
+        error: 'エラー', 
+        success: '成功', 
+        save: '保存', 
+        cancel: 'キャンセル' 
+      }
+    }
+  }
+  
+  if (locale === 'ko') {
+    return {
+      nav: { 
+        home: '홈', 
+        features: '기능', 
+        pricing: '가격', 
+        about: '소개', 
+        contact: '연락처', 
+        login: '로그인', 
+        register: '회원가입', 
+        dashboard: '대시보드' 
+      },
+      hero: { 
+        title: 'AI 기반 이메일 마케팅 어시스턴트', 
+        subtitle: 'AI를 사용하여 아름다운 전문 이메일 템플릿을 만들고 청중에게 전송', 
+        cta: '무료로 시작하기', 
+        learnMore: '자세히 보기' 
+      },
+      dashboard: { 
+        title: '대시보드', 
+        welcome: 'NovaMail에 오신 것을 환영합니다', 
+        createEmail: '이메일 만들기',
+        subtitle: 'AI 기반 전문 이메일 마케팅 플랫폼',
+        professionalTemplates: '전문 템플릿',
+        contactManagement: '연락처 관리',
+        analytics: '데이터 분석',
+        aiAssistant: 'AI 어시스턴트',
+        templateGeneration: '템플릿 생성',
+        personalizedContent: '개인화된 콘텐츠',
+        performanceTracking: '성능 추적'
+      },
+      editor: { 
+        title: '이메일 에디터', 
+        aiAssistant: 'AI 어시스턴트', 
+        chatPlaceholder: '만들고 싶은 이메일 콘텐츠를 설명해주세요...', 
+        saveDraft: '초안 저장' 
+      },
+      common: { 
+        loading: '로딩 중...', 
+        error: '오류', 
+        success: '성공', 
+        save: '저장', 
+        cancel: '취소' 
+      }
+    }
+  }
+  
+  // 默认英文
+  return {
+    nav: { 
+      home: 'Home', 
+      features: 'Features', 
+      pricing: 'Pricing', 
+      about: 'About', 
+      contact: 'Contact', 
+      login: 'Login', 
+      register: 'Register', 
+      dashboard: 'Dashboard' 
+    },
+    hero: { 
+      title: 'AI-Powered Email Marketing Assistant', 
+      subtitle: 'Create stunning professional email templates with AI and send them to your audience', 
+      cta: 'Get Started Free', 
+      learnMore: 'Learn More' 
+    },
+    dashboard: { 
+      title: 'Dashboard', 
+      welcome: 'Welcome to NovaMail', 
+      createEmail: 'Create Email',
+      subtitle: 'AI-Powered Professional Email Marketing Platform',
+      professionalTemplates: 'Professional Templates',
+      contactManagement: 'Contact Management',
+      analytics: 'Analytics',
+      aiAssistant: 'AI Assistant',
+      templateGeneration: 'Template Generation',
+      personalizedContent: 'Personalized Content',
+      performanceTracking: 'Performance Tracking'
+    },
+    editor: { 
+      title: 'Email Editor', 
+      aiAssistant: 'AI Assistant', 
+      chatPlaceholder: 'Describe the email content you want to create...', 
+      saveDraft: 'Save Draft' 
+    },
+    common: { 
+      loading: 'Loading...', 
+      error: 'Error', 
+      success: 'Success', 
+      save: 'Save', 
+      cancel: 'Cancel' 
+    }
+  }
 }
 
 // 自动检测并设置语言
@@ -184,13 +288,13 @@ export const useAutoLanguageDetection = () => {
       
       setDetecting(true)
       try {
-        const countryCode = await getUserLocation()
-        const suggestedLanguage = getLanguageByCountry(countryCode)
+        // 获取浏览器语言
+        const browserLang = navigator.language.split('-')[0]
+        const supportedCodes = supportedLocales.map(l => l.code)
         
-        if (suggestedLanguage !== 'en' && supportedLocales.some(l => l.code === suggestedLanguage)) {
-          // 直接自动切换到检测到的语言
-          console.log(`Auto-switching to ${suggestedLanguage} for country ${countryCode}`)
-          changeLanguage(suggestedLanguage)
+        if (supportedCodes.includes(browserLang)) {
+          console.log(`Auto-switching to ${browserLang} based on browser language`)
+          changeLanguage(browserLang)
         }
       } catch (error) {
         console.error('Language detection failed:', error)
