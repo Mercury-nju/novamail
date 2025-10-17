@@ -43,8 +43,6 @@ export default function EditCampaignPage() {
   const searchParams = useSearchParams()
   const templateId = searchParams.get('template')
   
-  const [editingElement, setEditingElement] = useState<string | null>(null)
-  const [editingValue, setEditingValue] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [campaignData, setCampaignData] = useState<CampaignData>({
@@ -545,63 +543,13 @@ export default function EditCampaignPage() {
     }
   }, [currentTemplate, campaignData.businessName, campaignData.productService, campaignData.targetAudience, campaignData.targetUrl])
 
-  // Add global edit handler
-  useEffect(() => {
-    const handleGlobalEdit = (elementId: string, currentValue: string) => {
-      handleStartEdit(elementId, currentValue)
-    }
-    
-    // @ts-ignore
-    window.startEdit = handleGlobalEdit
-    
-    return () => {
-      // @ts-ignore
-      delete window.startEdit
-    }
-  }, [])
-
-  const handleStartEdit = (elementId: string, currentValue: string) => {
-    setEditingElement(elementId)
-    setEditingValue(currentValue)
+  const handleSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCampaignData(prev => ({ ...prev, subject: e.target.value }))
   }
 
-  const handleSaveEdit = () => {
-    if (editingElement === 'subject') {
-      setCampaignData(prev => ({ ...prev, subject: editingValue }))
-    } else if (editingElement?.startsWith('content-')) {
-      // For now, we'll update the entire body with the new content
-      // In a more sophisticated implementation, we'd track which specific element was edited
-      setCampaignData(prev => ({ ...prev, body: editingValue }))
-    }
-    
-    setEditingElement(null)
-    setEditingValue('')
-    toast.success('Changes saved successfully!')
-  }
-
-  const handleCancelEdit = () => {
-    setEditingElement(null)
-    setEditingValue('')
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSaveEdit()
-    } else if (e.key === 'Escape') {
-      handleCancelEdit()
-    }
-  }
-
-  const handleContentClick = (e: React.MouseEvent) => {
-    const target = e.target as HTMLElement
-    if (target.getAttribute('data-editable') === 'true') {
-      e.preventDefault()
-      e.stopPropagation()
-      const text = target.textContent || ''
-      const elementId = `content-${Date.now()}`
-      handleStartEdit(elementId, text)
-    }
+  const handleContentChange = (e: React.FormEvent<HTMLDivElement>) => {
+    const newContent = e.currentTarget.innerHTML
+    setCampaignData(prev => ({ ...prev, body: newContent }))
   }
 
   const handleGenerateWithAI = async () => {
@@ -748,137 +696,39 @@ export default function EditCampaignPage() {
           {/* Subject Line Editor */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <label className="block text-sm font-medium text-gray-700 mb-3">Email Subject Line:</label>
-            {editingElement === 'subject' ? (
-              <div className="flex space-x-3">
-                <input
-                  type="text"
-                  value={editingValue}
-                  onChange={(e) => setEditingValue(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
-                  placeholder="Enter email subject..."
-                  autoFocus
-                />
-                <button
-                  onClick={handleSaveEdit}
-                  className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  <CheckIcon className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={handleCancelEdit}
-                  className="px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                >
-                  <XMarkIcon className="h-5 w-5" />
-                </button>
-              </div>
-            ) : (
-              <div 
-                className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 cursor-pointer hover:bg-gray-100 transition-colors text-lg"
-                onClick={() => handleStartEdit('subject', campaignData.subject)}
-                title="Click to edit subject line"
-              >
-                {campaignData.subject || 'Click to add subject line...'}
-              </div>
-            )}
+            <input
+              type="text"
+              value={campaignData.subject}
+              onChange={handleSubjectChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+              placeholder="Enter email subject..."
+            />
           </div>
 
           {/* Email Content Editor */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">Email Content (Click any text to edit):</label>
-            
-            {editingElement?.startsWith('content-') ? (
-              <div className="space-y-4">
-                <div className="border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="bg-white p-6 max-h-[400px] overflow-y-auto">
-                    <div 
-                      className="w-full"
-                      dangerouslySetInnerHTML={{ 
-                        __html: campaignData.body
-                          .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <label className="block text-sm font-medium text-gray-700">Edit Content:</label>
-                  <textarea
-                    value={editingValue}
-                    onChange={(e) => setEditingValue(e.target.value)}
-                    onKeyDown={handleKeyPress}
-                    className="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Edit your content here..."
-                    autoFocus
-                  />
-                  <div className="flex space-x-3">
-                    <button
-                      onClick={handleSaveEdit}
-                      className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                    >
-                      <CheckIcon className="h-4 w-4 mr-2" />
-                      Save Changes
-                    </button>
-                    <button
-                      onClick={handleCancelEdit}
-                      className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                    >
-                      <XMarkIcon className="h-4 w-4 mr-2" />
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="border border-gray-200 rounded-lg overflow-hidden">
-                <div 
-                  className="bg-white p-6 max-h-[600px] overflow-y-auto"
-                  onClick={handleContentClick}
-                  style={{ 
-                    userSelect: 'none',
-                    pointerEvents: 'auto'
-                  }}
-                >
-                  <div 
-                    className="w-full"
-                    dangerouslySetInnerHTML={{ 
-                      __html: campaignData.body
-                        .replace(/<h1([^>]*)>([^<]*)<\/h1>/gi, '<h1$1 class="cursor-pointer hover:bg-blue-50 p-1 rounded transition-colors border border-transparent hover:border-blue-200" data-editable="true">$2</h1>')
-                        .replace(/<h2([^>]*)>([^<]*)<\/h2>/gi, '<h2$1 class="cursor-pointer hover:bg-blue-50 p-1 rounded transition-colors border border-transparent hover:border-blue-200" data-editable="true">$2</h2>')
-                        .replace(/<h3([^>]*)>([^<]*)<\/h3>/gi, '<h3$1 class="cursor-pointer hover:bg-blue-50 p-1 rounded transition-colors border border-transparent hover:border-blue-200" data-editable="true">$3</h3>')
-                        .replace(/<p([^>]*)>([^<]*)<\/p>/gi, '<p$1 class="cursor-pointer hover:bg-blue-50 p-1 rounded transition-colors border border-transparent hover:border-blue-200" data-editable="true">$2</p>')
-                        .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-            
+            <label className="block text-sm font-medium text-gray-700 mb-3">Email Content (Edit directly):</label>
+            <div className="border border-gray-200 rounded-lg overflow-hidden">
+              <div 
+                className="bg-white p-6 max-h-[600px] overflow-y-auto focus:outline-none focus:ring-2 focus:ring-blue-500"
+                contentEditable
+                onInput={handleContentChange}
+                suppressContentEditableWarning={true}
+                style={{ 
+                  minHeight: '400px',
+                  outline: 'none'
+                }}
+                dangerouslySetInnerHTML={{ 
+                  __html: campaignData.body
+                    .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+                }}
+              />
+            </div>
             <p className="text-sm text-gray-500 mt-3 text-center">
-              💡 Click on any text in the email above to edit it directly
+              💡 Click anywhere in the email content above to start editing directly
             </p>
           </div>
 
-          {/* Quick Actions */}
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-blue-900 mb-3">Quick Actions</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="text-2xl mb-2">✏️</div>
-                <h4 className="font-medium text-blue-900">Direct Editing</h4>
-                <p className="text-sm text-blue-700">Click any text to edit it directly</p>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl mb-2">🤖</div>
-                <h4 className="font-medium text-blue-900">AI Generation</h4>
-                <p className="text-sm text-blue-700">Generate personalized content with AI</p>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl mb-2">📧</div>
-                <h4 className="font-medium text-blue-900">Send Campaign</h4>
-                <p className="text-sm text-blue-700">Send your email to your audience</p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
