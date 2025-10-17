@@ -400,11 +400,6 @@ export default function NewCampaignPage() {
     setIsEditing(true)
   }
 
-  const handleSaveEdit = () => {
-    setIsEditing(false)
-    toast.success('Template updated successfully!')
-  }
-
   return (
     <div className="min-h-screen bg-white">
           {/* Header */}
