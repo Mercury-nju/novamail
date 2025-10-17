@@ -122,14 +122,11 @@ export const useTranslation = () => {
       if (value && typeof value === 'object' && k in value) {
         value = value[k]
       } else {
-        console.log(`Translation key not found: ${key}, using fallback: ${fallback || key}`)
         return fallback || key
       }
     }
     
-    const result = typeof value === 'string' ? value : (fallback || key)
-    console.log(`Translation for ${key}: ${result}`)
-    return result
+    return typeof value === 'string' ? value : (fallback || key)
   }
 
   return { t, loading, locale }

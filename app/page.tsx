@@ -481,10 +481,6 @@ export default function HomePage() {
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center flex flex-col justify-center min-h-[60vh]">
-            {/* Debug Info */}
-            <div className="mb-4 p-2 bg-red-100 rounded text-xs text-red-600">
-              Debug: Locale={locale} | Loading={loading ? 'Yes' : 'No'} | Test={t('nav.home', 'Home')}
-            </div>
             <motion.h1 
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
