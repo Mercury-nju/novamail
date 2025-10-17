@@ -43,9 +43,6 @@ export default function NewCampaignPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [currentTemplateIndex, setCurrentTemplateIndex] = useState(0)
-  const [isEditing, setIsEditing] = useState(false)
-  const [editingField, setEditingField] = useState<'subject' | 'content' | null>(null)
-  const [editedContent, setEditedContent] = useState('')
   const [campaignData, setCampaignData] = useState<CampaignData>({
     templateId: '',
     subject: '',
@@ -316,89 +313,15 @@ export default function NewCampaignPage() {
       subject: currentTemplate.subject,
       body: currentTemplate.htmlContent
     }))
-    toast.success('Template selected! You can now customize the content.')
+    // Navigate to the editing page
+    router.push(`/dashboard/campaigns/edit?template=${currentTemplate.id}`)
   }
 
-  const handleEditField = (field: 'subject' | 'content') => {
-    setEditingField(field)
-    if (field === 'subject') {
-      setEditedContent(currentTemplate.subject)
-    } else {
-      setEditedContent(currentTemplate.htmlContent)
-    }
-  }
-
-  const handleSaveEdit = () => {
-    if (editingField === 'subject') {
-      // Update the template subject
-      const updatedTemplate = { ...currentTemplate, subject: editedContent }
-      professionalTemplates[currentTemplateIndex] = updatedTemplate
-      setCampaignData(prev => ({ ...prev, subject: editedContent }))
-    } else if (editingField === 'content') {
-      // Update the template content
-      const updatedTemplate = { ...currentTemplate, htmlContent: editedContent }
-      professionalTemplates[currentTemplateIndex] = updatedTemplate
-      setCampaignData(prev => ({ ...prev, body: editedContent }))
-    }
-    
-    setEditingField(null)
-    setEditedContent('')
-    toast.success('Changes saved successfully!')
-  }
-
-  const handleCancelEdit = () => {
-    setEditingField(null)
-    setEditedContent('')
-  }
-
-  const handleGenerateWithAI = async () => {
-    try {
-      toast.loading('Generating personalized content with AI...', { id: 'ai-generate' })
-      
-      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/ai/generate-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          templateId: currentTemplate.id,
-          businessName: campaignData.businessName || 'Your Business',
-          productService: campaignData.productService || 'Your Product/Service',
-          targetAudience: campaignData.targetAudience || 'Your Customers',
-          tone: campaignData.tone,
-          customizations: campaignData.customizations
-        })
-      })
-
-      if (response.ok) {
-        const result = await response.json()
-        const updatedTemplate = { 
-          ...currentTemplate, 
-          subject: result.subject || currentTemplate.subject,
-          htmlContent: result.htmlContent || currentTemplate.htmlContent
-        }
-        professionalTemplates[currentTemplateIndex] = updatedTemplate
-        setCampaignData(prev => ({
-          ...prev,
-          subject: result.subject || prev.subject,
-          body: result.htmlContent || prev.body
-        }))
-        toast.success('AI-generated content applied!', { id: 'ai-generate' })
-      } else {
-        throw new Error('Failed to generate content')
-      }
-    } catch (error) {
-      toast.error('Failed to generate AI content. Please try again.', { id: 'ai-generate' })
-    }
-  }
 
   const handleBack = () => {
     router.push('/dashboard')
   }
 
-  const handleEditTemplate = () => {
-    setIsEditing(true)
-  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -424,8 +347,8 @@ export default function NewCampaignPage() {
               </div>
             </div>
                     </div>
-                  </div>
-                </div>
+              </div>
+            </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="text-center mb-8">
@@ -498,23 +421,23 @@ export default function NewCampaignPage() {
                   <div className="grid grid-cols-1 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
-                      <input
-                        type="text"
-                        value={campaignData.businessName}
-                        onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
+                        <input
+                          type="text"
+                          value={campaignData.businessName}
+                          onChange={(e) => setCampaignData(prev => ({ ...prev, businessName: e.target.value }))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Your Business Name"
-                      />
-                    </div>
-                    <div>
+                        />
+                      </div>
+                      <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Product/Service</label>
-                      <input
-                        type="text"
-                        value={campaignData.productService}
-                        onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
+                        <input
+                          type="text"
+                          value={campaignData.productService}
+                          onChange={(e) => setCampaignData(prev => ({ ...prev, productService: e.target.value }))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Your Product or Service"
-                      />
+                        />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Target Audience</label>
@@ -529,7 +452,7 @@ export default function NewCampaignPage() {
                   </div>
                 </div>
 
-                <button
+                <button 
                   onClick={handleUseTemplate}
                   className="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
@@ -542,98 +465,27 @@ export default function NewCampaignPage() {
               <div className="bg-gray-50 p-8 lg:p-12">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-semibold text-gray-900">Email Preview</h4>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleEditField('subject')}
-                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-700 border border-blue-200 rounded-md hover:bg-blue-50"
-                    >
-                      <PencilIcon className="h-4 w-4 mr-1" />
-                      Edit Subject
-                    </button>
-                    <button
-                      onClick={() => handleEditField('content')}
-                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-purple-600 hover:text-purple-700 border border-purple-200 rounded-md hover:bg-purple-50"
-                    >
-                      <PencilIcon className="h-4 w-4 mr-1" />
-                      Edit Content
-                    </button>
-                    <button
-                      onClick={handleGenerateWithAI}
-                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-600 hover:text-green-700 border border-green-200 rounded-md hover:bg-green-50"
-                    >
-                      <SparklesIcon className="h-4 w-4 mr-1" />
-                      AI Generate
-                    </button>
+                  <div className="text-sm text-gray-500">
+                    Preview only - Edit after selecting template
                   </div>
                 </div>
-                
+
                 {/* Subject Line */}
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line:</label>
-                  {editingField === 'subject' ? (
-                    <div className="flex space-x-2">
-                      <input
-                        type="text"
-                        value={editedContent}
-                        onChange={(e) => setEditedContent(e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Enter email subject..."
-                      />
-                      <button
-                        onClick={handleSaveEdit}
-                        className="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                      >
-                        <CheckIcon className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="px-3 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-                      >
-                        <XMarkIcon className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="px-3 py-2 bg-white border border-gray-200 rounded-md text-gray-900">
-                      {currentTemplate.subject}
-                    </div>
-                  )}
+                  <div className="px-3 py-2 bg-white border border-gray-200 rounded-md text-gray-900">
+                    {currentTemplate.subject}
+            </div>
                 </div>
                 
                 {/* Email Content */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                  {editingField === 'content' ? (
-                    <div className="space-y-2">
-                      <textarea
-                        value={editedContent}
-                        onChange={(e) => setEditedContent(e.target.value)}
-                        className="w-full h-96 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono text-sm"
-                        placeholder="Enter HTML content..."
-                      />
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={handleSaveEdit}
-                          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                        >
-                          <CheckIcon className="h-4 w-4 mr-1 inline" />
-                          Save Changes
-                        </button>
-                        <button
-                          onClick={handleCancelEdit}
-                          className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-                        >
-                          <XMarkIcon className="h-4 w-4 mr-1 inline" />
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div 
-                      className="w-full"
-                      dangerouslySetInnerHTML={{ __html: currentTemplate.htmlContent }}
-                    />
-                  )}
+                  <div 
+                    className="w-full"
+                    dangerouslySetInnerHTML={{ __html: currentTemplate.htmlContent }}
+                  />
+                  </div>
                 </div>
-              </div>
             </div>
           </motion.div>
                   </div>
