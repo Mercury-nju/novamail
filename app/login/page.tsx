@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 function LoginForm() {
   const [email, setEmail] = useState('')
@@ -90,10 +91,13 @@ function LoginForm() {
 
       <div className="relative z-10 flex flex-col justify-center py-12 sm:px-6 lg:px-8 min-h-screen">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="mx-auto h-12 w-auto text-blue-600 flex items-center justify-center mb-8">
+          <div className="mx-auto h-12 w-auto text-blue-600 flex items-center justify-between mb-8">
             <Link href="/" className="text-3xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
               NovaMail
             </Link>
+            <div className="flex items-center">
+              <LanguageSwitcher />
+            </div>
           </div>
           <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-3">
             Sign in to your account

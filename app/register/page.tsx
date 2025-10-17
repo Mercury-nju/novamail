@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { SparklesIcon, EyeIcon, EyeSlashIcon, CheckIcon, ArrowLeftIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 type Step = 'form' | 'verify'
 
@@ -400,10 +401,13 @@ export default function RegisterPage() {
       <div className="relative z-10 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 min-h-screen">
       <div className="max-w-md w-full space-y-8">
           <div className="text-center">
-            <div className="mx-auto h-12 w-auto text-blue-600 flex items-center justify-center mb-8">
+            <div className="mx-auto h-12 w-auto text-blue-600 flex items-center justify-between mb-8">
               <Link href="/" className="text-3xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
                 NovaMail
               </Link>
+              <div className="flex items-center">
+                <LanguageSwitcher />
+              </div>
             </div>
             <h2 className="text-3xl font-extrabold text-gray-900">
             Create your account
