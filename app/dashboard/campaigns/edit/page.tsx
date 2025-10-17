@@ -45,6 +45,7 @@ export default function EditCampaignPage() {
   
   const [editingField, setEditingField] = useState<'subject' | 'content' | null>(null)
   const [editedContent, setEditedContent] = useState('')
+  const [isEditingTemplate, setIsEditingTemplate] = useState(false)
   const [campaignData, setCampaignData] = useState<CampaignData>({
     templateId: templateId || '',
     subject: '',
@@ -247,19 +248,47 @@ export default function EditCampaignPage() {
 
   const currentTemplate = professionalTemplates.find(t => t.id === templateId) || professionalTemplates[0]
 
+  // 替换模板中的占位符
+  const replacePlaceholders = (content: string) => {
+    return content
+      .replace(/\[Product Name\]/g, campaignData.productService || '[Product Name]')
+      .replace(/\[Company Name\]/g, campaignData.businessName || '[Company Name]')
+      .replace(/\[Customer Name\]/g, campaignData.targetAudience || '[Customer Name]')
+      .replace(/\[Your Name\]/g, campaignData.businessName || '[Your Name]')
+      .replace(/\[Target URL\]/g, campaignData.targetUrl || '[Target URL]')
+      .replace(/\[solve problem\]/g, 'solve your problems')
+      .replace(/\[Key Benefit 1\]/g, 'Revolutionary features')
+      .replace(/\[Key Benefit 2\]/g, 'Easy to use')
+      .replace(/\[Key Benefit 3\]/g, '24/7 support')
+      .replace(/\[Social proof or urgency reason\]/g, 'Limited time offer')
+      .replace(/\[Month Year\]/g, new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }))
+      .replace(/\[Subscriber Name\]/g, campaignData.targetAudience || '[Subscriber Name]')
+      .replace(/\[Key Achievement 1\]/g, 'New product launch')
+      .replace(/\[Key Achievement 2\]/g, 'Customer growth')
+      .replace(/\[Key Achievement 3\]/g, 'Industry recognition')
+      .replace(/\[Industry news or insights\]/g, 'Latest industry trends and insights')
+      .replace(/\[Read More URL\]/g, campaignData.targetUrl || '[Read More URL]')
+      .replace(/\[Dashboard URL\]/g, campaignData.targetUrl || '[Dashboard URL]')
+      .replace(/\[Resource Center\]/g, 'Resource Center')
+  }
+
   useEffect(() => {
     if (currentTemplate) {
+      const personalizedSubject = replacePlaceholders(currentTemplate.subject)
+      const personalizedBody = replacePlaceholders(currentTemplate.htmlContent)
+      
       setCampaignData(prev => ({
         ...prev,
         templateId: currentTemplate.id,
-        subject: currentTemplate.subject,
-        body: currentTemplate.htmlContent
+        subject: personalizedSubject,
+        body: personalizedBody
       }))
     }
-  }, [currentTemplate])
+  }, [currentTemplate, campaignData.businessName, campaignData.productService, campaignData.targetAudience, campaignData.targetUrl])
 
   const handleEditField = (field: 'subject' | 'content') => {
     setEditingField(field)
+    setIsEditingTemplate(true)
     if (field === 'subject') {
       setEditedContent(campaignData.subject)
     } else {
@@ -276,12 +305,22 @@ export default function EditCampaignPage() {
     
     setEditingField(null)
     setEditedContent('')
+    setIsEditingTemplate(false)
     toast.success('Changes saved successfully!')
   }
 
   const handleCancelEdit = () => {
     setEditingField(null)
     setEditedContent('')
+    setIsEditingTemplate(false)
+  }
+
+  const handleDirectEdit = (field: 'subject' | 'content', newValue: string) => {
+    if (field === 'subject') {
+      setCampaignData(prev => ({ ...prev, subject: newValue }))
+    } else if (field === 'content') {
+      setCampaignData(prev => ({ ...prev, body: newValue }))
+    }
   }
 
   const handleGenerateWithAI = async () => {
@@ -449,11 +488,11 @@ export default function EditCampaignPage() {
             </div>
           </div>
 
-          {/* Right Panel - Email Editor */}
+          {/* Right Panel - Live Email Editor */}
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Email Editor</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Live Email Editor</h3>
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handleEditField('subject')}
@@ -479,7 +518,7 @@ export default function EditCampaignPage() {
                 </div>
               </div>
               
-              {/* Subject Line */}
+              {/* Subject Line Editor */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line:</label>
                 {editingField === 'subject' ? (
@@ -505,15 +544,19 @@ export default function EditCampaignPage() {
                     </button>
                   </div>
                 ) : (
-                  <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-900">
+                  <div 
+                    className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-900 cursor-pointer hover:bg-gray-100 transition-colors"
+                    onClick={() => handleEditField('subject')}
+                    title="Click to edit subject line"
+                  >
                     {campaignData.subject}
                   </div>
                 )}
               </div>
               
-              {/* Email Content */}
+              {/* Live Email Preview with Inline Editing */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email Content:</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email Preview (Click to Edit):</label>
                 {editingField === 'content' ? (
                   <div className="space-y-2">
                     <textarea
@@ -540,13 +583,25 @@ export default function EditCampaignPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-gray-50 border border-gray-200 rounded-md p-4 max-h-96 overflow-y-auto">
+                  <div 
+                    className="bg-gray-50 border border-gray-200 rounded-md p-4 max-h-96 overflow-y-auto cursor-pointer hover:bg-gray-100 transition-colors"
+                    onClick={() => handleEditField('content')}
+                    title="Click to edit email content"
+                  >
                     <div 
                       className="w-full"
                       dangerouslySetInnerHTML={{ __html: campaignData.body }}
                     />
                   </div>
                 )}
+              </div>
+              
+              {/* Real-time Updates Info */}
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                <p className="text-sm text-blue-700">
+                  💡 <strong>Tip:</strong> Changes to business information above will automatically update the email template. 
+                  Click on the subject line or email content to edit directly.
+                </p>
               </div>
             </div>
           </div>
