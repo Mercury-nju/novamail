@@ -436,19 +436,233 @@ async function handleAIGenerateEmail(request, env) {
     });
   }
 
-  const data = await request.json();
-  const { purpose, businessName, productService, targetUrl, templateType } = data;
+  try {
+    const data = await request.json();
+    const { 
+      userRequest, 
+      templateId, 
+      currentSubject, 
+      currentBody, 
+      businessName, 
+      productService, 
+      targetAudience, 
+      tone,
+      templateName,
+      templateDescription
+    } = data;
 
-  // 生成邮件内容
-  const emailContent = generateEmailContent(purpose, businessName, productService, targetUrl, templateType);
+    // 构建AI提示词
+    const prompt = buildEmailPrompt({
+      userRequest,
+      templateName,
+      templateDescription,
+      businessName: businessName || 'Your Business',
+      productService: productService || 'Your Product/Service',
+      targetAudience: targetAudience || 'Your Customers',
+      tone: tone || 'professional',
+      currentSubject,
+      currentBody
+    });
 
-  return new Response(JSON.stringify({
-    success: true,
-    email: emailContent,
-    timestamp: new Date().toISOString()
-  }), {
-    headers: corsHeaders
-  });
+    // 暂时使用模拟响应进行测试
+    const mockResponse = {
+      subject: `Generated: ${userRequest}`,
+      htmlContent: generateSimpleEmailTemplate(`Based on your request: "${userRequest}", here's a professional email content for ${businessName || 'your business'}. This email is designed to engage your ${targetAudience || 'target audience'} with information about ${productService || 'your product/service'}.`),
+      message: `I've created email content based on your request: "${userRequest}". The content has been tailored for ${businessName || 'your business'} and is designed to appeal to ${targetAudience || 'your target audience'}.`
+    };
+    
+    return new Response(JSON.stringify({
+      success: true,
+      subject: mockResponse.subject,
+      htmlContent: mockResponse.htmlContent,
+      message: mockResponse.message,
+      timestamp: new Date().toISOString()
+    }), {
+      headers: corsHeaders
+    });
+
+    // TODO: 重新启用真实的AI调用
+    // const aiResponse = await callDashScopeAI(prompt, env.DASHSCOPE_API_KEY);
+    // if (aiResponse && aiResponse.content) {
+    //   const { subject, htmlContent, message } = parseAIResponse(aiResponse.content);
+    //   return new Response(JSON.stringify({
+    //     success: true,
+    //     subject: subject || currentSubject,
+    //     htmlContent: htmlContent || currentBody,
+    //     message: message || 'Email content has been generated successfully!',
+    //     timestamp: new Date().toISOString()
+    //   }), {
+    //     headers: corsHeaders
+    //   });
+    // } else {
+    //   throw new Error('AI response is empty or invalid');
+    // }
+  } catch (error) {
+    console.error('AI generation error:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to generate email content',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// 构建AI提示词
+function buildEmailPrompt({ userRequest, templateName, templateDescription, businessName, productService, targetAudience, tone, currentSubject, currentBody }) {
+  return `You are an expert email marketing copywriter. Based on the user's request, generate professional email content.
+
+User Request: "${userRequest}"
+
+Template Information:
+- Template Name: ${templateName}
+- Template Description: ${templateDescription}
+
+Business Context:
+- Business Name: ${businessName}
+- Product/Service: ${productService}
+- Target Audience: ${targetAudience}
+- Tone: ${tone}
+
+Current Content (if any):
+- Subject: ${currentSubject || 'Not specified'}
+- Body: ${currentBody ? 'Has existing content' : 'No existing content'}
+
+Please generate:
+1. A compelling email subject line
+2. Professional HTML email content that matches the template style
+3. A brief message explaining what you've created
+
+Format your response as JSON:
+{
+  "subject": "Your generated subject line",
+  "htmlContent": "Your HTML email content with proper styling",
+  "message": "Brief explanation of what you've created"
+}
+
+Make sure the HTML content is well-structured, professional, and engaging. Include proper styling and formatting.`;
+}
+
+// 调用DashScope AI API
+async function callDashScopeAI(prompt, apiKey) {
+  try {
+    const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'qwen-turbo',
+        input: {
+          messages: [
+            {
+              role: 'user',
+              content: prompt
+            }
+          ]
+        },
+        parameters: {
+          temperature: 0.7,
+          max_tokens: 2000
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('DashScope API error:', response.status, errorText);
+      throw new Error(`DashScope API error: ${response.status} - ${errorText}`);
+    }
+
+    const result = await response.json();
+    console.log('DashScope API response:', JSON.stringify(result, null, 2));
+    
+    if (result.output && result.output.choices && result.output.choices.length > 0) {
+      return result.output.choices[0].message.content;
+    } else {
+      throw new Error('Invalid response format from DashScope API');
+    }
+  } catch (error) {
+    console.error('DashScope API call failed:', error);
+    throw error;
+  }
+}
+
+// 解析AI响应
+function parseAIResponse(content) {
+  console.log('Parsing AI response:', content);
+  
+  try {
+    // 尝试解析JSON响应
+    const parsed = JSON.parse(content);
+    return {
+      subject: parsed.subject || 'Generated Email Subject',
+      htmlContent: parsed.htmlContent || content,
+      message: parsed.message || 'Email content has been generated successfully!'
+    };
+  } catch (error) {
+    console.log('JSON parsing failed, trying text extraction');
+    
+    // 如果不是JSON格式，尝试从文本中提取信息
+    const lines = content.split('\n');
+    let subject = '';
+    let htmlContent = '';
+    let message = '';
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line.includes('subject') || line.includes('Subject')) {
+        subject = line.replace(/.*[Ss]ubject[:\s]*/, '').replace(/['"]/g, '');
+      } else if (line.includes('htmlContent') || line.includes('HTML')) {
+        htmlContent = line.replace(/.*[Hh]tml[Cc]ontent[:\s]*/, '').replace(/['"]/g, '');
+      } else if (line.includes('message') || line.includes('Message')) {
+        message = line.replace(/.*[Mm]essage[:\s]*/, '').replace(/['"]/g, '');
+      }
+    }
+
+    // 如果没有找到结构化内容，生成一个简单的邮件模板
+    if (!htmlContent && content) {
+      htmlContent = generateSimpleEmailTemplate(content);
+    }
+
+    return {
+      subject: subject || 'Generated Email Subject',
+      htmlContent: htmlContent || content,
+      message: message || 'Email content has been generated successfully!'
+    };
+  }
+}
+
+// 生成简单的邮件模板
+function generateSimpleEmailTemplate(content) {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700;">Important Update</h1>
+      </div>
+      
+      <div style="padding: 40px 30px;">
+        <p style="color: #1a202c; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          ${content}
+        </p>
+        
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="#" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+            Learn More
+          </a>
+        </div>
+        
+        <p style="color: #4a5568; font-size: 15px; line-height: 1.6; margin: 24px 0;">
+          Best regards,<br>
+          <strong>Your Team</strong>
+        </p>
+      </div>
+    </div>
+  `;
 }
 
 // 生成邮件内容的简化函数
