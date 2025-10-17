@@ -43,7 +43,6 @@ export default function NewCampaignPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [currentTemplateIndex, setCurrentTemplateIndex] = useState(0)
-  const [showPreview, setShowPreview] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [campaignData, setCampaignData] = useState<CampaignData>({
     templateId: '',
@@ -423,22 +422,13 @@ export default function NewCampaignPage() {
                   </div>
                 </div>
 
-                <div className="flex space-x-4">
                 <button 
-                    onClick={handleUseTemplate}
-                    className="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                  >
-                    <PencilIcon className="h-5 w-5 mr-2" />
-                    Use This Template
+                  onClick={handleUseTemplate}
+                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  <PencilIcon className="h-5 w-5 mr-2" />
+                  Use This Template
                 </button>
-                      <button
-                        onClick={() => setShowPreview(!showPreview)}
-                    className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-colors"
-                      >
-                    <EyeIcon className="h-5 w-5 mr-2" />
-                    Preview
-                      </button>
-                    </div>
                   </div>
                   
               {/* Template Preview */}
@@ -457,22 +447,13 @@ export default function NewCampaignPage() {
               </div>
 
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                  {showPreview ? (
-                    <div className="max-h-96 overflow-y-auto">
-                      <div 
-                        className="transform scale-75 origin-top"
-                        style={{ width: '133.33%' }}
-                        dangerouslySetInnerHTML={{ __html: currentTemplate.htmlContent }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="p-4">
-                      <div className="text-sm text-gray-500 mb-2">Subject: {currentTemplate.subject}</div>
-                      <div className="text-sm text-gray-700">
-                        Click "Preview" to see the full email design
+                  <div className="max-h-96 overflow-y-auto">
+                    <div 
+                      className="transform scale-75 origin-top"
+                      style={{ width: '133.33%' }}
+                      dangerouslySetInnerHTML={{ __html: currentTemplate.htmlContent }}
+                    />
                   </div>
-                    </div>
-                  )}
                   </div>
                 </div>
             </div>
