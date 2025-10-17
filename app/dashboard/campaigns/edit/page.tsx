@@ -810,7 +810,55 @@ export default function EditCampaignPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Panel - AI Chat */}
+          {/* Left Panel - Email Template */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+            {/* Fixed Header */}
+            <div className="p-4 border-b border-gray-200">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">{currentTemplate.name}</h3>
+                <p className="text-sm text-gray-500">{currentTemplate.description}</p>
+              </div>
+            </div>
+            
+            {/* Subject Line - Fixed */}
+            <div className="p-4 border-b border-gray-200">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line:</label>
+              <input
+                type="text"
+                value={campaignData.subject}
+                onChange={handleSubjectChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                placeholder="Enter email subject..."
+              />
+            </div>
+            
+            {/* Email Content - Limited Height */}
+            <div className="h-96 overflow-y-auto p-4">
+              <div 
+                className="focus:outline-none focus:ring-2 focus:ring-blue-500"
+                contentEditable
+                onInput={handleContentChange}
+                suppressContentEditableWarning={true}
+                style={{ 
+                  outline: 'none',
+                  minHeight: '300px'
+                }}
+                dangerouslySetInnerHTML={{ 
+                  __html: campaignData.body
+                    .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+                }}
+              />
+            </div>
+            
+            {/* Fixed Footer */}
+            <div className="p-3 border-t border-gray-200">
+              <p className="text-xs text-gray-500 text-center">
+                💡 Accept AI-generated content from the chat to apply it here. You can also click to edit directly.
+              </p>
+            </div>
+          </div>
+
+          {/* Right Panel - AI Chat */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             {/* Fixed Header */}
             <div className="p-4 border-b border-gray-200">
@@ -931,53 +979,6 @@ export default function EditCampaignPage() {
             </div>
           </div>
 
-          {/* Right Panel - Email Template */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-            {/* Fixed Header */}
-            <div className="p-4 border-b border-gray-200">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">{currentTemplate.name}</h3>
-                <p className="text-sm text-gray-500">{currentTemplate.description}</p>
-              </div>
-            </div>
-            
-            {/* Subject Line - Fixed */}
-            <div className="p-4 border-b border-gray-200">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line:</label>
-              <input
-                type="text"
-                value={campaignData.subject}
-                onChange={handleSubjectChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                placeholder="Enter email subject..."
-              />
-            </div>
-            
-            {/* Email Content - Limited Height */}
-            <div className="h-96 overflow-y-auto p-4">
-              <div 
-                className="focus:outline-none focus:ring-2 focus:ring-blue-500"
-                contentEditable
-                onInput={handleContentChange}
-                suppressContentEditableWarning={true}
-                style={{ 
-                  outline: 'none',
-                  minHeight: '300px'
-                }}
-                dangerouslySetInnerHTML={{ 
-                  __html: campaignData.body
-                    .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                }}
-              />
-            </div>
-            
-            {/* Fixed Footer */}
-            <div className="p-3 border-t border-gray-200">
-              <p className="text-xs text-gray-500 text-center">
-                💡 Accept AI-generated content from the chat to apply it here. You can also click to edit directly.
-              </p>
-            </div>
-          </div>
         </div>
         
         {/* Bottom Action Bar */}
