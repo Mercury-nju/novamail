@@ -787,7 +787,7 @@ export default function EditCampaignPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-120px)]">
           {/* Left Panel - Email Template */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col h-full">
             {/* Fixed Header */}
@@ -813,23 +813,28 @@ export default function EditCampaignPage() {
             {/* Email Content - Scrollable */}
             <div className="flex-1 overflow-y-auto p-4">
               <div 
-                className="focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[300px] max-h-[600px] p-4 border border-gray-200 rounded-lg bg-white"
                 contentEditable
                 onInput={handleContentChange}
                 suppressContentEditableWarning={true}
                 style={{ 
                   outline: 'none',
-                  minHeight: '400px',
                   lineHeight: '1.6',
-                  whiteSpace: 'pre-wrap'
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word'
                 }}
-                dangerouslySetInnerHTML={isHtmlContent(campaignData.body) ? {
-                  __html: campaignData.body
-                    .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                } : {
-                  __html: campaignData.body.replace(/\n/g, '<br>')
-                }}
-              />
+              >
+                {isHtmlContent(campaignData.body) ? (
+                  <div dangerouslySetInnerHTML={{
+                    __html: campaignData.body
+                      .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+                  }} />
+                ) : (
+                  <div style={{ whiteSpace: 'pre-wrap' }}>
+                    {campaignData.body}
+                  </div>
+                )}
+              </div>
             </div>
             
             {/* Fixed Footer */}
