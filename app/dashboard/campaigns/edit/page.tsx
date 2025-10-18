@@ -812,48 +812,27 @@ export default function EditCampaignPage() {
             
             {/* Email Content - Scrollable */}
             <div className="flex-1 overflow-y-auto p-4">
-              <div className="relative">
-                {/* Template Preview - Read-only display */}
-                <div 
-                  className="p-4 border border-gray-200 rounded-lg bg-white"
-                  style={{ 
-                    minHeight: '300px',
-                    maxHeight: '500px',
-                    overflow: 'auto'
-                  }}
-                  dangerouslySetInnerHTML={isHtmlContent(campaignData.body) ? {
-                    __html: campaignData.body
-                      .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                  } : {
-                    __html: campaignData.body.replace(/\n/g, '<br>')
-                  }}
-                />
-                
-                {/* Editable Overlay - Invisible but captures clicks */}
-                <div 
-                  className="absolute inset-0 p-4 cursor-text"
-                  contentEditable
-                  onInput={handleContentChange}
-                  suppressContentEditableWarning={true}
-                  style={{ 
-                    outline: 'none',
-                    lineHeight: '1.6',
-                    wordWrap: 'break-word',
-                    overflowWrap: 'break-word',
-                    color: 'transparent',
-                    caretColor: 'black',
-                    minHeight: '300px',
-                    maxHeight: '500px',
-                    overflow: 'auto'
-                  }}
-                  dangerouslySetInnerHTML={isHtmlContent(campaignData.body) ? {
-                    __html: campaignData.body
-                      .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                  } : {
-                    __html: campaignData.body.replace(/\n/g, '<br>')
-                  }}
-                />
-              </div>
+              <div 
+                className="p-4 border border-gray-200 rounded-lg bg-white"
+                contentEditable
+                onInput={handleContentChange}
+                suppressContentEditableWarning={true}
+                style={{ 
+                  outline: 'none',
+                  lineHeight: '1.6',
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word',
+                  minHeight: '300px',
+                  maxHeight: '500px',
+                  overflow: 'auto'
+                }}
+                dangerouslySetInnerHTML={isHtmlContent(campaignData.body) ? {
+                  __html: campaignData.body
+                    .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+                } : {
+                  __html: campaignData.body.replace(/\n/g, '<br>')
+                }}
+              />
             </div>
             
             {/* Fixed Footer */}
