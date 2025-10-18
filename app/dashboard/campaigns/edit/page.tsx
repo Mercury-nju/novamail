@@ -569,7 +569,12 @@ export default function EditCampaignPage() {
     e.stopPropagation()
     console.log('Template clicked, entering edit mode')
     setIsEditing(true)
-    setEditableContent(campaignData.body)
+    
+    // 提取纯文本内容，去除HTML标签
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = campaignData.body
+    const plainText = tempDiv.textContent || tempDiv.innerText || ''
+    setEditableContent(plainText)
   }
 
   const handleEditableContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -577,7 +582,9 @@ export default function EditCampaignPage() {
   }
 
   const handleContentSave = () => {
-    setCampaignData(prev => ({ ...prev, body: editableContent }))
+    // 将纯文本内容转换为HTML格式（换行符转换为<br>）
+    const htmlContent = editableContent.replace(/\n/g, '<br>')
+    setCampaignData(prev => ({ ...prev, body: htmlContent }))
     setIsEditing(false)
   }
 
