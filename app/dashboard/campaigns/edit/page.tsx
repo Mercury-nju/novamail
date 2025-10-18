@@ -595,23 +595,6 @@ export default function EditCampaignPage() {
     document.addEventListener('mouseup', handleMouseUp)
   }
 
-  // 检测内容是否为HTML格式
-  const isHtmlContent = (content: string) => {
-    return /<[a-z][\s\S]*>/i.test(content)
-  }
-
-  // 设置初始内容 - 只在组件挂载时运行一次
-  useEffect(() => {
-    if (contentRef.current && campaignData.body && !isInitialized) {
-      const content = isHtmlContent(campaignData.body) 
-        ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-        : campaignData.body.replace(/\n/g, '<br>')
-      contentRef.current.innerHTML = content
-      setIsInitialized(true)
-    }
-  }, [campaignData.body, isInitialized])
-
-
   // 智能文本转HTML函数
   const convertTextToHtml = (text: string) => {
     let html = text
@@ -653,16 +636,40 @@ export default function EditCampaignPage() {
     // 确保列表不被段落包围
     html = html.replace(/<p>(<ul>.*<\/ul>)<\/p>/gs, '$1')
     
+    // 确保标题不被段落包围
+    html = html.replace(/<p>(<h3>.*<\/h3>)<\/p>/gs, '$1')
+    
+    // 清理多余的段落标签
+    html = html.replace(/<p>\s*<\/p>/g, '')
+    
     return html
   }
+
+  // 检测内容是否为HTML格式
+  const isHtmlContent = (content: string) => {
+    return /<[a-z][\s\S]*>/i.test(content)
+  }
+
+  // 设置初始内容 - 只在组件挂载时运行一次
+  useEffect(() => {
+    if (contentRef.current && campaignData.body && !isInitialized) {
+      const content = isHtmlContent(campaignData.body) 
+        ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+        : convertTextToHtml(campaignData.body) // 使用智能转换函数
+      contentRef.current.innerHTML = content
+      setIsInitialized(true)
+    }
+  }, [campaignData.body, isInitialized])
 
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
     // 使用智能转换函数
     const htmlContent = convertTextToHtml(generatedContent.textContent)
     
     // 调试信息
+    console.log('=== AI Content Acceptance Debug ===')
     console.log('Original text:', generatedContent.textContent)
     console.log('Converted HTML:', htmlContent)
+    console.log('Is HTML content?', isHtmlContent(htmlContent))
     
     // Apply the generated content to the template
     setCampaignData(prev => ({
@@ -675,6 +682,7 @@ export default function EditCampaignPage() {
     if (contentRef.current) {
       contentRef.current.innerHTML = htmlContent
       console.log('DOM updated with:', contentRef.current.innerHTML)
+      console.log('DOM innerHTML length:', contentRef.current.innerHTML.length)
     }
     
     // Add acceptance message to chat
