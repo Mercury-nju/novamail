@@ -986,52 +986,36 @@ export default function EditCampaignPage() {
                   
                   {/* Email Body - Editable Content */}
                   <div 
-                    className="p-6 relative"
+                    className="p-6"
+                    contentEditable
+                    suppressContentEditableWarning={true}
+                    onInput={(e) => {
+                      const newContent = e.currentTarget.innerHTML
+                      setCampaignData(prev => ({ ...prev, body: newContent }))
+                    }}
                     style={{
                       minHeight: '300px',
+                      outline: 'none',
                       lineHeight: '1.6',
                       fontSize: '16px',
-                      color: '#374151'
+                      color: '#374151',
+                      border: '1px solid transparent',
+                      borderRadius: '4px'
                     }}
-                  >
-                    {/* Display Layer - Shows the content */}
-                    <div 
-                      className="absolute inset-0 p-6 pointer-events-none"
-                      style={{
-                        lineHeight: '1.6',
-                        fontSize: '16px',
-                        color: '#374151'
-                      }}
-                      dangerouslySetInnerHTML={{
-                        __html: campaignData.body || '<p style="color: #9CA3AF; font-style: italic;">点击这里开始编辑您的邮件内容...</p>'
-                      }}
-                    />
-                    
-                    {/* Edit Layer - Transparent overlay for editing */}
-                    <div 
-                      className="absolute inset-0 p-6"
-                      contentEditable
-                      suppressContentEditableWarning={true}
-                      onInput={(e) => {
-                        const newContent = e.currentTarget.textContent || ''
-                        setCampaignData(prev => ({ ...prev, body: newContent }))
-                      }}
-                      onBlur={(e) => {
-                        const newContent = e.currentTarget.textContent || ''
-                        setCampaignData(prev => ({ ...prev, body: newContent }))
-                      }}
-                      style={{
-                        outline: 'none',
-                        lineHeight: '1.6',
-                        fontSize: '16px',
-                        color: 'transparent',
-                        caretColor: '#374151',
-                        background: 'transparent'
-                      }}
-                    >
-                      {campaignData.body ? (isHtmlContent(campaignData.body) ? htmlToText(campaignData.body) : campaignData.body) : '点击这里开始编辑您的邮件内容...'}
-                    </div>
-                  </div>
+                    onFocus={(e) => {
+                      e.currentTarget.style.border = '1px solid #3B82F6'
+                      e.currentTarget.style.backgroundColor = '#F8FAFC'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.border = '1px solid transparent'
+                      e.currentTarget.style.backgroundColor = 'transparent'
+                      const newContent = e.currentTarget.innerHTML
+                      setCampaignData(prev => ({ ...prev, body: newContent }))
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: campaignData.body || '<p style="color: #9CA3AF; font-style: italic;">点击这里开始编辑您的邮件内容...</p>'
+                    }}
+                  />
                   
                   {/* Email Footer */}
                   <div className="bg-gray-50 p-6 rounded-b-lg border-t border-gray-200">
