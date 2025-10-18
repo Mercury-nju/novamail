@@ -52,6 +52,8 @@ export default function EditCampaignPage() {
   const [chatInput, setChatInput] = useState('')
   const contentRef = useRef<HTMLDivElement>(null)
   const [isEditing, setIsEditing] = useState(false)
+  const [isInitialized, setIsInitialized] = useState(false)
+  const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -585,15 +587,36 @@ export default function EditCampaignPage() {
     setChatInput(hintText)
   }
 
-  // 初始化时设置内容
+  const handleResize = (e: React.MouseEvent) => {
+    const startX = e.clientX
+    const startWidth = leftPanelWidth
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = e.clientX - startX
+      const containerWidth = window.innerWidth - 200 // 减去padding和边距
+      const newWidth = Math.max(30, Math.min(80, startWidth + (deltaX / containerWidth) * 100))
+      setLeftPanelWidth(newWidth)
+    }
+    
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+    
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+  }
+
+  // 只在初始化时设置内容
   useEffect(() => {
-    if (contentRef.current) {
+    if (contentRef.current && !isInitialized) {
       const content = isHtmlContent(campaignData.body) 
         ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
         : campaignData.body.replace(/\n/g, '<br>')
       contentRef.current.innerHTML = content
+      setIsInitialized(true)
     }
-  }, [campaignData.body]) // 当内容变化时更新，但编辑时会被handleContentBlur覆盖
+  }, [campaignData.body, isInitialized])
 
   // 检测内容是否为HTML格式
   const isHtmlContent = (content: string) => {
@@ -823,9 +846,12 @@ export default function EditCampaignPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" style={{ height: 'calc(100vh - 120px)' }}>
+        <div className="flex" style={{ height: 'calc(100vh - 120px)' }}>
           {/* Left Panel - Email Template */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col h-full">
+          <div 
+            className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col h-full"
+            style={{ width: `${leftPanelWidth}%` }}
+          >
             {/* Fixed Header */}
             <div className="p-4 border-b border-gray-200 flex-shrink-0">
               <div>
@@ -876,8 +902,18 @@ export default function EditCampaignPage() {
             </div>
           </div>
 
+          {/* Resizable Divider */}
+          <div 
+            className="w-1 bg-gray-200 hover:bg-gray-300 cursor-col-resize flex-shrink-0 transition-colors"
+            onMouseDown={handleResize}
+            title="Drag to resize panels"
+          />
+
           {/* Right Panel - AI Chat */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col h-full">
+          <div 
+            className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col h-full"
+            style={{ width: `${100 - leftPanelWidth}%` }}
+          >
             {/* Fixed Header */}
             <div className="p-4 border-b border-gray-200 flex-shrink-0">
               <div className="flex items-center justify-between">
