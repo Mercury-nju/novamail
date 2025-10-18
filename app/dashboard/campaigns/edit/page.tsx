@@ -51,7 +51,6 @@ export default function EditCampaignPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
-  const contentRef = useRef<HTMLDivElement>(null) // 用于直接操作DOM内容
   
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
@@ -74,12 +73,7 @@ export default function EditCampaignPage() {
     customizations: {}
   })
 
-  // 管理内容更新
-  useEffect(() => {
-    if (contentRef.current && campaignData.body) {
-      contentRef.current.innerHTML = campaignData.body
-    }
-  }, [campaignData.body])
+  // 移除useEffect，直接使用textarea编辑
 
   const professionalTemplates: ProfessionalTemplate[] = [
     {
@@ -993,40 +987,35 @@ export default function EditCampaignPage() {
                   </div>
                   
                   {/* Email Body - Editable Content */}
-                  <div 
-                    ref={contentRef}
-                    className="p-6"
-                    contentEditable
-                    suppressContentEditableWarning={true}
-                    onInput={(e) => {
-                      const newContent = e.currentTarget.innerHTML
-                      setCampaignData(prev => ({ ...prev, body: newContent }))
-                    }}
-                    style={{
-                      minHeight: '300px',
-                      outline: 'none',
-                      lineHeight: '1.6',
-                      fontSize: '16px',
-                      color: '#374151',
-                      border: '1px solid transparent',
-                      borderRadius: '4px'
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.border = '1px solid #3B82F6'
-                      e.currentTarget.style.backgroundColor = '#F8FAFC'
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.border = '1px solid transparent'
-                      e.currentTarget.style.backgroundColor = 'transparent'
-                      const newContent = e.currentTarget.innerHTML
-                      setCampaignData(prev => ({ ...prev, body: newContent }))
-                    }}
-                  >
-                    {!campaignData.body && (
-                      <p style={{ color: '#9CA3AF', fontStyle: 'italic' }}>
-                        点击这里开始编辑您的邮件内容...
-                      </p>
-                    )}
+                  <div className="p-6">
+                    <textarea
+                      value={campaignData.body || ''}
+                      onChange={(e) => {
+                        setCampaignData(prev => ({ ...prev, body: e.target.value }))
+                      }}
+                      placeholder="点击这里开始编辑您的邮件内容..."
+                      style={{
+                        width: '100%',
+                        minHeight: '300px',
+                        outline: 'none',
+                        lineHeight: '1.6',
+                        fontSize: '16px',
+                        color: '#374151',
+                        border: '1px solid transparent',
+                        borderRadius: '4px',
+                        padding: '12px',
+                        fontFamily: 'inherit',
+                        resize: 'vertical'
+                      }}
+                      onFocus={(e) => {
+                        e.currentTarget.style.border = '1px solid #3B82F6'
+                        e.currentTarget.style.backgroundColor = '#F8FAFC'
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.border = '1px solid transparent'
+                        e.currentTarget.style.backgroundColor = 'transparent'
+                      }}
+                    />
                   </div>
                   
                   {/* Email Footer */}
