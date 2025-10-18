@@ -52,6 +52,7 @@ export default function EditCampaignPage() {
   const [chatInput, setChatInput] = useState('')
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
   const contentRef = useRef<HTMLDivElement>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -599,15 +600,16 @@ export default function EditCampaignPage() {
     return /<[a-z][\s\S]*>/i.test(content)
   }
 
-  // 设置初始内容
+  // 设置初始内容 - 只在组件挂载时运行一次
   useEffect(() => {
-    if (contentRef.current && campaignData.body) {
+    if (contentRef.current && campaignData.body && !isInitialized) {
       const content = isHtmlContent(campaignData.body) 
         ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
         : campaignData.body.replace(/\n/g, '<br>')
       contentRef.current.innerHTML = content
+      setIsInitialized(true)
     }
-  }, [campaignData.body])
+  }, [campaignData.body, isInitialized])
 
 
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
@@ -617,6 +619,14 @@ export default function EditCampaignPage() {
       subject: generatedContent.subject,
       body: generatedContent.textContent
     }))
+    
+    // 直接更新DOM内容，绕过useEffect
+    if (contentRef.current) {
+      const content = isHtmlContent(generatedContent.textContent) 
+        ? generatedContent.textContent.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+        : generatedContent.textContent.replace(/\n/g, '<br>')
+      contentRef.current.innerHTML = content
+    }
     
     // Add acceptance message to chat
     setChatHistory(prev => [...prev, {
