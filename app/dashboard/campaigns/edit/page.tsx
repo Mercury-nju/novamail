@@ -651,15 +651,28 @@ export default function EditCampaignPage() {
 
   // 设置初始内容 - 只在组件挂载时运行一次
   useEffect(() => {
+    console.log('=== useEffect triggered ===')
+    console.log('campaignData.body:', campaignData.body)
+    console.log('contentRef.current:', contentRef.current)
+    
     if (contentRef.current && campaignData.body) {
-      const content = isHtmlContent(campaignData.body) 
+      const isHtml = isHtmlContent(campaignData.body)
+      console.log('Is HTML content?', isHtml)
+      
+      const content = isHtml 
         ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
         : convertTextToHtml(campaignData.body) // 使用智能转换函数
+      
+      console.log('Final content to set:', content)
       contentRef.current.innerHTML = content
+      console.log('DOM updated with:', contentRef.current.innerHTML)
     }
   }, [campaignData.body])
 
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
+    console.log('=== handleAcceptContent called ===')
+    console.log('Generated content:', generatedContent)
+    
     // 使用智能转换函数
     const htmlContent = convertTextToHtml(generatedContent.textContent)
     
@@ -675,11 +688,14 @@ export default function EditCampaignPage() {
     console.log('Test conversion:', testText, '->', testHtml)
     
     // Apply the generated content to the template - useEffect will handle DOM update
-    setCampaignData(prev => ({
-      ...prev,
-      subject: generatedContent.subject,
-      body: htmlContent
-    }))
+    setCampaignData(prev => {
+      console.log('Updating campaignData.body to:', htmlContent)
+      return {
+        ...prev,
+        subject: generatedContent.subject,
+        body: htmlContent
+      }
+    })
     
     // Add acceptance message to chat
     setChatHistory(prev => [...prev, {
