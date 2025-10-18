@@ -600,15 +600,15 @@ export default function EditCampaignPage() {
     document.addEventListener('mouseup', handleMouseUp)
   }
 
-  // 准备显示的内容
-  const displayContent = isHtmlContent(campaignData.body) 
-    ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-    : campaignData.body.replace(/\n/g, '<br>')
-
   // 检测内容是否为HTML格式
   const isHtmlContent = (content: string) => {
     return /<[a-z][\s\S]*>/i.test(content)
   }
+
+  // 准备显示的内容
+  const displayContent = isHtmlContent(campaignData.body) 
+    ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+    : campaignData.body.replace(/\n/g, '<br>')
 
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
     // Apply the generated content to the template
