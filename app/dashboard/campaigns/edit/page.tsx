@@ -821,20 +821,16 @@ export default function EditCampaignPage() {
                   outline: 'none',
                   lineHeight: '1.6',
                   wordWrap: 'break-word',
-                  overflowWrap: 'break-word'
+                  overflowWrap: 'break-word',
+                  whiteSpace: 'pre-wrap'
                 }}
-              >
-                {isHtmlContent(campaignData.body) ? (
-                  <div dangerouslySetInnerHTML={{
-                    __html: campaignData.body
-                      .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                  }} />
-                ) : (
-                  <div style={{ whiteSpace: 'pre-wrap' }}>
-                    {campaignData.body}
-                  </div>
-                )}
-              </div>
+                dangerouslySetInnerHTML={isHtmlContent(campaignData.body) ? {
+                  __html: campaignData.body
+                    .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+                } : {
+                  __html: campaignData.body.replace(/\n/g, '<br>')
+                }}
+              />
             </div>
             
             {/* Fixed Footer */}
