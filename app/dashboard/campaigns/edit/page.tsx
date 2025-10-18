@@ -937,22 +937,22 @@ export default function EditCampaignPage() {
             <div className="mt-auto p-4 border-t border-gray-200">
               <div className="mb-3">
                 <p className="text-sm text-gray-600 text-center">
-                  💡 告诉AI您想要什么样的邮件内容，AI将为您生成专业的邮件模板
+                  💡 {t('editor.aiHint', 'Tell AI what email content you want to create, and AI will generate a professional email template for you')}
                 </p>
               </div>
-              <form onSubmit={handleChatSubmit} className="flex space-x-2">
-                  <input
-                    type="text"
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    placeholder={t('editor.chatPlaceholder')}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                    disabled={isGenerating}
-                  />
+              <form onSubmit={handleChatSubmit} className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder={t('editor.chatPlaceholder')}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-w-0"
+                  disabled={isGenerating}
+                />
                 <button
                   type="submit"
                   disabled={!chatInput.trim() || isGenerating}
-                  className={`px-3 py-2 rounded-lg font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors flex-shrink-0 ${
                     !chatInput.trim() || isGenerating
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                       : 'bg-blue-600 text-white hover:bg-blue-700'

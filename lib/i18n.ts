@@ -120,7 +120,8 @@ function getHardcodedTranslations(locale: string) {
         title: '邮件编辑器', 
         aiAssistant: 'AI助手', 
         chatPlaceholder: '描述您想要创建的邮件内容...', 
-        saveDraft: '保存草稿' 
+        saveDraft: '保存草稿',
+        aiHint: '告诉AI您想要什么样的邮件内容，AI将为您生成专业的邮件模板'
       },
       features: {
         title: '为什么选择NovaMail',
@@ -272,12 +273,13 @@ function getHardcodedTranslations(locale: string) {
       personalizedContent: 'Personalized Content',
       performanceTracking: 'Performance Tracking'
     },
-    editor: { 
-      title: 'Email Editor', 
-      aiAssistant: 'AI Assistant', 
-      chatPlaceholder: 'Describe the email content you want to create...', 
-      saveDraft: 'Save Draft' 
-    },
+      editor: { 
+        title: 'Email Editor', 
+        aiAssistant: 'AI Assistant', 
+        chatPlaceholder: 'Describe the email content you want to create...', 
+        saveDraft: 'Save Draft',
+        aiHint: 'Tell AI what email content you want to create, and AI will generate a professional email template for you'
+      },
       features: {
         title: 'Why Choose NovaMail',
         subtitle: 'Everything you need to grow your business',
