@@ -670,6 +670,27 @@ export default function EditCampaignPage() {
     }
   }, [campaignData.body])
 
+  // 测试HTML转换的简单函数
+  const testHtmlConversion = () => {
+    const testText = '• 测试列表项1\n• 测试列表项2\n\n这是段落'
+    const testHtml = convertTextToHtml(testText)
+    console.log('=== Test HTML Conversion ===')
+    console.log('Input:', testText)
+    console.log('Output:', testHtml)
+    
+    // 直接更新DOM
+    if (contentRef.current) {
+      contentRef.current.innerHTML = testHtml
+      console.log('DOM updated with test HTML')
+    }
+    
+    // 更新状态
+    setCampaignData(prev => ({
+      ...prev,
+      body: testHtml
+    }))
+  }
+
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
     console.log('=== handleAcceptContent called ===')
     console.log('Generated content:', generatedContent)
@@ -994,6 +1015,12 @@ export default function EditCampaignPage() {
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">{t('editor.aiAssistant')}</h3>
                 <div className="flex items-center space-x-2">
+                  <button
+                    onClick={testHtmlConversion}
+                    className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Test HTML
+                  </button>
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span className="text-sm text-gray-500">Online</span>
                 </div>
