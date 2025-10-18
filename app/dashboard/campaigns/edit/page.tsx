@@ -563,12 +563,7 @@ export default function EditCampaignPage() {
     setCampaignData(prev => ({ ...prev, subject: e.target.value }))
   }
 
-  const handleContentChange = () => {
-    if (contentRef.current) {
-      const newContent = contentRef.current.innerHTML
-      setCampaignData(prev => ({ ...prev, body: newContent }))
-    }
-  }
+  // 移除handleContentChange函数，现在直接在onInput中处理
 
   const handleHintClick = (hintText: string) => {
     setChatInput(hintText)
