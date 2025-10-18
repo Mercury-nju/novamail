@@ -51,7 +51,7 @@ export default function EditCampaignPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
-  const contentRef = useRef<HTMLDivElement>(null)
+  // 移除contentRef，直接使用dangerouslySetInnerHTML
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -649,26 +649,7 @@ export default function EditCampaignPage() {
     return /<[a-z][\s\S]*>/i.test(content)
   }
 
-  // 设置初始内容 - 只在组件挂载时运行一次
-  useEffect(() => {
-    console.log('=== useEffect triggered ===')
-    console.log('campaignData.body:', campaignData.body)
-    console.log('campaignData.body length:', campaignData.body.length)
-    console.log('contentRef.current:', contentRef.current)
-    
-    if (contentRef.current && campaignData.body) {
-      const isHtml = isHtmlContent(campaignData.body)
-      console.log('Is HTML content?', isHtml)
-      
-      const content = isHtml 
-        ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-        : convertTextToHtml(campaignData.body) // 使用智能转换函数
-      
-      console.log('Final content to set:', content)
-      contentRef.current.innerHTML = content
-      console.log('DOM updated with:', contentRef.current.innerHTML)
-    }
-  }, [campaignData.body])
+  // 移除复杂的useEffect，直接使用dangerouslySetInnerHTML
 
   // 测试HTML转换的简单函数
   const testHtmlConversion = () => {
@@ -678,13 +659,7 @@ export default function EditCampaignPage() {
     console.log('Input:', testText)
     console.log('Output:', testHtml)
     
-    // 直接更新DOM
-    if (contentRef.current) {
-      contentRef.current.innerHTML = testHtml
-      console.log('DOM updated with test HTML')
-    }
-    
-    // 更新状态
+    // 更新状态 - React会自动重新渲染
     setCampaignData(prev => ({
       ...prev,
       body: testHtml
@@ -709,7 +684,7 @@ export default function EditCampaignPage() {
     const testHtml = convertTextToHtml(testText)
     console.log('Test conversion:', testText, '->', testHtml)
     
-    // Apply the generated content to the template - useEffect will handle DOM update
+    // Apply the generated content to the template - React会自动重新渲染
     setCampaignData(prev => {
       console.log('=== setCampaignData called ===')
       console.log('Previous body:', prev.body)
@@ -727,14 +702,6 @@ export default function EditCampaignPage() {
       console.log('New campaignData:', newData)
       return newData
     })
-    
-    // 直接更新DOM，确保内容立即显示
-    if (contentRef.current) {
-      console.log('=== Direct DOM update ===')
-      console.log('Setting innerHTML directly to:', htmlContent)
-      contentRef.current.innerHTML = htmlContent
-      console.log('DOM updated directly with:', contentRef.current.innerHTML)
-    }
     
     // Add acceptance message to chat
     setChatHistory(prev => [...prev, {
@@ -973,10 +940,12 @@ export default function EditCampaignPage() {
             {/* Email Content - Direct Editable */}
             <div className="flex-1 overflow-y-auto p-4">
               <div 
-                ref={contentRef}
                 className="p-4 border border-gray-200 rounded-lg bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500"
                 contentEditable
-                onInput={handleContentChange}
+                onInput={(e) => {
+                  const newContent = e.currentTarget.innerHTML
+                  setCampaignData(prev => ({ ...prev, body: newContent }))
+                }}
                 suppressContentEditableWarning={true}
                 style={{ 
                   minHeight: '300px',
@@ -986,6 +955,14 @@ export default function EditCampaignPage() {
                   lineHeight: '1.6',
                   wordWrap: 'break-word',
                   overflowWrap: 'break-word'
+                }}
+                dangerouslySetInnerHTML={{ 
+                  __html: campaignData.body ? 
+                    (isHtmlContent(campaignData.body) ? 
+                      campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">') :
+                      convertTextToHtml(campaignData.body)
+                    ) : 
+                    '<p>Click here to start editing your email content...</p>'
                 }}
               />
             </div>
