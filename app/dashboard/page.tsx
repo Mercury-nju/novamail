@@ -15,7 +15,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher'
 export default function Dashboard() {
   const { t, loading, locale } = useTranslation()
   
-  
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -53,7 +53,7 @@ export default function Dashboard() {
               <p className="text-gray-500 mb-12 max-w-lg mx-auto">
                 {t('hero.subtitle')}
               </p>
-            </div>
+              </div>
 
             {/* CTA Button */}
             <motion.div
@@ -80,26 +80,26 @@ export default function Dashboard() {
             <div className="text-center">
                 <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center mx-auto mb-3">
                   <RocketLaunchIcon className="h-5 w-5 text-blue-600" />
-              </div>
+                </div>
                 <h3 className="font-medium text-gray-900 mb-2">Professional Templates</h3>
                 <p className="text-sm text-gray-500">Expertly designed templates for every business need</p>
-            </div>
-            
+                  </div>
+
               <div className="text-center">
                 <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center mx-auto mb-3">
                   <StarIcon className="h-5 w-5 text-purple-600" />
-                </div>
+                          </div>
                 <h3 className="font-medium text-gray-900 mb-2">Easy Customization</h3>
                 <p className="text-sm text-gray-500">Customize templates to match your brand perfectly</p>
-              </div>
+                  </div>
 
               <div className="text-center">
                 <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center mx-auto mb-3">
                   <EnvelopeIcon className="h-5 w-5 text-green-600" />
-                </div>
+                  </div>
                 <h3 className="font-medium text-gray-900 mb-2">High Engagement</h3>
                 <p className="text-sm text-gray-500">Optimized for maximum open and click rates</p>
-              </div>
+                </div>
             </motion.div>
           </motion.div>
               </div>

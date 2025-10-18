@@ -589,17 +589,6 @@ export default function EditCampaignPage() {
     toast.success('✨ Content applied to template!')
   }
 
-  const handleAdjustContent = (originalMessage: string) => {
-    // Set the original message back to the input for editing
-    setChatInput(originalMessage)
-    
-    // Add a system message to indicate adjustment mode
-    setChatHistory(prev => [...prev, {
-      type: 'ai',
-      message: 'Please modify your request and I\'ll generate new content for you.',
-      timestamp: new Date()
-    }])
-  }
 
   const handleChatSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -791,22 +780,6 @@ export default function EditCampaignPage() {
             
             <div className="flex items-center space-x-3">
               <LanguageSwitcher />
-              <motion.button
-                onClick={handleSaveDraft}
-                disabled={isSaving}
-                whileHover={!isSaving ? { scale: 1.05 } : {}}
-                whileTap={!isSaving ? { scale: 0.95 } : {}}
-                className={`inline-flex items-center px-4 py-2 font-medium rounded-lg transition-all duration-200 ${
-                  isSaving 
-                    ? 'bg-gray-400 text-white cursor-not-allowed' 
-                    : 'bg-gray-600 text-white hover:bg-gray-700'
-                }`}
-              >
-                <svg className={`h-4 w-4 mr-2 ${isSaving ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                {isSaving ? t('common.loading') : t('editor.saveDraft')}
-              </motion.button>
             </div>
           </div>
         </div>
@@ -816,9 +789,9 @@ export default function EditCampaignPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Panel - Email Template */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col h-full">
             {/* Fixed Header */}
-            <div className="p-4 border-b border-gray-200">
+            <div className="p-4 border-b border-gray-200 flex-shrink-0">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">{currentTemplate.name}</h3>
                 <p className="text-sm text-gray-500">{currentTemplate.description}</p>
@@ -826,7 +799,7 @@ export default function EditCampaignPage() {
             </div>
             
             {/* Subject Line - Fixed */}
-            <div className="p-4 border-b border-gray-200">
+            <div className="p-4 border-b border-gray-200 flex-shrink-0">
               <label className="block text-sm font-medium text-gray-700 mb-2">Subject Line:</label>
               <input
                 type="text"
@@ -837,16 +810,18 @@ export default function EditCampaignPage() {
               />
             </div>
             
-            {/* Email Content - Larger Height */}
-            <div className="h-[500px] overflow-y-auto p-4">
+            {/* Email Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-4">
               <div 
-                className="focus:outline-none focus:ring-2 focus:ring-blue-500 whitespace-pre-wrap"
+                className="focus:outline-none focus:ring-2 focus:ring-blue-500"
                 contentEditable
                 onInput={handleContentChange}
                 suppressContentEditableWarning={true}
                 style={{ 
                   outline: 'none',
-                  minHeight: '400px'
+                  minHeight: '400px',
+                  lineHeight: '1.6',
+                  whiteSpace: 'pre-wrap'
                 }}
                 dangerouslySetInnerHTML={isHtmlContent(campaignData.body) ? {
                   __html: campaignData.body
@@ -858,7 +833,7 @@ export default function EditCampaignPage() {
             </div>
             
             {/* Fixed Footer */}
-            <div className="p-3 border-t border-gray-200">
+            <div className="p-3 border-t border-gray-200 flex-shrink-0">
               <p className="text-xs text-gray-500 text-center">
                 💡 Accept AI-generated content from the chat to apply it here. You can also click to edit directly.
               </p>
@@ -866,9 +841,9 @@ export default function EditCampaignPage() {
           </div>
 
           {/* Right Panel - AI Chat */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col h-full">
             {/* Fixed Header */}
-            <div className="p-4 border-b border-gray-200">
+            <div className="p-4 border-b border-gray-200 flex-shrink-0">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">{t('editor.aiAssistant')}</h3>
                 <div className="flex items-center space-x-2">
@@ -891,7 +866,7 @@ export default function EditCampaignPage() {
                     <p>Or: "Write a newsletter about company updates"</p>
                   </div>
                   <div className="mt-3 p-2 bg-blue-50 rounded text-xs text-blue-700">
-                    💡 AI will show you the generated content. Click "Accept" to apply it to the template, or "Adjust" to make changes.
+                    💡 AI will show you the generated content. Click "Accept & Apply" to apply it to the template.
                   </div>
                 </div>
               ) : (
@@ -920,19 +895,13 @@ export default function EditCampaignPage() {
                             </div>
                           </div>
                           
-                          {/* Action buttons */}
-                          <div className="flex space-x-2">
+                          {/* Action button */}
+                          <div className="flex justify-center">
                             <button
                               onClick={() => handleAcceptContent(message.generatedContent!)}
-                              className="flex-1 px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 transition-colors"
+                              className="px-4 py-2 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
                             >
-                              ✅ Accept
-                            </button>
-                            <button
-                              onClick={() => handleAdjustContent(chatHistory[chatHistory.length - 2]?.message || '')}
-                              className="flex-1 px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
-                            >
-                              🔄 Adjust
+                              ✅ Accept & Apply
                             </button>
                           </div>
                         </div>

@@ -254,8 +254,8 @@ function getHardcodedTranslations(locale: string) {
       dashboard: 'Dashboard' 
     },
     hero: { 
-      title: 'AI-Powered Email Marketing Assistant', 
-      subtitle: 'Create stunning professional email templates with AI and send them to your audience', 
+      title: 'Your AI Copilot for Email Marketing', 
+      subtitle: 'Writes, designs, and sends stunning campaigns — all in minutes. Track results instantly and grow your audience effortlessly.', 
       cta: 'Get Started Free', 
       learnMore: 'Learn More' 
     },
