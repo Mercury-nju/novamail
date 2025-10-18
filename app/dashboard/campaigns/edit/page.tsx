@@ -51,7 +51,15 @@ export default function EditCampaignPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
-  // 移除contentRef，直接使用dangerouslySetInnerHTML
+  const contentRef = useRef<HTMLDivElement>(null) // 用于直接操作DOM内容
+  
+  // 管理内容更新
+  useEffect(() => {
+    if (contentRef.current && campaignData.body) {
+      contentRef.current.innerHTML = campaignData.body
+    }
+  }, [campaignData.body])
+  
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -986,6 +994,7 @@ export default function EditCampaignPage() {
                   
                   {/* Email Body - Editable Content */}
                   <div 
+                    ref={contentRef}
                     className="p-6"
                     contentEditable
                     suppressContentEditableWarning={true}
@@ -1012,10 +1021,13 @@ export default function EditCampaignPage() {
                       const newContent = e.currentTarget.innerHTML
                       setCampaignData(prev => ({ ...prev, body: newContent }))
                     }}
-                    dangerouslySetInnerHTML={{
-                      __html: campaignData.body || '<p style="color: #9CA3AF; font-style: italic;">点击这里开始编辑您的邮件内容...</p>'
-                    }}
-                  />
+                  >
+                    {!campaignData.body && (
+                      <p style={{ color: '#9CA3AF', fontStyle: 'italic' }}>
+                        点击这里开始编辑您的邮件内容...
+                      </p>
+                    )}
+                  </div>
                   
                   {/* Email Footer */}
                   <div className="bg-gray-50 p-6 rounded-b-lg border-t border-gray-200">
