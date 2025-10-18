@@ -567,14 +567,14 @@ export default function EditCampaignPage() {
     setCampaignData(prev => ({ ...prev, body: newContent }))
   }
 
-  // 更新内容到DOM
+  // 只在组件初始化时设置内容，避免干扰编辑
   useEffect(() => {
-    if (contentRef.current) {
+    if (contentRef.current && !contentRef.current.hasChildNodes()) {
       contentRef.current.innerHTML = isHtmlContent(campaignData.body) 
         ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
         : campaignData.body.replace(/\n/g, '<br>')
     }
-  }, [campaignData.body])
+  }, [])
 
   // 检测内容是否为HTML格式
   const isHtmlContent = (content: string) => {
@@ -588,6 +588,13 @@ export default function EditCampaignPage() {
       subject: generatedContent.subject,
       body: generatedContent.textContent
     }))
+    
+    // 同步更新DOM内容
+    if (contentRef.current) {
+      contentRef.current.innerHTML = isHtmlContent(generatedContent.textContent) 
+        ? generatedContent.textContent.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+        : generatedContent.textContent.replace(/\n/g, '<br>')
+    }
     
     // Add acceptance message to chat
     setChatHistory(prev => [...prev, {
