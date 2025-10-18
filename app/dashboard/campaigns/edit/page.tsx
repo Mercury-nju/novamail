@@ -53,13 +53,6 @@ export default function EditCampaignPage() {
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
   const contentRef = useRef<HTMLDivElement>(null) // 用于直接操作DOM内容
   
-  // 管理内容更新
-  useEffect(() => {
-    if (contentRef.current && campaignData.body) {
-      contentRef.current.innerHTML = campaignData.body
-    }
-  }, [campaignData.body])
-  
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -80,6 +73,13 @@ export default function EditCampaignPage() {
     targetAudience: '',
     customizations: {}
   })
+
+  // 管理内容更新
+  useEffect(() => {
+    if (contentRef.current && campaignData.body) {
+      contentRef.current.innerHTML = campaignData.body
+    }
+  }, [campaignData.body])
 
   const professionalTemplates: ProfessionalTemplate[] = [
     {
