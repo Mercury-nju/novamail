@@ -585,8 +585,22 @@ function parseAIResponse(data) {
 
 // 生成邮件主题
 function generateEmailSubject(userRequest, businessName, productService) {
-  const business = businessName || 'Your Business';
-  const product = productService || 'Your Product/Service';
+  // 从用户请求中提取信息
+  let extractedBusiness = businessName;
+  let extractedProduct = productService;
+  
+  // 如果用户请求中包含"NovaMail"，使用它作为公司名
+  if (userRequest.includes('NovaMail') || userRequest.includes('novamail')) {
+    extractedBusiness = 'NovaMail';
+  }
+  
+  // 如果用户请求中包含"Discord"，使用它作为产品/服务
+  if (userRequest.includes('Discord') || userRequest.includes('discord')) {
+    extractedProduct = 'Discord社群';
+  }
+  
+  const business = extractedBusiness || 'NovaMail';
+  const product = extractedProduct || '邮件营销服务';
   
   // 根据用户请求生成相应的主题
   if (userRequest.includes('邀请') || userRequest.includes('invite')) {
@@ -606,9 +620,29 @@ function generateEmailSubject(userRequest, businessName, productService) {
 
 // 生成纯文本邮件内容
 function generateTextContent(userRequest, businessName, productService, targetAudience, tone) {
-  const business = businessName || 'Your Business';
-  const product = productService || 'Your Product/Service';
-  const audience = targetAudience || '您的客户';
+  // 从用户请求中提取信息
+  let extractedBusiness = businessName;
+  let extractedProduct = productService;
+  let extractedAudience = targetAudience;
+  
+  // 如果用户请求中包含"NovaMail"，使用它作为公司名
+  if (userRequest.includes('NovaMail') || userRequest.includes('novamail')) {
+    extractedBusiness = 'NovaMail';
+  }
+  
+  // 如果用户请求中包含"Discord"，使用它作为产品/服务
+  if (userRequest.includes('Discord') || userRequest.includes('discord')) {
+    extractedProduct = 'Discord社群';
+  }
+  
+  // 如果用户请求中包含"共创伙伴"，使用它作为目标受众
+  if (userRequest.includes('共创伙伴') || userRequest.includes('合作伙伴')) {
+    extractedAudience = '共创伙伴';
+  }
+  
+  const business = extractedBusiness || 'NovaMail';
+  const product = extractedProduct || '邮件营销服务';
+  const audience = extractedAudience || '企业用户';
   const isFormal = tone === 'professional' || tone === 'formal';
   
   // 根据用户请求生成相应的内容
