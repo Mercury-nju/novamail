@@ -707,6 +707,14 @@ export default function EditCampaignPage() {
       return newData
     })
     
+    // 直接更新DOM，确保内容立即显示
+    if (contentRef.current) {
+      console.log('=== Direct DOM update ===')
+      console.log('Setting innerHTML directly to:', htmlContent)
+      contentRef.current.innerHTML = htmlContent
+      console.log('DOM updated directly with:', contentRef.current.innerHTML)
+    }
+    
     // Add acceptance message to chat
     setChatHistory(prev => [...prev, {
       type: 'ai',
