@@ -51,6 +51,7 @@ export default function EditCampaignPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const contentRef = useRef<HTMLDivElement>(null)
+  const [isEditing, setIsEditing] = useState(false)
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -567,14 +568,23 @@ export default function EditCampaignPage() {
     setCampaignData(prev => ({ ...prev, body: newContent }))
   }
 
-  // 只在组件初始化时设置内容，避免干扰编辑
+  const handleContentFocus = () => {
+    setIsEditing(true)
+  }
+
+  const handleContentBlur = () => {
+    setIsEditing(false)
+  }
+
+  // 只在非编辑状态下更新内容
   useEffect(() => {
-    if (contentRef.current && !contentRef.current.hasChildNodes()) {
-      contentRef.current.innerHTML = isHtmlContent(campaignData.body) 
+    if (contentRef.current && !isEditing) {
+      const content = isHtmlContent(campaignData.body) 
         ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
         : campaignData.body.replace(/\n/g, '<br>')
+      contentRef.current.innerHTML = content
     }
-  }, [])
+  }, [campaignData.body, isEditing])
 
   // 检测内容是否为HTML格式
   const isHtmlContent = (content: string) => {
@@ -834,6 +844,8 @@ export default function EditCampaignPage() {
                 className="p-4 border border-gray-200 rounded-lg bg-white"
                 contentEditable
                 onInput={handleContentChange}
+                onFocus={handleContentFocus}
+                onBlur={handleContentBlur}
                 suppressContentEditableWarning={true}
                 style={{ 
                   outline: 'none',
