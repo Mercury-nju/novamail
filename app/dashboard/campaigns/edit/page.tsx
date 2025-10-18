@@ -606,7 +606,7 @@ export default function EditCampaignPage() {
     document.addEventListener('mouseup', handleMouseUp)
   }
 
-  // 设置初始内容
+  // 设置内容
   useEffect(() => {
     if (contentRef.current) {
       const content = isHtmlContent(campaignData.body) 
@@ -614,7 +614,7 @@ export default function EditCampaignPage() {
         : campaignData.body.replace(/\n/g, '<br>')
       contentRef.current.innerHTML = content
     }
-  }, []) // 只在组件挂载时运行一次
+  }, [campaignData.body]) // 当内容变化时更新
 
   // 检测内容是否为HTML格式
   const isHtmlContent = (content: string) => {
