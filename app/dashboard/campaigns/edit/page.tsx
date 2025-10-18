@@ -613,19 +613,24 @@ export default function EditCampaignPage() {
 
 
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
+    // 将纯文本转换为HTML格式
+    const htmlContent = generatedContent.textContent
+      .replace(/\n\n/g, '</p><p>') // 双换行转换为段落
+      .replace(/\n/g, '<br>') // 单换行转换为换行符
+      .replace(/^/, '<p>') // 开头添加段落标签
+      .replace(/$/, '</p>') // 结尾添加段落标签
+      .replace(/<p><\/p>/g, '') // 移除空段落
+    
     // Apply the generated content to the template
     setCampaignData(prev => ({
       ...prev,
       subject: generatedContent.subject,
-      body: generatedContent.textContent
+      body: htmlContent
     }))
     
     // 直接更新DOM内容，绕过useEffect
     if (contentRef.current) {
-      const content = isHtmlContent(generatedContent.textContent) 
-        ? generatedContent.textContent.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-        : generatedContent.textContent.replace(/\n/g, '<br>')
-      contentRef.current.innerHTML = content
+      contentRef.current.innerHTML = htmlContent
     }
     
     // Add acceptance message to chat
