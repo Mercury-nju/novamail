@@ -574,11 +574,6 @@ export default function EditCampaignPage() {
 
   const handleContentBlur = () => {
     setIsEditing(false)
-    // 保存编辑后的内容到状态
-    if (contentRef.current) {
-      const newContent = contentRef.current.innerHTML
-      setCampaignData(prev => ({ ...prev, body: newContent }))
-    }
   }
 
   const handleHintClick = (hintText: string) => {
