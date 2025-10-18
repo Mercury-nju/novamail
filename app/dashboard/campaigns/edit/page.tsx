@@ -51,6 +51,7 @@ export default function EditCampaignPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
+  const contentRef = useRef<HTMLDivElement>(null)
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -562,9 +563,11 @@ export default function EditCampaignPage() {
     setCampaignData(prev => ({ ...prev, subject: e.target.value }))
   }
 
-  const handleContentChange = (e: React.FormEvent<HTMLDivElement>) => {
-    const newContent = e.currentTarget.innerHTML
-    setCampaignData(prev => ({ ...prev, body: newContent }))
+  const handleContentChange = () => {
+    if (contentRef.current) {
+      const newContent = contentRef.current.innerHTML
+      setCampaignData(prev => ({ ...prev, body: newContent }))
+    }
   }
 
   const handleHintClick = (hintText: string) => {
@@ -595,6 +598,16 @@ export default function EditCampaignPage() {
   const isHtmlContent = (content: string) => {
     return /<[a-z][\s\S]*>/i.test(content)
   }
+
+  // 设置初始内容
+  useEffect(() => {
+    if (contentRef.current && campaignData.body) {
+      const content = isHtmlContent(campaignData.body) 
+        ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+        : campaignData.body.replace(/\n/g, '<br>')
+      contentRef.current.innerHTML = content
+    }
+  }, [campaignData.body])
 
 
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
@@ -842,6 +855,7 @@ export default function EditCampaignPage() {
             {/* Email Content - Direct Editable */}
             <div className="flex-1 overflow-y-auto p-4">
               <div 
+                ref={contentRef}
                 className="p-4 border border-gray-200 rounded-lg bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500"
                 contentEditable
                 onInput={handleContentChange}
@@ -854,11 +868,6 @@ export default function EditCampaignPage() {
                   lineHeight: '1.6',
                   wordWrap: 'break-word',
                   overflowWrap: 'break-word'
-                }}
-                dangerouslySetInnerHTML={{
-                  __html: isHtmlContent(campaignData.body) 
-                    ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                    : campaignData.body.replace(/\n/g, '<br>')
                 }}
               />
             </div>
