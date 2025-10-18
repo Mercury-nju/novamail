@@ -907,9 +907,9 @@ export default function EditCampaignPage() {
                           <div className="mb-3">
                             <label className="text-xs font-medium text-gray-500">Content Preview:</label>
                             <div 
-                              className="text-xs text-gray-700 mt-1 max-h-20 overflow-hidden"
+                              className="text-xs text-gray-700 mt-1 max-h-32 overflow-hidden border border-gray-200 rounded p-2 bg-gray-50"
                               dangerouslySetInnerHTML={{ 
-                                __html: message.generatedContent.htmlContent.substring(0, 200) + '...' 
+                                __html: message.generatedContent.htmlContent
                               }}
                             />
                           </div>
