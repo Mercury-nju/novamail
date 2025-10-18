@@ -653,6 +653,7 @@ export default function EditCampaignPage() {
   useEffect(() => {
     console.log('=== useEffect triggered ===')
     console.log('campaignData.body:', campaignData.body)
+    console.log('campaignData.body length:', campaignData.body.length)
     console.log('contentRef.current:', contentRef.current)
     
     if (contentRef.current && campaignData.body) {
@@ -689,12 +690,21 @@ export default function EditCampaignPage() {
     
     // Apply the generated content to the template - useEffect will handle DOM update
     setCampaignData(prev => {
-      console.log('Updating campaignData.body to:', htmlContent)
-      return {
+      console.log('=== setCampaignData called ===')
+      console.log('Previous body:', prev.body)
+      console.log('Previous body length:', prev.body.length)
+      console.log('New body:', htmlContent)
+      console.log('New body length:', htmlContent.length)
+      console.log('Bodies are equal?', prev.body === htmlContent)
+      
+      const newData = {
         ...prev,
         subject: generatedContent.subject,
         body: htmlContent
       }
+      
+      console.log('New campaignData:', newData)
+      return newData
     })
     
     // Add acceptance message to chat
