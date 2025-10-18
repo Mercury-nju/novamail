@@ -447,14 +447,14 @@ async function handleAIGenerateEmail(request, env) {
     
     const response = {
       subject: aiResponse.subject,
-      htmlContent: aiResponse.htmlContent,
+      textContent: aiResponse.textContent,
       message: `I've created professional email content based on your request: "${userRequest}". The content has been tailored for ${businessName || 'your business'} and is designed to appeal to ${targetAudience || 'your target audience'}.`
     };
     
     return new Response(JSON.stringify({
       success: true,
       subject: response.subject,
-      htmlContent: response.htmlContent,
+      textContent: response.textContent,
       message: response.message,
       timestamp: new Date().toISOString()
     }), {
@@ -515,14 +515,14 @@ async function callDashScopeAI(userRequest, businessName, productService, target
     // 回退到本地生成
     return {
       subject: generateEmailSubject(userRequest, businessName, productService),
-      htmlContent: generateProfessionalEmailContent(userRequest, businessName, productService, targetAudience, tone)
+      textContent: generateTextContent(userRequest, businessName, productService, targetAudience, tone)
     };
   }
 }
 
 // 构建AI提示词
 function buildEmailPrompt(userRequest, businessName, productService, targetAudience, tone) {
-  return `你是一个专业的邮件营销专家。请根据以下信息生成一封专业的HTML邮件：
+  return `你是一个专业的邮件营销专家。请根据以下信息生成一封专业的邮件内容：
 
 用户需求：${userRequest}
 公司名称：${businessName || 'Your Business'}
@@ -532,24 +532,20 @@ function buildEmailPrompt(userRequest, businessName, productService, targetAudie
 
 请生成：
 1. 一个吸引人的邮件主题（不超过50个字符）
-2. 完整的HTML邮件内容，包含：
-   - 专业的邮件头部设计
-   - 清晰的内容结构
-   - 行动号召按钮
-   - 专业的邮件签名
-   - 响应式设计
+2. 邮件正文内容（纯文本，不要HTML格式）
 
 要求：
-- 使用现代、专业的HTML和CSS样式
-- 内容要符合用户需求
+- 内容要专业、有吸引力
+- 符合目标受众的需求
 - 语调要${tone || 'professional'}
-- 包含渐变背景和现代设计元素
-- 确保邮件在各种设备上都能正常显示
+- 包含清晰的价值主张和行动号召
+- 内容长度适中，易于阅读
+- 使用段落结构，便于阅读
 
 请以JSON格式返回：
 {
   "subject": "邮件主题",
-  "htmlContent": "完整的HTML邮件内容"
+  "textContent": "邮件正文内容（纯文本）"
 }`;
 }
 
@@ -564,7 +560,7 @@ function parseAIResponse(data) {
         const parsed = JSON.parse(jsonMatch[0]);
         return {
           subject: parsed.subject || 'AI Generated Email',
-          htmlContent: parsed.htmlContent || generateProfessionalEmailContent('', '', '', '', '')
+          textContent: parsed.textContent || 'AI generated email content'
         };
       }
     }
@@ -572,13 +568,13 @@ function parseAIResponse(data) {
     // 如果解析失败，使用默认生成
     return {
       subject: generateEmailSubject('', '', ''),
-      htmlContent: generateProfessionalEmailContent('', '', '', '', '')
+      textContent: 'AI generated email content'
     };
   } catch (error) {
     console.error('Failed to parse AI response:', error);
     return {
       subject: generateEmailSubject('', '', ''),
-      htmlContent: generateProfessionalEmailContent('', '', '', '', '')
+      textContent: 'AI generated email content'
     };
   }
 }
@@ -602,6 +598,112 @@ function generateEmailSubject(userRequest, businessName, productService) {
   } else {
     return `📧 ${business} - ${userRequest.substring(0, 30)}...`;
   }
+}
+
+// 生成纯文本邮件内容
+function generateTextContent(userRequest, businessName, productService, targetAudience, tone) {
+  const business = businessName || 'Your Business';
+  const product = productService || 'Your Product/Service';
+  const audience = targetAudience || '您的客户';
+  const isFormal = tone === 'professional' || tone === 'formal';
+  
+  // 根据用户请求生成相应的内容
+  let content = '';
+  
+  if (userRequest.includes('邀请') || userRequest.includes('invite')) {
+    content = `亲爱的${audience}，
+
+我们非常高兴地邀请您成为${business}的合作伙伴！作为一家致力于${product}的公司，我们相信您的加入将为我们的团队带来新的活力和创新思维。
+
+合作优势：
+• 专业的${product}解决方案
+• 强大的技术支持和培训
+• 灵活的合作模式和收益分享
+• 持续的市场推广支持
+
+我们期待与您建立长期稳定的合作关系，共同创造更大的价值。
+
+如有任何疑问，请随时与我们联系。
+
+此致
+敬礼！
+
+${business}团队`;
+  } else if (userRequest.includes('产品') || userRequest.includes('product')) {
+    content = `亲爱的${audience}，
+
+我们很高兴向您介绍我们的${product}。经过精心研发和不断优化，这款产品将为您的业务带来显著的提升。
+
+产品特点：
+• 高效便捷的操作体验
+• 强大的功能支持
+• 安全可靠的数据保护
+• 7x24小时技术支持
+
+我们相信${product}能够满足您的需求，帮助您实现业务目标。
+
+立即体验，开启您的成功之旅！
+
+${business}团队`;
+  } else if (userRequest.includes('促销') || userRequest.includes('sale')) {
+    content = `亲爱的${audience}，
+
+好消息！我们为您准备了限时特惠活动，${product}现在享受超值优惠价格！
+
+优惠详情：
+• 限时特价，数量有限
+• 免费试用30天
+• 专业培训和技术支持
+• 无风险退款保证
+
+这是您获得${product}的最佳时机，不要错过！
+
+立即行动，抓住这个难得的机会！
+
+${business}团队`;
+  } else if (userRequest.includes('欢迎') || userRequest.includes('welcome')) {
+    content = `亲爱的${audience}，
+
+欢迎加入${business}大家庭！我们非常高兴您选择信任我们。
+
+作为新成员，您将享受到：
+• 专属的客户服务
+• 定期的产品更新
+• 优先的技术支持
+• 会员专享优惠
+
+我们致力于为您提供最优质的服务和产品体验。
+
+如有任何问题，请随时联系我们的客服团队。
+
+再次欢迎您的加入！
+
+${business}团队`;
+  } else {
+    content = `亲爱的${audience}，
+
+感谢您对${business}的关注。我们很高兴为您介绍我们的${product}。
+
+关于我们：
+${business}是一家专注于${product}的公司，我们致力于为客户提供最优质的产品和服务。
+
+我们的承诺：
+• 专业的产品质量
+• 贴心的客户服务
+• 持续的技术创新
+• 完善的售后支持
+
+我们期待与您建立长期的合作关系。
+
+如有任何疑问，请随时与我们联系。
+
+此致
+敬礼！
+
+${business}团队`;
+  }
+  
+  return content;
 }
 
 // 生成专业邮件内容

@@ -56,7 +56,7 @@ export default function EditCampaignPage() {
     timestamp: Date
     generatedContent?: {
       subject: string
-      htmlContent: string
+      textContent: string
     }
   }>>([])
   const [campaignData, setCampaignData] = useState<CampaignData>({
@@ -566,12 +566,17 @@ export default function EditCampaignPage() {
     setCampaignData(prev => ({ ...prev, body: newContent }))
   }
 
-  const handleAcceptContent = (generatedContent: { subject: string; htmlContent: string }) => {
+  // 检测内容是否为HTML格式
+  const isHtmlContent = (content: string) => {
+    return /<[a-z][\s\S]*>/i.test(content)
+  }
+
+  const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
     // Apply the generated content to the template
     setCampaignData(prev => ({
       ...prev,
       subject: generatedContent.subject,
-      body: generatedContent.htmlContent
+      body: generatedContent.textContent
     }))
     
     // Add acceptance message to chat
@@ -643,7 +648,7 @@ export default function EditCampaignPage() {
           timestamp: new Date(),
           generatedContent: {
             subject: result.subject,
-            htmlContent: result.htmlContent
+            textContent: result.textContent
           }
         }])
         
@@ -843,10 +848,14 @@ export default function EditCampaignPage() {
                   outline: 'none',
                   minHeight: '400px'
                 }}
-                dangerouslySetInnerHTML={{ 
-                  __html: campaignData.body
-                    .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                }}
+                {...(isHtmlContent(campaignData.body) ? {
+                  dangerouslySetInnerHTML: { 
+                    __html: campaignData.body
+                      .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+                  }
+                } : {
+                  children: campaignData.body
+                })}
               />
             </div>
             
@@ -907,11 +916,10 @@ export default function EditCampaignPage() {
                           <div className="mb-3">
                             <label className="text-xs font-medium text-gray-500">Content Preview:</label>
                             <div 
-                              className="text-xs text-gray-700 mt-1 max-h-32 overflow-hidden border border-gray-200 rounded p-2 bg-gray-50"
-                              dangerouslySetInnerHTML={{ 
-                                __html: message.generatedContent.htmlContent
-                              }}
-                            />
+                              className="text-xs text-gray-700 mt-1 max-h-32 overflow-y-auto border border-gray-200 rounded p-2 bg-gray-50 whitespace-pre-wrap"
+                            >
+                              {message.generatedContent.textContent}
+                            </div>
                           </div>
                           
                           {/* Action buttons */}
