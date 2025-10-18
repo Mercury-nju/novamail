@@ -52,7 +52,7 @@ export default function EditCampaignPage() {
   const [chatInput, setChatInput] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
-  const contentRef = useRef<HTMLDivElement>(null)
+  const [editableContent, setEditableContent] = useState('')
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -564,22 +564,23 @@ export default function EditCampaignPage() {
     setCampaignData(prev => ({ ...prev, subject: e.target.value }))
   }
 
-  const handleContentChange = (e: React.FormEvent<HTMLDivElement>) => {
-    const newContent = e.currentTarget.innerHTML
-    setCampaignData(prev => ({ ...prev, body: newContent }))
-  }
-
-  const handleContentFocus = () => {
+  const handleContentClick = () => {
     setIsEditing(true)
+    setEditableContent(campaignData.body)
   }
 
-  const handleContentBlur = () => {
+  const handleEditableContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setEditableContent(e.target.value)
+  }
+
+  const handleContentSave = () => {
+    setCampaignData(prev => ({ ...prev, body: editableContent }))
     setIsEditing(false)
-    // 保存编辑后的内容到状态
-    if (contentRef.current) {
-      const newContent = contentRef.current.innerHTML
-      setCampaignData(prev => ({ ...prev, body: newContent }))
-    }
+  }
+
+  const handleContentCancel = () => {
+    setIsEditing(false)
+    setEditableContent('')
   }
 
   const handleHintClick = (hintText: string) => {
@@ -611,15 +612,6 @@ export default function EditCampaignPage() {
     return /<[a-z][\s\S]*>/i.test(content)
   }
 
-  // 设置初始内容
-  useEffect(() => {
-    if (contentRef.current) {
-      const content = isHtmlContent(campaignData.body) 
-        ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-        : campaignData.body.replace(/\n/g, '<br>')
-      contentRef.current.innerHTML = content
-    }
-  }, []) // 只在组件挂载时运行一次
 
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
     // Apply the generated content to the template
@@ -628,14 +620,6 @@ export default function EditCampaignPage() {
       subject: generatedContent.subject,
       body: generatedContent.textContent
     }))
-    
-    // 同步更新DOM内容
-    if (contentRef.current) {
-      const content = isHtmlContent(generatedContent.textContent) 
-        ? generatedContent.textContent.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-        : generatedContent.textContent.replace(/\n/g, '<br>')
-      contentRef.current.innerHTML = content
-    }
     
     // Add acceptance message to chat
     setChatHistory(prev => [...prev, {
@@ -873,24 +857,45 @@ export default function EditCampaignPage() {
             
             {/* Email Content - Scrollable */}
             <div className="flex-1 overflow-y-auto p-4">
-              <div 
-                ref={contentRef}
-                className="p-4 border border-gray-200 rounded-lg bg-white"
-                contentEditable
-                onInput={handleContentChange}
-                onFocus={handleContentFocus}
-                onBlur={handleContentBlur}
-                suppressContentEditableWarning={true}
-                style={{ 
-                  outline: 'none',
-                  lineHeight: '1.6',
-                  wordWrap: 'break-word',
-                  overflowWrap: 'break-word',
-                  minHeight: '300px',
-                  maxHeight: '500px',
-                  overflow: 'auto'
-                }}
-              />
+              {isEditing ? (
+                <div className="p-4 border border-gray-200 rounded-lg bg-white">
+                  <textarea
+                    value={editableContent}
+                    onChange={handleEditableContentChange}
+                    className="w-full h-96 p-2 border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter email content..."
+                  />
+                  <div className="flex justify-end space-x-2 mt-2">
+                    <button
+                      onClick={handleContentCancel}
+                      className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleContentSave}
+                      className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div 
+                  className="p-4 border border-gray-200 rounded-lg bg-white cursor-pointer hover:bg-gray-50"
+                  onClick={handleContentClick}
+                  style={{ 
+                    minHeight: '300px',
+                    maxHeight: '500px',
+                    overflow: 'auto'
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: isHtmlContent(campaignData.body) 
+                      ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+                      : campaignData.body.replace(/\n/g, '<br>')
+                  }}
+                />
+              )}
             </div>
             
             {/* Fixed Footer */}
