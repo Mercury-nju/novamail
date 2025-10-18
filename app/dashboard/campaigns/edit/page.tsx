@@ -574,9 +574,14 @@ export default function EditCampaignPage() {
 
   const handleContentBlur = () => {
     setIsEditing(false)
+    // 保存编辑后的内容到状态
+    if (contentRef.current) {
+      const newContent = contentRef.current.innerHTML
+      setCampaignData(prev => ({ ...prev, body: newContent }))
+    }
   }
 
-  // 只在非编辑状态下更新内容
+  // 只在初始化时设置内容，之后由用户编辑控制
   useEffect(() => {
     if (contentRef.current && !isEditing) {
       const content = isHtmlContent(campaignData.body) 
@@ -584,7 +589,7 @@ export default function EditCampaignPage() {
         : campaignData.body.replace(/\n/g, '<br>')
       contentRef.current.innerHTML = content
     }
-  }, [campaignData.body, isEditing])
+  }, []) // 只在组件挂载时运行一次
 
   // 检测内容是否为HTML格式
   const isHtmlContent = (content: string) => {
@@ -884,16 +889,38 @@ export default function EditCampaignPage() {
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 py-4">
-                  <SparklesIcon className="h-6 w-6 mx-auto mb-2 text-gray-300" />
-                  <p className="text-sm mb-2">Tell AI what email content you want to create</p>
-                  <div className="space-y-1 text-xs text-gray-400">
-                    <p>Try: "Write a product launch email for my new app"</p>
-                    <p>Or: "Create a welcome email for new customers"</p>
-                    <p>Or: "Generate a promotional email for Black Friday sale"</p>
-                    <p>Or: "Write a newsletter about company updates"</p>
+                  <SparklesIcon className="h-8 w-8 mx-auto mb-3 text-blue-400" />
+                  <h4 className="text-sm font-medium mb-3 text-gray-700">🤖 AI Email Content Generator</h4>
+                  <p className="text-sm mb-4">Describe what kind of email you want to create, and AI will generate professional content for you!</p>
+                  
+                  <div className="space-y-2 text-xs text-gray-500 mb-4">
+                    <div className="p-2 bg-gray-50 rounded border-l-2 border-blue-400">
+                      <strong>📧 Product Launch:</strong> "Write a product launch email for my new mobile app"
+                    </div>
+                    <div className="p-2 bg-gray-50 rounded border-l-2 border-green-400">
+                      <strong>👋 Welcome Series:</strong> "Create a welcome email for new customers"
+                    </div>
+                    <div className="p-2 bg-gray-50 rounded border-l-2 border-orange-400">
+                      <strong>🛍️ Promotions:</strong> "Generate a promotional email for Black Friday sale"
+                    </div>
+                    <div className="p-2 bg-gray-50 rounded border-l-2 border-purple-400">
+                      <strong>📰 Newsletter:</strong> "Write a newsletter about company updates"
+                    </div>
                   </div>
-                  <div className="mt-3 p-2 bg-blue-50 rounded text-xs text-blue-700">
-                    💡 AI will show you the generated content. Click "Accept & Apply" to apply it to the template.
+                  
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-start space-x-2">
+                      <div className="text-blue-500 mt-0.5">💡</div>
+                      <div className="text-xs text-blue-700 text-left">
+                        <p className="font-medium mb-1">How it works:</p>
+                        <ol className="space-y-1 text-left">
+                          <li>1. Type your request in the input below</li>
+                          <li>2. AI generates professional email content</li>
+                          <li>3. Click "Accept & Apply" to use it in your template</li>
+                          <li>4. Edit directly in the template if needed</li>
+                        </ol>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ) : (
