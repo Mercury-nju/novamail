@@ -581,15 +581,19 @@ export default function EditCampaignPage() {
     }
   }
 
-  // 只在初始化时设置内容，之后由用户编辑控制
+  const handleHintClick = (hintText: string) => {
+    setChatInput(hintText)
+  }
+
+  // 初始化时设置内容
   useEffect(() => {
-    if (contentRef.current && !isEditing) {
+    if (contentRef.current) {
       const content = isHtmlContent(campaignData.body) 
         ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
         : campaignData.body.replace(/\n/g, '<br>')
       contentRef.current.innerHTML = content
     }
-  }, []) // 只在组件挂载时运行一次
+  }, [campaignData.body]) // 当内容变化时更新，但编辑时会被handleContentBlur覆盖
 
   // 检测内容是否为HTML格式
   const isHtmlContent = (content: string) => {
@@ -894,16 +898,28 @@ export default function EditCampaignPage() {
                   <p className="text-sm mb-4">Describe what kind of email you want to create, and AI will generate professional content for you!</p>
                   
                   <div className="space-y-2 text-xs text-gray-500 mb-4">
-                    <div className="p-2 bg-gray-50 rounded border-l-2 border-blue-400">
+                    <div 
+                      className="p-2 bg-gray-50 rounded border-l-2 border-blue-400 cursor-pointer hover:bg-blue-50 hover:border-blue-500 transition-colors"
+                      onClick={() => handleHintClick("Write a product launch email for my new mobile app")}
+                    >
                       <strong>📧 Product Launch:</strong> "Write a product launch email for my new mobile app"
                     </div>
-                    <div className="p-2 bg-gray-50 rounded border-l-2 border-green-400">
+                    <div 
+                      className="p-2 bg-gray-50 rounded border-l-2 border-green-400 cursor-pointer hover:bg-green-50 hover:border-green-500 transition-colors"
+                      onClick={() => handleHintClick("Create a welcome email for new customers")}
+                    >
                       <strong>👋 Welcome Series:</strong> "Create a welcome email for new customers"
                     </div>
-                    <div className="p-2 bg-gray-50 rounded border-l-2 border-orange-400">
+                    <div 
+                      className="p-2 bg-gray-50 rounded border-l-2 border-orange-400 cursor-pointer hover:bg-orange-50 hover:border-orange-500 transition-colors"
+                      onClick={() => handleHintClick("Generate a promotional email for Black Friday sale")}
+                    >
                       <strong>🛍️ Promotions:</strong> "Generate a promotional email for Black Friday sale"
                     </div>
-                    <div className="p-2 bg-gray-50 rounded border-l-2 border-purple-400">
+                    <div 
+                      className="p-2 bg-gray-50 rounded border-l-2 border-purple-400 cursor-pointer hover:bg-purple-50 hover:border-purple-500 transition-colors"
+                      onClick={() => handleHintClick("Write a newsletter about company updates")}
+                    >
                       <strong>📰 Newsletter:</strong> "Write a newsletter about company updates"
                     </div>
                   </div>
