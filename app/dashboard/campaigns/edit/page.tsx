@@ -646,18 +646,16 @@ export default function EditCampaignPage() {
 
   // 移除复杂的useEffect，直接使用dangerouslySetInnerHTML
 
-  // 测试HTML转换的简单函数
-  const testHtmlConversion = () => {
-    const testText = '• 测试列表项1\n• 测试列表项2\n\n这是段落'
-    const testHtml = convertTextToHtml(testText)
-    console.log('=== Test HTML Conversion ===')
-    console.log('Input:', testText)
-    console.log('Output:', testHtml)
+  // 测试文本编辑的简单函数
+  const testTextEditing = () => {
+    const testText = '• 测试列表项1\n• 测试列表项2\n\n这是段落\n\n**粗体文本**\n*斜体文本*'
+    console.log('=== Test Text Editing ===')
+    console.log('Test text:', testText)
     
     // 更新状态 - React会自动重新渲染
     setCampaignData(prev => ({
       ...prev,
-      body: testHtml
+      body: testText
     }))
   }
 
@@ -665,33 +663,24 @@ export default function EditCampaignPage() {
     console.log('=== handleAcceptContent called ===')
     console.log('Generated content:', generatedContent)
     
-    // 使用智能转换函数
-    const htmlContent = convertTextToHtml(generatedContent.textContent)
+    // 直接使用AI生成的纯文本内容，不进行HTML转换
+    const textContent = generatedContent.textContent
     
     // 调试信息
     console.log('=== AI Content Acceptance Debug ===')
     console.log('Original text:', generatedContent.textContent)
-    console.log('Converted HTML:', htmlContent)
-    console.log('Is HTML content?', isHtmlContent(htmlContent))
+    console.log('Using text content directly:', textContent)
     
-    // 测试转换函数
-    const testText = '• 测试列表项1\n• 测试列表项2\n\n这是段落'
-    const testHtml = convertTextToHtml(testText)
-    console.log('Test conversion:', testText, '->', testHtml)
-    
-    // Apply the generated content to the template - React会自动重新渲染
+    // Apply the generated content to the template
     setCampaignData(prev => {
       console.log('=== setCampaignData called ===')
       console.log('Previous body:', prev.body)
-      console.log('Previous body length:', prev.body.length)
-      console.log('New body:', htmlContent)
-      console.log('New body length:', htmlContent.length)
-      console.log('Bodies are equal?', prev.body === htmlContent)
+      console.log('New body:', textContent)
       
       const newData = {
         ...prev,
         subject: generatedContent.subject,
-        body: htmlContent
+        body: textContent
       }
       
       console.log('New campaignData:', newData)
@@ -932,32 +921,19 @@ export default function EditCampaignPage() {
               />
             </div>
             
-            {/* Email Content - Direct Editable */}
+            {/* Email Content - Simple Textarea Approach */}
             <div className="flex-1 overflow-y-auto p-4">
-              <div 
-                className="p-4 border border-gray-200 rounded-lg bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500"
-                contentEditable
-                onInput={(e) => {
-                  const newContent = e.currentTarget.innerHTML
-                  setCampaignData(prev => ({ ...prev, body: newContent }))
+              <textarea
+                className="w-full h-full p-4 border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                value={campaignData.body || ''}
+                onChange={(e) => {
+                  setCampaignData(prev => ({ ...prev, body: e.target.value }))
                 }}
-                suppressContentEditableWarning={true}
+                placeholder="Click here to start editing your email content..."
                 style={{ 
                   minHeight: '300px',
-                  maxHeight: '500px',
-                  overflow: 'auto',
-                  outline: 'none',
                   lineHeight: '1.6',
-                  wordWrap: 'break-word',
-                  overflowWrap: 'break-word'
-                }}
-                dangerouslySetInnerHTML={{ 
-                  __html: campaignData.body ? 
-                    (isHtmlContent(campaignData.body) ? 
-                      campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">') :
-                      convertTextToHtml(campaignData.body)
-                    ) : 
-                    '<p>Click here to start editing your email content...</p>'
+                  fontFamily: 'inherit'
                 }}
               />
             </div>
@@ -965,7 +941,7 @@ export default function EditCampaignPage() {
             {/* Fixed Footer */}
             <div className="p-3 border-t border-gray-200 flex-shrink-0">
               <p className="text-xs text-gray-500 text-center">
-                💡 Click anywhere in the template to edit directly. Changes are saved automatically.
+                💡 Type directly in the text area above. Changes are saved automatically.
               </p>
             </div>
           </div>
@@ -988,10 +964,10 @@ export default function EditCampaignPage() {
                 <h3 className="text-lg font-semibold text-gray-900">{t('editor.aiAssistant')}</h3>
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={testHtmlConversion}
+                    onClick={testTextEditing}
                     className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
                   >
-                    Test HTML
+                    Test Text
                   </button>
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span className="text-sm text-gray-500">Online</span>
