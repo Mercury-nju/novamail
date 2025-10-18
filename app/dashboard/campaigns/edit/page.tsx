@@ -671,6 +671,11 @@ export default function EditCampaignPage() {
     console.log('Converted HTML:', htmlContent)
     console.log('Is HTML content?', isHtmlContent(htmlContent))
     
+    // 测试转换函数
+    const testText = '• 测试列表项1\n• 测试列表项2\n\n这是段落'
+    const testHtml = convertTextToHtml(testText)
+    console.log('Test conversion:', testText, '->', testHtml)
+    
     // Apply the generated content to the template
     setCampaignData(prev => ({
       ...prev,
@@ -683,6 +688,11 @@ export default function EditCampaignPage() {
       contentRef.current.innerHTML = htmlContent
       console.log('DOM updated with:', contentRef.current.innerHTML)
       console.log('DOM innerHTML length:', contentRef.current.innerHTML.length)
+      
+      // 验证DOM内容
+      setTimeout(() => {
+        console.log('DOM content after 100ms:', contentRef.current?.innerHTML)
+      }, 100)
     }
     
     // Add acceptance message to chat
