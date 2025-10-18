@@ -612,14 +612,47 @@ export default function EditCampaignPage() {
   }, [campaignData.body, isInitialized])
 
 
+  // 智能文本转HTML函数
+  const convertTextToHtml = (text: string) => {
+    let html = text
+    
+    // 处理列表项（以 • 开头的行）
+    html = html.replace(/^•\s*(.+)$/gm, '<li>$1</li>')
+    
+    // 将连续的 <li> 包装在 <ul> 中
+    html = html.replace(/(<li>.*<\/li>)(\s*<li>.*<\/li>)*/gs, (match) => {
+      return `<ul>${match}</ul>`
+    })
+    
+    // 处理标题（以数字+点开头的行，如 "1. 标题"）
+    html = html.replace(/^(\d+\.\s*.+)$/gm, '<h3>$1</h3>')
+    
+    // 处理粗体文本（**文本**）
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    
+    // 处理斜体文本（*文本*）
+    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>')
+    
+    // 处理段落（双换行）
+    html = html.replace(/\n\n/g, '</p><p>')
+    
+    // 处理单换行
+    html = html.replace(/\n/g, '<br>')
+    
+    // 包装在段落中
+    html = `<p>${html}</p>`
+    
+    // 清理空段落和多余的标签
+    html = html.replace(/<p><\/p>/g, '')
+    html = html.replace(/<p>\s*<br>\s*<\/p>/g, '')
+    html = html.replace(/<p>\s*<\/p>/g, '')
+    
+    return html
+  }
+
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
-    // 将纯文本转换为HTML格式
-    const htmlContent = generatedContent.textContent
-      .replace(/\n\n/g, '</p><p>') // 双换行转换为段落
-      .replace(/\n/g, '<br>') // 单换行转换为换行符
-      .replace(/^/, '<p>') // 开头添加段落标签
-      .replace(/$/, '</p>') // 结尾添加段落标签
-      .replace(/<p><\/p>/g, '') // 移除空段落
+    // 使用智能转换函数
+    const htmlContent = convertTextToHtml(generatedContent.textContent)
     
     // Apply the generated content to the template
     setCampaignData(prev => ({
