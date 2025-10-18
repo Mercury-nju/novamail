@@ -606,7 +606,7 @@ export default function EditCampaignPage() {
     document.addEventListener('mouseup', handleMouseUp)
   }
 
-  // 只在组件挂载时设置一次内容，之后不再干扰
+  // 设置内容
   useEffect(() => {
     if (contentRef.current) {
       const content = isHtmlContent(campaignData.body) 
@@ -614,7 +614,7 @@ export default function EditCampaignPage() {
         : campaignData.body.replace(/\n/g, '<br>')
       contentRef.current.innerHTML = content
     }
-  }, []) // 空依赖数组，只运行一次
+  }, [campaignData.body])
 
   // 检测内容是否为HTML格式
   const isHtmlContent = (content: string) => {
