@@ -644,6 +644,50 @@ export default function EditCampaignPage() {
     return /<[a-z][\s\S]*>/i.test(content)
   }
 
+  // 将HTML转换为纯文本显示
+  const htmlToText = (html: string) => {
+    if (!html) return ''
+    
+    // 创建一个临时的div元素来解析HTML
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = html
+    
+    // 处理列表项
+    const listItems = tempDiv.querySelectorAll('li')
+    listItems.forEach(li => {
+      li.textContent = '• ' + li.textContent
+    })
+    
+    // 处理标题
+    const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6')
+    headings.forEach(heading => {
+      heading.textContent = heading.textContent + '\n'
+    })
+    
+    // 处理段落
+    const paragraphs = tempDiv.querySelectorAll('p')
+    paragraphs.forEach(p => {
+      if (p.textContent && p.textContent.trim()) {
+        p.textContent = p.textContent + '\n\n'
+      }
+    })
+    
+    // 处理换行
+    const brs = tempDiv.querySelectorAll('br')
+    brs.forEach(br => {
+      br.replaceWith('\n')
+    })
+    
+    // 获取纯文本内容
+    let text = tempDiv.textContent || tempDiv.innerText || ''
+    
+    // 清理多余的换行
+    text = text.replace(/\n{3,}/g, '\n\n')
+    text = text.trim()
+    
+    return text
+  }
+
   // 移除复杂的useEffect，直接使用dangerouslySetInnerHTML
 
   // 测试文本编辑的简单函数
@@ -925,7 +969,7 @@ export default function EditCampaignPage() {
             <div className="flex-1 overflow-y-auto p-4">
               <textarea
                 className="w-full h-full p-4 border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-                value={campaignData.body || ''}
+                value={campaignData.body ? (isHtmlContent(campaignData.body) ? htmlToText(campaignData.body) : campaignData.body) : ''}
                 onChange={(e) => {
                   setCampaignData(prev => ({ ...prev, body: e.target.value }))
                 }}
