@@ -619,6 +619,9 @@ export default function EditCampaignPage() {
     // 处理列表项（以 • 开头的行）
     html = html.replace(/^•\s*(.+)$/gm, '<li>$1</li>')
     
+    // 处理其他列表符号
+    html = html.replace(/^[-*]\s*(.+)$/gm, '<li>$1</li>')
+    
     // 将连续的 <li> 包装在 <ul> 中
     html = html.replace(/(<li>.*<\/li>)(\s*<li>.*<\/li>)*/gs, (match) => {
       return `<ul>${match}</ul>`
@@ -647,12 +650,19 @@ export default function EditCampaignPage() {
     html = html.replace(/<p>\s*<br>\s*<\/p>/g, '')
     html = html.replace(/<p>\s*<\/p>/g, '')
     
+    // 确保列表不被段落包围
+    html = html.replace(/<p>(<ul>.*<\/ul>)<\/p>/gs, '$1')
+    
     return html
   }
 
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
     // 使用智能转换函数
     const htmlContent = convertTextToHtml(generatedContent.textContent)
+    
+    // 调试信息
+    console.log('Original text:', generatedContent.textContent)
+    console.log('Converted HTML:', htmlContent)
     
     // Apply the generated content to the template
     setCampaignData(prev => ({
@@ -664,6 +674,7 @@ export default function EditCampaignPage() {
     // 直接更新DOM内容，绕过useEffect
     if (contentRef.current) {
       contentRef.current.innerHTML = htmlContent
+      console.log('DOM updated with:', contentRef.current.innerHTML)
     }
     
     // Add acceptance message to chat
