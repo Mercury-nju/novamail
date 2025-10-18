@@ -52,7 +52,6 @@ export default function EditCampaignPage() {
   const [chatInput, setChatInput] = useState('')
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
   const contentRef = useRef<HTMLDivElement>(null)
-  const [isInitialized, setIsInitialized] = useState(false)
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -652,14 +651,13 @@ export default function EditCampaignPage() {
 
   // 设置初始内容 - 只在组件挂载时运行一次
   useEffect(() => {
-    if (contentRef.current && campaignData.body && !isInitialized) {
+    if (contentRef.current && campaignData.body) {
       const content = isHtmlContent(campaignData.body) 
         ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
         : convertTextToHtml(campaignData.body) // 使用智能转换函数
       contentRef.current.innerHTML = content
-      setIsInitialized(true)
     }
-  }, [campaignData.body, isInitialized])
+  }, [campaignData.body])
 
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
     // 使用智能转换函数
@@ -676,24 +674,12 @@ export default function EditCampaignPage() {
     const testHtml = convertTextToHtml(testText)
     console.log('Test conversion:', testText, '->', testHtml)
     
-    // Apply the generated content to the template
+    // Apply the generated content to the template - useEffect will handle DOM update
     setCampaignData(prev => ({
       ...prev,
       subject: generatedContent.subject,
       body: htmlContent
     }))
-    
-    // 直接更新DOM内容，绕过useEffect
-    if (contentRef.current) {
-      contentRef.current.innerHTML = htmlContent
-      console.log('DOM updated with:', contentRef.current.innerHTML)
-      console.log('DOM innerHTML length:', contentRef.current.innerHTML.length)
-      
-      // 验证DOM内容
-      setTimeout(() => {
-        console.log('DOM content after 100ms:', contentRef.current?.innerHTML)
-      }, 100)
-    }
     
     // Add acceptance message to chat
     setChatHistory(prev => [...prev, {
