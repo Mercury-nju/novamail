@@ -52,6 +52,7 @@ export default function EditCampaignPage() {
   const [chatInput, setChatInput] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
+  const contentRef = useRef<HTMLDivElement>(null)
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -574,6 +575,11 @@ export default function EditCampaignPage() {
 
   const handleContentBlur = () => {
     setIsEditing(false)
+    // 保存编辑后的内容到状态
+    if (contentRef.current) {
+      const newContent = contentRef.current.innerHTML
+      setCampaignData(prev => ({ ...prev, body: newContent }))
+    }
   }
 
   const handleHintClick = (hintText: string) => {
@@ -605,10 +611,15 @@ export default function EditCampaignPage() {
     return /<[a-z][\s\S]*>/i.test(content)
   }
 
-  // 准备显示的内容
-  const displayContent = isHtmlContent(campaignData.body) 
-    ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-    : campaignData.body.replace(/\n/g, '<br>')
+  // 设置初始内容
+  useEffect(() => {
+    if (contentRef.current) {
+      const content = isHtmlContent(campaignData.body) 
+        ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+        : campaignData.body.replace(/\n/g, '<br>')
+      contentRef.current.innerHTML = content
+    }
+  }, []) // 只在组件挂载时运行一次
 
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
     // Apply the generated content to the template
@@ -617,6 +628,14 @@ export default function EditCampaignPage() {
       subject: generatedContent.subject,
       body: generatedContent.textContent
     }))
+    
+    // 同步更新DOM内容
+    if (contentRef.current) {
+      const content = isHtmlContent(generatedContent.textContent) 
+        ? generatedContent.textContent.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+        : generatedContent.textContent.replace(/\n/g, '<br>')
+      contentRef.current.innerHTML = content
+    }
     
     // Add acceptance message to chat
     setChatHistory(prev => [...prev, {
@@ -855,6 +874,7 @@ export default function EditCampaignPage() {
             {/* Email Content - Scrollable */}
             <div className="flex-1 overflow-y-auto p-4">
               <div 
+                ref={contentRef}
                 className="p-4 border border-gray-200 rounded-lg bg-white"
                 contentEditable
                 onInput={handleContentChange}
@@ -870,7 +890,6 @@ export default function EditCampaignPage() {
                   maxHeight: '500px',
                   overflow: 'auto'
                 }}
-                dangerouslySetInnerHTML={{ __html: displayContent }}
               />
             </div>
             
