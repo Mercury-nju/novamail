@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { toast } from 'react-hot-toast'
@@ -50,6 +50,7 @@ export default function EditCampaignPage() {
   const [isSending, setIsSending] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [chatInput, setChatInput] = useState('')
+  const contentRef = useRef<HTMLDivElement>(null)
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -566,6 +567,15 @@ export default function EditCampaignPage() {
     setCampaignData(prev => ({ ...prev, body: newContent }))
   }
 
+  // 更新内容到DOM
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.innerHTML = isHtmlContent(campaignData.body) 
+        ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+        : campaignData.body.replace(/\n/g, '<br>')
+    }
+  }, [campaignData.body])
+
   // 检测内容是否为HTML格式
   const isHtmlContent = (content: string) => {
     return /<[a-z][\s\S]*>/i.test(content)
@@ -813,6 +823,7 @@ export default function EditCampaignPage() {
             {/* Email Content - Scrollable */}
             <div className="flex-1 overflow-y-auto p-4">
               <div 
+                ref={contentRef}
                 className="p-4 border border-gray-200 rounded-lg bg-white"
                 contentEditable
                 onInput={handleContentChange}
@@ -825,12 +836,6 @@ export default function EditCampaignPage() {
                   minHeight: '300px',
                   maxHeight: '500px',
                   overflow: 'auto'
-                }}
-                dangerouslySetInnerHTML={isHtmlContent(campaignData.body) ? {
-                  __html: campaignData.body
-                    .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                } : {
-                  __html: campaignData.body.replace(/\n/g, '<br>')
                 }}
               />
             </div>
