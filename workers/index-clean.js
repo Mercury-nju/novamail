@@ -461,7 +461,10 @@ async function handleAIGenerateEmail(request, env) {
       message: response.message,
       timestamp: new Date().toISOString()
     }), {
-      headers: corsHeaders
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json; charset=utf-8'
+      }
     });
 
   } catch (error) {
@@ -473,7 +476,10 @@ async function handleAIGenerateEmail(request, env) {
       timestamp: new Date().toISOString()
     }), {
       status: 500,
-      headers: corsHeaders
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json; charset=utf-8'
+      }
     });
   }
 }
