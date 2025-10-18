@@ -53,6 +53,7 @@ export default function EditCampaignPage() {
   const contentRef = useRef<HTMLDivElement>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
+  const [hasInitialized, setHasInitialized] = useState(false)
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -606,15 +607,16 @@ export default function EditCampaignPage() {
     document.addEventListener('mouseup', handleMouseUp)
   }
 
-  // 设置内容
+  // 只在初始化时设置内容
   useEffect(() => {
-    if (contentRef.current) {
+    if (contentRef.current && !hasInitialized) {
       const content = isHtmlContent(campaignData.body) 
         ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
         : campaignData.body.replace(/\n/g, '<br>')
       contentRef.current.innerHTML = content
+      setHasInitialized(true)
     }
-  }, [campaignData.body]) // 当内容变化时更新
+  }, [campaignData.body, hasInitialized])
 
   // 检测内容是否为HTML格式
   const isHtmlContent = (content: string) => {
@@ -629,11 +631,12 @@ export default function EditCampaignPage() {
       body: generatedContent.textContent
     }))
     
-    // 同步更新DOM内容
+    // 直接更新DOM内容，不依赖useEffect
     if (contentRef.current) {
-      contentRef.current.innerHTML = isHtmlContent(generatedContent.textContent) 
+      const content = isHtmlContent(generatedContent.textContent) 
         ? generatedContent.textContent.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
         : generatedContent.textContent.replace(/\n/g, '<br>')
+      contentRef.current.innerHTML = content
     }
     
     // Add acceptance message to chat
