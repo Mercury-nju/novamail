@@ -52,7 +52,6 @@ export default function EditCampaignPage() {
   const [chatInput, setChatInput] = useState('')
   const contentRef = useRef<HTMLDivElement>(null)
   const [isEditing, setIsEditing] = useState(false)
-  const [isInitialized, setIsInitialized] = useState(false)
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
@@ -607,16 +606,15 @@ export default function EditCampaignPage() {
     document.addEventListener('mouseup', handleMouseUp)
   }
 
-  // 只在初始化时设置内容
+  // 设置初始内容
   useEffect(() => {
-    if (contentRef.current && !isInitialized) {
+    if (contentRef.current) {
       const content = isHtmlContent(campaignData.body) 
         ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
         : campaignData.body.replace(/\n/g, '<br>')
       contentRef.current.innerHTML = content
-      setIsInitialized(true)
     }
-  }, [campaignData.body, isInitialized])
+  }, []) // 只在组件挂载时运行一次
 
   // 检测内容是否为HTML格式
   const isHtmlContent = (content: string) => {
