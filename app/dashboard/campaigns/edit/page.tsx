@@ -840,7 +840,7 @@ export default function EditCampaignPage() {
             {/* Email Content - Larger Height */}
             <div className="h-[500px] overflow-y-auto p-4">
               <div 
-                className="focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="focus:outline-none focus:ring-2 focus:ring-blue-500 whitespace-pre-wrap"
                 contentEditable
                 onInput={handleContentChange}
                 suppressContentEditableWarning={true}
@@ -848,14 +848,12 @@ export default function EditCampaignPage() {
                   outline: 'none',
                   minHeight: '400px'
                 }}
-                {...(isHtmlContent(campaignData.body) ? {
-                  dangerouslySetInnerHTML: { 
-                    __html: campaignData.body
-                      .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                  }
+                dangerouslySetInnerHTML={isHtmlContent(campaignData.body) ? {
+                  __html: campaignData.body
+                    .replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
                 } : {
-                  children: campaignData.body
-                })}
+                  __html: campaignData.body.replace(/\n/g, '<br>')
+                }}
               />
             </div>
             
