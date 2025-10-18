@@ -442,8 +442,11 @@ async function handleAIGenerateEmail(request, env) {
       templateDescription
     } = data;
 
-    // 使用真实的DashScope AI生成邮件内容
-    const aiResponse = await callDashScopeAI(userRequest, businessName, productService, targetAudience, tone);
+    // 暂时使用本地生成，避免AI API乱码问题
+    const aiResponse = {
+      subject: generateEmailSubject(userRequest, businessName, productService),
+      textContent: generateTextContent(userRequest, businessName, productService, targetAudience, tone)
+    };
     
     const response = {
       subject: aiResponse.subject,
@@ -485,7 +488,7 @@ async function callDashScopeAI(userRequest, businessName, productService, target
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json; charset=utf-8'
       },
       body: JSON.stringify({
         model: 'qwen-turbo',
@@ -541,6 +544,7 @@ function buildEmailPrompt(userRequest, businessName, productService, targetAudie
 - 包含清晰的价值主张和行动号召
 - 内容长度适中，易于阅读
 - 使用段落结构，便于阅读
+- 请使用简体中文
 
 请以JSON格式返回：
 {
