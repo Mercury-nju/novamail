@@ -690,16 +690,18 @@ export default function EditCampaignPage() {
 
   // 移除复杂的useEffect，直接使用dangerouslySetInnerHTML
 
-  // 测试文本编辑的简单函数
-  const testTextEditing = () => {
+  // 测试专业模板编辑的函数
+  const testProfessionalTemplate = () => {
     const testText = '• 测试列表项1\n• 测试列表项2\n\n这是段落\n\n**粗体文本**\n*斜体文本*'
-    console.log('=== Test Text Editing ===')
+    const testHtml = convertTextToHtml(testText)
+    console.log('=== Test Professional Template ===')
     console.log('Test text:', testText)
+    console.log('Test HTML:', testHtml)
     
     // 更新状态 - React会自动重新渲染
     setCampaignData(prev => ({
       ...prev,
-      body: testText
+      body: testHtml
     }))
   }
 
@@ -707,24 +709,24 @@ export default function EditCampaignPage() {
     console.log('=== handleAcceptContent called ===')
     console.log('Generated content:', generatedContent)
     
-    // 直接使用AI生成的纯文本内容，不进行HTML转换
-    const textContent = generatedContent.textContent
+    // 将AI生成的纯文本转换为HTML格式
+    const htmlContent = convertTextToHtml(generatedContent.textContent)
     
     // 调试信息
     console.log('=== AI Content Acceptance Debug ===')
     console.log('Original text:', generatedContent.textContent)
-    console.log('Using text content directly:', textContent)
+    console.log('Converted HTML:', htmlContent)
     
     // Apply the generated content to the template
     setCampaignData(prev => {
       console.log('=== setCampaignData called ===')
       console.log('Previous body:', prev.body)
-      console.log('New body:', textContent)
+      console.log('New body:', htmlContent)
       
       const newData = {
         ...prev,
         subject: generatedContent.subject,
-        body: textContent
+        body: htmlContent
       }
       
       console.log('New campaignData:', newData)
@@ -965,27 +967,73 @@ export default function EditCampaignPage() {
               />
             </div>
             
-            {/* Email Content - Simple Textarea Approach */}
+            {/* Email Content - Professional Template with WYSIWYG Editing */}
             <div className="flex-1 overflow-y-auto p-4">
-              <textarea
-                className="w-full h-full p-4 border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-                value={campaignData.body ? (isHtmlContent(campaignData.body) ? htmlToText(campaignData.body) : campaignData.body) : ''}
-                onChange={(e) => {
-                  setCampaignData(prev => ({ ...prev, body: e.target.value }))
-                }}
-                placeholder="Click here to start editing your email content..."
-                style={{ 
-                  minHeight: '300px',
-                  lineHeight: '1.6',
-                  fontFamily: 'inherit'
-                }}
-              />
+              <div className="max-w-2xl mx-auto">
+                {/* Professional Email Template */}
+                <div 
+                  className="bg-white border border-gray-200 rounded-lg shadow-sm"
+                  style={{ 
+                    minHeight: '400px',
+                    fontFamily: 'system-ui, -apple-system, sans-serif'
+                  }}
+                >
+                  {/* Email Header */}
+                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg">
+                    <h1 className="text-2xl font-bold">NovaMail</h1>
+                    <p className="text-blue-100 text-sm mt-1">AI-Powered Email Marketing</p>
+                  </div>
+                  
+                  {/* Email Body - Editable Content */}
+                  <div 
+                    className="p-6"
+                    contentEditable
+                    suppressContentEditableWarning={true}
+                    onInput={(e) => {
+                      const newContent = e.currentTarget.innerHTML
+                      setCampaignData(prev => ({ ...prev, body: newContent }))
+                    }}
+                    onBlur={(e) => {
+                      const newContent = e.currentTarget.innerHTML
+                      setCampaignData(prev => ({ ...prev, body: newContent }))
+                    }}
+                    style={{
+                      minHeight: '300px',
+                      outline: 'none',
+                      lineHeight: '1.6',
+                      fontSize: '16px',
+                      color: '#374151'
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: campaignData.body || '<p style="color: #9CA3AF; font-style: italic;">点击这里开始编辑您的邮件内容...</p>'
+                    }}
+                  />
+                  
+                  {/* Email Footer */}
+                  <div className="bg-gray-50 p-6 rounded-b-lg border-t border-gray-200">
+                    <div className="text-center text-sm text-gray-600">
+                      <p>© 2024 NovaMail. All rights reserved.</p>
+                      <p className="mt-1">
+                        <a href="#" className="text-blue-600 hover:text-blue-800">Unsubscribe</a> | 
+                        <a href="#" className="text-blue-600 hover:text-blue-800 ml-2">Privacy Policy</a>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Editing Instructions */}
+                <div className="mt-4 text-center">
+                  <p className="text-sm text-gray-500">
+                    💡 点击邮件内容区域直接编辑，支持富文本格式
+                  </p>
+                </div>
+              </div>
             </div>
             
             {/* Fixed Footer */}
             <div className="p-3 border-t border-gray-200 flex-shrink-0">
               <p className="text-xs text-gray-500 text-center">
-                💡 Type directly in the text area above. Changes are saved automatically.
+                💡 点击邮件内容区域直接编辑，支持富文本格式，更改自动保存
               </p>
             </div>
           </div>
@@ -1008,10 +1056,10 @@ export default function EditCampaignPage() {
                 <h3 className="text-lg font-semibold text-gray-900">{t('editor.aiAssistant')}</h3>
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={testTextEditing}
+                    onClick={testProfessionalTemplate}
                     className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
                   >
-                    Test Text
+                    Test Template
                   </button>
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span className="text-sm text-gray-500">Online</span>
