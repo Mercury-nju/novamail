@@ -50,9 +50,7 @@ export default function EditCampaignPage() {
   const [isSending, setIsSending] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [chatInput, setChatInput] = useState('')
-  const [isEditing, setIsEditing] = useState(false)
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
-  const [editableContent, setEditableContent] = useState('')
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
     message: string
@@ -564,33 +562,9 @@ export default function EditCampaignPage() {
     setCampaignData(prev => ({ ...prev, subject: e.target.value }))
   }
 
-  const handleContentClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    console.log('Template clicked, entering edit mode')
-    setIsEditing(true)
-    
-    // 提取纯文本内容，去除HTML标签
-    const tempDiv = document.createElement('div')
-    tempDiv.innerHTML = campaignData.body
-    const plainText = tempDiv.textContent || tempDiv.innerText || ''
-    setEditableContent(plainText)
-  }
-
-  const handleEditableContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setEditableContent(e.target.value)
-  }
-
-  const handleContentSave = () => {
-    // 将纯文本内容转换为HTML格式（换行符转换为<br>）
-    const htmlContent = editableContent.replace(/\n/g, '<br>')
-    setCampaignData(prev => ({ ...prev, body: htmlContent }))
-    setIsEditing(false)
-  }
-
-  const handleContentCancel = () => {
-    setIsEditing(false)
-    setEditableContent('')
+  const handleContentChange = (e: React.FormEvent<HTMLDivElement>) => {
+    const newContent = e.currentTarget.innerHTML
+    setCampaignData(prev => ({ ...prev, body: newContent }))
   }
 
   const handleHintClick = (hintText: string) => {
@@ -865,58 +839,34 @@ export default function EditCampaignPage() {
               />
             </div>
             
-            {/* Email Content - Scrollable */}
+            {/* Email Content - Direct Editable */}
             <div className="flex-1 overflow-y-auto p-4">
-              {isEditing ? (
-                <div className="p-4 border border-gray-200 rounded-lg bg-white">
-                  <textarea
-                    value={editableContent}
-                    onChange={handleEditableContentChange}
-                    className="w-full h-96 p-2 border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter email content..."
-                  />
-                  <div className="flex justify-end space-x-2 mt-2">
-                    <button
-                      onClick={handleContentCancel}
-                      className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleContentSave}
-                      className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-                    >
-                      Save
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div 
-                  className="p-4 border border-gray-200 rounded-lg bg-white cursor-pointer hover:bg-gray-50 relative"
-                  onClick={handleContentClick}
-                  style={{ 
-                    minHeight: '300px',
-                    maxHeight: '500px',
-                    overflow: 'auto'
-                  }}
-                >
-                  <div 
-                    className="pointer-events-none"
-                    dangerouslySetInnerHTML={{
-                      __html: isHtmlContent(campaignData.body) 
-                        ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                        : campaignData.body.replace(/\n/g, '<br>')
-                    }}
-                  />
-                  <div className="absolute inset-0 pointer-events-auto"></div>
-                </div>
-              )}
+              <div 
+                className="p-4 border border-gray-200 rounded-lg bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500"
+                contentEditable
+                onInput={handleContentChange}
+                suppressContentEditableWarning={true}
+                style={{ 
+                  minHeight: '300px',
+                  maxHeight: '500px',
+                  overflow: 'auto',
+                  outline: 'none',
+                  lineHeight: '1.6',
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word'
+                }}
+                dangerouslySetInnerHTML={{
+                  __html: isHtmlContent(campaignData.body) 
+                    ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+                    : campaignData.body.replace(/\n/g, '<br>')
+                }}
+              />
             </div>
             
             {/* Fixed Footer */}
             <div className="p-3 border-t border-gray-200 flex-shrink-0">
               <p className="text-xs text-gray-500 text-center">
-                💡 Accept AI-generated content from the chat to apply it here. You can also click to edit directly.
+                💡 Click anywhere in the template to edit directly. Changes are saved automatically.
               </p>
             </div>
           </div>
