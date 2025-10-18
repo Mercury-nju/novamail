@@ -995,10 +995,6 @@ export default function EditCampaignPage() {
                       const newContent = e.currentTarget.innerHTML
                       setCampaignData(prev => ({ ...prev, body: newContent }))
                     }}
-                    onBlur={(e) => {
-                      const newContent = e.currentTarget.innerHTML
-                      setCampaignData(prev => ({ ...prev, body: newContent }))
-                    }}
                     style={{
                       minHeight: '300px',
                       outline: 'none',
@@ -1013,6 +1009,8 @@ export default function EditCampaignPage() {
                       e.currentTarget.style.backgroundColor = '#F8FAFC'
                     }}
                     onBlur={(e) => {
+                      const newContent = e.currentTarget.innerHTML
+                      setCampaignData(prev => ({ ...prev, body: newContent }))
                       e.currentTarget.style.border = '1px solid transparent'
                       e.currentTarget.style.backgroundColor = 'transparent'
                     }}
