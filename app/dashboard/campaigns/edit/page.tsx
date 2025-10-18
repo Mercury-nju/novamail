@@ -564,7 +564,10 @@ export default function EditCampaignPage() {
     setCampaignData(prev => ({ ...prev, subject: e.target.value }))
   }
 
-  const handleContentClick = () => {
+  const handleContentClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('Template clicked, entering edit mode')
     setIsEditing(true)
     setEditableContent(campaignData.body)
   }
@@ -882,19 +885,24 @@ export default function EditCampaignPage() {
                 </div>
               ) : (
                 <div 
-                  className="p-4 border border-gray-200 rounded-lg bg-white cursor-pointer hover:bg-gray-50"
+                  className="p-4 border border-gray-200 rounded-lg bg-white cursor-pointer hover:bg-gray-50 relative"
                   onClick={handleContentClick}
                   style={{ 
                     minHeight: '300px',
                     maxHeight: '500px',
                     overflow: 'auto'
                   }}
-                  dangerouslySetInnerHTML={{
-                    __html: isHtmlContent(campaignData.body) 
-                      ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
-                      : campaignData.body.replace(/\n/g, '<br>')
-                  }}
-                />
+                >
+                  <div 
+                    className="pointer-events-none"
+                    dangerouslySetInnerHTML={{
+                      __html: isHtmlContent(campaignData.body) 
+                        ? campaignData.body.replace(/<a\s+([^>]*?)>/gi, '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">')
+                        : campaignData.body.replace(/\n/g, '<br>')
+                    }}
+                  />
+                  <div className="absolute inset-0 pointer-events-auto"></div>
+                </div>
               )}
             </div>
             
