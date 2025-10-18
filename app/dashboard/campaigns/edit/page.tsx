@@ -986,36 +986,47 @@ export default function EditCampaignPage() {
                     <p className="text-blue-100 text-sm mt-1">AI-Powered Email Marketing</p>
                   </div>
                   
-                  {/* Email Body - Editable Content */}
-                  <div className="p-6">
-                    <textarea
-                      value={campaignData.body || ''}
-                      onChange={(e) => {
-                        setCampaignData(prev => ({ ...prev, body: e.target.value }))
-                      }}
-                      placeholder="点击这里开始编辑您的邮件内容..."
+                  {/* Email Body - Professional Template with WYSIWYG Editing */}
+                  <div className="p-6 relative">
+                    {/* Display Layer - Shows the professional template */}
+                    <div 
+                      className="absolute inset-0 p-6 pointer-events-none"
                       style={{
-                        width: '100%',
-                        minHeight: '300px',
-                        outline: 'none',
                         lineHeight: '1.6',
                         fontSize: '16px',
                         color: '#374151',
-                        border: '1px solid transparent',
-                        borderRadius: '4px',
-                        padding: '12px',
-                        fontFamily: 'inherit',
-                        resize: 'vertical'
+                        minHeight: '300px'
                       }}
-                      onFocus={(e) => {
-                        e.currentTarget.style.border = '1px solid #3B82F6'
-                        e.currentTarget.style.backgroundColor = '#F8FAFC'
-                      }}
-                      onBlur={(e) => {
-                        e.currentTarget.style.border = '1px solid transparent'
-                        e.currentTarget.style.backgroundColor = 'transparent'
+                      dangerouslySetInnerHTML={{
+                        __html: campaignData.body || '<p style="color: #9CA3AF; font-style: italic;">点击这里开始编辑您的邮件内容...</p>'
                       }}
                     />
+                    
+                    {/* Edit Layer - Transparent overlay for editing */}
+                    <div 
+                      className="absolute inset-0 p-6"
+                      contentEditable
+                      suppressContentEditableWarning={true}
+                      onInput={(e) => {
+                        const newContent = e.currentTarget.innerHTML
+                        setCampaignData(prev => ({ ...prev, body: newContent }))
+                      }}
+                      onBlur={(e) => {
+                        const newContent = e.currentTarget.innerHTML
+                        setCampaignData(prev => ({ ...prev, body: newContent }))
+                      }}
+                      style={{
+                        outline: 'none',
+                        lineHeight: '1.6',
+                        fontSize: '16px',
+                        color: 'transparent',
+                        caretColor: '#374151',
+                        background: 'transparent',
+                        minHeight: '300px'
+                      }}
+                    >
+                      {campaignData.body ? (campaignData.body.replace(/<[^>]*>/g, '')) : '点击这里开始编辑您的邮件内容...'}
+                    </div>
                   </div>
                   
                   {/* Email Footer */}
