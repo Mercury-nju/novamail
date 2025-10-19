@@ -443,6 +443,11 @@ async function handleAIGenerateEmail(request, env) {
     } = data;
 
     // 暂时使用本地生成，避免AI API乱码问题
+    const aiResponse = {
+      subject: generateEmailSubject(userRequest, businessName, productService),
+      textContent: generateTextContent(userRequest, businessName, productService, targetAudience, tone)
+    };
+    
     // 生成AI对话响应
     const aiResponse = generateAIResponse(userRequest, businessName, productService, targetAudience);
     
@@ -1035,9 +1040,8 @@ async function handleUserLimits(request, env) {
     headers: corsHeaders
   });
 }
- 
- / /   A I 5pEx=v]��]2|"��q�WQ����f 
- function generateAIResponse(userRequest, businessName, productService, targetAudience) {
+// AI对话响应生成函数
+function generateAIResponse(userRequest, businessName, productService, targetAudience) {
   const request = userRequest.toLowerCase()
   const business = businessName || 'Your Business'
   
