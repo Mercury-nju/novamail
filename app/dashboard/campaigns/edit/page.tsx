@@ -300,9 +300,6 @@ export default function CampaignEditPage() {
                   msUserSelect: 'text',
                   cursor: 'text'
                 }}
-                dangerouslySetInnerHTML={{
-                  __html: campaignData.body || templateContent
-                }}
                 onKeyDown={(e) => {
                   // 防止Tab键跳转焦点
                   if (e.key === 'Tab') {
@@ -315,9 +312,18 @@ export default function CampaignEditPage() {
                   const text = e.clipboardData.getData('text/plain')
                   document.execCommand('insertText', false, text)
                 }}
+                onMouseDown={(e) => {
+                  // 防止点击时焦点跳转
+                  e.stopPropagation()
+                }}
                 onFocus={(e) => {
-                  // 防止光标自动跳转到开头
-                  e.preventDefault()
+                  // 完全阻止默认焦点行为
+                  e.stopPropagation()
+                }}
+                ref={(el) => {
+                  if (el && !el.innerHTML) {
+                    el.innerHTML = campaignData.body || templateContent
+                  }
                 }}
               />
             </div>
