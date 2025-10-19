@@ -74,11 +74,11 @@ export default function EditCampaignPage() {
     customizations: {}
   })
 
-  // 初始化内容到DOM（只运行一次）
+  // 初始化专业模板到DOM（只运行一次）
   useEffect(() => {
     if (contentRef.current && !contentRef.current.innerHTML) {
-      // 设置默认的专业模板
-      const defaultTemplate = `
+      // 使用真正的专业模板 - Modern Gradient
+      const professionalTemplate = `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
             <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">NovaMail</h1>
@@ -116,9 +116,9 @@ export default function EditCampaignPage() {
           </div>
         </div>
       `
-      contentRef.current.innerHTML = defaultTemplate
+      contentRef.current.innerHTML = professionalTemplate
       // 同时更新状态
-      setCampaignData(prev => ({ ...prev, body: defaultTemplate }))
+      setCampaignData(prev => ({ ...prev, body: professionalTemplate }))
     }
   }, [])
 
@@ -759,28 +759,43 @@ export default function EditCampaignPage() {
     console.log('Generated content:', generatedContent)
     
     // 将AI生成的纯文本转换为HTML格式
-    const htmlContent = convertTextToHtml(generatedContent.textContent)
+    const aiContentHtml = convertTextToHtml(generatedContent.textContent)
+    
+    // 创建完整的专业模板，将AI内容嵌入其中
+    const professionalTemplateWithAIContent = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">NovaMail</h1>
+          <p style="color: #e2e8f0; margin: 8px 0 0 0; font-size: 14px; font-weight: 400;">AI-Powered Email Marketing</p>
+        </div>
+        
+        <div style="padding: 40px 30px;">
+          ${aiContentHtml}
+        </div>
+      </div>
+    `
     
     // 调试信息
     console.log('=== AI Content Acceptance Debug ===')
     console.log('Original text:', generatedContent.textContent)
-    console.log('Converted HTML:', htmlContent)
+    console.log('AI Content HTML:', aiContentHtml)
+    console.log('Full Professional Template:', professionalTemplateWithAIContent)
     
     // 直接更新DOM
     if (contentRef.current) {
-      contentRef.current.innerHTML = htmlContent
+      contentRef.current.innerHTML = professionalTemplateWithAIContent
     }
     
     // Apply the generated content to the template
     setCampaignData(prev => {
       console.log('=== setCampaignData called ===')
       console.log('Previous body:', prev.body)
-      console.log('New body:', htmlContent)
+      console.log('New body:', professionalTemplateWithAIContent)
       
       const newData = {
         ...prev,
         subject: generatedContent.subject,
-        body: htmlContent
+        body: professionalTemplateWithAIContent
       }
       
       console.log('New campaignData:', newData)
@@ -790,11 +805,11 @@ export default function EditCampaignPage() {
     // Add acceptance message to chat
     setChatHistory(prev => [...prev, {
       type: 'ai',
-      message: '✅ Content has been applied to the template! You can continue editing or make new requests.',
+      message: '✅ Content has been applied to the professional template! You can continue editing or make new requests.',
       timestamp: new Date()
     }])
     
-    toast.success('✨ Content applied to template!')
+    toast.success('✨ Content applied to professional template!')
   }
 
 
