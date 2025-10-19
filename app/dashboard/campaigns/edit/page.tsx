@@ -995,6 +995,25 @@ export default function EditCampaignPage() {
                       const newContent = e.currentTarget.innerHTML
                       setCampaignData(prev => ({ ...prev, body: newContent }))
                     }}
+                    onKeyDown={(e) => {
+                      // 确保所有键盘操作都能正常工作
+                      // 包括删除、退格、选择、复制、粘贴等
+                      if (e.key === 'Delete' || e.key === 'Backspace') {
+                        // 删除操作 - 让浏览器自然处理
+                        return
+                      }
+                      if (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'x' || e.key === 'a')) {
+                        // 复制、粘贴、剪切、全选 - 让浏览器自然处理
+                        return
+                      }
+                    }}
+                    onPaste={(e) => {
+                      // 粘贴操作 - 让浏览器自然处理，然后更新内容
+                      setTimeout(() => {
+                        const newContent = e.currentTarget.innerHTML
+                        setCampaignData(prev => ({ ...prev, body: newContent }))
+                      }, 0)
+                    }}
                     style={{
                       minHeight: '300px',
                       outline: 'none',
@@ -1002,7 +1021,12 @@ export default function EditCampaignPage() {
                       fontSize: '16px',
                       color: '#374151',
                       border: '1px solid transparent',
-                      borderRadius: '4px'
+                      borderRadius: '4px',
+                      cursor: 'text',
+                      userSelect: 'text',
+                      WebkitUserSelect: 'text',
+                      MozUserSelect: 'text',
+                      msUserSelect: 'text'
                     }}
                     onFocus={(e) => {
                       e.currentTarget.style.border = '1px solid #3B82F6'
@@ -1015,7 +1039,7 @@ export default function EditCampaignPage() {
                       e.currentTarget.style.backgroundColor = 'transparent'
                     }}
                     dangerouslySetInnerHTML={{
-                      __html: campaignData.body || '<p style="color: #9CA3AF; font-style: italic;">点击这里开始编辑您的邮件内容...</p>'
+                      __html: campaignData.body || '<p style="color: #9CA3AF; font-style: italic;">点击这里开始编辑您的邮件内容... 您可以删除、修改、输入文字</p>'
                     }}
                   />
                   
