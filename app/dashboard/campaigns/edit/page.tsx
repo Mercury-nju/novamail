@@ -210,8 +210,10 @@ export default function CampaignEditPage() {
     }])
 
     try {
-      // 智能API路由选择 - 简化逻辑
-      const apiUrl = '/api/ai/generate-email'  // 始终使用本地API进行开发
+      // 智能API路由选择 - 生产环境兼容
+      const apiUrl = typeof window !== 'undefined' && window.location.hostname.includes('novamail.world')
+        ? 'https://novamail.world/api/ai/generate-email'  // 生产环境
+        : '/api/ai/generate-email'  // 开发环境
       
       console.log('🔍 API URL:', apiUrl)
       console.log('🔍 Hostname:', typeof window !== 'undefined' ? window.location.hostname : 'server-side')
@@ -285,8 +287,10 @@ export default function CampaignEditPage() {
 
     setIsSending(true)
     try {
-      // 智能API路由选择 - 简化逻辑
-      const apiUrl = '/api/campaigns/send'  // 始终使用本地API进行开发
+      // 智能API路由选择 - 生产环境兼容
+      const apiUrl = typeof window !== 'undefined' && window.location.hostname.includes('novamail.world')
+        ? 'https://novamail.world/api/campaigns/send'  // 生产环境
+        : '/api/campaigns/send'  // 开发环境
         
       const response = await fetch(apiUrl, {
         method: 'POST',
