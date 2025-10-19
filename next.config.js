@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 移除 output: 'export' 以支持API路由
-  // 移除 trailingSlash: true 以避免API路由重定向问题
+  // Cloudflare Pages 需要静态导出
+  output: 'export',
+  trailingSlash: true,
   images: {
     unoptimized: true
   },

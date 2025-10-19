@@ -83,14 +83,21 @@ const nextConfig = {
 
 ### 4. 部署平台
 
-#### Vercel (推荐)
+#### Cloudflare Pages (推荐)
+1. 连接 GitHub 仓库
+2. 构建命令: `npm run build`
+3. 输出目录: `out`
+4. 设置环境变量
+5. 部署API Routes Worker: `./deploy-api-routes.sh`
+
+#### Vercel
 1. 连接 GitHub 仓库
 2. 设置环境变量
 3. 自动部署
 
 #### Netlify
 1. 构建命令: `npm run build`
-2. 发布目录: `.next`
+2. 发布目录: `out`
 3. 设置环境变量
 
 #### 自托管

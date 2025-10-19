@@ -1,0 +1,18 @@
+name = "novamail-api-routes"
+main = "api-routes.js"
+compatibility_date = "2024-01-15"
+compatibility_flags = ["nodejs_compat"]
+
+# 环境变量
+[vars]
+RESEND_API_KEY = "re_PCbEHboB..."  # Resend API密钥 (用于campaign营销邮件)
+DASHSCOPE_API_KEY = "sk-9bf19547ddbd4be1a87a7a43cf251097"  # DashScope AI API密钥
+
+# 生产环境配置
+[env.production]
+name = "novamail-api-routes"
+main = "api-routes.js"
+
+[env.production.vars]
+RESEND_API_KEY = "re_PCbEHboB..."  # 生产环境Resend API密钥
+DASHSCOPE_API_KEY = "sk-9bf19547ddbd4be1a87a7a43cf251097"  # 生产环境DashScope API密钥
