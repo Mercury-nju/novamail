@@ -261,13 +261,16 @@ export default function CampaignEditPage() {
       }
 
     } catch (error) {
-      console.error('Error generating content:', error)
+      console.error('❌ Error generating content:', error)
+      console.error('❌ Error details:', error.message)
+      console.error('❌ Error stack:', error.stack)
+      
       setChatHistory(prev => [...prev, {
         type: 'ai',
-        message: 'Sorry, I encountered an error. Please try again.',
+        message: `Sorry, I encountered an error: ${error.message}. Please try again.`,
         timestamp: new Date()
       }])
-      toast.error('Failed to generate content')
+      toast.error(`Failed to generate content: ${error.message}`)
     } finally {
       setIsGenerating(false)
     }
