@@ -26,6 +26,10 @@ export default function CampaignEditPage() {
     body: ''
   })
   
+  // 编辑状态
+  const [isEditing, setIsEditing] = useState(false)
+  const [editText, setEditText] = useState('')
+  
   
   const [chatInput, setChatInput] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
@@ -147,6 +151,39 @@ export default function CampaignEditPage() {
     text = text.trim()
     
     return text
+  }
+
+  // 开始编辑
+  const startEdit = () => {
+    const currentContent = campaignData.body || templateContent
+    const textContent = extractTextFromHtml(currentContent)
+    setEditText(textContent)
+    setIsEditing(true)
+  }
+
+  // 保存编辑
+  const saveEdit = () => {
+    const htmlContent = convertTextToHtml(editText)
+    const fullTemplate = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">NovaMail</h1>
+          <p style="color: #e2e8f0; margin: 8px 0 0 0; font-size: 14px; font-weight: 400;">AI-Powered Email Marketing</p>
+        </div>
+        
+        <div style="padding: 40px 30px;">
+          ${htmlContent}
+        </div>
+      </div>
+    `
+    setCampaignData(prev => ({ ...prev, body: fullTemplate }))
+    setIsEditing(false)
+  }
+
+  // 取消编辑
+  const cancelEdit = () => {
+    setIsEditing(false)
+    setEditText('')
   }
 
   // 处理AI内容接受
@@ -280,40 +317,61 @@ export default function CampaignEditPage() {
             </div>
             
             <div className="border border-gray-200 rounded-lg overflow-hidden">
-              <div
-                contentEditable
-                suppressContentEditableWarning={true}
-                onInput={(e) => {
-                  const newContent = e.currentTarget.innerHTML
-                  setCampaignData(prev => ({ ...prev, body: newContent }))
-                }}
-                className="min-h-[500px] focus:outline-none"
-                style={{
-                  lineHeight: '1.6',
-                  fontSize: '16px',
-                  color: '#374151',
-                  userSelect: 'text',
-                  WebkitUserSelect: 'text',
-                  MozUserSelect: 'text',
-                  msUserSelect: 'text',
-                  cursor: 'text'
-                }}
-                dangerouslySetInnerHTML={{
-                  __html: campaignData.body || templateContent
-                }}
-                onKeyDown={(e) => {
-                  // 防止Tab键跳转焦点
-                  if (e.key === 'Tab') {
-                    e.preventDefault()
-                    document.execCommand('insertText', false, '    ')
-                  }
-                }}
-                onPaste={(e) => {
-                  e.preventDefault()
-                  const text = e.clipboardData.getData('text/plain')
-                  document.execCommand('insertText', false, text)
-                }}
-              />
+              {isEditing ? (
+                // 编辑模式：使用textarea进行流畅编辑
+                <div className="p-4">
+                  <div className="mb-4 flex gap-2">
+                    <button
+                      onClick={saveEdit}
+                      className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 flex items-center gap-2"
+                    >
+                      <Check className="w-4 h-4" />
+                      保存
+                    </button>
+                    <button
+                      onClick={cancelEdit}
+                      className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 flex items-center gap-2"
+                    >
+                      <X className="w-4 h-4" />
+                      取消
+                    </button>
+                  </div>
+                  <textarea
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    className="w-full min-h-[400px] p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    style={{
+                      lineHeight: '1.6',
+                      fontSize: '16px',
+                      color: '#374151',
+                      fontFamily: 'monospace'
+                    }}
+                    placeholder="在这里编辑邮件内容..."
+                  />
+                  <div className="mt-2 text-sm text-gray-500">
+                    支持格式：• 列表项、**粗体**、*斜体*、1. 标题
+                  </div>
+                </div>
+              ) : (
+                // 显示模式：显示专业模板
+                <div className="relative">
+                  <div
+                    className="min-h-[500px] cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={startEdit}
+                    dangerouslySetInnerHTML={{
+                      __html: campaignData.body || templateContent
+                    }}
+                  />
+                  <div className="absolute top-4 right-4">
+                    <button
+                      onClick={startEdit}
+                      className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 opacity-0 hover:opacity-100 transition-opacity"
+                    >
+                      编辑内容
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
