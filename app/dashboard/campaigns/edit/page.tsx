@@ -51,6 +51,7 @@ export default function EditCampaignPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const [leftPanelWidth, setLeftPanelWidth] = useState(65) // 默认左侧占65%
+  const contentRef = useRef<HTMLDivElement>(null)
   
   const [chatHistory, setChatHistory] = useState<Array<{
     type: 'user' | 'ai'
@@ -73,7 +74,12 @@ export default function EditCampaignPage() {
     customizations: {}
   })
 
-  // 移除useEffect，直接使用textarea编辑
+  // 同步内容到DOM
+  useEffect(() => {
+    if (contentRef.current && campaignData.body) {
+      contentRef.current.innerHTML = campaignData.body
+    }
+  }, [campaignData.body])
 
   const professionalTemplates: ProfessionalTemplate[] = [
     {
@@ -988,6 +994,7 @@ export default function EditCampaignPage() {
                   
                   {/* Email Body - Direct Editable Template */}
                   <div 
+                    ref={contentRef}
                     className="p-6"
                     contentEditable
                     suppressContentEditableWarning={true}
@@ -1038,10 +1045,13 @@ export default function EditCampaignPage() {
                       e.currentTarget.style.border = '1px solid transparent'
                       e.currentTarget.style.backgroundColor = 'transparent'
                     }}
-                    dangerouslySetInnerHTML={{
-                      __html: campaignData.body || '<p style="color: #9CA3AF; font-style: italic;">点击这里开始编辑您的邮件内容... 您可以删除、修改、输入文字</p>'
-                    }}
-                  />
+                  >
+                    {!campaignData.body && (
+                      <p style={{ color: '#9CA3AF', fontStyle: 'italic' }}>
+                        点击这里开始编辑您的邮件内容... 您可以删除、修改、输入文字
+                      </p>
+                    )}
+                  </div>
                   
                   {/* Email Footer */}
                   <div className="bg-gray-50 p-6 rounded-b-lg border-t border-gray-200">
