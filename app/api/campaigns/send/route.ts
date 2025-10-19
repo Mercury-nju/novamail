@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// 模拟邮件发送功能
+// 真实邮件发送功能 - 生产环境就绪
 async function sendEmail(
   subject: string,
   content: string,
@@ -8,30 +8,62 @@ async function sendEmail(
   senderEmail: string,
   senderName: string
 ) {
-  // 这里可以集成真实的邮件服务，如：
-  // - Resend
-  // - SendGrid
-  // - Mailgun
-  // - AWS SES
-  // - Nodemailer with SMTP
+  // 生产环境：集成 Resend API
+  const RESEND_API_KEY = process.env.RESEND_API_KEY
   
-  // 目前使用模拟发送
-  console.log('=== EMAIL SENDING SIMULATION ===')
-  console.log('From:', `${senderName} <${senderEmail}>`)
-  console.log('To:', recipients.join(', '))
-  console.log('Subject:', subject)
-  console.log('Content:', content)
-  console.log('================================')
+  if (!RESEND_API_KEY) {
+    // 开发环境：模拟发送
+    console.log('=== EMAIL SENDING SIMULATION (DEV MODE) ===')
+    console.log('From:', `${senderName} <${senderEmail}>`)
+    console.log('To:', recipients.join(', '))
+    console.log('Subject:', subject)
+    console.log('Content:', content.substring(0, 100) + '...')
+    console.log('==========================================')
+    
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    return {
+      success: true,
+      messageId: `msg_${Date.now()}`,
+      recipients: recipients.length,
+      sentAt: new Date().toISOString(),
+      mode: 'simulation'
+    }
+  }
   
-  // 模拟发送延迟
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  
-  // 模拟发送结果
-  return {
-    success: true,
-    messageId: `msg_${Date.now()}`,
-    recipients: recipients.length,
-    sentAt: new Date().toISOString()
+  // 生产环境：使用 Resend API
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: `${senderName} <${senderEmail}>`,
+        to: recipients,
+        subject: subject,
+        html: content,
+      }),
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Resend API error: ${response.status}`)
+    }
+    
+    const data = await response.json()
+    
+    return {
+      success: true,
+      messageId: data.id,
+      recipients: recipients.length,
+      sentAt: new Date().toISOString(),
+      mode: 'production'
+    }
+    
+  } catch (error) {
+    console.error('Resend API error:', error)
+    throw new Error('Failed to send email via Resend API')
   }
 }
 

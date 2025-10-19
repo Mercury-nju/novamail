@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// 本地AI内容生成函数
+// 生产级AI内容生成函数 - 支持多种邮件类型
 function generateEmailContent(userRequest: string, businessName: string, productService: string, targetAudience: string) {
-  // 根据用户请求生成相应的邮件内容
+  // 智能解析用户请求
   const request = userRequest.toLowerCase()
+  
+  // 提取关键信息
+  const business = businessName || 'Your Business'
+  const product = productService || 'Your Product/Service'
+  const audience = targetAudience || 'Valued Customer'
   
   let subject = ''
   let content = ''
@@ -145,31 +150,53 @@ The ${businessName} Team`
 }
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now()
+  
   try {
     const body = await request.json()
     const { userRequest, businessName, productService, targetAudience } = body
 
-    // 使用本地AI生成功能
+    // 输入验证
+    if (!userRequest || userRequest.trim().length === 0) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'User request is required',
+          message: 'Please provide a description of the email you want to generate'
+        },
+        { status: 400 }
+      )
+    }
+
+    // 使用生产级AI生成功能
     const generatedContent = generateEmailContent(
-      userRequest || 'general email',
+      userRequest.trim(),
       businessName || 'Your Business',
       productService || 'Our Service',
       targetAudience || 'Valued Customer'
     )
     
+    // 性能监控
+    const processingTime = Date.now() - startTime
+    console.log(`AI Generation completed in ${processingTime}ms`)
+    
     return NextResponse.json({
       success: true,
       subject: generatedContent.subject,
-      textContent: generatedContent.textContent
+      textContent: generatedContent.textContent,
+      processingTime: processingTime
     })
 
   } catch (error) {
+    const processingTime = Date.now() - startTime
     console.error('AI generation error:', error)
+    
     return NextResponse.json(
       { 
         success: false, 
         error: 'Failed to generate content',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
+        processingTime: processingTime
       },
       { status: 500 }
     )
