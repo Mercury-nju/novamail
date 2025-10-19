@@ -74,12 +74,12 @@ export default function EditCampaignPage() {
     customizations: {}
   })
 
-  // 同步内容到DOM
+  // 初始化内容到DOM（只运行一次）
   useEffect(() => {
-    if (contentRef.current && campaignData.body) {
+    if (contentRef.current && campaignData.body && !contentRef.current.innerHTML) {
       contentRef.current.innerHTML = campaignData.body
     }
-  }, [campaignData.body])
+  }, [])
 
   const professionalTemplates: ProfessionalTemplate[] = [
     {
@@ -724,6 +724,11 @@ export default function EditCampaignPage() {
     console.log('=== AI Content Acceptance Debug ===')
     console.log('Original text:', generatedContent.textContent)
     console.log('Converted HTML:', htmlContent)
+    
+    // 直接更新DOM
+    if (contentRef.current) {
+      contentRef.current.innerHTML = htmlContent
+    }
     
     // Apply the generated content to the template
     setCampaignData(prev => {
