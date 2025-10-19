@@ -1,144 +1,194 @@
 // Cloudflare Pages Function for AI Email Generation
 // 处理AI邮件内容生成请求
 
-// 生产级AI内容生成函数
-function generateEmailContent(userRequest, businessName, productService, targetAudience) {
+// AI对话响应生成函数
+function generateAIResponse(userRequest, businessName, productService, targetAudience) {
   const request = userRequest.toLowerCase()
   
   const business = businessName || 'Your Business'
   const product = productService || 'Your Product/Service'
   const audience = targetAudience || 'Valued Customer'
   
-  let subject = ''
-  let content = ''
+  let response = ''
   
-  if (request.includes('product launch') || request.includes('product launch email')) {
-    subject = `🚀 Introducing ${product} - The Future is Here`
-    content = `Dear ${audience},
+  if (request.includes('subject line') || request.includes('subject lines')) {
+    response = `Great question about email subject lines! Here are some proven strategies to improve your open rates:
 
-We're excited to announce the launch of ${product}! This revolutionary new offering from ${business} is designed to transform your experience and deliver unprecedented value.
+**Power Words That Work:**
+• "Exclusive" - creates urgency and FOMO
+• "Free" - always catches attention
+• "New" - suggests fresh content
+• "Limited" - creates scarcity
+• "You" - personalizes the message
 
-**What makes ${product} special:**
-• Revolutionary features that set new industry standards
-• Seamless integration with your existing workflow
-• 24/7 dedicated support from our expert team
-• Proven results that speak for themselves
+**Best Practices:**
+• Keep it under 50 characters for mobile
+• Use numbers and emojis sparingly
+• A/B test different approaches
+• Avoid spam trigger words
+• Make it relevant to your audience
 
-**Why you should care:**
-This isn't just another product launch - it's the beginning of a new era. Early adopters are already seeing remarkable improvements in their productivity and results.
+**Examples for ${business}:**
+• "Exclusive: New ${product} Features (Just for You)"
+• "Limited Time: 50% Off ${product}"
+• "You're Invited: ${business} VIP Event"
 
-**Ready to get started?**
-Join thousands of satisfied customers who have already made the switch. Limited-time launch offer available for the first 100 customers.
+Would you like me to help you create specific subject lines for your upcoming campaign?`
+  } else if (request.includes('marketing strateg') || request.includes('strategies')) {
+    response = `Excellent question! Here are the most effective email marketing strategies for ${business}:
 
-Best regards,
-The ${business} Team
+**1. Segmentation is Key:**
+• Divide your list by demographics, behavior, and preferences
+• Send targeted content to each segment
+• Personalize subject lines and content
 
-P.S. Don't miss out on our exclusive launch bonus - act now while supplies last!`
-  } else if (request.includes('newsletter') || request.includes('company updates')) {
-    subject = `📧 ${business} Newsletter - Latest Updates & Insights`
-    content = `Dear ${audience},
+**2. Automation Workflows:**
+• Welcome series for new subscribers
+• Abandoned cart recovery
+• Birthday and anniversary emails
+• Re-engagement campaigns
 
-Welcome to our latest newsletter! We have some exciting updates and insights to share with you.
+**3. Content Strategy:**
+• 80% valuable content, 20% promotional
+• Educational content builds trust
+• User-generated content increases engagement
+• Behind-the-scenes content humanizes your brand
 
-**Company Updates:**
-• New team members joining our growing family
-• Recent achievements and milestones reached
-• Upcoming events and webinars you won't want to miss
-• Product improvements based on your valuable feedback
+**4. Timing & Frequency:**
+• Test different send times for your audience
+• Tuesday-Thursday typically perform best
+• Start with weekly, adjust based on engagement
+• Respect unsubscribe requests immediately
 
-**Industry Insights:**
-The market is evolving rapidly, and we're here to help you stay ahead of the curve. Our latest research shows significant opportunities in the coming months.
+**5. Mobile Optimization:**
+• 60%+ of emails are opened on mobile
+• Use single-column layouts
+• Large, tappable buttons
+• Short, scannable content
 
-**What's Next:**
-We're working on some exciting new features that we can't wait to share with you. Stay tuned for more updates in our next newsletter.
+What specific aspect of email marketing would you like to dive deeper into?`
+  } else if (request.includes('open rate') || request.includes('open rates')) {
+    response = `Great question! Here are proven strategies to boost your email open rates:
 
-Thank you for being part of our community!
+**Immediate Improvements:**
+• Clean your email list regularly (remove inactive subscribers)
+• Use double opt-in to ensure quality subscribers
+• Segment your audience for targeted messaging
+• Test different send times (Tuesday-Thursday, 10-11 AM often work best)
 
-Best regards,
-The ${business} Team`
-  } else if (request.includes('sale') || request.includes('promotion') || request.includes('discount')) {
-    subject = `🎉 Limited Time Offer - ${product} at Special Price!`
-    content = `Dear ${audience},
+**Subject Line Optimization:**
+• Keep it under 50 characters
+• Use personalization (first name, location)
+• Create urgency without being spammy
+• Ask questions to spark curiosity
+• Use emojis strategically (not in every email)
 
-We have an exclusive offer that we don't want you to miss! For a limited time only, you can get ${product} at an incredible discount.
+**Sender Reputation:**
+• Use a consistent "From" name and email
+• Maintain a clean IP reputation
+• Avoid spam trigger words
+• Include clear unsubscribe options
+• Monitor bounce rates and complaints
 
-**Special Offer Details:**
-• Save up to 50% on your first purchase
-• Free shipping on orders over $100
-• Extended warranty included at no extra cost
-• 30-day money-back guarantee
+**Content Quality:**
+• Deliver value in every email
+• Match subject line to content
+• Use preview text effectively
+• Mobile-optimize everything
+• Test different content formats
 
-**Why this offer is special:**
-This is our biggest sale of the year, and we're passing the savings directly to you. Don't wait - this offer expires soon!
+**Industry Benchmarks:**
+• Average open rate: 20-25%
+• Good open rate: 25-30%
+• Excellent open rate: 30%+
 
-**How to claim your discount:**
-Simply use code SAVE50 at checkout to unlock your exclusive savings.
+What's your current open rate, and which area would you like to focus on improving first?`
+  } else if (request.includes('content idea') || request.includes('content ideas')) {
+    response = `Here are some engaging email content ideas for ${business}:
 
-**Limited time only - act fast!**
-This offer won't last long. Secure your discount today before it's too late.
+**Educational Content:**
+• "How-to" guides related to ${product}
+• Industry insights and trends
+• Case studies and success stories
+• Tips and best practices
+• FAQ series addressing common questions
 
-Best regards,
-The ${business} Team
+**Behind-the-Scenes:**
+• Team introductions and company culture
+• Product development process
+• Office tours or virtual events
+• Customer testimonials and reviews
+• Company milestones and achievements
 
-P.S. This offer is exclusively for our valued customers - thank you for your continued support!`
-  } else if (request.includes('welcome') || request.includes('new customer')) {
-    subject = `🎉 Welcome to ${business} - Let's Get Started!`
-    content = `Dear ${audience},
+**Interactive Content:**
+• Polls and surveys
+• Quizzes related to your industry
+• Contests and giveaways
+• User-generated content features
+• Interactive product demos
 
-Welcome to ${business}! We're thrilled to have you join our community of satisfied customers.
+**Seasonal & Event-Based:**
+• Holiday-themed content
+• Industry conference recaps
+• Seasonal product recommendations
+• Anniversary celebrations
+• New year goal-setting content
 
-**Getting Started:**
-• Complete your profile setup to unlock all features
-• Explore our comprehensive knowledge base
-• Join our community forum to connect with other users
-• Schedule a personalized onboarding call with our team
+**Value-Driven Content:**
+• Exclusive discounts and offers
+• Early access to new features
+• Free resources and templates
+• Webinar invitations
+• Industry reports and whitepapers
 
-**What you can expect:**
-• 24/7 customer support from our expert team
-• Regular updates and new feature releases
-• Exclusive content and resources for members
-• Priority access to new products and services
+**Pro Tips:**
+• Mix content types to keep subscribers engaged
+• Use storytelling to make content memorable
+• Include clear calls-to-action
+• Test different content formats
+• Track engagement metrics
 
-**Your next steps:**
-1. Complete your account setup
-2. Explore our platform features
-3. Connect with our community
-4. Reach out if you need any assistance
-
-We're here to help you succeed every step of the way!
-
-Welcome aboard,
-The ${business} Team
-
-P.S. Don't hesitate to reach out if you have any questions - we're here to help!`
+What type of content resonates most with your audience? I can help you develop specific ideas!`
   } else {
-    // 通用邮件模板
-    subject = `📧 Important Update from ${business}`
-    content = `Dear ${audience},
+    // 通用对话响应
+    response = `Thanks for reaching out! I'm here to help you with email marketing strategies and content ideas for ${business}.
 
-Thank you for your interest in ${product}. We wanted to reach out with some important information that we believe will be valuable to you.
+Here are some ways I can assist you:
 
-**What we're sharing:**
-• Latest updates and improvements to our services
-• New opportunities that might interest you
-• Important information about your account
-• Exclusive offers available to our valued customers
+**Email Marketing Strategy:**
+• Subject line optimization
+• List segmentation advice
+• Automation workflow planning
+• A/B testing recommendations
 
-**Why this matters:**
-We're committed to providing you with the best possible experience, and this information is designed to help you make the most of our services.
+**Content Creation:**
+• Email template suggestions
+• Content calendar planning
+• Engagement tactics
+• Industry best practices
 
-**Next steps:**
-Please review the information above and let us know if you have any questions. We're here to help!
+**Performance Optimization:**
+• Open rate improvement
+• Click-through rate enhancement
+• Deliverability tips
+• Analytics interpretation
 
-Thank you for your continued trust in ${business}.
+**Quick Wins:**
+• Mobile optimization checklist
+• Spam filter avoidance
+• Personalization techniques
+• Timing optimization
 
-Best regards,
-The ${business} Team
+What specific aspect of email marketing would you like to explore? Feel free to ask me anything about:
+• Writing compelling subject lines
+• Creating engaging content
+• Building effective campaigns
+• Measuring success metrics
 
-P.S. If you have any questions or need assistance, please don't hesitate to contact us.`
+I'm here to help you succeed with your email marketing efforts! 🚀`
   }
   
-  return { subject, content }
+  return { response }
 }
 
 export async function onRequest(context) {
@@ -189,7 +239,7 @@ export async function onRequest(context) {
     }
     
     const startTime = Date.now()
-    const generatedContent = generateEmailContent(
+    const aiResponse = generateAIResponse(
       userRequest.trim(),
       businessName || 'Your Business',
       productService || 'Our Service',
@@ -199,9 +249,7 @@ export async function onRequest(context) {
     
     return new Response(JSON.stringify({
       success: true,
-      subject: generatedContent.subject,
-      textContent: generatedContent.content,
-      message: `I've created professional email content based on your request: "${userRequest}". The content has been tailored for ${businessName || 'Your Business'} and is designed to appeal to ${targetAudience || 'Your Customers'}.`,
+      message: aiResponse.response,
       timestamp: new Date().toISOString(),
       processingTime: `${processingTime}ms`
     }), {

@@ -160,38 +160,7 @@ export default function CampaignEditPage() {
   }
 
 
-  // 处理AI内容接受
-  const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
-    const aiContentHtml = convertTextToHtml(generatedContent.textContent)
-    
-    // 创建完整的专业模板
-    const fullTemplate = `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">NovaMail</h1>
-          <p style="color: #e2e8f0; margin: 8px 0 0 0; font-size: 14px; font-weight: 400;">AI-Powered Email Marketing</p>
-        </div>
-        
-        <div style="padding: 40px 30px;">
-          ${aiContentHtml}
-        </div>
-      </div>
-    `
-    
-    setCampaignData(prev => ({
-      ...prev,
-      subject: generatedContent.subject,
-      body: fullTemplate
-    }))
-    
-    setChatHistory(prev => [...prev, {
-      type: 'ai',
-      message: '✅ Content applied to professional template!',
-      timestamp: new Date()
-    }])
-    
-    toast.success('✨ Content applied to template!')
-  }
+  // AI对话功能 - 专注于对话交互，不同步到邮件内容
 
   // 处理聊天提交
   const handleChatSubmit = async (e: React.FormEvent) => {
@@ -246,21 +215,17 @@ export default function CampaignEditPage() {
       console.log('✅ Data subject:', data.subject)
       console.log('✅ Data textContent:', data.textContent)
       
-      if (data.success && data.subject && data.textContent) {
-        // 添加AI响应
-        setChatHistory(prev => [...prev, {
-          type: 'ai',
-          message: 'Here\'s your generated email content:',
-          timestamp: new Date(),
-          generatedContent: {
-            subject: data.subject,
-            textContent: data.textContent
-          }
-        }])
-        toast.success('✨ Email content generated successfully!')
-      } else {
-        throw new Error('Invalid API response format')
-      }
+                if (data.success && data.message) {
+                  // 添加AI对话响应
+                  setChatHistory(prev => [...prev, {
+                    type: 'ai',
+                    message: data.message,
+                    timestamp: new Date()
+                  }])
+                  toast.success('✨ AI responded successfully!')
+                } else {
+                  throw new Error('Invalid API response format')
+                }
 
     } catch (error: any) {
       console.error('❌ Error generating content:', error)
@@ -426,7 +391,7 @@ export default function CampaignEditPage() {
         <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
           <div className="p-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
-            <p className="text-sm text-gray-500">Generate professional email content</p>
+            <p className="text-sm text-gray-500">Chat with AI for email marketing advice and content ideas</p>
           </div>
 
           {/* AI Hints */}
@@ -434,28 +399,28 @@ export default function CampaignEditPage() {
             <h4 className="text-sm font-medium text-gray-700 mb-3">Quick Start:</h4>
             <div className="space-y-2">
               <button
-                onClick={() => setChatInput('Write a product launch email for a new AI tool')}
+                onClick={() => setChatInput('How to write better email subject lines?')}
                 className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
               >
-                🚀 Product Launch Email
+                💡 Email Subject Lines
               </button>
               <button
-                onClick={() => setChatInput('Create a newsletter about company updates')}
+                onClick={() => setChatInput('What are the best email marketing strategies?')}
                 className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
               >
-                📧 Company Newsletter
+                📊 Marketing Strategies
               </button>
               <button
-                onClick={() => setChatInput('Write a promotional email for a sale')}
+                onClick={() => setChatInput('How to increase email open rates?')}
                 className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
               >
-                🎉 Sale Promotion
+                🎯 Open Rate Tips
               </button>
               <button
-                onClick={() => setChatInput('Create a welcome email for new customers')}
+                onClick={() => setChatInput('Give me email content ideas for my business')}
                 className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
               >
-                👋 Welcome Email
+                📝 Content Ideas
               </button>
             </div>
           </div>
@@ -471,24 +436,7 @@ export default function CampaignEditPage() {
                 }`}>
                   <p className="text-sm">{message.message}</p>
                   
-                  {message.generatedContent && (
-                    <div className="mt-3 p-3 bg-white rounded border">
-                      <div className="text-xs text-gray-500 mb-2">Subject:</div>
-                      <div className="text-sm font-medium mb-2">{message.generatedContent.subject}</div>
-                      <div className="text-xs text-gray-500 mb-2">Content:</div>
-                      <div className="text-sm whitespace-pre-wrap">{message.generatedContent.textContent}</div>
-                      
-                      <div className="flex gap-2 mt-3">
-                        <button
-                          onClick={() => handleAcceptContent(message.generatedContent!)}
-                          className="flex items-center gap-1 px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
-                        >
-                          <Check className="w-3 h-3" />
-                          Accept
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  {/* AI对话功能 - 纯对话交互，无内容同步 */}
                   
                   <div className="text-xs opacity-70 mt-2">
                     {message.timestamp.toLocaleTimeString()}
