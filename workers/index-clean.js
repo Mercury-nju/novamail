@@ -442,12 +442,6 @@ async function handleAIGenerateEmail(request, env) {
       templateDescription
     } = data;
 
-    // 暂时使用本地生成，避免AI API乱码问题
-    const aiResponse = {
-      subject: generateEmailSubject(userRequest, businessName, productService),
-      textContent: generateTextContent(userRequest, businessName, productService, targetAudience, tone)
-    };
-    
     // 生成AI对话响应
     const aiResponse = generateAIResponse(userRequest, businessName, productService, targetAudience);
     
