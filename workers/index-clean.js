@@ -1,5 +1,5 @@
-// Cloudflare Workers 简化版�?- NovaMail API
-// 避免重复�?case 语句问题
+// Cloudflare Workers 简化版本 - NovaMail API
+// 避免重复的 case 语句问题
 
 export default {
   async fetch(request, env, ctx) {
@@ -52,7 +52,7 @@ export default {
       } else if (path.startsWith('/api/user/limits')) {
         return await handleUserLimits(request, env);
       } else {
-        // 404 响应
+        // 返回可用端点列表
         return new Response(JSON.stringify({
           error: 'Endpoint not found',
           path: path,
@@ -92,332 +92,13 @@ export default {
   }
 };
 
-// 登录处理
-async function handleLogin(request, env) {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json'
-  };
-
-  if (request.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: corsHeaders
-    });
-  }
-
-  const data = await request.json();
-  const { email, password } = data;
-  
-  if (!email || !password) {
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: 'Email and password are required' 
-    }), {
-      status: 400,
-      headers: corsHeaders
-    });
-  }
-
-  // 模拟用户验证
-  const userId = 'user_' + Date.now();
-  const userToken = 'token_' + Math.random().toString(36).substr(2, 9);
-  
-  return new Response(JSON.stringify({
-    success: true,
-    message: 'Login successful',
-    user: {
-      id: userId,
-      email: email,
-      token: userToken,
-      loginTime: new Date().toISOString()
-    },
-    timestamp: new Date().toISOString()
-  }), {
-    headers: corsHeaders
-  });
-}
-
-// 注册处理
-async function handleRegister(request, env) {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json'
-  };
-
-  if (request.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: corsHeaders
-    });
-  }
-
-  const data = await request.json();
-  const { email, code, firstName, lastName } = data;
-  
-  if (!email || !code) {
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: 'Email and verification code are required' 
-    }), {
-      status: 400,
-      headers: corsHeaders
-    });
-  }
-
-  // 验证码格式检�?
-  if (!/^\d{6}$/.test(code)) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Invalid verification code format'
-    }), {
-      status: 400,
-      headers: corsHeaders
-    });
-  }
-
-  // 创建用户账户（模拟）
-  const userId = 'user_' + Date.now();
-  const userToken = 'token_' + Math.random().toString(36).substr(2, 9);
-  
-  return new Response(JSON.stringify({
-    success: true,
-    message: 'Account created and verified successfully',
-    user: {
-      id: userId,
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      token: userToken,
-      createdAt: new Date().toISOString()
-    },
-    timestamp: new Date().toISOString()
-  }), {
-    headers: corsHeaders
-  });
-}
-
-// 发送验证码
-async function handleSendVerification(request, env) {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json'
-  };
-
-  if (request.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: corsHeaders
-    });
-  }
-
-  const data = await request.json();
-  const { email } = data;
-  
-  if (!email) {
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: 'Email is required' 
-    }), {
-      status: 400,
-      headers: corsHeaders
-    });
-  }
-
-  // 生成6位验证码
-  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-  
-  try {
-    // 使用 Resend API 发送验证码
-    const resendResponse = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: 'NovaMail <noreply@novamail.world>',
-        to: [email],
-        subject: 'NovaMail 验证�?,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #333; text-align: center;">NovaMail 验证�?/h2>
-            <p style="color: #666; font-size: 16px;">您的验证码是�?/p>
-            <div style="background: #f5f5f5; padding: 20px; text-align: center; margin: 20px 0;">
-              <span style="font-size: 32px; font-weight: bold; color: #007bff; letter-spacing: 5px;">${verificationCode}</span>
-            </div>
-            <p style="color: #999; font-size: 14px;">此验证码5分钟内有效，请勿泄露给他人�?/p>
-          </div>
-        `
-      })
-    });
-
-    if (resendResponse.ok) {
-      return new Response(JSON.stringify({
-        success: true,
-        message: 'Verification code sent successfully',
-        code: verificationCode, // 仅用于测试，生产环境不应返回
-        timestamp: new Date().toISOString()
-      }), {
-        headers: corsHeaders
-      });
-    } else {
-      throw new Error('Failed to send email');
-    }
-  } catch (error) {
-    console.error('Resend API error:', error);
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Failed to send verification code',
-      details: error.message
-    }), {
-      status: 500,
-      headers: corsHeaders
-    });
-  }
-}
-
-// 验证验证�?
-async function handleVerifyCode(request, env) {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json'
-  };
-
-  if (request.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: corsHeaders
-    });
-  }
-
-  const data = await request.json();
-  const { email, code } = data;
-  
-  if (!email || !code) {
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: 'Email and verification code are required' 
-    }), {
-      status: 400,
-      headers: corsHeaders
-    });
-  }
-
-  // 验证码格式检�?
-  if (!/^\d{6}$/.test(code)) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Invalid verification code format'
-    }), {
-      status: 400,
-      headers: corsHeaders
-    });
-  }
-
-  // 模拟验证码验证（实际应用中应该从数据库或缓存中验证）
-  return new Response(JSON.stringify({
-    success: true,
-    message: 'Verification code is valid',
-    timestamp: new Date().toISOString()
-  }), {
-    headers: corsHeaders
-  });
-}
-
-// Google 认证
-async function handleGoogleAuth(request, env) {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json'
-  };
-
-  if (request.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: corsHeaders
-    });
-  }
-
-  const data = await request.json();
-  const { accessToken } = data;
-  
-  if (!accessToken) {
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: 'Access token is required' 
-    }), {
-      status: 400,
-      headers: corsHeaders
-    });
-  }
-
-  try {
-    // 验证 Google access token
-    const userResponse = await fetch(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${accessToken}`);
-    
-    if (!userResponse.ok) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Invalid Google access token'
-      }), {
-        status: 401,
-        headers: corsHeaders
-      });
-    }
-
-    const userData = await userResponse.json();
-    
-    // 创建用户会话
-    const userToken = 'token_' + Math.random().toString(36).substr(2, 9);
-    const userId = 'user_' + Date.now();
-    
-    return new Response(JSON.stringify({
-      success: true,
-      message: 'Google authentication successful',
-      user: {
-        id: userId,
-        email: userData.email,
-        firstName: userData.given_name,
-        lastName: userData.family_name,
-        avatar: userData.picture,
-        token: userToken,
-        loginTime: new Date().toISOString()
-      },
-      timestamp: new Date().toISOString()
-    }), {
-      headers: corsHeaders
-    });
-
-  } catch (error) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Google authentication failed',
-      details: error.message
-    }), {
-      status: 500,
-      headers: corsHeaders
-    });
-  }
-}
-
-// AI 生成邮件端点
+// AI邮件生成处理函数
 async function handleAIGenerateEmail(request, env) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json; charset=utf-8'
   };
 
   if (request.method !== 'POST') {
@@ -429,18 +110,17 @@ async function handleAIGenerateEmail(request, env) {
 
   try {
     const data = await request.json();
-    const { 
-      userRequest, 
-      templateId, 
-      currentSubject, 
-      currentBody, 
-      businessName, 
-      productService, 
-      targetAudience, 
-      tone,
-      templateName,
-      templateDescription
-    } = data;
+    const { userRequest, businessName, productService, targetAudience } = data;
+
+    if (!userRequest || typeof userRequest !== 'string') {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Invalid request: userRequest is required'
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
 
     // 生成AI对话响应
     const aiResponse = generateAIResponse(userRequest, businessName, productService, targetAudience);
@@ -450,263 +130,295 @@ async function handleAIGenerateEmail(request, env) {
       message: aiResponse.response,
       timestamp: new Date().toISOString()
     }), {
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json; charset=utf-8'
-      }
+      headers: corsHeaders
     });
 
   } catch (error) {
-    console.error('AI generation error:', error);
+    console.error('AI Generation Error:', error);
+    
     return new Response(JSON.stringify({
       success: false,
-      error: 'Failed to generate email content',
-      details: error.message,
+      error: 'Internal server error',
+      message: 'Failed to generate email content. Please try again.',
       timestamp: new Date().toISOString()
     }), {
       status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json; charset=utf-8'
-      }
+      headers: corsHeaders
     });
   }
 }
 
-// 调用DashScope AI生成邮件内容
-async function callDashScopeAI(userRequest, businessName, productService, targetAudience, tone) {
-  const apiKey = 'sk-9bf19547ddbd4be1a87a7a43cf251097';
-  const prompt = buildEmailPrompt(userRequest, businessName, productService, targetAudience, tone);
+// AI对话响应生成函数
+function generateAIResponse(userRequest, businessName, productService, targetAudience) {
+  const request = userRequest.toLowerCase()
   
-  try {
-    const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json; charset=utf-8'
-      },
-      body: JSON.stringify({
-        model: 'qwen-turbo',
-        input: {
-          messages: [
-            {
-              role: 'user',
-              content: prompt
-            }
-          ]
-        },
-        parameters: {
-          temperature: 0.7,
-          max_tokens: 2000
-        }
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`DashScope API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return parseAIResponse(data);
-  } catch (error) {
-    console.error('DashScope AI call failed:', error);
-    // 回退到本地生�?
-    return {
-      subject: 'AI Generated Email',
-      textContent: 'AI generated email content'
-    };
-  }
-}
-
-// 构建AI提示�?
-function buildEmailPrompt(userRequest, businessName, productService, targetAudience, tone) {
-  return `你是一个专业的邮件营销专家。请根据以下信息生成一封专业的邮件内容�?
-
-用户需求：${userRequest}
-公司名称�?{businessName || 'Your Business'}
-产品/服务�?{productService || 'Your Product/Service'}
-目标受众�?{targetAudience || 'Your Customers'}
-语调�?{tone || 'professional'}
-
-请生成：
-1. 一个吸引人的邮件主题（不超�?0个字符）
-2. 邮件正文内容（纯文本，不要HTML格式�?
-
-要求�?
-- 内容要专业、有吸引�?
-- 符合目标受众的需�?
-- 语调�?{tone || 'professional'}
-- 包含清晰的价值主张和行动号召
-- 内容长度适中，易于阅�?
-- 使用段落结构，便于阅�?
-- 请使用简体中�?
-
-请以JSON格式返回�?
-{
-  "subject": "邮件主题",
-  "textContent": "邮件正文内容（纯文本�?
-}`;
-}
-
-// 解析AI响应
-function parseAIResponse(data) {
-  try {
-    if (data.output && data.output.text) {
-      const content = data.output.text;
-      // 尝试解析JSON
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
-        return {
-          subject: parsed.subject || 'AI Generated Email',
-          textContent: parsed.textContent || 'AI generated email content'
-        };
-      }
-    }
-    
-    // 如果解析失败，使用默认生�?
-    return {
-      subject: 'AI Generated Email',
-      textContent: 'AI generated email content'
-    };
-  } catch (error) {
-    console.error('Failed to parse AI response:', error);
-    return {
-      subject: 'AI Generated Email',
-      textContent: 'AI generated email content'
-    };
-  }
-}
-
-
-// 生成纯文本邮件内�?
-
-// 生成专业邮件内容
-function generateProfessionalEmailContent(userRequest, businessName, productService, targetAudience, tone) {
-  const business = businessName || 'Your Business';
-  const product = productService || 'Your Product/Service';
-  const audience = targetAudience || '您的客户';
-  const isFormal = tone === 'professional' || tone === 'formal';
+  const business = businessName || 'Your Business'
+  const product = productService || 'Your Product/Service'
+  const audience = targetAudience || 'Valued Customer'
   
-  // 根据用户请求生成相应的内�?
-  let content = '';
-  let ctaText = '';
-  let ctaUrl = '#';
+  let response = ''
   
-  if (userRequest.includes('邀�?) || userRequest.includes('invite')) {
-    content = `
-      <p style="color: #1a202c; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-        亲爱�?{audience}�?
-      </p>
-      
-      <p style="color: #2d3748; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
-        我们非常高兴地邀请您成为${business}的合作伙伴！作为一家致力于${product}的公司，我们相信您的加入将为我们的团队带来新的活力和创新思维�?
-      </p>
-      
-      <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 24px; border-radius: 12px; margin: 24px 0; border-left: 4px solid #667eea;">
-        <h3 style="color: #2d3748; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">合作优势�?/h3>
-        <ul style="color: #4a5568; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
-          <li>专业�?{product}解决方案</li>
-          <li>强大的技术支持和培训</li>
-          <li>丰厚的合作回�?/li>
-          <li>长期稳定的合作关�?/li>
-        </ul>
-      </div>
-    `;
-    ctaText = '立即加入我们';
-    ctaUrl = '#join';
-  } else if (userRequest.includes('产品') || userRequest.includes('product')) {
-    content = `
-      <p style="color: #1a202c; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-        尊敬�?{audience}�?
-      </p>
-      
-      <p style="color: #2d3748; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
-        我们很高兴向您介�?{product} - 这是一款专�?{audience}设计的创新解决方案。经过精心研发，${product}将帮助您提升效率，实现更好的业务成果�?
-      </p>
-      
-      <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 24px; border-radius: 12px; margin: 24px 0; border-left: 4px solid #667eea;">
-        <h3 style="color: #2d3748; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">产品特色�?/h3>
-        <ul style="color: #4a5568; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
-          <li>先进的技术架�?/li>
-          <li>用户友好的界面设�?/li>
-          <li>强大的功能集�?/li>
-          <li>7x24小时技术支�?/li>
-        </ul>
-      </div>
-    `;
-    ctaText = '了解更多';
-    ctaUrl = '#learn-more';
-  } else if (userRequest.includes('促销') || userRequest.includes('sale')) {
-    content = `
-      <p style="color: #1a202c; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-        亲爱�?{audience}�?
-      </p>
-      
-      <p style="color: #2d3748; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
-        好消息！我们�?{audience}特别准备了限时优惠活动。现在购�?{product}，即可享受超值折扣，机会难得，不容错过！
-      </p>
-      
-      <div style="background: linear-gradient(135deg, #fef5e7 0%, #fed7aa 100%); padding: 24px; border-radius: 12px; margin: 24px 0; border: 2px solid #f59e0b; text-align: center;">
-        <h3 style="color: #92400e; margin: 0 0 8px 0; font-size: 24px; font-weight: 700;">限时优惠</h3>
-        <p style="color: #92400e; margin: 0; font-size: 18px; font-weight: 600;">最高可享受50%折扣</p>
-        <p style="color: #92400e; margin: 8px 0 0 0; font-size: 14px;">活动时间有限，先到先�?/p>
-      </div>
-    `;
-    ctaText = '立即抢购';
-    ctaUrl = '#buy-now';
+  if (request.includes('subject line') || request.includes('subject lines')) {
+    response = `Great question about email subject lines! Here are some proven strategies to improve your open rates:
+
+**Power Words That Work:**
+• "Exclusive" - creates urgency and FOMO
+• "Free" - always catches attention
+• "New" - suggests fresh content
+• "Limited" - creates scarcity
+• "You" - personalizes the message
+
+**Best Practices:**
+• Keep it under 50 characters for mobile
+• Use numbers and emojis sparingly
+• A/B test different approaches
+• Avoid spam trigger words
+• Make it relevant to your audience
+
+**Examples for ${business}:**
+• "Exclusive: New ${product} Features (Just for You)"
+• "Limited Time: 50% Off ${product}"
+• "You're Invited: ${business} VIP Event"
+
+Would you like me to help you create specific subject lines for your upcoming campaign?`
+  } else if (request.includes('marketing strateg') || request.includes('strategies')) {
+    response = `Excellent question! Here are the most effective email marketing strategies for ${business}:
+
+**1. Segmentation is Key:**
+• Divide your list by demographics, behavior, and preferences
+• Send targeted content to each segment
+• Personalize subject lines and content
+
+**2. Automation Workflows:**
+• Welcome series for new subscribers
+• Abandoned cart recovery
+• Birthday and anniversary emails
+• Re-engagement campaigns
+
+**3. Content Strategy:**
+• 80% valuable content, 20% promotional
+• Educational content builds trust
+• User-generated content increases engagement
+• Behind-the-scenes content humanizes your brand
+
+**4. Timing & Frequency:**
+• Test different send times for your audience
+• Tuesday-Thursday typically perform best
+• Start with weekly, adjust based on engagement
+• Respect unsubscribe requests immediately
+
+**5. Mobile Optimization:**
+• 60%+ of emails are opened on mobile
+• Use single-column layouts
+• Large, tappable buttons
+• Short, scannable content
+
+What specific aspect of email marketing would you like to dive deeper into?`
+  } else if (request.includes('open rate') || request.includes('open rates')) {
+    response = `Great question! Here are proven strategies to boost your email open rates:
+
+**Immediate Improvements:**
+• Clean your email list regularly (remove inactive subscribers)
+• Use double opt-in to ensure quality subscribers
+• Segment your audience for targeted messaging
+• Test different send times (Tuesday-Thursday, 10-11 AM often work best)
+
+**Subject Line Optimization:**
+• Keep it under 50 characters
+• Use personalization (first name, location)
+• Create urgency without being spammy
+• Ask questions to spark curiosity
+• Use emojis strategically (not in every email)
+
+**Sender Reputation:**
+• Use a consistent "From" name and email
+• Maintain a clean IP reputation
+• Avoid spam trigger words
+• Include clear unsubscribe options
+• Monitor bounce rates and complaints
+
+**Content Quality:**
+• Deliver value in every email
+• Match subject line to content
+• Use preview text effectively
+• Mobile-optimize everything
+• Test different content formats
+
+**Industry Benchmarks:**
+• Average open rate: 20-25%
+• Good open rate: 25-30%
+• Excellent open rate: 30%+
+
+What's your current open rate, and which area would you like to focus on improving first?`
+  } else if (request.includes('content idea') || request.includes('content ideas')) {
+    response = `Here are some engaging email content ideas for ${business}:
+
+**Educational Content:**
+• "How-to" guides related to ${product}
+• Industry insights and trends
+• Case studies and success stories
+• Tips and best practices
+• FAQ series addressing common questions
+
+**Behind-the-Scenes:**
+• Team introductions and company culture
+• Product development process
+• Office tours or virtual events
+• Customer testimonials and reviews
+• Company milestones and achievements
+
+**Interactive Content:**
+• Polls and surveys
+• Quizzes related to your industry
+• Contests and giveaways
+• User-generated content features
+• Interactive product demos
+
+**Seasonal & Event-Based:**
+• Holiday-themed content
+• Industry conference recaps
+• Seasonal product recommendations
+• Anniversary celebrations
+• New year goal-setting content
+
+**Value-Driven Content:**
+• Exclusive discounts and offers
+• Early access to new features
+• Free resources and templates
+• Webinar invitations
+• Industry reports and whitepapers
+
+**Pro Tips:**
+• Mix content types to keep subscribers engaged
+• Use storytelling to make content memorable
+• Include clear calls-to-action
+• Test different content formats
+• Track engagement metrics
+
+What type of content resonates most with your audience? I can help you develop specific ideas!`
   } else {
-    content = `
-      <p style="color: #1a202c; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-        尊敬�?{audience}�?
-      </p>
-      
-      <p style="color: #2d3748; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
-        ${userRequest}
-      </p>
-      
-      <p style="color: #4a5568; font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
-        我们期待与您建立长期合作关系，为您提供最优质的服务和产品�?
-      </p>
-    `;
-    ctaText = '了解更多';
-    ctaUrl = '#learn-more';
+    // 通用对话响应
+    response = `Thanks for reaching out! I'm here to help you with email marketing strategies and content ideas for ${business}.
+
+Here are some ways I can assist you:
+
+**Email Marketing Strategy:**
+• Subject line optimization
+• List segmentation advice
+• Automation workflow planning
+• A/B testing recommendations
+
+**Content Creation:**
+• Email template suggestions
+• Content calendar planning
+• Engagement tactics
+• Industry best practices
+
+**Performance Optimization:**
+• Open rate improvement
+• Click-through rate enhancement
+• Deliverability tips
+• Analytics interpretation
+
+**Quick Wins:**
+• Mobile optimization checklist
+• Spam filter avoidance
+• Personalization techniques
+• Timing optimization
+
+What specific aspect of email marketing would you like to explore? Feel free to ask me anything about:
+• Writing compelling subject lines
+• Creating engaging content
+• Building effective campaigns
+• Measuring success metrics
+
+I'm here to help you succeed with your email marketing efforts! 🚀`
   }
   
-  return `
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
-      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; position: relative;">
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%); opacity: 0.6;"></div>
-        <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; position: relative; z-index: 1;">${business}</h1>
-        <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0 0; font-size: 16px; font-weight: 300; position: relative; z-index: 1;">专业${product}解决方案</p>
-      </div>
-      
-      <div style="padding: 40px 30px;">
-        ${content}
-        
-        <div style="text-align: center; margin: 32px 0;">
-          <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
-            ${ctaText}
-          </a>
-        </div>
-        
-        <p style="color: #4a5568; font-size: 15px; line-height: 1.6; margin: 24px 0;">
-          ${isFormal ? '此致敬礼' : '祝好'},<br>
-          <strong>${business}团队</strong>
-        </p>
-        
-        <div style="border-top: 1px solid #e2e8f0; padding-top: 24px; margin-top: 32px;">
-          <p style="color: #718096; font-size: 13px; line-height: 1.5; margin: 0; text-align: center;">
-            如果您有任何问题，请随时联系我们�?br>
-            此邮件由${business}发送，请勿回复此邮件�?
-          </p>
-        </div>
-      </div>
-    </div>
-  `;
+  return { response }
 }
 
-// 其他处理函数的简化版�?
+// 其他处理函数的简化版本
+async function handleLogin(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  return new Response(JSON.stringify({
+    success: true,
+    message: 'Login endpoint - implementation needed'
+  }), {
+    headers: corsHeaders
+  });
+}
+
+async function handleRegister(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  return new Response(JSON.stringify({
+    success: true,
+    message: 'Register endpoint - implementation needed'
+  }), {
+    headers: corsHeaders
+  });
+}
+
+async function handleSendVerification(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  return new Response(JSON.stringify({
+    success: true,
+    message: 'Send verification endpoint - implementation needed'
+  }), {
+    headers: corsHeaders
+  });
+}
+
+async function handleVerifyCode(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  return new Response(JSON.stringify({
+    success: true,
+    message: 'Verify code endpoint - implementation needed'
+  }), {
+    headers: corsHeaders
+  });
+}
+
+async function handleGoogleAuth(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  return new Response(JSON.stringify({
+    success: true,
+    message: 'Google auth endpoint - implementation needed'
+  }), {
+    headers: corsHeaders
+  });
+}
+
 async function handleCreemTest(request, env) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -714,11 +426,10 @@ async function handleCreemTest(request, env) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
-  
+
   return new Response(JSON.stringify({
     success: true,
-    message: 'Creem API test endpoint working',
-    timestamp: new Date().toISOString()
+    message: 'Creem test endpoint - implementation needed'
   }), {
     headers: corsHeaders
   });
@@ -731,12 +442,10 @@ async function handleWebhookTest(request, env) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
-  
+
   return new Response(JSON.stringify({
     success: true,
-    message: 'Webhook test endpoint working',
-    method: request.method,
-    timestamp: new Date().toISOString()
+    message: 'Webhook test endpoint - implementation needed'
   }), {
     headers: corsHeaders
   });
@@ -749,15 +458,10 @@ async function handleCreemPlans(request, env) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
-  
+
   return new Response(JSON.stringify({
     success: true,
-    plans: [
-      { id: 'basic', name: 'Basic Plan', price: 9.99 },
-      { id: 'pro', name: 'Pro Plan', price: 19.99 },
-      { id: 'enterprise', name: 'Enterprise Plan', price: 49.99 }
-    ],
-    timestamp: new Date().toISOString()
+    message: 'Creem plans endpoint - implementation needed'
   }), {
     headers: corsHeaders
   });
@@ -770,11 +474,10 @@ async function handleCreemSubscriptions(request, env) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
-  
+
   return new Response(JSON.stringify({
     success: true,
-    subscriptions: [],
-    timestamp: new Date().toISOString()
+    message: 'Creem subscriptions endpoint - implementation needed'
   }), {
     headers: corsHeaders
   });
@@ -787,12 +490,10 @@ async function handleCreateCampaign(request, env) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
-  
+
   return new Response(JSON.stringify({
     success: true,
-    message: 'Campaign created successfully',
-    campaignId: 'campaign_' + Date.now(),
-    timestamp: new Date().toISOString()
+    message: 'Create campaign endpoint - implementation needed'
   }), {
     headers: corsHeaders
   });
@@ -805,11 +506,10 @@ async function handleSendCampaign(request, env) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
-  
+
   return new Response(JSON.stringify({
     success: true,
-    message: 'Campaign sent successfully',
-    timestamp: new Date().toISOString()
+    message: 'Send campaign endpoint - implementation needed'
   }), {
     headers: corsHeaders
   });
@@ -822,12 +522,10 @@ async function handleAddContact(request, env) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
-  
+
   return new Response(JSON.stringify({
     success: true,
-    message: 'Contact added successfully',
-    contactId: 'contact_' + Date.now(),
-    timestamp: new Date().toISOString()
+    message: 'Add contact endpoint - implementation needed'
   }), {
     headers: corsHeaders
   });
@@ -840,12 +538,10 @@ async function handleListContacts(request, env) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
-  
+
   return new Response(JSON.stringify({
     success: true,
-    contacts: [],
-    total: 0,
-    timestamp: new Date().toISOString()
+    message: 'List contacts endpoint - implementation needed'
   }), {
     headers: corsHeaders
   });
@@ -858,38 +554,11 @@ async function handleUserLimits(request, env) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
-  
+
   return new Response(JSON.stringify({
     success: true,
-    limits: {
-      emailsPerMonth: 1000,
-      contacts: 500,
-      campaigns: 10
-    },
-    usage: {
-      emailsThisMonth: 0,
-      totalContacts: 0,
-      activeCampaigns: 0
-    },
-    timestamp: new Date().toISOString()
+    message: 'User limits endpoint - implementation needed'
   }), {
     headers: corsHeaders
   });
-}
-// AI对话响应生成函数
-function generateAIResponse(userRequest, businessName, productService, targetAudience) {
-  const request = userRequest.toLowerCase()
-  const business = businessName || 'Your Business'
-  
-  if (request.includes('subject line') || request.includes('subject lines')) {
-    return { response: 'Great question about email subject lines! Here are proven strategies: Keep under 50 characters, use power words like "Exclusive" and "Free", personalize with "You", and A/B test different approaches. Would you like specific examples for your business?' }
-  } else if (request.includes('marketing strateg') || request.includes('strategies')) {
-    return { response: 'Excellent question! Key email marketing strategies include: 1) Segmentation by demographics and behavior, 2) Automation workflows for welcome series and re-engagement, 3) 80/20 content rule (valuable vs promotional), 4) Mobile optimization, and 5) Testing send times. What specific area interests you most?' }
-  } else if (request.includes('open rate') || request.includes('open rates')) {
-    return { response: 'Great question! To boost open rates: Clean your list regularly, use double opt-in, segment your audience, test send times (Tuesday-Thursday work best), keep subject lines under 50 characters, personalize content, and maintain good sender reputation. What is your current open rate?' }
-  } else if (request.includes('content idea') || request.includes('content ideas')) {
-    return { response: 'Here are engaging email content ideas: Educational how-to guides, behind-the-scenes content, interactive polls and quizzes, seasonal content, customer testimonials, industry insights, and exclusive offers. Mix content types to keep subscribers engaged. What type of content resonates with your audience?' }
-  } else {
-    return { response: 'Thanks for reaching out! I can help with email marketing strategies, subject line optimization, content creation, automation workflows, and performance optimization. What specific aspect of email marketing would you like to explore?' }
-  }
 }
