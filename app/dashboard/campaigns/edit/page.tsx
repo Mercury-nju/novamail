@@ -212,7 +212,7 @@ export default function CampaignEditPage() {
     try {
       // 智能API路由选择 - 生产环境兼容
       const apiUrl = typeof window !== 'undefined' && window.location.hostname.includes('novamail.world')
-        ? 'https://novamail.world/api/ai/generate-email'  // 生产环境
+        ? '/api/ai/generate-email'  // 生产环境也使用本地API（通过Cloudflare Pages Functions）
         : '/api/ai/generate-email'  // 开发环境
       
       console.log('🔍 API URL:', apiUrl)
@@ -289,7 +289,7 @@ export default function CampaignEditPage() {
     try {
       // 智能API路由选择 - 生产环境兼容
       const apiUrl = typeof window !== 'undefined' && window.location.hostname.includes('novamail.world')
-        ? 'https://novamail.world/api/campaigns/send'  // 生产环境
+        ? '/api/campaigns/send'  // 生产环境也使用本地API（通过Cloudflare Pages Functions）
         : '/api/campaigns/send'  // 开发环境
         
       const response = await fetch(apiUrl, {
