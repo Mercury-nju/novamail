@@ -240,17 +240,25 @@ export default function CampaignEditPage() {
 
       const data = await response.json()
       console.log('✅ API Response:', data)
+      console.log('✅ Data success:', data.success)
+      console.log('✅ Data subject:', data.subject)
+      console.log('✅ Data textContent:', data.textContent)
       
-      // 添加AI响应
-      setChatHistory(prev => [...prev, {
-        type: 'ai',
-        message: 'Here\'s your generated email content:',
-        timestamp: new Date(),
-        generatedContent: {
-          subject: data.subject || 'New Email Campaign',
-          textContent: data.textContent || 'Generated content will appear here.'
-        }
-      }])
+      if (data.success && data.subject && data.textContent) {
+        // 添加AI响应
+        setChatHistory(prev => [...prev, {
+          type: 'ai',
+          message: 'Here\'s your generated email content:',
+          timestamp: new Date(),
+          generatedContent: {
+            subject: data.subject,
+            textContent: data.textContent
+          }
+        }])
+        toast.success('✨ Email content generated successfully!')
+      } else {
+        throw new Error('Invalid API response format')
+      }
 
     } catch (error) {
       console.error('Error generating content:', error)
