@@ -316,18 +316,8 @@ export default function CampaignEditPage() {
                   document.execCommand('insertText', false, text)
                 }}
                 onFocus={(e) => {
-                  // 确保光标在内容区域
-                  setTimeout(() => {
-                    const sel = window.getSelection()
-                    if (sel && sel.rangeCount === 0) {
-                      const range = document.createRange()
-                      if (e.currentTarget.firstChild) {
-                        range.setStart(e.currentTarget.firstChild, 0)
-                        range.collapse(true)
-                        sel.addRange(range)
-                      }
-                    }
-                  }, 0)
+                  // 防止光标自动跳转到开头
+                  e.preventDefault()
                 }}
               />
             </div>
