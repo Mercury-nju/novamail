@@ -337,6 +337,37 @@ export default function CampaignEditPage() {
             <p className="text-sm text-gray-500">Generate professional email content</p>
           </div>
 
+          {/* AI Hints */}
+          <div className="p-4 border-b border-gray-200">
+            <h4 className="text-sm font-medium text-gray-700 mb-3">Quick Start:</h4>
+            <div className="space-y-2">
+              <button
+                onClick={() => setChatInput('Write a product launch email for a new AI tool')}
+                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
+              >
+                🚀 Product Launch Email
+              </button>
+              <button
+                onClick={() => setChatInput('Create a newsletter about company updates')}
+                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
+              >
+                📧 Company Newsletter
+              </button>
+              <button
+                onClick={() => setChatInput('Write a promotional email for a sale')}
+                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
+              >
+                🎉 Sale Promotion
+              </button>
+              <button
+                onClick={() => setChatInput('Create a welcome email for new customers')}
+                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
+              >
+                👋 Welcome Email
+              </button>
+            </div>
+          </div>
+
           {/* Chat History */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {chatHistory.map((message, index) => (
