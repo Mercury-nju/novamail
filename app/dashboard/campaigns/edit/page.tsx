@@ -214,6 +214,9 @@ export default function CampaignEditPage() {
       const apiUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
         ? '/api/ai/generate-email'  // 开发环境使用本地API
         : 'https://novamail-api-routes.zhuanz.workers.dev/api/ai/generate-email'  // 生产环境使用Workers
+      
+      console.log('🔍 API URL:', apiUrl)
+      console.log('🔍 Hostname:', typeof window !== 'undefined' ? window.location.hostname : 'server-side')
         
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -228,11 +231,17 @@ export default function CampaignEditPage() {
         }),
       })
 
+      console.log('🔍 Response status:', response.status)
+      console.log('🔍 Response ok:', response.ok)
+      
       if (!response.ok) {
-        throw new Error('Failed to generate content')
+        const errorText = await response.text()
+        console.error('❌ API Error:', errorText)
+        throw new Error(`Failed to generate content: ${response.status} ${errorText}`)
       }
 
       const data = await response.json()
+      console.log('✅ API Response:', data)
       
       // 添加AI响应
       setChatHistory(prev => [...prev, {
