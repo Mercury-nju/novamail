@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  trailingSlash: true,
+  // 移除 output: 'export' 以支持API路由
+  // 移除 trailingSlash: true 以避免API路由重定向问题
   images: {
     unoptimized: true
   },
