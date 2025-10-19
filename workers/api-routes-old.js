@@ -1,5 +1,5 @@
 // Cloudflare Worker for NovaMail API Routes
-// 处理AI对话和邮件发送功能
+// 处理AI生成和邮件发送功能
 
 // AI对话响应生成函数
 function generateAIResponse(userRequest, businessName, productService, targetAudience) {
@@ -67,128 +67,96 @@ Would you like me to help you create specific subject lines for your upcoming ca
 • Short, scannable content
 
 What specific aspect of email marketing would you like to dive deeper into?`
-  } else if (request.includes('open rate') || request.includes('open rates')) {
-    response = `Great question! Here are proven strategies to boost your email open rates:
+  } else if (request.includes('sale') || request.includes('promotion') || request.includes('promotional')) {
+    subject = `🎉 Limited Time Offer - Don't Miss Out!`
+    content = `Dear ${audience},
 
-**Immediate Improvements:**
-• Clean your email list regularly (remove inactive subscribers)
-• Use double opt-in to ensure quality subscribers
-• Segment your audience for targeted messaging
-• Test different send times (Tuesday-Thursday, 10-11 AM often work best)
+We have an exclusive offer that we simply can't keep to ourselves! For a limited time only, ${business} is offering incredible savings on ${product}.
 
-**Subject Line Optimization:**
-• Keep it under 50 characters
-• Use personalization (first name, location)
-• Create urgency without being spammy
-• Ask questions to spark curiosity
-• Use emojis strategically (not in every email)
+**Special Offer Details:**
+• Save up to 50% on your first purchase
+• Free shipping on all orders over $100
+• Bonus items included with every purchase
+• Extended warranty at no extra cost
 
-**Sender Reputation:**
-• Use a consistent "From" name and email
-• Maintain a clean IP reputation
-• Avoid spam trigger words
-• Include clear unsubscribe options
-• Monitor bounce rates and complaints
+**Why this offer is special:**
+This is our biggest promotion of the year, and we're passing the savings directly to you. But hurry - this offer expires soon!
 
-**Content Quality:**
-• Deliver value in every email
-• Match subject line to content
-• Use preview text effectively
-• Mobile-optimize everything
-• Test different content formats
+**How to claim your discount:**
+1. Visit our website or call us directly
+2. Mention this exclusive offer
+3. Enjoy your savings!
 
-**Industry Benchmarks:**
-• Average open rate: 20-25%
-• Good open rate: 25-30%
-• Excellent open rate: 30%+
+**Limited Time Only:**
+This offer expires in 48 hours, so don't wait. Secure your discount today and experience the difference that ${product} can make.
 
-What's your current open rate, and which area would you like to focus on improving first?`
-  } else if (request.includes('content idea') || request.includes('content ideas')) {
-    response = `Here are some engaging email content ideas for ${business}:
+Act now before it's too late!
 
-**Educational Content:**
-• "How-to" guides related to ${product}
-• Industry insights and trends
-• Case studies and success stories
-• Tips and best practices
-• FAQ series addressing common questions
+Best regards,
+The ${business} Team
 
-**Behind-the-Scenes:**
-• Team introductions and company culture
-• Product development process
-• Office tours or virtual events
-• Customer testimonials and reviews
-• Company milestones and achievements
+P.S. This offer is exclusive to our valued customers - thank you for your continued support!`
+  } else if (request.includes('welcome') || request.includes('new customers')) {
+    subject = `👋 Welcome to ${business} - Let's Get Started!`
+    content = `Dear ${audience},
 
-**Interactive Content:**
-• Polls and surveys
-• Quizzes related to your industry
-• Contests and giveaways
-• User-generated content features
-• Interactive product demos
+Welcome to ${business}! We're thrilled to have you join our community of satisfied customers.
 
-**Seasonal & Event-Based:**
-• Holiday-themed content
-• Industry conference recaps
-• Seasonal product recommendations
-• Anniversary celebrations
-• New year goal-setting content
+**Getting Started:**
+We've prepared everything you need to make the most of your experience with ${product}. Here's what you can expect:
 
-**Value-Driven Content:**
-• Exclusive discounts and offers
-• Early access to new features
-• Free resources and templates
-• Webinar invitations
-• Industry reports and whitepapers
+• Personalized onboarding process
+• Access to our comprehensive knowledge base
+• Direct line to our support team
+• Exclusive resources for new members
 
-**Pro Tips:**
-• Mix content types to keep subscribers engaged
-• Use storytelling to make content memorable
-• Include clear calls-to-action
-• Test different content formats
-• Track engagement metrics
+**Your Next Steps:**
+1. Complete your profile setup
+2. Explore our featured resources
+3. Connect with our community
+4. Start experiencing the benefits
 
-What type of content resonates most with your audience? I can help you develop specific ideas!`
+**We're Here to Help:**
+Our team is committed to your success. If you have any questions or need assistance, don't hesitate to reach out. We're just an email or phone call away.
+
+**Welcome Bonus:**
+As a new member, you'll receive exclusive access to our premium resources and special offers available only to our community.
+
+Thank you for choosing ${business}. We're excited to be part of your journey!
+
+Warmest welcome,
+The ${business} Team
+
+P.S. Keep an eye on your inbox for more helpful tips and exclusive offers coming your way!`
   } else {
-    // 通用对话响应
-    response = `Thanks for reaching out! I'm here to help you with email marketing strategies and content ideas for ${business}.
+    // 通用邮件模板
+    subject = `Important Update from ${business}`
+    content = `Dear ${audience},
 
-Here are some ways I can assist you:
+We hope this message finds you well. We're writing to share some important information about ${product} and how it can benefit you.
 
-**Email Marketing Strategy:**
-• Subject line optimization
-• List segmentation advice
-• Automation workflow planning
-• A/B testing recommendations
+**What we're offering:**
+${product} is designed to help you achieve your goals more effectively. Our solution combines cutting-edge technology with user-friendly design to deliver exceptional results.
 
-**Content Creation:**
-• Email template suggestions
-• Content calendar planning
-• Engagement tactics
-• Industry best practices
+**Key Benefits:**
+• Streamlined processes that save you time
+• Enhanced productivity and efficiency
+• Reliable support when you need it most
+• Proven track record of success
 
-**Performance Optimization:**
-• Open rate improvement
-• Click-through rate enhancement
-• Deliverability tips
-• Analytics interpretation
+**Why choose ${business}:**
+We've been serving customers like you for years, and our commitment to excellence has never wavered. When you work with us, you're not just getting a product - you're getting a partner.
 
-**Quick Wins:**
-• Mobile optimization checklist
-• Spam filter avoidance
-• Personalization techniques
-• Timing optimization
+**Next Steps:**
+We'd love to discuss how ${product} can help you achieve your objectives. Please don't hesitate to reach out if you have any questions.
 
-What specific aspect of email marketing would you like to explore? Feel free to ask me anything about:
-• Writing compelling subject lines
-• Creating engaging content
-• Building effective campaigns
-• Measuring success metrics
+Thank you for your time and consideration.
 
-I'm here to help you succeed with your email marketing efforts! 🚀`
+Best regards,
+The ${business} Team`
   }
   
-  return { response }
+  return { subject, textContent: content }
 }
 
 // 邮件发送功能
@@ -201,18 +169,20 @@ async function sendEmail(subject, content, recipients, senderEmail, senderName) 
     console.log('From:', `${senderName} <${senderEmail}>`)
     console.log('To:', recipients.join(', '))
     console.log('Subject:', subject)
-    console.log('Content:', content)
+    console.log('Content:', content.substring(0, 100) + '...')
     console.log('==========================================')
     
     return {
       success: true,
-      message: 'Email sent successfully (simulation mode)',
-      emailId: `sim_${Date.now()}`
+      messageId: `msg_${Date.now()}`,
+      recipients: recipients.length,
+      sentAt: new Date().toISOString(),
+      mode: 'simulation'
     }
   }
   
+  // 生产环境：使用 Resend API
   try {
-    // 生产环境：使用Resend API
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -227,26 +197,27 @@ async function sendEmail(subject, content, recipients, senderEmail, senderName) 
       }),
     })
     
+    if (!response.ok) {
+      throw new Error(`Resend API error: ${response.status}`)
+    }
+    
     const data = await response.json()
     
-    if (response.ok) {
-      return {
-        success: true,
-        message: 'Email sent successfully',
-        emailId: data.id
-      }
-    } else {
-      throw new Error(data.message || 'Failed to send email')
-    }
-  } catch (error) {
-    console.error('Email sending error:', error)
     return {
-      success: false,
-      message: error.message || 'Failed to send email'
+      success: true,
+      messageId: data.id,
+      recipients: recipients.length,
+      sentAt: new Date().toISOString(),
+      mode: 'production'
     }
+    
+  } catch (error) {
+    console.error('Resend API error:', error)
+    throw new Error('Failed to send email via Resend API')
   }
 }
 
+// 主处理函数
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url)
@@ -268,7 +239,7 @@ export default {
     }
     
     try {
-      // AI对话响应
+      // AI生成邮件内容
       if (path === '/api/ai/generate-email' && request.method === 'POST') {
         const body = await request.json()
         const { userRequest, businessName, productService, targetAudience } = body
@@ -278,7 +249,7 @@ export default {
           return new Response(JSON.stringify({
             success: false,
             error: 'User request is required',
-            message: 'Please provide a description of what you want to know about email marketing'
+            message: 'Please provide a description of the email you want to generate'
           }), {
             status: 400,
             headers: { 'Content-Type': 'application/json', ...corsHeaders }
@@ -286,7 +257,7 @@ export default {
         }
         
         const startTime = Date.now()
-        const aiResponse = generateAIResponse(
+        const generatedContent = generateEmailContent(
           userRequest.trim(),
           businessName || 'Your Business',
           productService || 'Our Service',
@@ -296,26 +267,39 @@ export default {
         
         return new Response(JSON.stringify({
           success: true,
-          message: aiResponse.response,
-          timestamp: new Date().toISOString(),
-          processingTime: `${processingTime}ms`
+          subject: generatedContent.subject,
+          textContent: generatedContent.textContent,
+          processingTime: processingTime
         }), {
           status: 200,
-          headers: { 'Content-Type': 'application/json; charset=utf-8', ...corsHeaders }
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
         })
       }
       
-      // 邮件发送
+      // 发送邮件
       if (path === '/api/campaigns/send' && request.method === 'POST') {
         const body = await request.json()
-        const { subject, content, recipients, senderEmail, senderName } = body
+        const { subject, content, recipients, senderEmail, senderName = 'NovaMail' } = body
         
-        // 输入验证
+        // 验证必需字段
         if (!subject || !content || !recipients || !senderEmail) {
           return new Response(JSON.stringify({
             success: false,
-            error: 'Missing required fields',
-            message: 'Subject, content, recipients, and sender email are required'
+            error: 'Missing required fields: subject, content, recipients, senderEmail'
+          }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders }
+          })
+        }
+        
+        // 验证邮箱格式
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        const invalidEmails = recipients.filter(email => !emailRegex.test(email))
+        
+        if (invalidEmails.length > 0) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: `Invalid email addresses: ${invalidEmails.join(', ')}`
           }), {
             status: 400,
             headers: { 'Content-Type': 'application/json', ...corsHeaders }
@@ -324,16 +308,20 @@ export default {
         
         const result = await sendEmail(subject, content, recipients, senderEmail, senderName)
         
-        return new Response(JSON.stringify(result), {
-          status: result.success ? 200 : 500,
-          headers: { 'Content-Type': 'application/json; charset=utf-8', ...corsHeaders }
+        return new Response(JSON.stringify({
+          success: true,
+          message: `Email sent successfully to ${recipients.length} recipient(s)`,
+          data: result
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
         })
       }
       
       // 404 - 未找到路由
       return new Response(JSON.stringify({
         success: false,
-        error: 'Not found',
+        error: 'Not Found',
         message: 'API endpoint not found'
       }), {
         status: 404,
@@ -342,14 +330,13 @@ export default {
       
     } catch (error) {
       console.error('API Error:', error)
-      
       return new Response(JSON.stringify({
         success: false,
-        error: 'Internal server error',
-        message: 'An unexpected error occurred'
+        error: 'Internal Server Error',
+        message: error.message || 'Unknown error'
       }), {
         status: 500,
-        headers: { 'Content-Type': 'application/json; charset=utf-8', ...corsHeaders }
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
       })
     }
   }
