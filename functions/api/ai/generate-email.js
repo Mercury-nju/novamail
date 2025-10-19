@@ -251,7 +251,13 @@ export async function onRequest(context) {
       success: true,
       message: aiResponse.response,
       timestamp: new Date().toISOString(),
-      processingTime: `${processingTime}ms`
+      processingTime: `${processingTime}ms`,
+      debug: {
+        userRequest: userRequest.trim(),
+        businessName: businessName || 'Your Business',
+        productService: productService || 'Our Service',
+        targetAudience: targetAudience || 'Valued Customer'
+      }
     }), {
       status: 200,
       headers: corsHeaders
