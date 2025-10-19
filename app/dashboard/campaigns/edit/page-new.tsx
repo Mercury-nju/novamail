@@ -26,20 +26,9 @@ export default function CampaignEditPage() {
     body: ''
   })
   
-  
-  
   const [chatInput, setChatInput] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([])
-  
-  // 邮件发送状态
-  const [isSending, setIsSending] = useState(false)
-  const [showSendModal, setShowSendModal] = useState(false)
-  const [sendForm, setSendForm] = useState({
-    recipients: '',
-    senderEmail: '',
-    senderName: 'NovaMail'
-  })
   
   // 专业模板内容 - 直接作为状态
   const [templateContent] = useState(`
@@ -111,54 +100,6 @@ export default function CampaignEditPage() {
     
     return html
   }
-
-  // 从HTML提取纯文本
-  const extractTextFromHtml = (html: string): string => {
-    if (!html) return ''
-    
-    // 创建临时DOM元素
-    const tempDiv = document.createElement('div')
-    tempDiv.innerHTML = html
-    
-    // 处理列表
-    const lists = tempDiv.querySelectorAll('ul')
-    lists.forEach(ul => {
-      const items = ul.querySelectorAll('li')
-      items.forEach(li => {
-        li.textContent = '• ' + (li.textContent || '')
-      })
-    })
-    
-    // 处理标题
-    const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6')
-    headings.forEach(h => {
-      h.textContent = h.textContent + '\n'
-    })
-    
-    // 处理段落
-    const paragraphs = tempDiv.querySelectorAll('p')
-    paragraphs.forEach(p => {
-      if (p.textContent && p.textContent.trim()) {
-        p.textContent = p.textContent + '\n\n'
-      }
-    })
-    
-    // 处理换行
-    const brs = tempDiv.querySelectorAll('br')
-    brs.forEach(br => {
-      br.replaceWith('\n')
-    })
-    
-    // 获取纯文本内容
-    let text = tempDiv.textContent || tempDiv.innerText || ''
-    
-    // 清理多余的换行
-    text = text.replace(/\n{3,}/g, '\n\n')
-    text = text.trim()
-    
-    return text
-  }
-
 
   // 处理AI内容接受
   const handleAcceptContent = (generatedContent: { subject: string; textContent: string }) => {
@@ -253,75 +194,27 @@ export default function CampaignEditPage() {
     }
   }
 
-  // 处理邮件发送
-  const handleSendEmail = async () => {
-    if (!sendForm.recipients || !sendForm.senderEmail) {
-      toast.error('Please fill in all required fields')
-      return
-    }
-
-    setIsSending(true)
-    try {
-      const response = await fetch('/api/campaigns/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          subject: campaignData.subject,
-          content: campaignData.body,
-          recipients: sendForm.recipients.split(',').map(email => email.trim()),
-          senderEmail: sendForm.senderEmail,
-          senderName: sendForm.senderName
-        })
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        toast.success('Email sent successfully!')
-        setShowSendModal(false)
-        setSendForm({
-          recipients: '',
-          senderEmail: '',
-          senderName: 'NovaMail'
-        })
-      } else {
-        throw new Error(data.error || 'Failed to send email')
-      }
-    } catch (error) {
-      console.error('Send email error:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to send email')
-    } finally {
-      setIsSending(false)
-    }
+  // 处理模板内容编辑
+  const handleTemplateEdit = (e: React.FormEvent<HTMLDivElement>) => {
+    const newContent = e.currentTarget.innerHTML
+    setCampaignData(prev => ({ ...prev, body: newContent }))
   }
-
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.back()}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">Email Editor</h1>
-              <p className="text-sm text-gray-500">Modern Gradient</p>
-            </div>
-          </div>
+        <div className="flex items-center gap-4">
           <button
-            onClick={() => setShowSendModal(true)}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+            onClick={() => router.back()}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <Send className="w-4 h-4" />
-            Send Email
+            <ArrowLeft className="w-5 h-5" />
           </button>
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">Email Editor</h1>
+            <p className="text-sm text-gray-500">Modern Gradient</p>
+          </div>
         </div>
       </div>
 
@@ -347,45 +240,15 @@ export default function CampaignEditPage() {
               <div
                 contentEditable
                 suppressContentEditableWarning={true}
-                onInput={(e) => {
-                  const newContent = e.currentTarget.innerHTML
-                  setCampaignData(prev => ({ ...prev, body: newContent }))
+                onInput={handleTemplateEdit}
+                dangerouslySetInnerHTML={{
+                  __html: campaignData.body || templateContent
                 }}
-                className="min-h-[500px] focus:outline-none"
+                className="min-h-[500px] p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 style={{
                   lineHeight: '1.6',
                   fontSize: '16px',
-                  color: '#374151',
-                  userSelect: 'text',
-                  WebkitUserSelect: 'text',
-                  MozUserSelect: 'text',
-                  msUserSelect: 'text',
-                  cursor: 'text'
-                }}
-                onKeyDown={(e) => {
-                  // 防止Tab键跳转焦点
-                  if (e.key === 'Tab') {
-                    e.preventDefault()
-                    document.execCommand('insertText', false, '    ')
-                  }
-                }}
-                onPaste={(e) => {
-                  e.preventDefault()
-                  const text = e.clipboardData.getData('text/plain')
-                  document.execCommand('insertText', false, text)
-                }}
-                onMouseDown={(e) => {
-                  // 防止点击时焦点跳转
-                  e.stopPropagation()
-                }}
-                onFocus={(e) => {
-                  // 完全阻止默认焦点行为
-                  e.stopPropagation()
-                }}
-                ref={(el) => {
-                  if (el && !el.innerHTML) {
-                    el.innerHTML = campaignData.body || templateContent
-                  }
+                  color: '#374151'
                 }}
               />
             </div>
@@ -397,37 +260,6 @@ export default function CampaignEditPage() {
           <div className="p-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
             <p className="text-sm text-gray-500">Generate professional email content</p>
-          </div>
-
-          {/* AI Hints */}
-          <div className="p-4 border-b border-gray-200">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">Quick Start:</h4>
-            <div className="space-y-2">
-              <button
-                onClick={() => setChatInput('Write a product launch email for a new AI tool')}
-                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
-              >
-                🚀 Product Launch Email
-              </button>
-              <button
-                onClick={() => setChatInput('Create a newsletter about company updates')}
-                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
-              >
-                📧 Company Newsletter
-              </button>
-              <button
-                onClick={() => setChatInput('Write a promotional email for a sale')}
-                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
-              >
-                🎉 Sale Promotion
-              </button>
-              <button
-                onClick={() => setChatInput('Create a welcome email for new customers')}
-                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
-              >
-                👋 Welcome Email
-              </button>
-            </div>
           </div>
 
           {/* Chat History */}
@@ -494,83 +326,6 @@ export default function CampaignEditPage() {
           </div>
         </div>
       </div>
-
-      {/* Send Email Modal */}
-      {showSendModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h3 className="text-lg font-semibold mb-4">Send Email</h3>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Recipients (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  value={sendForm.recipients}
-                  onChange={(e) => setSendForm(prev => ({ ...prev, recipients: e.target.value }))}
-                  placeholder="user1@example.com, user2@example.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Sender Email *
-                </label>
-                <input
-                  type="email"
-                  value={sendForm.senderEmail}
-                  onChange={(e) => setSendForm(prev => ({ ...prev, senderEmail: e.target.value }))}
-                  placeholder="your-email@example.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Sender Name
-                </label>
-                <input
-                  type="text"
-                  value={sendForm.senderName}
-                  onChange={(e) => setSendForm(prev => ({ ...prev, senderName: e.target.value }))}
-                  placeholder="Your Name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-            
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => setShowSendModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
-                disabled={isSending}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSendEmail}
-                disabled={isSending}
-                className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-              >
-                {isSending ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4" />
-                    Send
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

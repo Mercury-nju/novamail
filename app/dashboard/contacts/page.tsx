@@ -140,9 +140,9 @@ export default function ContactsPage() {
     try {
       const data = await file.arrayBuffer()
       const workbook = XLSX.read(data)
-      const sheetName = workbook.SheetNames[0]
-      const worksheet = workbook.Sheets[sheetName]
-      const jsonData = XLSX.utils.sheet_to_json(worksheet)
+          const sheetName = workbook.SheetNames[0]
+          const worksheet = workbook.Sheets[sheetName]
+          const jsonData = XLSX.utils.sheet_to_json(worksheet)
 
       const importedContacts: Contact[] = jsonData.map((row: any, index: number) => ({
         id: `imported_${Date.now()}_${index}`,
@@ -151,7 +151,7 @@ export default function ContactsPage() {
         tags: row['Tags'] ? row['Tags'].split(',').map((tag: string) => tag.trim()) : ['New User'],
         status: 'new' as const,
         lastContact: new Date().toISOString().split('T')[0],
-        totalEmails: 0
+              totalEmails: 0
       })).filter(contact => contact.name && contact.email)
 
       setContacts(prev => [...prev, ...importedContacts])
@@ -182,14 +182,14 @@ export default function ContactsPage() {
         status: 'new',
         lastContact: new Date().toISOString().split('T')[0],
         totalEmails: 0
-      }
-
-      setContacts(prev => [...prev, contact])
+        }
+        
+        setContacts(prev => [...prev, contact])
       updateTagCounts([...contacts, contact])
       setNewContact({ name: '', email: '', tags: [], customFields: {} })
       setShowAddContactModal(false)
-      toast.success('Contact added successfully')
-    } catch (error) {
+        toast.success('Contact added successfully')
+        } catch (error) {
       console.error('Add contact error:', error)
       toast.error('Failed to add contact')
     } finally {
@@ -236,22 +236,22 @@ export default function ContactsPage() {
                 <UserGroupIcon className="h-8 w-8 text-blue-600" />
                 <h1 className="text-2xl font-bold text-gray-900">Contact Management</h1>
               </div>
-            </div>
+        </div>
             <div className="flex items-center space-x-4">
-              <button
+          <button
                 onClick={() => setShowImportModal(true)}
                 className="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              >
+          >
                 <DocumentArrowUpIcon className="h-4 w-4 mr-2" />
                 Import Contacts
-              </button>
-              <button
+          </button>
+          <button
                 onClick={() => setShowAddContactModal(true)}
                 className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-              >
+          >
                 <PlusIcon className="h-4 w-4 mr-2" />
                 Add Contact
-              </button>
+          </button>
             </div>
           </div>
         </div>
@@ -265,12 +265,12 @@ export default function ContactsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20"
           >
-            <div className="flex items-center">
+          <div className="flex items-center">
               <div className="p-3 bg-blue-100 rounded-lg">
                 <UserGroupIcon className="h-6 w-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Contacts</p>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Total Contacts</p>
                 <p className="text-2xl font-bold text-gray-900">{contacts.length}</p>
               </div>
             </div>
@@ -289,8 +289,8 @@ export default function ContactsPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Active Users</p>
                 <p className="text-2xl font-bold text-gray-900">{contacts.filter(c => c.status === 'active').length}</p>
-              </div>
-            </div>
+          </div>
+        </div>
           </motion.div>
 
           <motion.div
@@ -299,11 +299,11 @@ export default function ContactsPage() {
             transition={{ delay: 0.2 }}
             className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20"
           >
-            <div className="flex items-center">
+          <div className="flex items-center">
               <div className="p-3 bg-purple-100 rounded-lg">
                 <TagIcon className="h-6 w-6 text-purple-600" />
               </div>
-              <div className="ml-4">
+            <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">VIP Users</p>
                 <p className="text-2xl font-bold text-gray-900">{contacts.filter(c => c.tags.includes('VIP')).length}</p>
               </div>
@@ -316,19 +316,19 @@ export default function ContactsPage() {
             transition={{ delay: 0.3 }}
             className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20"
           >
-            <div className="flex items-center">
+          <div className="flex items-center">
               <div className="p-3 bg-orange-100 rounded-lg">
                 <TagIcon className="h-6 w-6 text-orange-600" />
               </div>
-              <div className="ml-4">
+            <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">New Users</p>
                 <p className="text-2xl font-bold text-gray-900">{contacts.filter(c => c.status === 'new').length}</p>
               </div>
             </div>
           </motion.div>
-        </div>
+      </div>
 
-        {/* Filters */}
+      {/* Filters */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -351,7 +351,7 @@ export default function ContactsPage() {
             {/* Status Filter */}
             <div className="flex items-center space-x-2">
               <FunnelIcon className="h-5 w-5 text-gray-400" />
-              <select
+            <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
                 className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -360,7 +360,7 @@ export default function ContactsPage() {
                 <option value="new">New User</option>
                 <option value="active">Active User</option>
                 <option value="silent">Silent User</option>
-              </select>
+            </select>
             </div>
           </div>
 
@@ -397,10 +397,10 @@ export default function ContactsPage() {
             <h3 className="text-lg font-semibold text-gray-900">
               Contact List ({filteredContacts.length})
             </h3>
-          </div>
+      </div>
 
           <div className="divide-y divide-gray-200">
-            {filteredContacts.map((contact) => (
+              {filteredContacts.map((contact) => (
               <motion.div
                 key={contact.id}
                 initial={{ opacity: 0 }}
@@ -420,13 +420,13 @@ export default function ContactsPage() {
                       <div className="flex items-center space-x-2 mt-1">
                         <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(contact.status)}`}>
                           {getStatusText(contact.status)}
-                        </span>
-                        {contact.tags.map((tag) => (
+                    </span>
+                      {contact.tags.map((tag) => (
                           <span key={tag} className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getTagColor(tag)}`}>
                             <TagIcon className="h-3 w-3 mr-1" />
-                            {tag}
-                          </span>
-                        ))}
+                          {tag}
+                      </span>
+                      ))}
                       </div>
                     </div>
                   </div>
@@ -450,7 +450,7 @@ export default function ContactsPage() {
                 </div>
               </motion.div>
             ))}
-          </div>
+        </div>
         </motion.div>
       </div>
 
@@ -471,13 +471,13 @@ export default function ContactsPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Import Contacts</h3>
-                <button
+              <button
                   onClick={() => setShowImportModal(false)}
                   className="text-gray-400 hover:text-gray-600"
-                >
+              >
                   <XMarkIcon className="h-6 w-6" />
-                </button>
-              </div>
+              </button>
+          </div>
               
               <div className="space-y-4">
                 <p className="text-sm text-gray-600">
@@ -485,21 +485,21 @@ export default function ContactsPage() {
                 </p>
                 
                 <input
-                  ref={fileInputRef}
-                  type="file"
+        ref={fileInputRef}
+        type="file"
                   accept=".xlsx,.csv"
-                  onChange={handleFileUpload}
+        onChange={handleFileUpload}
                   className="hidden"
                 />
                 
-                <button
-                  onClick={() => fileInputRef.current?.click()}
+              <button
+                onClick={() => fileInputRef.current?.click()}
                   disabled={importing}
                   className="w-full flex items-center justify-center px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 transition-colors"
-                >
+              >
                   <DocumentArrowUpIcon className="h-6 w-6 text-gray-400 mr-2" />
                   {importing ? 'Importing...' : 'Select File'}
-                </button>
+              </button>
               </div>
             </motion.div>
           </motion.div>
@@ -523,38 +523,38 @@ export default function ContactsPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Add Contact</h3>
-                <button
+              <button
                   onClick={() => setShowAddContactModal(false)}
                   className="text-gray-400 hover:text-gray-600"
-                >
+              >
                   <XMarkIcon className="h-6 w-6" />
-                </button>
-              </div>
+              </button>
+            </div>
               
               <div className="space-y-4">
-                <div>
+              <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                  <input
-                    type="text"
-                    value={newContact.name}
+                <input
+                  type="text"
+                  value={newContact.name}
                     onChange={(e) => setNewContact(prev => ({ ...prev, name: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Enter name"
-                  />
-                </div>
-                
-                <div>
+                />
+              </div>
+              
+              <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input
-                    type="email"
-                    value={newContact.email}
+                <input
+                  type="email"
+                  value={newContact.email}
                     onChange={(e) => setNewContact(prev => ({ ...prev, email: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Enter email"
-                  />
-                </div>
-                
-                <div>
+                />
+              </div>
+
+              <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
                   <div className="flex flex-wrap gap-2">
                     {availableTags.map((tag) => (
@@ -579,19 +579,19 @@ export default function ContactsPage() {
                       </button>
                     ))}
                   </div>
-                </div>
-                
-                <button
+            </div>
+
+              <button
                   onClick={handleAddContact}
                   disabled={adding}
                   className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 disabled:opacity-50"
                 >
                   {adding ? 'Adding...' : 'Add Contact'}
-                </button>
-              </div>
+              </button>
+            </div>
             </motion.div>
           </motion.div>
-        )}
+      )}
       </AnimatePresence>
     </div>
   )
