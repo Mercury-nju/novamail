@@ -1,5 +1,5 @@
-// Cloudflare Workers 简化版�?- NovaMail API
-// 避免重复�?case 语句问题
+// Cloudflare Workers 简化版�?- NovaMail API
+// 避免重复�?case 语句问题
 
 export default {
   async fetch(request, env, ctx) {
@@ -169,7 +169,7 @@ async function handleRegister(request, env) {
     });
   }
 
-  // 验证码格式检�?
+  // 验证码格式检�?
   if (!/^\d{6}$/.test(code)) {
     return new Response(JSON.stringify({
       success: false,
@@ -244,15 +244,15 @@ async function handleSendVerification(request, env) {
       body: JSON.stringify({
         from: 'NovaMail <noreply@novamail.world>',
         to: [email],
-        subject: 'NovaMail 验证�?,
+        subject: 'NovaMail 验证�?,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #333; text-align: center;">NovaMail 验证�?/h2>
-            <p style="color: #666; font-size: 16px;">您的验证码是�?/p>
+            <h2 style="color: #333; text-align: center;">NovaMail 验证�?/h2>
+            <p style="color: #666; font-size: 16px;">您的验证码是�?/p>
             <div style="background: #f5f5f5; padding: 20px; text-align: center; margin: 20px 0;">
               <span style="font-size: 32px; font-weight: bold; color: #007bff; letter-spacing: 5px;">${verificationCode}</span>
             </div>
-            <p style="color: #999; font-size: 14px;">此验证码5分钟内有效，请勿泄露给他人�?/p>
+            <p style="color: #999; font-size: 14px;">此验证码5分钟内有效，请勿泄露给他人�?/p>
           </div>
         `
       })
@@ -283,7 +283,7 @@ async function handleSendVerification(request, env) {
   }
 }
 
-// 验证验证�?
+// 验证验证�?
 async function handleVerifyCode(request, env) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -312,7 +312,7 @@ async function handleVerifyCode(request, env) {
     });
   }
 
-  // 验证码格式检�?
+  // 验证码格式检�?
   if (!/^\d{6}$/.test(code)) {
     return new Response(JSON.stringify({
       success: false,
@@ -510,7 +510,7 @@ async function callDashScopeAI(userRequest, businessName, productService, target
     return parseAIResponse(data);
   } catch (error) {
     console.error('DashScope AI call failed:', error);
-    // 回退到本地生�?
+    // 回退到本地生�?
     return {
       subject: 'AI Generated Email',
       textContent: 'AI generated email content'
@@ -518,33 +518,33 @@ async function callDashScopeAI(userRequest, businessName, productService, target
   }
 }
 
-// 构建AI提示�?
+// 构建AI提示�?
 function buildEmailPrompt(userRequest, businessName, productService, targetAudience, tone) {
-  return `你是一个专业的邮件营销专家。请根据以下信息生成一封专业的邮件内容�?
+  return `你是一个专业的邮件营销专家。请根据以下信息生成一封专业的邮件内容�?
 
 用户需求：${userRequest}
-公司名称�?{businessName || 'Your Business'}
-产品/服务�?{productService || 'Your Product/Service'}
-目标受众�?{targetAudience || 'Your Customers'}
-语调�?{tone || 'professional'}
+公司名称�?{businessName || 'Your Business'}
+产品/服务�?{productService || 'Your Product/Service'}
+目标受众�?{targetAudience || 'Your Customers'}
+语调�?{tone || 'professional'}
 
 请生成：
-1. 一个吸引人的邮件主题（不超�?0个字符）
-2. 邮件正文内容（纯文本，不要HTML格式�?
+1. 一个吸引人的邮件主题（不超�?0个字符）
+2. 邮件正文内容（纯文本，不要HTML格式�?
 
-要求�?
-- 内容要专业、有吸引�?
-- 符合目标受众的需�?
-- 语调�?{tone || 'professional'}
+要求�?
+- 内容要专业、有吸引�?
+- 符合目标受众的需�?
+- 语调�?{tone || 'professional'}
 - 包含清晰的价值主张和行动号召
-- 内容长度适中，易于阅�?
-- 使用段落结构，便于阅�?
-- 请使用简体中�?
+- 内容长度适中，易于阅�?
+- 使用段落结构，便于阅�?
+- 请使用简体中�?
 
-请以JSON格式返回�?
+请以JSON格式返回�?
 {
   "subject": "邮件主题",
-  "textContent": "邮件正文内容（纯文本�?
+  "textContent": "邮件正文内容（纯文本�?
 }`;
 }
 
@@ -564,7 +564,7 @@ function parseAIResponse(data) {
       }
     }
     
-    // 如果解析失败，使用默认生�?
+    // 如果解析失败，使用默认生�?
     return {
       subject: 'AI Generated Email',
       textContent: 'AI generated email content'
@@ -579,7 +579,7 @@ function parseAIResponse(data) {
 }
 
 
-// 生成纯文本邮件内�?
+// 生成纯文本邮件内�?
 
 // 生成专业邮件内容
 function generateProfessionalEmailContent(userRequest, businessName, productService, targetAudience, tone) {
@@ -588,28 +588,28 @@ function generateProfessionalEmailContent(userRequest, businessName, productServ
   const audience = targetAudience || '您的客户';
   const isFormal = tone === 'professional' || tone === 'formal';
   
-  // 根据用户请求生成相应的内�?
+  // 根据用户请求生成相应的内�?
   let content = '';
   let ctaText = '';
   let ctaUrl = '#';
   
-  if (userRequest.includes('邀�?) || userRequest.includes('invite')) {
+  if (userRequest.includes('邀�?) || userRequest.includes('invite')) {
     content = `
       <p style="color: #1a202c; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-        亲爱�?{audience}�?
+        亲爱�?{audience}�?
       </p>
       
       <p style="color: #2d3748; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
-        我们非常高兴地邀请您成为${business}的合作伙伴！作为一家致力于${product}的公司，我们相信您的加入将为我们的团队带来新的活力和创新思维�?
+        我们非常高兴地邀请您成为${business}的合作伙伴！作为一家致力于${product}的公司，我们相信您的加入将为我们的团队带来新的活力和创新思维�?
       </p>
       
       <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 24px; border-radius: 12px; margin: 24px 0; border-left: 4px solid #667eea;">
-        <h3 style="color: #2d3748; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">合作优势�?/h3>
+        <h3 style="color: #2d3748; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">合作优势�?/h3>
         <ul style="color: #4a5568; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
-          <li>专业�?{product}解决方案</li>
+          <li>专业�?{product}解决方案</li>
           <li>强大的技术支持和培训</li>
-          <li>丰厚的合作回�?/li>
-          <li>长期稳定的合作关�?/li>
+          <li>丰厚的合作回�?/li>
+          <li>长期稳定的合作关�?/li>
         </ul>
       </div>
     `;
@@ -618,20 +618,20 @@ function generateProfessionalEmailContent(userRequest, businessName, productServ
   } else if (userRequest.includes('产品') || userRequest.includes('product')) {
     content = `
       <p style="color: #1a202c; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-        尊敬�?{audience}�?
+        尊敬�?{audience}�?
       </p>
       
       <p style="color: #2d3748; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
-        我们很高兴向您介�?{product} - 这是一款专�?{audience}设计的创新解决方案。经过精心研发，${product}将帮助您提升效率，实现更好的业务成果�?
+        我们很高兴向您介�?{product} - 这是一款专�?{audience}设计的创新解决方案。经过精心研发，${product}将帮助您提升效率，实现更好的业务成果�?
       </p>
       
       <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 24px; border-radius: 12px; margin: 24px 0; border-left: 4px solid #667eea;">
-        <h3 style="color: #2d3748; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">产品特色�?/h3>
+        <h3 style="color: #2d3748; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">产品特色�?/h3>
         <ul style="color: #4a5568; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
-          <li>先进的技术架�?/li>
-          <li>用户友好的界面设�?/li>
-          <li>强大的功能集�?/li>
-          <li>7x24小时技术支�?/li>
+          <li>先进的技术架�?/li>
+          <li>用户友好的界面设�?/li>
+          <li>强大的功能集�?/li>
+          <li>7x24小时技术支�?/li>
         </ul>
       </div>
     `;
@@ -640,17 +640,17 @@ function generateProfessionalEmailContent(userRequest, businessName, productServ
   } else if (userRequest.includes('促销') || userRequest.includes('sale')) {
     content = `
       <p style="color: #1a202c; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-        亲爱�?{audience}�?
+        亲爱�?{audience}�?
       </p>
       
       <p style="color: #2d3748; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
-        好消息！我们�?{audience}特别准备了限时优惠活动。现在购�?{product}，即可享受超值折扣，机会难得，不容错过！
+        好消息！我们�?{audience}特别准备了限时优惠活动。现在购�?{product}，即可享受超值折扣，机会难得，不容错过！
       </p>
       
       <div style="background: linear-gradient(135deg, #fef5e7 0%, #fed7aa 100%); padding: 24px; border-radius: 12px; margin: 24px 0; border: 2px solid #f59e0b; text-align: center;">
         <h3 style="color: #92400e; margin: 0 0 8px 0; font-size: 24px; font-weight: 700;">限时优惠</h3>
         <p style="color: #92400e; margin: 0; font-size: 18px; font-weight: 600;">最高可享受50%折扣</p>
-        <p style="color: #92400e; margin: 8px 0 0 0; font-size: 14px;">活动时间有限，先到先�?/p>
+        <p style="color: #92400e; margin: 8px 0 0 0; font-size: 14px;">活动时间有限，先到先�?/p>
       </div>
     `;
     ctaText = '立即抢购';
@@ -658,7 +658,7 @@ function generateProfessionalEmailContent(userRequest, businessName, productServ
   } else {
     content = `
       <p style="color: #1a202c; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-        尊敬�?{audience}�?
+        尊敬�?{audience}�?
       </p>
       
       <p style="color: #2d3748; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
@@ -666,7 +666,7 @@ function generateProfessionalEmailContent(userRequest, businessName, productServ
       </p>
       
       <p style="color: #4a5568; font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
-        我们期待与您建立长期合作关系，为您提供最优质的服务和产品�?
+        我们期待与您建立长期合作关系，为您提供最优质的服务和产品�?
       </p>
     `;
     ctaText = '了解更多';
@@ -697,8 +697,8 @@ function generateProfessionalEmailContent(userRequest, businessName, productServ
         
         <div style="border-top: 1px solid #e2e8f0; padding-top: 24px; margin-top: 32px;">
           <p style="color: #718096; font-size: 13px; line-height: 1.5; margin: 0; text-align: center;">
-            如果您有任何问题，请随时联系我们�?br>
-            此邮件由${business}发送，请勿回复此邮件�?
+            如果您有任何问题，请随时联系我们�?br>
+            此邮件由${business}发送，请勿回复此邮件�?
           </p>
         </div>
       </div>
@@ -706,7 +706,7 @@ function generateProfessionalEmailContent(userRequest, businessName, productServ
   `;
 }
 
-// 其他处理函数的简化版�?
+// 其他处理函数的简化版�?
 async function handleCreemTest(request, env) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
