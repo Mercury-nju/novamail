@@ -262,17 +262,17 @@ export default function CampaignEditPage() {
         throw new Error('Invalid API response format')
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Error generating content:', error)
-      console.error('❌ Error details:', error.message)
-      console.error('❌ Error stack:', error.stack)
+      console.error('❌ Error details:', error?.message || 'Unknown error')
+      console.error('❌ Error stack:', error?.stack || 'No stack trace')
       
       setChatHistory(prev => [...prev, {
         type: 'ai',
-        message: `Sorry, I encountered an error: ${error.message}. Please try again.`,
+        message: `Sorry, I encountered an error: ${error?.message || 'Unknown error'}. Please try again.`,
         timestamp: new Date()
       }])
-      toast.error(`Failed to generate content: ${error.message}`)
+      toast.error(`Failed to generate content: ${error?.message || 'Unknown error'}`)
     } finally {
       setIsGenerating(false)
     }
