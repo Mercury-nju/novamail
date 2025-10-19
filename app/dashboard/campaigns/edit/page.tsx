@@ -200,6 +200,29 @@ export default function CampaignEditPage() {
     setCampaignData(prev => ({ ...prev, body: newContent }))
   }
 
+  // 处理键盘事件，改善编辑体验
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    // 防止Tab键跳转到其他元素
+    if (e.key === 'Tab') {
+      e.preventDefault()
+      // 插入制表符
+      document.execCommand('insertText', false, '    ')
+    }
+    
+    // 防止Enter键在某些情况下跳转焦点
+    if (e.key === 'Enter' && e.shiftKey) {
+      e.preventDefault()
+      document.execCommand('insertHTML', false, '<br>')
+    }
+  }
+
+  // 处理粘贴事件
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    const text = e.clipboardData.getData('text/plain')
+    document.execCommand('insertText', false, text)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -241,14 +264,34 @@ export default function CampaignEditPage() {
                 contentEditable
                 suppressContentEditableWarning={true}
                 onInput={handleTemplateEdit}
-                dangerouslySetInnerHTML={{
-                  __html: campaignData.body || templateContent
-                }}
+                onKeyDown={handleKeyDown}
+                onPaste={handlePaste}
                 className="min-h-[500px] p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 style={{
                   lineHeight: '1.6',
                   fontSize: '16px',
-                  color: '#374151'
+                  color: '#374151',
+                  userSelect: 'text',
+                  WebkitUserSelect: 'text',
+                  MozUserSelect: 'text',
+                  msUserSelect: 'text'
+                }}
+                dangerouslySetInnerHTML={{
+                  __html: campaignData.body || templateContent
+                }}
+                onFocus={(e) => {
+                  // 确保光标在内容区域，但不强制跳转到开头
+                  setTimeout(() => {
+                    const sel = window.getSelection()
+                    if (sel && sel.rangeCount === 0) {
+                      const range = document.createRange()
+                      if (e.currentTarget.firstChild) {
+                        range.setStart(e.currentTarget.firstChild, 0)
+                        range.collapse(true)
+                        sel.addRange(range)
+                      }
+                    }
+                  }, 0)
                 }}
               />
             </div>
