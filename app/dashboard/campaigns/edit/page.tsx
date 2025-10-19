@@ -74,9 +74,9 @@ export default function EditCampaignPage() {
     customizations: {}
   })
 
-  // 初始化专业模板到DOM（只运行一次）
+  // 强制显示专业模板
   useEffect(() => {
-    if (contentRef.current && !contentRef.current.innerHTML) {
+    if (contentRef.current) {
       // 使用真正的专业模板 - Modern Gradient
       const professionalTemplate = `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
