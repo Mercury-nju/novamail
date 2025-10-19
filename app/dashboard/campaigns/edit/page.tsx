@@ -210,10 +210,10 @@ export default function CampaignEditPage() {
     }])
 
     try {
-      // 使用Cloudflare Workers API
-      const apiUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://novamail-api-routes.zhuanz.workers.dev/api/ai/generate-email'
-        : '/api/ai/generate-email'
+      // 智能API路由选择
+      const apiUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+        ? '/api/ai/generate-email'  // 开发环境使用本地API
+        : 'https://novamail-api-routes.zhuanz.workers.dev/api/ai/generate-email'  // 生产环境使用Workers
         
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -267,10 +267,10 @@ export default function CampaignEditPage() {
 
     setIsSending(true)
     try {
-      // 使用Cloudflare Workers API
-      const apiUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://novamail-api-routes.zhuanz.workers.dev/api/campaigns/send'
-        : '/api/campaigns/send'
+      // 智能API路由选择
+      const apiUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+        ? '/api/campaigns/send'  // 开发环境使用本地API
+        : 'https://novamail-api-routes.zhuanz.workers.dev/api/campaigns/send'  // 生产环境使用Workers
         
       const response = await fetch(apiUrl, {
         method: 'POST',

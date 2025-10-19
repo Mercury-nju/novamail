@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Cloudflare Pages 需要静态导出
-  output: 'export',
-  trailingSlash: true,
+  // 开发环境支持API路由，生产环境静态导出
+  ...(process.env.NODE_ENV === 'production' && {
+    output: 'export',
+    trailingSlash: true,
+  }),
   images: {
     unoptimized: true
   },
