@@ -74,58 +74,53 @@ export default function EditCampaignPage() {
     customizations: {}
   })
 
-  // 初始化内容到DOM
+  // 初始化内容到DOM（只运行一次）
   useEffect(() => {
-    if (contentRef.current) {
-      // 如果campaignData.body有内容，设置到DOM
-      if (campaignData.body) {
-        contentRef.current.innerHTML = campaignData.body
-      } else {
-        // 如果没有内容，设置默认的专业模板
-        const defaultTemplate = `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
-              <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">NovaMail</h1>
-              <p style="color: #e2e8f0; margin: 8px 0 0 0; font-size: 14px; font-weight: 400;">AI-Powered Email Marketing</p>
+    if (contentRef.current && !contentRef.current.innerHTML) {
+      // 设置默认的专业模板
+      const defaultTemplate = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">NovaMail</h1>
+            <p style="color: #e2e8f0; margin: 8px 0 0 0; font-size: 14px; font-weight: 400;">AI-Powered Email Marketing</p>
+          </div>
+          
+          <div style="padding: 40px 30px;">
+            <p style="color: #1e293b; font-size: 16px; line-height: 1.6; margin-bottom: 24px; font-weight: 400;">
+              Dear [Customer Name],
+            </p>
+            
+            <p style="color: #334155; font-size: 16px; line-height: 1.7; margin-bottom: 32px; font-weight: 400;">
+              We're excited to introduce our latest innovation that will transform your business. This is more than just a product launch – it's the beginning of a new era.
+            </p>
+            
+            <div style="background: #f8fafc; padding: 24px; border-radius: 8px; margin: 24px 0; border: 1px solid #e2e8f0;">
+              <h3 style="color: #1e293b; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">What's New</h3>
+              <ul style="color: #475569; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
+                <li style="margin-bottom: 8px;">Revolutionary AI-powered features</li>
+                <li style="margin-bottom: 8px;">Seamless integration with your existing tools</li>
+                <li style="margin-bottom: 8px;">24/7 dedicated support</li>
+              </ul>
             </div>
             
-            <div style="padding: 40px 30px;">
-              <p style="color: #1e293b; font-size: 16px; line-height: 1.6; margin-bottom: 24px; font-weight: 400;">
-                Dear [Customer Name],
-              </p>
-              
-              <p style="color: #334155; font-size: 16px; line-height: 1.7; margin-bottom: 32px; font-weight: 400;">
-                We're excited to introduce our latest innovation that will transform your business. This is more than just a product launch – it's the beginning of a new era.
-              </p>
-              
-              <div style="background: #f8fafc; padding: 24px; border-radius: 8px; margin: 24px 0; border: 1px solid #e2e8f0;">
-                <h3 style="color: #1e293b; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">What's New</h3>
-                <ul style="color: #475569; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
-                  <li style="margin-bottom: 8px;">Revolutionary AI-powered features</li>
-                  <li style="margin-bottom: 8px;">Seamless integration with your existing tools</li>
-                  <li style="margin-bottom: 8px;">24/7 dedicated support</li>
-                </ul>
-              </div>
-              
-              <div style="text-align: center; margin: 32px 0;">
-                <a href="#" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);">
-                  Get Started Today
-                </a>
-              </div>
-              
-              <p style="color: #1a1a1a; font-size: 15px; line-height: 1.6; margin: 48px 0 0 0; font-weight: 300;">
-                Best,<br>
-                The NovaMail Team
-              </p>
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="#" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);">
+                Get Started Today
+              </a>
             </div>
+            
+            <p style="color: #1a1a1a; font-size: 15px; line-height: 1.6; margin: 48px 0 0 0; font-weight: 300;">
+              Best,<br>
+              The NovaMail Team
+            </p>
           </div>
-        `
-        contentRef.current.innerHTML = defaultTemplate
-        // 同时更新状态
-        setCampaignData(prev => ({ ...prev, body: defaultTemplate }))
-      }
+        </div>
+      `
+      contentRef.current.innerHTML = defaultTemplate
+      // 同时更新状态
+      setCampaignData(prev => ({ ...prev, body: defaultTemplate }))
     }
-  }, [campaignData.body])
+  }, [])
 
   const professionalTemplates: ProfessionalTemplate[] = [
     {
