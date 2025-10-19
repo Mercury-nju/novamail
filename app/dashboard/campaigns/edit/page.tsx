@@ -26,6 +26,10 @@ export default function CampaignEditPage() {
     body: ''
   })
   
+  // 编辑模式状态
+  const [isEditing, setIsEditing] = useState(false)
+  const [editContent, setEditContent] = useState('')
+  
   const [chatInput, setChatInput] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([])
@@ -99,6 +103,53 @@ export default function CampaignEditPage() {
     }
     
     return html
+  }
+
+  // 从HTML提取纯文本
+  const extractTextFromHtml = (html: string): string => {
+    if (!html) return ''
+    
+    // 创建临时DOM元素
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = html
+    
+    // 处理列表
+    const lists = tempDiv.querySelectorAll('ul')
+    lists.forEach(ul => {
+      const items = ul.querySelectorAll('li')
+      items.forEach(li => {
+        li.textContent = '• ' + (li.textContent || '')
+      })
+    })
+    
+    // 处理标题
+    const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6')
+    headings.forEach(h => {
+      h.textContent = h.textContent + '\n'
+    })
+    
+    // 处理段落
+    const paragraphs = tempDiv.querySelectorAll('p')
+    paragraphs.forEach(p => {
+      if (p.textContent && p.textContent.trim()) {
+        p.textContent = p.textContent + '\n\n'
+      }
+    })
+    
+    // 处理换行
+    const brs = tempDiv.querySelectorAll('br')
+    brs.forEach(br => {
+      br.replaceWith('\n')
+    })
+    
+    // 获取纯文本内容
+    let text = tempDiv.textContent || tempDiv.innerText || ''
+    
+    // 清理多余的换行
+    text = text.replace(/\n{3,}/g, '\n\n')
+    text = text.trim()
+    
+    return text
   }
 
   // 处理AI内容接受
@@ -194,33 +245,37 @@ export default function CampaignEditPage() {
     }
   }
 
-  // 处理模板内容编辑
-  const handleTemplateEdit = (e: React.FormEvent<HTMLDivElement>) => {
-    const newContent = e.currentTarget.innerHTML
-    setCampaignData(prev => ({ ...prev, body: newContent }))
+  // 开始编辑模式
+  const startEditing = () => {
+    const currentContent = campaignData.body || templateContent
+    const textContent = extractTextFromHtml(currentContent)
+    setEditContent(textContent)
+    setIsEditing(true)
   }
 
-  // 处理键盘事件，改善编辑体验
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    // 防止Tab键跳转到其他元素
-    if (e.key === 'Tab') {
-      e.preventDefault()
-      // 插入制表符
-      document.execCommand('insertText', false, '    ')
-    }
-    
-    // 防止Enter键在某些情况下跳转焦点
-    if (e.key === 'Enter' && e.shiftKey) {
-      e.preventDefault()
-      document.execCommand('insertHTML', false, '<br>')
-    }
+  // 保存编辑
+  const saveEditing = () => {
+    const htmlContent = convertTextToHtml(editContent)
+    const fullTemplate = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">NovaMail</h1>
+          <p style="color: #e2e8f0; margin: 8px 0 0 0; font-size: 14px; font-weight: 400;">AI-Powered Email Marketing</p>
+        </div>
+        
+        <div style="padding: 40px 30px;">
+          ${htmlContent}
+        </div>
+      </div>
+    `
+    setCampaignData(prev => ({ ...prev, body: fullTemplate }))
+    setIsEditing(false)
   }
 
-  // 处理粘贴事件
-  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    const text = e.clipboardData.getData('text/plain')
-    document.execCommand('insertText', false, text)
+  // 取消编辑
+  const cancelEditing = () => {
+    setIsEditing(false)
+    setEditContent('')
   }
 
   return (
@@ -260,40 +315,61 @@ export default function CampaignEditPage() {
             </div>
             
             <div className="border border-gray-200 rounded-lg overflow-hidden">
-              <div
-                contentEditable
-                suppressContentEditableWarning={true}
-                onInput={handleTemplateEdit}
-                onKeyDown={handleKeyDown}
-                onPaste={handlePaste}
-                className="min-h-[500px] p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                style={{
-                  lineHeight: '1.6',
-                  fontSize: '16px',
-                  color: '#374151',
-                  userSelect: 'text',
-                  WebkitUserSelect: 'text',
-                  MozUserSelect: 'text',
-                  msUserSelect: 'text'
-                }}
-                dangerouslySetInnerHTML={{
-                  __html: campaignData.body || templateContent
-                }}
-                onFocus={(e) => {
-                  // 确保光标在内容区域，但不强制跳转到开头
-                  setTimeout(() => {
-                    const sel = window.getSelection()
-                    if (sel && sel.rangeCount === 0) {
-                      const range = document.createRange()
-                      if (e.currentTarget.firstChild) {
-                        range.setStart(e.currentTarget.firstChild, 0)
-                        range.collapse(true)
-                        sel.addRange(range)
-                      }
-                    }
-                  }, 0)
-                }}
-              />
+              {isEditing ? (
+                // 编辑模式：使用textarea进行流畅编辑
+                <div className="p-4">
+                  <div className="mb-4 flex gap-2">
+                    <button
+                      onClick={saveEditing}
+                      className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 flex items-center gap-2"
+                    >
+                      <Check className="w-4 h-4" />
+                      保存
+                    </button>
+                    <button
+                      onClick={cancelEditing}
+                      className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 flex items-center gap-2"
+                    >
+                      <X className="w-4 h-4" />
+                      取消
+                    </button>
+                  </div>
+                  <textarea
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    className="w-full min-h-[400px] p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    style={{
+                      lineHeight: '1.6',
+                      fontSize: '16px',
+                      color: '#374151',
+                      fontFamily: 'monospace'
+                    }}
+                    placeholder="在这里编辑邮件内容..."
+                  />
+                  <div className="mt-2 text-sm text-gray-500">
+                    支持格式：• 列表项、**粗体**、*斜体*、1. 标题
+                  </div>
+                </div>
+              ) : (
+                // 显示模式：显示专业模板
+                <div className="relative">
+                  <div
+                    className="min-h-[500px] p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={startEditing}
+                    dangerouslySetInnerHTML={{
+                      __html: campaignData.body || templateContent
+                    }}
+                  />
+                  <div className="absolute top-4 right-4">
+                    <button
+                      onClick={startEditing}
+                      className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 opacity-0 hover:opacity-100 transition-opacity"
+                    >
+                      编辑内容
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
