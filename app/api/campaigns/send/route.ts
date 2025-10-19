@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
     // 验证邮箱格式
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    const invalidEmails = recipients.filter(email => !emailRegex.test(email))
+    const invalidEmails = recipients.filter((email: string) => !emailRegex.test(email))
     
     if (invalidEmails.length > 0) {
       return NextResponse.json(
