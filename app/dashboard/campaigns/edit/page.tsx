@@ -287,7 +287,7 @@ export default function CampaignEditPage() {
                   const newContent = e.currentTarget.innerHTML
                   setCampaignData(prev => ({ ...prev, body: newContent }))
                 }}
-                className="min-h-[500px] p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="min-h-[500px] focus:outline-none"
                 style={{
                   lineHeight: '1.6',
                   fontSize: '16px',
