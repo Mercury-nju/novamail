@@ -15,8 +15,7 @@ async function callDashScopeAI(userRequest: string, businessName: string, produc
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'X-DashScope-SSE': 'enable'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: 'qwen-turbo',
@@ -290,11 +289,13 @@ export async function POST(request: NextRequest) {
     
   } catch (error: any) {
     console.error('AI Generation Error:', error)
+    console.error('Error details:', error?.message)
+    console.error('Error stack:', error?.stack)
     
     return NextResponse.json({
       success: false,
       error: 'Internal server error',
-      message: 'Failed to generate AI response. Please try again.',
+      message: `Failed to generate AI response: ${error?.message || 'Unknown error'}`,
       timestamp: new Date().toISOString()
     }, { status: 500 })
   }

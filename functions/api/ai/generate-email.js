@@ -16,8 +16,7 @@ async function callDashScopeAI(userRequest, businessName, productService, target
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'X-DashScope-SSE': 'enable'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: 'qwen-turbo',
