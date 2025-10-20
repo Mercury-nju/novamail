@@ -5,17 +5,27 @@ async function callDashScopeAI(userRequest: string, businessName: string, produc
   try {
     const apiKey = process.env.DASHSCOPE_API_KEY || 'sk-9bf19547ddbd4be1a87a7a43cf251097';
     
-    const prompt = `你是一个专业的AI助手，擅长回答各种问题。请直接回答用户的问题，提供准确、有用的信息。
+    // 添加NovaMail产品上下文
+    const prompt = `你是NovaMail的AI助手，NovaMail是一个专业的邮件营销平台，帮助用户创建、发送和管理邮件营销活动。
+
+产品信息：
+- 品牌：NovaMail
+- 功能：邮件模板设计、邮件发送、营销活动管理、数据分析
+- 目标用户：企业、营销人员、电商卖家、内容创作者
+- 核心价值：简化邮件营销流程，提高营销效果
+
+请根据用户的问题提供专业、有用的回答。如果问题与邮件营销相关，请结合NovaMail的功能给出具体建议；如果是其他问题，请基于你的知识提供准确回答。
 
 用户问题：${userRequest}
 
-请根据用户的具体问题提供准确、详细的回答。如果问题涉及邮件营销，请提供专业建议；如果是其他问题，请根据你的知识给出最佳答案。`;
+请用中文回答，提供详细、实用的建议。`;
 
     const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-DashScope-SSE': 'enable'
       },
       body: JSON.stringify({
         model: 'qwen-turbo',
@@ -38,14 +48,42 @@ async function callDashScopeAI(userRequest: string, businessName: string, produc
       throw new Error(`DashScope API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    // 处理SSE流响应
+    const text = await response.text();
+    console.log('DashScope raw response:', text.substring(0, 200));
     
-    if (data.output && data.output.choices && data.output.choices[0]) {
+    // 解析SSE流
+    const lines = text.split('\n');
+    let lastContent = '';
+    
+    for (const line of lines) {
+      if (line.startsWith('data:')) {
+        const data = line.substring(5).trim();
+        if (data === '[DONE]') break;
+        
+        try {
+          const parsed = JSON.parse(data);
+          console.log('Parsed SSE data:', parsed);
+          
+          // 处理DashScope API的响应格式
+          if (parsed.output && parsed.output.text) {
+            lastContent = parsed.output.text;
+          } else if (parsed.output && parsed.output.choices && parsed.output.choices[0]) {
+            lastContent = parsed.output.choices[0].message?.content || parsed.output.choices[0].text;
+          }
+        } catch (e) {
+          console.log('SSE parsing error for line:', line);
+          // 忽略解析错误，继续处理下一行
+        }
+      }
+    }
+    
+    if (lastContent) {
       return {
-        message: data.output.choices[0].message.content
+        message: lastContent
       };
     } else {
-      throw new Error('Invalid response format from DashScope API');
+      throw new Error('No valid content found in SSE stream');
     }
     
   } catch (error) {
