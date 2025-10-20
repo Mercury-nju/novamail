@@ -122,12 +122,12 @@ async function handleAIGenerateEmail(request, env) {
       });
     }
 
-    // 生成AI对话响应
-    const aiResponse = generateAIResponse(userRequest, businessName, productService, targetAudience);
+    // 调用DashScope AI API
+    const aiResponse = await callDashScopeAI(userRequest, businessName, productService, targetAudience, env);
     
     return new Response(JSON.stringify({
       success: true,
-      message: aiResponse.response,
+      message: aiResponse.message,
       timestamp: new Date().toISOString()
     }), {
       headers: corsHeaders
@@ -148,7 +148,75 @@ async function handleAIGenerateEmail(request, env) {
   }
 }
 
-// AI对话响应生成函数
+// 调用DashScope AI API
+async function callDashScopeAI(userRequest, businessName, productService, targetAudience, env) {
+  try {
+    const apiKey = env.DASHSCOPE_API_KEY || 'sk-9bf19547ddbd4be1a87a7a43cf251097';
+    
+    const prompt = `你是一个专业的邮件营销专家。请根据用户的问题提供专业的邮件营销建议。
+
+用户问题：${userRequest}
+公司名称：${businessName || 'Your Business'}
+产品/服务：${productService || 'Your Product/Service'}
+目标受众：${targetAudience || 'Your Customers'}
+
+请提供专业、实用的邮件营销建议，包括：
+- 具体的策略和技巧
+- 实际可操作的建议
+- 行业最佳实践
+- 针对性的解决方案
+
+请用中文回答，内容要专业、有深度，避免重复。`;
+
+    const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'X-DashScope-SSE': 'enable'
+      },
+      body: JSON.stringify({
+        model: 'qwen-turbo',
+        input: {
+          messages: [
+            {
+              role: 'user',
+              content: prompt
+            }
+          ]
+        },
+        parameters: {
+          temperature: 0.7,
+          max_tokens: 2000
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`DashScope API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    if (data.output && data.output.choices && data.output.choices[0]) {
+      return {
+        message: data.output.choices[0].message.content
+      };
+    } else {
+      throw new Error('Invalid response format from DashScope API');
+    }
+    
+  } catch (error) {
+    console.error('DashScope AI call failed:', error);
+    // 回退到本地生成
+    const fallbackResponse = generateAIResponse(userRequest, businessName, productService, targetAudience);
+    return {
+      message: fallbackResponse.response
+    };
+  }
+}
+
+// AI对话响应生成函数（备用）
 function generateAIResponse(userRequest, businessName, productService, targetAudience) {
   const request = userRequest.toLowerCase()
   
