@@ -1,7 +1,66 @@
 // Cloudflare Pages Function for AI Email Generation
 // 处理AI邮件内容生成请求
 
-// AI对话响应生成函数
+// 调用DashScope AI API
+async function callDashScopeAI(userRequest, businessName, productService, targetAudience) {
+  try {
+    const apiKey = 'sk-9bf19547ddbd4be1a87a7a43cf251097';
+    
+    const prompt = `你是一个专业的AI助手，擅长回答各种问题。请直接回答用户的问题，提供准确、有用的信息。
+
+用户问题：${userRequest}
+
+请根据用户的具体问题提供准确、详细的回答。如果问题涉及邮件营销，请提供专业建议；如果是其他问题，请根据你的知识给出最佳答案。`;
+
+    const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'X-DashScope-SSE': 'enable'
+      },
+      body: JSON.stringify({
+        model: 'qwen-turbo',
+        input: {
+          messages: [
+            {
+              role: 'user',
+              content: prompt
+            }
+          ]
+        },
+        parameters: {
+          temperature: 0.7,
+          max_tokens: 2000
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`DashScope API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    if (data.output && data.output.choices && data.output.choices[0]) {
+      return {
+        message: data.output.choices[0].message.content
+      };
+    } else {
+      throw new Error('Invalid response format from DashScope API');
+    }
+    
+  } catch (error) {
+    console.error('DashScope AI call failed:', error);
+    // 回退到本地生成
+    const fallbackResponse = generateAIResponse(userRequest, businessName, productService, targetAudience);
+    return {
+      message: fallbackResponse.response
+    };
+  }
+}
+
+// AI对话响应生成函数（备用）
 function generateAIResponse(userRequest, businessName, productService, targetAudience) {
   const request = userRequest.toLowerCase()
   
@@ -239,7 +298,7 @@ export async function onRequest(context) {
     }
     
     const startTime = Date.now()
-    const aiResponse = generateAIResponse(
+    const aiResponse = await callDashScopeAI(
       userRequest.trim(),
       businessName || 'Your Business',
       productService || 'Our Service',
@@ -249,7 +308,7 @@ export async function onRequest(context) {
     
     return new Response(JSON.stringify({
       success: true,
-      message: aiResponse.response,
+      message: aiResponse.message,
       timestamp: new Date().toISOString(),
       processingTime: `${processingTime}ms`,
       debug: {
