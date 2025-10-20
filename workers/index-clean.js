@@ -216,181 +216,105 @@ function generateAIResponse(userRequest, businessName, productService, targetAud
   
   let response = ''
   
-  if (request.includes('subject line') || request.includes('subject lines')) {
-    response = `Great question about email subject lines! Here are some proven strategies to improve your open rates:
+  // 根据用户问题提供智能回复
+  if (request.includes('你好') || request.includes('hello') || request.includes('hi')) {
+    response = `你好！我是你的AI助手，很高兴为你服务！我可以帮助你解答各种问题，包括邮件营销、技术问题、生活建议等等。请告诉我你需要什么帮助？`
+  } else if (request.includes('天气') || request.includes('weather')) {
+    response = `很抱歉，我无法获取实时天气信息。建议你查看天气预报应用或网站获取准确的天气信息。如果你需要其他帮助，我很乐意为你服务！`
+  } else if (request.includes('时间') || request.includes('time')) {
+    response = `我无法获取实时时间信息。建议你查看你的设备时钟或询问语音助手。如果你有其他问题，我很乐意帮助你！`
+  } else if (request.includes('人工智能') || request.includes('ai') || request.includes('artificial intelligence')) {
+    response = `人工智能（AI）是计算机科学的一个分支，旨在创建能够执行通常需要人类智能的任务的系统。AI包括机器学习、深度学习、自然语言处理等技术。
 
-**Power Words That Work:**
-• "Exclusive" - creates urgency and FOMO
-• "Free" - always catches attention
-• "New" - suggests fresh content
-• "Limited" - creates scarcity
-• "You" - personalizes the message
+**AI的主要应用领域：**
+• 自然语言处理（如聊天机器人、翻译）
+• 计算机视觉（如图像识别、自动驾驶）
+• 机器学习（如推荐系统、预测分析）
+• 语音识别和生成
+• 机器人技术
 
-**Best Practices:**
-• Keep it under 50 characters for mobile
-• Use numbers and emojis sparingly
-• A/B test different approaches
-• Avoid spam trigger words
-• Make it relevant to your audience
+**AI的发展趋势：**
+• 大语言模型（如GPT、ChatGPT）
+• 多模态AI（结合文本、图像、音频）
+• 边缘AI（在设备上运行）
+• 可解释AI（提高透明度）
 
-**Examples for ${business}:**
-• "Exclusive: New ${product} Features (Just for You)"
-• "Limited Time: 50% Off ${product}"
-• "You're Invited: ${business} VIP Event"
+你对AI的哪个方面特别感兴趣？我可以为你详细介绍！`
+  } else if (request.includes('编程') || request.includes('programming') || request.includes('代码') || request.includes('code')) {
+    response = `编程是创建计算机程序的过程！我很乐意帮助你学习编程。
 
-Would you like me to help you create specific subject lines for your upcoming campaign?`
-  } else if (request.includes('marketing strateg') || request.includes('strategies')) {
-    response = `Excellent question! Here are the most effective email marketing strategies for ${business}:
+**热门编程语言：**
+• JavaScript - 网页开发
+• Python - 数据科学、AI
+• Java - 企业应用
+• C++ - 系统编程
+• Go - 云原生应用
 
-**1. Segmentation is Key:**
-• Divide your list by demographics, behavior, and preferences
-• Send targeted content to each segment
-• Personalize subject lines and content
+**学习建议：**
+• 选择一门语言深入学习
+• 多做实践项目
+• 阅读优秀代码
+• 参与开源项目
+• 持续学习新技术
 
-**2. Automation Workflows:**
-• Welcome series for new subscribers
-• Abandoned cart recovery
-• Birthday and anniversary emails
-• Re-engagement campaigns
+你想学习哪种编程语言？或者有什么具体的编程问题需要帮助？`
+  } else if (request.includes('邮件') || request.includes('email') || request.includes('营销') || request.includes('marketing')) {
+    response = `邮件营销是一个强大的数字营销工具！让我为你介绍一些关键策略：
 
-**3. Content Strategy:**
-• 80% valuable content, 20% promotional
-• Educational content builds trust
-• User-generated content increases engagement
-• Behind-the-scenes content humanizes your brand
+**邮件营销最佳实践：**
+• 建立高质量的邮件列表
+• 个性化邮件内容
+• 优化邮件主题行
+• 移动端友好设计
+• 定期清理无效邮箱
 
-**4. Timing & Frequency:**
-• Test different send times for your audience
-• Tuesday-Thursday typically perform best
-• Start with weekly, adjust based on engagement
-• Respect unsubscribe requests immediately
+**提高打开率的技巧：**
+• 使用吸引人的主题行
+• 选择最佳发送时间
+• 分段发送给不同用户群体
+• A/B测试不同版本
 
-**5. Mobile Optimization:**
-• 60%+ of emails are opened on mobile
-• Use single-column layouts
-• Large, tappable buttons
-• Short, scannable content
+**内容策略：**
+• 提供有价值的内容
+• 保持品牌一致性
+• 包含明确的行动号召
+• 定期发送但不过度
 
-What specific aspect of email marketing would you like to dive deeper into?`
-  } else if (request.includes('open rate') || request.includes('open rates')) {
-    response = `Great question! Here are proven strategies to boost your email open rates:
+你想了解邮件营销的哪个具体方面？我可以提供更详细的建议！`
+  } else if (request.includes('帮助') || request.includes('help')) {
+    response = `我很乐意帮助你！作为AI助手，我可以协助你处理各种问题：
 
-**Immediate Improvements:**
-• Clean your email list regularly (remove inactive subscribers)
-• Use double opt-in to ensure quality subscribers
-• Segment your audience for targeted messaging
-• Test different send times (Tuesday-Thursday, 10-11 AM often work best)
+**我可以帮助你：**
+• 回答问题（技术、生活、学习等）
+• 提供建议和解决方案
+• 解释概念和原理
+• 协助学习和研究
+• 创意和灵感
 
-**Subject Line Optimization:**
-• Keep it under 50 characters
-• Use personalization (first name, location)
-• Create urgency without being spammy
-• Ask questions to spark curiosity
-• Use emojis strategically (not in every email)
+**使用建议：**
+• 描述你的具体问题
+• 提供相关背景信息
+• 说明你的目标或需求
+• 随时提出后续问题
 
-**Sender Reputation:**
-• Use a consistent "From" name and email
-• Maintain a clean IP reputation
-• Avoid spam trigger words
-• Include clear unsubscribe options
-• Monitor bounce rates and complaints
-
-**Content Quality:**
-• Deliver value in every email
-• Match subject line to content
-• Use preview text effectively
-• Mobile-optimize everything
-• Test different content formats
-
-**Industry Benchmarks:**
-• Average open rate: 20-25%
-• Good open rate: 25-30%
-• Excellent open rate: 30%+
-
-What's your current open rate, and which area would you like to focus on improving first?`
-  } else if (request.includes('content idea') || request.includes('content ideas')) {
-    response = `Here are some engaging email content ideas for ${business}:
-
-**Educational Content:**
-• "How-to" guides related to ${product}
-• Industry insights and trends
-• Case studies and success stories
-• Tips and best practices
-• FAQ series addressing common questions
-
-**Behind-the-Scenes:**
-• Team introductions and company culture
-• Product development process
-• Office tours or virtual events
-• Customer testimonials and reviews
-• Company milestones and achievements
-
-**Interactive Content:**
-• Polls and surveys
-• Quizzes related to your industry
-• Contests and giveaways
-• User-generated content features
-• Interactive product demos
-
-**Seasonal & Event-Based:**
-• Holiday-themed content
-• Industry conference recaps
-• Seasonal product recommendations
-• Anniversary celebrations
-• New year goal-setting content
-
-**Value-Driven Content:**
-• Exclusive discounts and offers
-• Early access to new features
-• Free resources and templates
-• Webinar invitations
-• Industry reports and whitepapers
-
-**Pro Tips:**
-• Mix content types to keep subscribers engaged
-• Use storytelling to make content memorable
-• Include clear calls-to-action
-• Test different content formats
-• Track engagement metrics
-
-What type of content resonates most with your audience? I can help you develop specific ideas!`
+请告诉我你需要什么帮助，我会尽力为你提供有用的信息和建议！`
   } else {
-    // 通用对话响应
-    response = `Thanks for reaching out! I'm here to help you with email marketing strategies and content ideas for ${business}.
+    // 通用智能回复
+    response = `感谢你的问题！虽然我无法获取实时信息或执行外部操作，但我可以为你提供一般性的建议和信息。
 
-Here are some ways I can assist you:
+**我可以帮助你：**
+• 解释概念和原理
+• 提供学习建议
+• 分享最佳实践
+• 解答技术问题
+• 提供创意想法
 
-**Email Marketing Strategy:**
-• Subject line optimization
-• List segmentation advice
-• Automation workflow planning
-• A/B testing recommendations
+如果你有具体的问题，请详细描述，我会尽力为你提供有用的回答。你也可以尝试：
+• 重新表述你的问题
+• 提供更多背景信息
+• 询问相关的其他问题
 
-**Content Creation:**
-• Email template suggestions
-• Content calendar planning
-• Engagement tactics
-• Industry best practices
-
-**Performance Optimization:**
-• Open rate improvement
-• Click-through rate enhancement
-• Deliverability tips
-• Analytics interpretation
-
-**Quick Wins:**
-• Mobile optimization checklist
-• Spam filter avoidance
-• Personalization techniques
-• Timing optimization
-
-What specific aspect of email marketing would you like to explore? Feel free to ask me anything about:
-• Writing compelling subject lines
-• Creating engaging content
-• Building effective campaigns
-• Measuring success metrics
-
-I'm here to help you succeed with your email marketing efforts! 🚀`
+有什么我可以帮助你的吗？`
   }
   
   return { response }
