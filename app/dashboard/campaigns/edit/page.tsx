@@ -323,10 +323,12 @@ export default function CampaignEditPage() {
 
     setIsSending(true)
     try {
-      // 直接发送到后端，使用最简单的数据结构
+      // 使用campaignData格式，兼容生产环境Cloudflare Workers
       const requestData = {
-        subject: safeSubject,
-        content: safeBody,
+        campaignData: {
+          subject: safeSubject,
+          body: safeBody
+        },
         recipients: recipientList,
         senderEmail: 'noreply@novamail.world',
         senderName: sendForm.senderName || 'NovaMail'
