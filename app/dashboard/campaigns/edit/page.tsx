@@ -40,7 +40,6 @@ export default function CampaignEditPage() {
   const [showSendModal, setShowSendModal] = useState(false)
   const [sendForm, setSendForm] = useState({
     recipients: '',
-    senderEmail: '',
     senderName: 'NovaMail'
   })
   
@@ -277,7 +276,6 @@ export default function CampaignEditPage() {
   const handleSendEmail = async () => {
     console.log('=== 发送邮件调试信息 ===')
     console.log('sendForm.recipients:', sendForm.recipients)
-    console.log('sendForm.senderEmail:', sendForm.senderEmail)
     console.log('sendForm.senderName:', sendForm.senderName)
     console.log('campaignData.subject:', campaignData.subject)
     console.log('campaignData.body:', campaignData.body)
@@ -322,11 +320,6 @@ export default function CampaignEditPage() {
       return
     }
 
-    // 如果用户填写了显示邮箱，则验证格式
-    if (sendForm.senderEmail && !emailRegex.test(sendForm.senderEmail)) {
-      toast.error('Invalid display email address')
-      return
-    }
 
     setIsSending(true)
     try {
@@ -335,7 +328,7 @@ export default function CampaignEditPage() {
         subject: safeSubject,
         content: safeBody,
         recipients: recipientList,
-        senderEmail: sendForm.senderEmail || 'noreply@novamail.world',
+        senderEmail: 'noreply@novamail.world',
         senderName: sendForm.senderName || 'NovaMail'
       }
       
@@ -584,22 +577,6 @@ export default function CampaignEditPage() {
                 <p className="text-xs text-gray-500 mt-1">Separate multiple emails with commas</p>
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Display Email (Optional)
-                </label>
-                <input
-                  type="email"
-                  value={sendForm.senderEmail}
-                  onChange={(e) => setSendForm(prev => ({ ...prev, senderEmail: e.target.value }))}
-                  placeholder="support@yourcompany.com (for display only)"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={isSending}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  This email will be shown to recipients. Leave empty to use default NovaMail address.
-                </p>
-              </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -622,14 +599,9 @@ export default function CampaignEditPage() {
                 <h4 className="text-sm font-medium text-gray-700 mb-2">Email Preview</h4>
                 <div className="text-xs text-gray-600">
                   <p><strong>Subject:</strong> {campaignData.subject}</p>
-                  <p><strong>From:</strong> {sendForm.senderName} &lt;{sendForm.senderEmail || 'noreply@novamail.world'}&gt;</p>
+                  <p><strong>From:</strong> {sendForm.senderName} &lt;noreply@novamail.world&gt;</p>
                   <p><strong>To:</strong> {sendForm.recipients || 'No recipients'}</p>
                   <p><strong>Method:</strong> Resend API (统一发送)</p>
-                  {sendForm.senderEmail && (
-                    <p className="text-blue-600 mt-1">
-                      💡 收件人将看到您的企业邮箱地址
-                    </p>
-                  )}
                 </div>
               </div>
             </div>
@@ -644,7 +616,7 @@ export default function CampaignEditPage() {
               </button>
               <button
                 onClick={handleSendEmail}
-                disabled={isSending || !sendForm.recipients || !sendForm.senderEmail}
+                disabled={isSending || !sendForm.recipients}
                 className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {isSending ? (

@@ -203,9 +203,9 @@ export async function POST(request: NextRequest) {
       subject = body.subject
       content = body.content
       recipients = body.recipients
-      senderEmail = body.senderEmail || 'noreply@novamail.world'
+      senderEmail = 'noreply@novamail.world'  // 固定使用NovaMail邮箱
       senderName = body.senderName || 'NovaMail'
-      useUserDomain = body.useUserDomain || false
+      useUserDomain = false  // 禁用域名功能
       console.log('使用 Next.js API 格式')
       console.log('subject:', subject)
       console.log('content:', content)
