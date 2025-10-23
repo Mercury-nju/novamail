@@ -66,9 +66,9 @@ export default function EmailDomainPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* 页面标题 */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">邮箱域名配置</h1>
+          <h1 className="text-3xl font-bold text-gray-900">发件人显示配置</h1>
           <p className="mt-2 text-gray-600">
-            配置您的域名，让收件人看到您的企业邮箱地址
+            配置发件人显示信息，让收件人看到您的企业身份
           </p>
         </div>
 
@@ -76,7 +76,7 @@ export default function EmailDomainPage() {
           {/* 域名配置 */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              您的域名 <span className="text-red-500">*</span>
+              您的企业域名 <span className="text-red-500">*</span>
             </label>
             <div className="flex items-center space-x-2">
               <input
@@ -88,14 +88,14 @@ export default function EmailDomainPage() {
               />
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              输入您的域名，不需要包含 www 或 http://
+              输入您的企业域名，用于显示发件人身份（不需要真实邮箱服务器）
             </p>
           </div>
 
           {/* 邮箱前缀配置 */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              邮箱前缀
+              发件人前缀
             </label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-3">
               {config.prefixes.map((prefix) => (
@@ -127,18 +127,20 @@ export default function EmailDomainPage() {
               onClick={handleAddPrefix}
               className="text-sm text-blue-600 hover:text-blue-800"
             >
-              + 添加自定义前缀
+              + 添加自定义发件人前缀
             </button>
           </div>
 
           {/* 预览效果 */}
           {displayEmail && (
             <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h3 className="text-sm font-medium text-blue-900 mb-2">预览效果</h3>
-              <div className="text-sm text-blue-800">
-                <p><strong>发件人显示：</strong>{displayEmail}</p>
-                <p><strong>收件人看到：</strong>{displayEmail}</p>
+              <h3 className="text-sm font-medium text-blue-900 mb-2">显示效果预览</h3>
+              <div className="text-sm text-blue-800 space-y-1">
+                <p><strong>收件人看到的发件人：</strong>{displayEmail}</p>
                 <p><strong>回复地址：</strong>{displayEmail}</p>
+                <p className="text-xs text-gray-600 mt-2">
+                  💡 实际发送通过NovaMail服务器，但收件人看到的是您的企业邮箱地址
+                </p>
               </div>
             </div>
           )}
@@ -157,13 +159,19 @@ export default function EmailDomainPage() {
 
         {/* 使用说明 */}
         <div className="mt-8 bg-green-50 border border-green-200 rounded-lg p-6">
-          <h3 className="text-lg font-medium text-green-900 mb-2">使用说明</h3>
+          <h3 className="text-lg font-medium text-green-900 mb-2">工作原理</h3>
           <div className="text-sm text-green-800 space-y-2">
-            <p>1. <strong>配置域名</strong>：输入您的域名（如：yourcompany.com）</p>
-            <p>2. <strong>选择前缀</strong>：选择或添加邮箱前缀（如：support、marketing）</p>
-            <p>3. <strong>保存配置</strong>：点击保存按钮保存您的设置</p>
-            <p>4. <strong>发送邮件</strong>：在发送邮件时，系统会自动使用您配置的邮箱地址</p>
-            <p>5. <strong>显示效果</strong>：收件人将看到您的企业邮箱地址，而不是NovaMail的地址</p>
+            <p>1. <strong>配置显示信息</strong>：输入您的企业域名和发件人前缀</p>
+            <p>2. <strong>无需真实邮箱</strong>：不需要配置真实的邮箱服务器</p>
+            <p>3. <strong>显示效果</strong>：收件人看到您的企业邮箱地址</p>
+            <p>4. <strong>实际发送</strong>：通过NovaMail服务器发送，但显示您的企业身份</p>
+            <p>5. <strong>回复地址</strong>：收件人回复时使用您配置的邮箱地址</p>
+            <div className="mt-3 p-3 bg-green-100 rounded">
+              <p className="text-xs text-green-700">
+                <strong>💡 重要说明：</strong>这只是显示配置，不需要真实的邮箱服务器。
+                所有邮件都通过NovaMail发送，但收件人看到的是您的企业邮箱地址。
+              </p>
+            </div>
           </div>
         </div>
       </div>
