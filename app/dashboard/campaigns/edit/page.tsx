@@ -351,7 +351,6 @@ export default function CampaignEditPage() {
         setShowSendModal(false)
         setSendForm({
           recipients: '',
-          senderEmail: '',
           senderName: 'NovaMail'
         })
       } else {
