@@ -498,6 +498,68 @@ export default function NewCampaignPage() {
       features: ['Calming Colors', 'Wellness Focus', 'Clean Design', 'Health Oriented'],
       isPopular: false,
       isNew: false
+    },
+    {
+      id: 'ecommerce',
+      name: 'E-commerce',
+      category: 'Sales',
+      description: 'Bold, colorful design perfect for e-commerce and retail brands',
+      subject: '🛍️ New Collection Alert - Limited Stock!',
+      htmlContent: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+          <div style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); padding: 40px 30px; text-align: center; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%); opacity: 0.6;"></div>
+            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; position: relative; z-index: 1;">🛍️ New Collection</h1>
+            <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0 0; font-size: 16px; font-weight: 400; position: relative; z-index: 1;">Limited Stock Alert!</p>
+          </div>
+          
+          <div style="padding: 40px 30px;">
+            <p style="color: #1f2937; font-size: 16px; line-height: 1.6; margin-bottom: 25px; font-weight: 500;">
+              Hi Fashion Enthusiast,
+            </p>
+            
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
+              Our hottest spring collection just dropped and we're seeing items fly off the shelves! Don't miss out on these exclusive pieces.
+            </p>
+            
+            <div style="background: #fef3c7; padding: 25px; border-radius: 10px; margin: 25px 0; border: 1px solid #fbbf24;">
+              <h3 style="color: #92400e; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">🔥 Limited Time Offers</h3>
+              <ul style="color: #b45309; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
+                <li style="margin-bottom: 8px;">🚚 Free Shipping Over $75</li>
+                <li style="margin-bottom: 8px;">⚡ Express Delivery Available</li>
+                <li style="margin-bottom: 8px;">🎯 Exclusive Early Access</li>
+                <li style="margin-bottom: 8px;">💎 VIP Member Discounts</li>
+              </ul>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #ec4899, #be185d); padding: 25px; border-radius: 10px; text-align: center; margin: 25px 0;">
+              <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">⚡ Flash Sale</h3>
+              <p style="color: white; margin: 0; font-size: 15px;">
+                Up to <strong>50% off</strong> selected items - ends in 24 hours!
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="#" style="display: inline-block; background: linear-gradient(135deg, #ec4899, #be185d); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);">
+                Shop Now 🛒
+              </a>
+            </div>
+            
+            <p style="color: #4b5563; font-size: 15px; line-height: 1.6; margin: 25px 0; text-align: center;">
+              Limited quantities available. Shop now before they're gone! ⏰
+            </p>
+            
+            <p style="color: #1f2937; font-size: 15px; line-height: 1.6; margin: 30px 0 0 0;">
+              Happy Shopping,<br>
+              <strong style="color: #ec4899;">The Fashion Team</strong><br>
+              <span style="color: #be185d;">[Store Name]</span>
+            </p>
+          </div>
+        </div>
+      `,
+      features: ['Bold Colors', 'E-commerce Focus', 'Sales Oriented', 'Urgency Driven'],
+      isPopular: true,
+      isNew: false
     }
   ]
 

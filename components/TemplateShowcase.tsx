@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { CheckIcon, EyeIcon, SparklesIcon, DocumentTextIcon, ShoppingCartIcon, CalendarIcon } from '@heroicons/react/24/outline'
 
@@ -21,43 +22,143 @@ interface Template {
 
 const templates: Template[] = [
   {
-    id: 'modern-promo',
-    name: 'Modern Promo',
-    category: 'Marketing',
+    id: 'modern-gradient',
+    name: 'Modern Gradient',
+    category: 'Modern',
     gradient: 'from-blue-500 to-purple-600',
     icon: (
       <SparklesIcon className="w-6 h-6 text-white" />
     ),
     emailContent: {
-      subject: '🚀 Exclusive Launch Offer - Limited Time!',
-      greeting: 'Dear Valued Customer,',
-      message: 'We\'re thrilled to announce our latest product launch with special insider pricing just for you!',
+      subject: '🚀 Introducing [Product Name] - The Future is Here',
+      greeting: 'Hi [Customer Name],',
+      message: 'We\'re thrilled to announce the launch of NovaAI, our revolutionary AI-powered email marketing platform that will transform how you connect with your audience.',
       features: [
-        '30% OFF Premium Plans',
-        'Free Premium Support',
-        'Extended Trial Period'
+        'AI-powered content generation',
+        'Advanced personalization',
+        'Smart analytics'
       ],
-      cta: 'Claim Your Offer'
+      cta: 'Start Your Free Trial'
     }
   },
   {
-    id: 'newsletter',
-    name: 'Newsletter',
-    category: 'Content',
-    gradient: 'from-green-500 to-teal-600',
+    id: 'minimal-clean',
+    name: 'Minimal Clean',
+    category: 'Minimal',
+    gradient: 'from-gray-500 to-gray-700',
     icon: (
       <DocumentTextIcon className="w-6 h-6 text-white" />
     ),
     emailContent: {
-      subject: '📰 Weekly Newsletter - Industry Insights',
-      greeting: 'Hello there,',
-      message: 'Welcome to this week\'s digest of the latest trends, tips, and breakthroughs in email marketing.',
+      subject: 'Welcome to [Company Name] - Let\'s Get Started!',
+      greeting: 'Hi [Customer Name],',
+      message: 'Welcome to NovaMail. We\'re excited to have you join thousands of businesses already using our platform to create beautiful, effective email campaigns.',
       features: [
-        'Latest Industry News',
-        'Pro Marketing Tips',
-        'Success Stories'
+        'Complete your profile setup',
+        'Choose your first template',
+        'Import your contact list'
       ],
-      cta: 'Read Full Newsletter'
+      cta: 'Get Started'
+    }
+  },
+  {
+    id: 'corporate-professional',
+    name: 'Corporate Professional',
+    category: 'Corporate',
+    gradient: 'from-slate-500 to-slate-700',
+    icon: (
+      <DocumentTextIcon className="w-6 h-6 text-white" />
+    ),
+    emailContent: {
+      subject: '[Company Name] Monthly Newsletter - [Month Year]',
+      greeting: 'Dear [Subscriber Name],',
+      message: 'Welcome to our December 2024 newsletter. This month, we\'re excited to share significant updates and insights from the NovaMail platform.',
+      features: [
+        'AI-powered email personalization',
+        '99.9% email delivery rate',
+        '15+ CRM platform integrations'
+      ],
+      cta: 'Read Full Report'
+    }
+  },
+  {
+    id: 'elegant-luxury',
+    name: 'Elegant Luxury',
+    category: 'Elegant',
+    gradient: 'from-amber-500 to-yellow-600',
+    icon: (
+      <SparklesIcon className="w-6 h-6 text-white" />
+    ),
+    emailContent: {
+      subject: 'Exclusive Invitation: [Event Name] - A Night of Elegance',
+      greeting: 'Dear [Guest Name],',
+      message: 'We are delighted to extend a personal invitation to you for an exclusive evening of elegance and sophistication.',
+      features: [
+        'Exclusive evening event',
+        'Black Tie Optional',
+        'Premium experience'
+      ],
+      cta: 'Accept Invitation'
+    }
+  },
+  {
+    id: 'creative-vibrant',
+    name: 'Creative Vibrant',
+    category: 'Creative',
+    gradient: 'from-pink-500 to-rose-600',
+    icon: (
+      <SparklesIcon className="w-6 h-6 text-white" />
+    ),
+    emailContent: {
+      subject: '🎨 Creative Workshop: [Workshop Name] - Unleash Your Creativity',
+      greeting: 'Hey [Creative Name]! 👋',
+      message: 'Ready to dive into a world of creativity? We\'re excited to invite you to our exclusive [Workshop Name] - where imagination meets innovation!',
+      features: [
+        'Creative problem-solving',
+        'Advanced design principles',
+        'Innovation methodologies'
+      ],
+      cta: 'Join the Workshop 🚀'
+    }
+  },
+  {
+    id: 'tech-modern',
+    name: 'Tech Modern',
+    category: 'Modern',
+    gradient: 'from-blue-600 to-indigo-600',
+    icon: (
+      <SparklesIcon className="w-6 h-6 text-white" />
+    ),
+    emailContent: {
+      subject: 'Tech Update: [Product Name] v2.0 - Now Live!',
+      greeting: 'Hello [Developer Name],',
+      message: 'We\'re excited to announce that [Product Name] v2.0 is now live! This major update brings powerful new features and significant performance improvements.',
+      features: [
+        '3x faster processing speed',
+        'Enhanced API endpoints',
+        'Real-time analytics dashboard'
+      ],
+      cta: 'Explore New Features'
+    }
+  },
+  {
+    id: 'health-wellness',
+    name: 'Health & Wellness',
+    category: 'Minimal',
+    gradient: 'from-green-500 to-emerald-600',
+    icon: (
+      <SparklesIcon className="w-6 h-6 text-white" />
+    ),
+    emailContent: {
+      subject: 'Wellness Wednesday: [Topic] - Your Health Journey Starts Here',
+      greeting: 'Hi [Wellness Seeker],',
+      message: 'This week, we\'re focusing on [Wellness Topic] - a key component of your overall health and wellbeing journey.',
+      features: [
+        'Mindful breathing exercises',
+        'Nutritious meal planning',
+        'Daily movement goals'
+      ],
+      cta: 'Start Your Journey 🌱'
     }
   },
   {
@@ -79,31 +180,17 @@ const templates: Template[] = [
       ],
       cta: 'Shop Now'
     }
-  },
-  {
-    id: 'event-invite',
-    name: 'Event Invite',
-    category: 'Events',
-    gradient: 'from-indigo-500 to-purple-600',
-    icon: (
-      <CalendarIcon className="w-6 h-6 text-white" />
-    ),
-    emailContent: {
-      subject: '🎉 You\'re Invited! Digital Marketing Summit',
-      greeting: 'Dear Professional,',
-      message: 'Join industry leaders at the biggest digital marketing event of the year.',
-      features: [
-        'Keynote Speakers',
-        'Networking Sessions',
-        'Live Workshops'
-      ],
-      cta: 'RSVP Now'
-    }
   }
 ]
 
 export default function TemplateShowcase() {
+  const router = useRouter()
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0])
+
+  const handleTemplateClick = (template: Template) => {
+    // Navigate to the professional templates page with the selected template
+    router.push(`/dashboard/campaigns/new?template=${template.id}`)
+  }
 
   return (
     <section className="py-12 relative bg-gray-50 overflow-hidden">
@@ -173,7 +260,10 @@ export default function TemplateShowcase() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  onClick={() => setSelectedTemplate(template)}
+                  onClick={() => {
+                    setSelectedTemplate(template)
+                    handleTemplateClick(template)
+                  }}
                   className={`
                     relative group cursor-pointer transition-all duration-300 p-3 rounded-lg border-2 h-20
                     ${selectedTemplate.id === template.id 
