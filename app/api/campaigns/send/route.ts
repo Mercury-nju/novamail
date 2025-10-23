@@ -177,6 +177,12 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
+    // 调试：打印接收到的数据
+    console.log('=== 后端接收数据调试 ===')
+    console.log('body:', JSON.stringify(body, null, 2))
+    console.log('body.campaignData:', body.campaignData)
+    console.log('========================')
+    
     // 支持两种数据结构：Workers API 格式和 Next.js API 格式
     let subject, content, recipients, senderEmail, senderName, useUserDomain
     
@@ -188,6 +194,10 @@ export async function POST(request: NextRequest) {
       senderEmail = 'noreply@novamail.world' // 默认值
       senderName = 'NovaMail'
       useUserDomain = false
+      console.log('使用 Workers API 格式')
+      console.log('subject:', subject)
+      console.log('content:', content)
+      console.log('recipients:', recipients)
     } else {
       // Next.js API 格式
       subject = body.subject
@@ -196,6 +206,10 @@ export async function POST(request: NextRequest) {
       senderEmail = body.senderEmail || 'noreply@novamail.world'
       senderName = body.senderName || 'NovaMail'
       useUserDomain = body.useUserDomain || false
+      console.log('使用 Next.js API 格式')
+      console.log('subject:', subject)
+      console.log('content:', content)
+      console.log('recipients:', recipients)
     }
 
     // 验证必需字段
