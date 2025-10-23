@@ -176,14 +176,27 @@ async function sendViaResendWithUserEmail(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { 
-      subject, 
-      content, 
-      recipients, 
-      senderEmail, 
-      senderName = 'NovaMail',
+    
+    // 支持两种数据结构：Workers API 格式和 Next.js API 格式
+    let subject, content, recipients, senderEmail, senderName, useUserDomain
+    
+    if (body.campaignData) {
+      // Workers API 格式
+      subject = body.campaignData.subject
+      content = body.campaignData.body
+      recipients = body.recipients
+      senderEmail = 'noreply@novamail.world' // 默认值
+      senderName = 'NovaMail'
       useUserDomain = false
-    } = body
+    } else {
+      // Next.js API 格式
+      subject = body.subject
+      content = body.content
+      recipients = body.recipients
+      senderEmail = body.senderEmail || 'noreply@novamail.world'
+      senderName = body.senderName || 'NovaMail'
+      useUserDomain = body.useUserDomain || false
+    }
 
     // 验证必需字段
     if (!subject || !content || !recipients) {
