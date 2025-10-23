@@ -45,8 +45,12 @@ export default function CampaignEditPage() {
   })
   
   const [useUserDomain, setUseUserDomain] = useState(false)
-  const [userDomains, setUserDomains] = useState([])
-  const [userEmailAliases, setUserEmailAliases] = useState([])
+  const [userDomains, setUserDomains] = useState<any[]>([])
+  const [userEmailAliases, setUserEmailAliases] = useState<Array<{
+    email: string
+    domain: string
+    label: string
+  }>>([])
   
   
   // 根据模板ID获取当前模板
@@ -73,10 +77,14 @@ export default function CampaignEditPage() {
           setUserDomains(data.domains || [])
           
           // 提取所有邮箱别名
-          const aliases = []
-          data.domains?.forEach(domain => {
+          const aliases: Array<{
+            email: string
+            domain: string
+            label: string
+          }> = []
+          data.domains?.forEach((domain: any) => {
             if (domain.status === 'verified') {
-              domain.emailAliases?.forEach(alias => {
+              domain.emailAliases?.forEach((alias: string) => {
                 aliases.push({
                   email: alias,
                   domain: domain.domain,
