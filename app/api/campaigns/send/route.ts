@@ -205,11 +205,11 @@ export async function POST(request: NextRequest) {
     } = body
 
     // 验证必需字段
-    if (!subject || !content || !recipients || !senderEmail) {
+    if (!subject || !content || !recipients) {
       return NextResponse.json(
         { 
           success: false, 
-          error: 'Missing required fields: subject, content, recipients, senderEmail' 
+          error: 'Missing required fields: subject, content, recipients' 
         },
         { status: 400 }
       )
@@ -229,8 +229,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 发送邮件
-    const result = await sendEmail(subject, content, recipients, senderEmail, senderName, useUserDomain)
+    // 发送邮件 - 如果senderEmail为空，使用默认值
+    const finalSenderEmail = senderEmail || 'noreply@novamail.world'
+    const result = await sendEmail(subject, content, recipients, finalSenderEmail, senderName, useUserDomain)
     
     return NextResponse.json({
       success: true,
