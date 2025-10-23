@@ -4,184 +4,38 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { CheckIcon, EyeIcon, SparklesIcon, DocumentTextIcon, ShoppingCartIcon, CalendarIcon } from '@heroicons/react/24/outline'
+import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
 
-interface Template {
-  id: string
-  name: string
-  category: string
-  icon: JSX.Element
-  emailContent: {
-    subject: string
-    greeting: string
-    message: string
-    features: string[]
-    cta: string
+// Use shared template data
+const templates = professionalTemplates.map(template => ({
+  ...template,
+  icon: getTemplateIcon(template.category),
+  gradient: getTemplateGradient(template.category)
+}))
+
+function getTemplateIcon(category: string) {
+  switch (category) {
+    case 'Modern': return <SparklesIcon className="w-6 h-6 text-white" />
+    case 'Minimal': return <DocumentTextIcon className="w-6 h-6 text-white" />
+    case 'Corporate': return <DocumentTextIcon className="w-6 h-6 text-white" />
+    case 'Creative': return <SparklesIcon className="w-6 h-6 text-white" />
+    case 'Elegant': return <SparklesIcon className="w-6 h-6 text-white" />
+    case 'Sales': return <ShoppingCartIcon className="w-6 h-6 text-white" />
+    default: return <SparklesIcon className="w-6 h-6 text-white" />
   }
-  gradient: string
 }
 
-const templates: Template[] = [
-  {
-    id: 'modern-gradient',
-    name: 'Modern Gradient',
-    category: 'Modern',
-    gradient: 'from-blue-500 to-purple-600',
-    icon: (
-      <SparklesIcon className="w-6 h-6 text-white" />
-    ),
-    emailContent: {
-      subject: '🚀 Introducing [Product Name] - The Future is Here',
-      greeting: 'Hi [Customer Name],',
-      message: 'We\'re thrilled to announce the launch of NovaAI, our revolutionary AI-powered email marketing platform that will transform how you connect with your audience.',
-      features: [
-        'AI-powered content generation',
-        'Advanced personalization',
-        'Smart analytics'
-      ],
-      cta: 'Start Your Free Trial'
-    }
-  },
-  {
-    id: 'minimal-clean',
-    name: 'Minimal Clean',
-    category: 'Minimal',
-    gradient: 'from-gray-500 to-gray-700',
-    icon: (
-      <DocumentTextIcon className="w-6 h-6 text-white" />
-    ),
-    emailContent: {
-      subject: 'Welcome to [Company Name] - Let\'s Get Started!',
-      greeting: 'Hi [Customer Name],',
-      message: 'Welcome to NovaMail. We\'re excited to have you join thousands of businesses already using our platform to create beautiful, effective email campaigns.',
-      features: [
-        'Complete your profile setup',
-        'Choose your first template',
-        'Import your contact list'
-      ],
-      cta: 'Get Started'
-    }
-  },
-  {
-    id: 'corporate-professional',
-    name: 'Corporate Professional',
-    category: 'Corporate',
-    gradient: 'from-slate-500 to-slate-700',
-    icon: (
-      <DocumentTextIcon className="w-6 h-6 text-white" />
-    ),
-    emailContent: {
-      subject: '[Company Name] Monthly Newsletter - [Month Year]',
-      greeting: 'Dear [Subscriber Name],',
-      message: 'Welcome to our December 2024 newsletter. This month, we\'re excited to share significant updates and insights from the NovaMail platform.',
-      features: [
-        'AI-powered email personalization',
-        '99.9% email delivery rate',
-        '15+ CRM platform integrations'
-      ],
-      cta: 'Read Full Report'
-    }
-  },
-  {
-    id: 'elegant-luxury',
-    name: 'Elegant Luxury',
-    category: 'Elegant',
-    gradient: 'from-amber-500 to-yellow-600',
-    icon: (
-      <SparklesIcon className="w-6 h-6 text-white" />
-    ),
-    emailContent: {
-      subject: 'Exclusive Invitation: [Event Name] - A Night of Elegance',
-      greeting: 'Dear [Guest Name],',
-      message: 'We are delighted to extend a personal invitation to you for an exclusive evening of elegance and sophistication.',
-      features: [
-        'Exclusive evening event',
-        'Black Tie Optional',
-        'Premium experience'
-      ],
-      cta: 'Accept Invitation'
-    }
-  },
-  {
-    id: 'creative-vibrant',
-    name: 'Creative Vibrant',
-    category: 'Creative',
-    gradient: 'from-pink-500 to-rose-600',
-    icon: (
-      <SparklesIcon className="w-6 h-6 text-white" />
-    ),
-    emailContent: {
-      subject: '🎨 Creative Workshop: [Workshop Name] - Unleash Your Creativity',
-      greeting: 'Hey [Creative Name]! 👋',
-      message: 'Ready to dive into a world of creativity? We\'re excited to invite you to our exclusive [Workshop Name] - where imagination meets innovation!',
-      features: [
-        'Creative problem-solving',
-        'Advanced design principles',
-        'Innovation methodologies'
-      ],
-      cta: 'Join the Workshop 🚀'
-    }
-  },
-  {
-    id: 'tech-modern',
-    name: 'Tech Modern',
-    category: 'Modern',
-    gradient: 'from-blue-600 to-indigo-600',
-    icon: (
-      <SparklesIcon className="w-6 h-6 text-white" />
-    ),
-    emailContent: {
-      subject: 'Tech Update: [Product Name] v2.0 - Now Live!',
-      greeting: 'Hello [Developer Name],',
-      message: 'We\'re excited to announce that [Product Name] v2.0 is now live! This major update brings powerful new features and significant performance improvements.',
-      features: [
-        '3x faster processing speed',
-        'Enhanced API endpoints',
-        'Real-time analytics dashboard'
-      ],
-      cta: 'Explore New Features'
-    }
-  },
-  {
-    id: 'health-wellness',
-    name: 'Health & Wellness',
-    category: 'Minimal',
-    gradient: 'from-green-500 to-emerald-600',
-    icon: (
-      <SparklesIcon className="w-6 h-6 text-white" />
-    ),
-    emailContent: {
-      subject: 'Wellness Wednesday: [Topic] - Your Health Journey Starts Here',
-      greeting: 'Hi [Wellness Seeker],',
-      message: 'This week, we\'re focusing on [Wellness Topic] - a key component of your overall health and wellbeing journey.',
-      features: [
-        'Mindful breathing exercises',
-        'Nutritious meal planning',
-        'Daily movement goals'
-      ],
-      cta: 'Start Your Journey 🌱'
-    }
-  },
-  {
-    id: 'ecommerce',
-    name: 'E-commerce',
-    category: 'Sales',
-    gradient: 'from-pink-500 to-rose-600',
-    icon: (
-      <ShoppingCartIcon className="w-6 h-6 text-white" />
-    ),
-    emailContent: {
-      subject: '🛍️ New Collection Alert - Limited Stock!',
-      greeting: 'Hi Fashion Enthusiast,',
-      message: 'Our hottest spring collection just dropped and we\'re seeing items fly off the shelves!',
-      features: [
-        'Free Shipping Over $75',
-        'Express Delivery Available',
-        'Exclusive Early Access'
-      ],
-      cta: 'Shop Now'
-    }
+function getTemplateGradient(category: string) {
+  switch (category) {
+    case 'Modern': return 'from-blue-500 to-purple-600'
+    case 'Minimal': return 'from-gray-500 to-gray-700'
+    case 'Corporate': return 'from-slate-500 to-slate-700'
+    case 'Creative': return 'from-pink-500 to-rose-600'
+    case 'Elegant': return 'from-amber-500 to-yellow-600'
+    case 'Sales': return 'from-pink-500 to-rose-600'
+    default: return 'from-blue-500 to-purple-600'
   }
-]
+}
 
 export default function TemplateShowcase() {
   const router = useRouter()
@@ -353,45 +207,34 @@ export default function TemplateShowcase() {
                 {/* Subject Line */}
                 <div className="mb-4 p-2 bg-gray-50 rounded-lg border-l-4 border-primary-500">
                   <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">Subject: </span>
-                  <span className="text-sm font-medium text-gray-900">{selectedTemplate.emailContent.subject}</span>
+                  <span className="text-sm font-medium text-gray-900">{selectedTemplate.subject}</span>
                 </div>
 
-                {/* Email Body */}
-                <div className="space-y-3 mb-6">
-                  <div className={`h-16 bg-gradient-to-r ${selectedTemplate.gradient} rounded-lg text-white relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-black/10"></div>
-                    <div className="relative p-3 h-full flex flex-col justify-center">
-                      <h3 className="text-base font-bold mb-1">{selectedTemplate.name}</h3>
-                      <p className="text-xs opacity-90">{selectedTemplate.emailContent.message}</p>
+                {/* Email HTML Preview */}
+                <div className="bg-white rounded border border-gray-200 overflow-hidden">
+                  <div className="bg-gray-100 px-3 py-2 border-b border-gray-200">
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                     </div>
                   </div>
-
-                  <div className="space-y-2">
-                    <p className="text-gray-900 font-medium text-sm">{selectedTemplate.emailContent.greeting}</p>
-                    <p className="text-gray-700 leading-relaxed text-sm">{selectedTemplate.emailContent.message}</p>
-                    
-                    <div className="space-y-1">
-                      {selectedTemplate.emailContent.features.map((feature, index) => (
-                        <div key={index} className="flex items-center space-x-2">
-                          <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                          <span className="text-gray-700 text-xs">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="p-3 max-h-80 overflow-y-auto">
+                    <div 
+                      className="w-full transform scale-75 origin-top pointer-events-none"
+                      dangerouslySetInnerHTML={{ 
+                        __html: selectedTemplate.htmlContent.replace(
+                          /<a\s+([^>]*?)>/gi, 
+                          '<a $1 style="pointer-events: none; cursor: default; text-decoration: none;">'
+                        )
+                      }}
+                      style={{ 
+                        userSelect: 'none',
+                        '--preview-mode': 'true'
+                      } as React.CSSProperties}
+                    />
                   </div>
                 </div>
-
-                {/* CTA Button */}
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`
-                    w-full mt-3 py-2 rounded-lg font-semibold text-white shadow-sm hover:shadow-md transition-all duration-200 text-sm
-                    bg-gradient-to-r ${selectedTemplate.gradient}
-                  `}
-                >
-                  {selectedTemplate.emailContent.cta}
-                </motion.button>
               </div>
             </motion.div>
           </motion.div>
