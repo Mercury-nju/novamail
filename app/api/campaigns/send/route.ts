@@ -32,29 +32,10 @@ async function sendEmail(
     }
   }
   
-  // 智能选择发送方式
+  // 简化：总是使用别名发送方式，确保邮件能正常发送
   try {
-    // 检查是否使用用户域名
-    const userDomain = senderEmail.split('@')[1]
-    const isUserDomain = useUserDomain || !senderEmail.includes('@novamail.world')
-    
-    if (isUserDomain) {
-      // 检查用户域名是否已验证
-      const isVerifiedDomain = await checkDomainVerification(userDomain)
-      
-      if (isVerifiedDomain) {
-        // 使用用户验证的域名发送
-        console.log(`Using verified user domain: ${userDomain}`)
-        return await sendViaResendWithUserEmail(subject, content, recipients, senderEmail, senderName)
-      } else {
-        // 域名未验证，使用别名发送但保持用户邮箱显示
-        console.log(`Domain ${userDomain} not verified, using alias method with user email display`)
-        return await sendViaResendWithAlias(subject, content, recipients, senderEmail, senderName)
-      }
-    } else {
-      // 使用默认的别名发送方式
-      return await sendViaResendWithAlias(subject, content, recipients, senderEmail, senderName)
-    }
+    console.log('Using alias method for reliable email delivery')
+    return await sendViaResendWithAlias(subject, content, recipients, senderEmail, senderName)
     
   } catch (error) {
     console.error('Email sending error:', error)
