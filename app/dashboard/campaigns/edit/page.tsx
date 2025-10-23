@@ -277,12 +277,18 @@ export default function CampaignEditPage() {
   const handleSendEmail = async () => {
     console.log('=== 发送邮件调试信息 ===')
     console.log('sendForm.recipients:', sendForm.recipients)
+    console.log('sendForm.senderEmail:', sendForm.senderEmail)
+    console.log('sendForm.senderName:', sendForm.senderName)
     console.log('campaignData.subject:', campaignData.subject)
     console.log('campaignData.body:', campaignData.body)
     console.log('campaignData.body length:', campaignData.body?.length)
+    console.log('currentTemplate:', currentTemplate)
+    console.log('currentTemplate.subject:', currentTemplate?.subject)
+    console.log('currentTemplate.htmlContent length:', currentTemplate?.htmlContent?.length)
     console.log('========================')
     
     if (!sendForm.recipients) {
+      console.log('❌ 错误: 缺少收件人')
       toast.error('Please fill in recipients')
       return
     }
@@ -296,6 +302,15 @@ export default function CampaignEditPage() {
     console.log('finalBody length:', finalBody?.length)
     console.log('recipients:', sendForm.recipients)
     console.log('==================')
+    
+    // 检查最终内容
+    if (!finalSubject || !finalBody) {
+      console.log('❌ 错误: 缺少主题或内容')
+      console.log('finalSubject:', finalSubject)
+      console.log('finalBody:', finalBody)
+      toast.error('Missing required fields: subject and content')
+      return
+    }
 
     // 验证邮箱格式
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
