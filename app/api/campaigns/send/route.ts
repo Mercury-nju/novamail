@@ -89,6 +89,9 @@ async function sendViaResendWithAlias(
   senderEmail: string,
   senderName: string
 ) {
+  // 使用固定的Resend API Key
+  const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_HoZby1YY_8DhQswTinqLVqUwFjqHV4V7y"
+  
   console.log('Sending email via Resend API with alias:', {
     from: `${senderName} <${senderEmail}>`,
     to: recipients,
@@ -99,7 +102,7 @@ async function sendViaResendWithAlias(
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+      'Authorization': `Bearer ${RESEND_API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -145,6 +148,9 @@ async function sendViaResendWithUserEmail(
   senderEmail: string,
   senderName: string
 ) {
+  // 使用固定的Resend API Key
+  const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_HoZby1YY_8DhQswTinqLVqUwFjqHV4V7y"
+  
   console.log('Sending email via Resend API with user email:', {
     from: `${senderName} <${senderEmail}>`,
     to: recipients,
@@ -155,7 +161,7 @@ async function sendViaResendWithUserEmail(
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+      'Authorization': `Bearer ${RESEND_API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
