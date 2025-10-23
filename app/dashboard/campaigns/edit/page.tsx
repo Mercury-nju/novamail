@@ -67,40 +67,37 @@ export default function CampaignEditPage() {
     }
   }, [currentTemplate, campaignData.body])
 
-  // 获取用户域名和邮箱别名
+  // 获取用户邮箱配置
   useEffect(() => {
-    const fetchUserDomains = async () => {
+    const loadEmailConfig = () => {
       try {
-        const response = await fetch('/api/domains')
-        if (response.ok) {
-          const data = await response.json()
-          setUserDomains(data.domains || [])
+        const savedConfig = localStorage.getItem('emailDomainConfig')
+        if (savedConfig) {
+          const config = JSON.parse(savedConfig)
+          setUserDomains([{ domain: config.domain, status: 'configured' }])
           
-          // 提取所有邮箱别名
-          const aliases: Array<{
-            email: string
-            domain: string
-            label: string
-          }> = []
-          data.domains?.forEach((domain: any) => {
-            if (domain.status === 'verified') {
-              domain.emailAliases?.forEach((alias: string) => {
-                aliases.push({
-                  email: alias,
-                  domain: domain.domain,
-                  label: `${alias} (${domain.domain})`
-                })
-              })
-            }
-          })
+          // 生成邮箱别名选项
+          const aliases = config.prefixes.map((prefix: string) => ({
+            email: `${prefix}@${config.domain}`,
+            domain: config.domain,
+            label: `${prefix}@${config.domain}`
+          }))
           setUserEmailAliases(aliases)
+          
+          // 设置默认发件人邮箱
+          if (config.selectedPrefix && config.domain) {
+            setSendForm(prev => ({
+              ...prev,
+              senderEmail: `${config.selectedPrefix}@${config.domain}`
+            }))
+          }
         }
       } catch (error) {
-        console.error('Failed to fetch user domains:', error)
+        console.error('Failed to load email config:', error)
       }
     }
 
-    fetchUserDomains()
+    loadEmailConfig()
   }, [])
   
   // 专业模板内容 - 使用当前模板
@@ -572,7 +569,7 @@ export default function CampaignEditPage() {
                 )}
                 {userDomains.length === 0 && (
                   <p className="text-xs text-blue-600 mt-1">
-                    <a href="/dashboard/settings/domains" className="underline">
+                    <a href="/dashboard/settings/email-domain" className="underline">
                       配置您的域名
                     </a> 以使用自己的邮箱地址发送邮件
                   </p>
