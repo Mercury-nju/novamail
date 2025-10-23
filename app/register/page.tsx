@@ -6,8 +6,6 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { SparklesIcon, EyeIcon, EyeSlashIcon, CheckIcon, ArrowLeftIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
-import LanguageSwitcher from '@/components/LanguageSwitcher'
-import { useTranslation } from '@/lib/i18n'
 
 type Step = 'form' | 'verify'
 
@@ -26,7 +24,6 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isResending, setIsResending] = useState(false)
   const router = useRouter()
-  const { t } = useTranslation()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
@@ -408,11 +405,11 @@ export default function RegisterPage() {
                 NovaMail
               </Link>
               <div className="flex items-center">
-                <LanguageSwitcher />
+                <span className="text-gray-700">English</span>
               </div>
             </div>
             <h2 className="text-3xl font-extrabold text-gray-900">
-            {t('nav.register', 'Create your account')}
+            Create your account
           </h2>
           <p className="mt-2 text-sm text-gray-600">
             Join NovaMail and start your email marketing journey
@@ -571,9 +568,9 @@ export default function RegisterPage() {
           </form>
 
           <div className="mt-8 text-center text-sm text-gray-700">
-          {t('common.alreadyHaveAccount', 'Already have an account?')}{' '}
+          Already have an account?{' '}
             <Link href="/login" className="font-medium text-primary-600 hover:text-primary-500 transition-colors duration-300">
-              {t('nav.login', 'Sign in')}
+              Sign in
             </Link>
           </div>
         </div>

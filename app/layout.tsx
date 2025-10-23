@@ -16,30 +16,13 @@ export const metadata: Metadata = {
   },
 }
 
-// 生成静态参数用于国际化
-export async function generateStaticParams() {
-  return [
-    { locale: 'en' },
-    { locale: 'zh' },
-    { locale: 'ja' },
-    { locale: 'ko' },
-    { locale: 'es' },
-    { locale: 'fr' },
-    { locale: 'de' }
-  ]
-}
-
 export default function RootLayout({
   children,
-  params,
 }: {
   children: React.ReactNode
-  params: { locale: string }
 }) {
-  const locale = params?.locale || 'en'
-  
   return (
-    <html lang={locale}>
+    <html lang="en">
       <head>
         <script 
           src="https://analytics.ahrefs.com/analytics.js" 

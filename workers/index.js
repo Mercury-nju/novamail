@@ -1631,7 +1631,7 @@ async function handleCampaignSend(request, env) {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              from: 'NovaMail <onboarding@resend.dev>',
+              from: 'NovaMail <noreply@novamail.world>',
               to: [recipient],
               subject: campaignData.subject || 'Email Campaign',
               html: emailData.html,
@@ -3230,7 +3230,7 @@ async function handleTestEmail(request, env) {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            from: 'NovaMail Test <test@novamail.world>',
+            from: 'NovaMail Test <noreply@novamail.world>',
             to: [email],
             subject: 'NovaMail SMTP 连接测试',
             html: `

@@ -4,7 +4,6 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Send, Sparkles, Check, X } from 'lucide-react'
 import { toast } from 'react-hot-toast'
-import { useTranslation } from '@/lib/i18n'
 
 interface ChatMessage {
   type: 'user' | 'ai'
@@ -17,7 +16,6 @@ interface ChatMessage {
 }
 
 export default function CampaignEditPage() {
-  const { t } = useTranslation()
   const router = useRouter()
   
   // 简单的状态管理

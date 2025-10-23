@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'react-hot-toast'
 import { 
   CheckCircleIcon, 
@@ -25,7 +24,6 @@ interface Domain {
 }
 
 export default function DomainManagementPage() {
-  const { t } = useTranslation()
   const [domains, setDomains] = useState<Domain[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showAddDomain, setShowAddDomain] = useState(false)

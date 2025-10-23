@@ -9,11 +9,8 @@ import {
   EnvelopeIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
-import { useTranslation } from '@/lib/i18n'
-import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function Dashboard() {
-  const { t, loading, locale } = useTranslation()
   
 
   return (
@@ -28,10 +25,10 @@ export default function Dashboard() {
               </div>
               <div>
                 <h1 className="text-lg font-medium text-gray-900">NovaMail</h1>
-                <p className="text-xs text-gray-500">{t('dashboard.title')}</p>
+                <p className="text-xs text-gray-500">AI Email Marketing Platform</p>
               </div>
             </div>
-            <LanguageSwitcher />
+            <span className="text-gray-700">English</span>
           </div>
         </div>
       </div>
@@ -47,11 +44,11 @@ export default function Dashboard() {
             {/* Hero Section */}
             <div className="mb-16">
               <h2 className="text-4xl font-light text-gray-900 mb-4">
-                {t('hero.title')}
+                Welcome to NovaMail
               </h2>
               
               <p className="text-gray-500 mb-12 max-w-lg mx-auto">
-                {t('hero.subtitle')}
+                Create stunning email campaigns with AI-powered tools
               </p>
               </div>
 
@@ -65,7 +62,7 @@ export default function Dashboard() {
                 href="/dashboard/campaigns/new"
                 className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-md hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                {t('dashboard.createEmail')}
+                Create Email Campaign
                 <ArrowRightIcon className="h-4 w-4 ml-2" />
               </Link>
             </motion.div>

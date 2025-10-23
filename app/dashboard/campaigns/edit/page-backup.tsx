@@ -13,8 +13,6 @@ import {
   PaperAirplaneIcon,
   EyeIcon
 } from '@heroicons/react/24/outline'
-import { useTranslation } from '@/lib/i18n'
-import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 interface ProfessionalTemplate {
   id: string
@@ -44,7 +42,6 @@ export default function EditCampaignPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const templateId = searchParams.get('template')
-  const { t } = useTranslation()
   
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSending, setIsSending] = useState(false)
@@ -996,13 +993,13 @@ export default function EditCampaignPage() {
                 <ArrowLeftIcon className="h-6 w-6" />
               </button>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">{t('editor.title')}</h1>
+                <h1 className="text-xl font-semibold text-gray-900">Email Campaign Editor</h1>
                 <p className="text-sm text-gray-500">{currentTemplate.name}</p>
               </div>
             </div>
             
             <div className="flex items-center space-x-3">
-              <LanguageSwitcher />
+              <span className="text-gray-700">English</span>
             </div>
           </div>
         </div>
@@ -1158,7 +1155,7 @@ export default function EditCampaignPage() {
             {/* Fixed Header */}
             <div className="p-4 border-b border-gray-200 flex-shrink-0">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">{t('editor.aiAssistant')}</h3>
+                <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={testProfessionalTemplate}
@@ -1285,7 +1282,7 @@ export default function EditCampaignPage() {
             <div className="mt-auto p-4 border-t border-gray-200">
               <div className="mb-3">
                 <p className="text-sm text-gray-600 text-center">
-                  💡 {t('editor.aiHint', 'Tell AI what email content you want to create, and AI will generate a professional email template for you')}
+                  💡 Tell AI what email content you want to create, and AI will generate a professional email template for you
                 </p>
               </div>
               <form onSubmit={handleChatSubmit} className="flex gap-2">
@@ -1293,7 +1290,7 @@ export default function EditCampaignPage() {
                   type="text"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  placeholder={t('editor.chatPlaceholder')}
+                  placeholder="Describe the email you want to generate..."
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-w-0"
                   disabled={isGenerating}
                 />

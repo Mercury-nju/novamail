@@ -14,13 +14,9 @@ import {
   CheckIcon,
   EyeIcon
 } from '@heroicons/react/24/outline'
-import { useAutoLanguageDetection, useTranslation } from '@/lib/i18n'
-import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function HomePage() {
   const router = useRouter()
-  useAutoLanguageDetection() // 自动检测用户语言
-  const { t, loading, locale } = useTranslation() // 添加翻译功能
   const { scrollYProgress } = useScroll()
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -246,7 +242,7 @@ export default function HomePage() {
                 whileTap={{ scale: 0.98 }}
               >
                 <Link href="/pricing" className="text-gray-700 hover:text-gray-900 transition-all duration-300 py-2 px-4 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/25 hover:border-white/40 shadow-xl hover:shadow-2xl">
-                  {t('nav.pricing', 'Pricing')}
+                  Pricing
                 </Link>
               </motion.div>
               <motion.div 
@@ -278,7 +274,7 @@ export default function HomePage() {
                 whileTap={{ scale: 0.98 }}
               >
                 <div className="text-gray-700 hover:text-gray-900 transition-all duration-300 py-2 px-4 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/25 hover:border-white/40 shadow-xl hover:shadow-2xl">
-                  <LanguageSwitcher />
+                  English
                 </div>
               </motion.div>
               <motion.div 
@@ -292,7 +288,7 @@ export default function HomePage() {
                 onClick={handleGetStarted}
               >
                 <button className="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-blue-800 hover:to-purple-700 text-white px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 cursor-pointer">
-                  {t('hero.cta', 'Get Started')}
+                  Get Started
                 </button>
               </motion.div>
             </div>
@@ -481,7 +477,7 @@ export default function HomePage() {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="text-gray-900"
               >
-                {t('hero.title', 'Your AI Copilot for Email Marketing')}
+                Your AI Copilot for Email Marketing
               </motion.span>
             </motion.h1>
             
@@ -496,7 +492,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.9 }}
             >
-                {t('hero.subtitle', 'Writes, designs, and sends stunning campaigns — all in minutes. Track results instantly and grow your audience effortlessly.')}
+                Writes, designs, and sends stunning campaigns — all in minutes. Track results instantly and grow your audience effortlessly.
               </motion.p>
             </motion.div>
 
@@ -699,10 +695,10 @@ export default function HomePage() {
               transition={{ duration: 0.6 }}
               className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-6"
             >
-              {t('features.title', 'Why Choose NovaMail')}
+              Why Choose NovaMail
             </motion.span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              {t('features.subtitle', 'Everything you need to grow your business')}
+              Everything you need to grow your business
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
               Powerful AI-driven features designed for modern email marketing. 
@@ -922,7 +918,7 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="inline-block px-4 py-2 bg-green-100 text-green-800 text-sm font-medium rounded-full mb-6"
             >
-              {t('features.simple', 'Simple & Effective')}
+              Simple & Effective
             </motion.span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
               Create <span className="text-green-600">Professional</span> Emails in Minutes
@@ -1293,7 +1289,7 @@ export default function HomePage() {
               transition={{ duration: 0.8 }}
               className="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
             >
-              {t('testimonials.title', 'What Our Users Say')}
+              What Our Users Say
             </motion.h2>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}

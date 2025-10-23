@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Send, Sparkles, Check, X } from 'lucide-react'
 import { toast } from 'react-hot-toast'
-import { useTranslation } from '@/lib/i18n'
 import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
 
 interface ChatMessage {
@@ -18,7 +17,6 @@ interface ChatMessage {
 }
 
 export default function CampaignEditPage() {
-  const { t } = useTranslation()
   const router = useRouter()
   const searchParams = useSearchParams()
   
