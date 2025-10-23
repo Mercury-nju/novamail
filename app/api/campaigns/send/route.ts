@@ -104,7 +104,7 @@ async function sendViaResendWithAlias(
     },
     body: JSON.stringify({
       from: `${senderName} <noreply@novamail.world>`, // 使用验证域名
-      to: recipients,
+      to: recipients, // 确保使用正确的字段名
       subject: subject,
       html: content,
       // 添加回复地址为用户邮箱
