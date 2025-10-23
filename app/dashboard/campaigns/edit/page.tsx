@@ -287,14 +287,15 @@ export default function CampaignEditPage() {
       return
     }
     
-    // 如果内容为空，使用模板默认内容
+    // 使用模板默认内容作为后备
     const finalSubject = campaignData.subject || currentTemplate?.subject || 'Default Subject'
     const finalBody = campaignData.body || currentTemplate?.htmlContent || '<p>Default content</p>'
     
-    if (!finalSubject || !finalBody) {
-      toast.error('Missing required fields: subject and content')
-      return
-    }
+    console.log('=== 最终发送数据 ===')
+    console.log('finalSubject:', finalSubject)
+    console.log('finalBody length:', finalBody?.length)
+    console.log('recipients:', sendForm.recipients)
+    console.log('==================')
 
     // 验证邮箱格式
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
