@@ -45,6 +45,8 @@ export default function CampaignEditPage() {
   })
   
   const [useUserDomain, setUseUserDomain] = useState(false)
+  const [userDomains, setUserDomains] = useState([])
+  const [userEmailAliases, setUserEmailAliases] = useState([])
   
   
   // 根据模板ID获取当前模板
@@ -60,6 +62,38 @@ export default function CampaignEditPage() {
       }))
     }
   }, [currentTemplate, campaignData.body])
+
+  // 获取用户域名和邮箱别名
+  useEffect(() => {
+    const fetchUserDomains = async () => {
+      try {
+        const response = await fetch('/api/domains')
+        if (response.ok) {
+          const data = await response.json()
+          setUserDomains(data.domains || [])
+          
+          // 提取所有邮箱别名
+          const aliases = []
+          data.domains?.forEach(domain => {
+            if (domain.status === 'verified') {
+              domain.emailAliases?.forEach(alias => {
+                aliases.push({
+                  email: alias,
+                  domain: domain.domain,
+                  label: `${alias} (${domain.domain})`
+                })
+              })
+            }
+          })
+          setUserEmailAliases(aliases)
+        }
+      } catch (error) {
+        console.error('Failed to fetch user domains:', error)
+      }
+    }
+
+    fetchUserDomains()
+  }, [])
   
   // 专业模板内容 - 使用当前模板
   const templateContent = currentTemplate.htmlContent
@@ -503,14 +537,38 @@ export default function CampaignEditPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Sender Email <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="email"
-                  value={sendForm.senderEmail}
-                  onChange={(e) => setSendForm(prev => ({ ...prev, senderEmail: e.target.value }))}
-                  placeholder="your-email@example.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={isSending}
-                />
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={sendForm.senderEmail}
+                    onChange={(e) => setSendForm(prev => ({ ...prev, senderEmail: e.target.value }))}
+                    placeholder="your-email@example.com"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={isSending}
+                    list="email-aliases"
+                  />
+                  {userEmailAliases.length > 0 && (
+                    <datalist id="email-aliases">
+                      {userEmailAliases.map((alias, index) => (
+                        <option key={index} value={alias.email}>
+                          {alias.label}
+                        </option>
+                      ))}
+                    </datalist>
+                  )}
+                </div>
+                {userEmailAliases.length > 0 && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    您已配置的邮箱别名会显示在下拉列表中
+                  </p>
+                )}
+                {userDomains.length === 0 && (
+                  <p className="text-xs text-blue-600 mt-1">
+                    <a href="/dashboard/settings/domains" className="underline">
+                      配置您的域名
+                    </a> 以使用自己的邮箱地址发送邮件
+                  </p>
+                )}
               </div>
               
               <div>

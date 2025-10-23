@@ -1504,30 +1504,16 @@ async function handleCampaignSend(request, env) {
         }
       }
       
-      // 如果没有找到配置或配置不完整，拒绝发送
+      // 如果没有找到配置或配置不完整，使用默认的Resend服务
       if (!userEmailConfig || !userEmailConfig.isConfigured || !userEmailConfig.email || !userEmailConfig.password) {
-        return new Response(JSON.stringify({ 
-          success: false, 
-          error: 'SMTP configuration required',
-          message: 'Please configure your SMTP settings before sending emails. Go to Settings > Email Configuration to set up your email account.',
-          code: 'SMTP_NOT_CONFIGURED'
-        }), {
-          status: 400,
-          headers: corsHeaders
-        });
+        console.log('No user SMTP configuration found, using default Resend service');
+        userEmailConfig = null; // 使用默认服务
       }
       
     } catch (error) {
       console.log('Failed to load SMTP configuration:', error);
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'SMTP configuration required',
-        message: 'Please configure your SMTP settings before sending emails. Go to Settings > Email Configuration to set up your email account.',
-        code: 'SMTP_NOT_CONFIGURED'
-      }), {
-        status: 400,
-        headers: corsHeaders
-      });
+      console.log('Using default Resend service');
+      userEmailConfig = null; // 使用默认服务
     }
 
     // 发送邮件活动
@@ -1634,42 +1620,41 @@ async function handleCampaignSend(request, env) {
             });
           }
         } else {
-          // 使用 NovaMail Gmail 发送服务
-          console.log('Sending via NovaMail Gmail service');
+          // 使用 Resend API 作为默认发送服务
+          console.log('Sending via Resend API (default service)');
           
-          const accessToken = await getCurrentGmailAccessToken(env);
-          if (!accessToken) {
-            throw new Error('Gmail access token not available');
+          const resendApiKey = env.RESEND_API_KEY;
+          if (!resendApiKey || resendApiKey === 're_PCbEHboB...' || resendApiKey.startsWith('re_PCbEHboB')) {
+            throw new Error('Resend API key not configured');
           }
 
-          const gmailResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+          const resendResponse = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${accessToken}`,
+              'Authorization': `Bearer ${resendApiKey}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              raw: utf8ToBase64(`From: NovaMail <lihongyangnju@gmail.com>
-To: ${recipient}
-Subject: ${campaignData.subject || 'Email Campaign'}
-Content-Type: text/html; charset=UTF-8
-
-${emailData.html}`)
+              from: 'NovaMail <onboarding@resend.dev>',
+              to: [recipient],
+              subject: campaignData.subject || 'Email Campaign',
+              html: emailData.html,
+              reply_to: 'noreply@novamail.world'
             })
           });
 
-          if (gmailResponse.ok) {
-            const result = await gmailResponse.json();
+          if (resendResponse.ok) {
+            const result = await resendResponse.json();
             sentEmails.push({
               recipient: recipient,
               status: 'sent',
-              method: 'novamail_gmail',
+              method: 'resend_api',
               messageId: result.id,
               timestamp: new Date().toISOString()
             });
           } else {
-            const errorData = await gmailResponse.text();
-            throw new Error(`Gmail API error: ${errorData}`);
+            const errorData = await resendResponse.text();
+            throw new Error(`Resend API error: ${errorData}`);
           }
         }
       } catch (error) {
@@ -1679,7 +1664,7 @@ ${emailData.html}`)
           status: 'failed',
           method: userEmailConfig?.isConfigured ? 
             (userEmailConfig.provider === 'gmail' ? 'user_smtp_gmail_api' : `smtp_proxy_gmail_${userEmailConfig.provider}`) 
-            : 'novamail_gmail',
+            : 'resend_api',
           error: error.message,
           timestamp: new Date().toISOString()
         });
@@ -1701,7 +1686,7 @@ ${emailData.html}`)
       createdAt: new Date().toISOString(),
       sentAt: new Date().toISOString(),
       businessName: campaignData.businessName,
-      sendingMethod: 'user_smtp_gmail'
+      sendingMethod: userEmailConfig?.isConfigured ? 'user_smtp' : 'resend_api'
     };
 
     // 保存 campaign 到 KV 存储
