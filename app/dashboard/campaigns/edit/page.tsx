@@ -41,6 +41,11 @@ export default function CampaignEditPage() {
     senderName: 'NovaMail'
   })
   
+  // 批量收件人管理
+  const [recipientList, setRecipientList] = useState<string[]>([])
+  const [showRecipientManager, setShowRecipientManager] = useState(false)
+  const [importMethod, setImportMethod] = useState<'manual' | 'csv' | 'contacts'>('manual')
+  
   // 移除无意义的域名功能
   // const [useUserDomain, setUseUserDomain] = useState(false)
   // const [userDomains, setUserDomains] = useState<any[]>([])
@@ -71,6 +76,55 @@ export default function CampaignEditPage() {
       }))
     }
   }, [currentTemplate])
+
+  // 批量收件人管理功能
+  const addRecipients = (emails: string[]) => {
+    const validEmails = emails.filter(email => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      return emailRegex.test(email.trim())
+    })
+    
+    setRecipientList(prev => {
+      const newList = [...prev, ...validEmails]
+      return [...new Set(newList)] // 去重
+    })
+    
+    // 更新发送表单
+    setSendForm(prev => ({
+      ...prev,
+      recipients: [...new Set([...prev.recipients.split(',').filter(e => e.trim()), ...validEmails])].join(', ')
+    }))
+  }
+  
+  const removeRecipient = (email: string) => {
+    setRecipientList(prev => prev.filter(e => e !== email))
+    setSendForm(prev => ({
+      ...prev,
+      recipients: prev.recipients.split(',').filter(e => e.trim() !== email).join(', ')
+    }))
+  }
+  
+  const clearAllRecipients = () => {
+    setRecipientList([])
+    setSendForm(prev => ({ ...prev, recipients: '' }))
+  }
+  
+  const handleCSVImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const text = e.target?.result as string
+      const emails = text.split('\n')
+        .map(line => line.split(',')[0].trim()) // 取第一列作为邮箱
+        .filter(email => email && email.includes('@'))
+      
+      addRecipients(emails)
+      toast.success(`Imported ${emails.length} email addresses`)
+    }
+    reader.readAsText(file)
+  }
 
   // 简化：移除复杂的邮箱配置加载
   // useEffect(() => {
@@ -299,7 +353,7 @@ export default function CampaignEditPage() {
       toast.error('Please fill in recipients')
       return
     }
-    
+
     // 使用模板默认内容作为后备
     const finalSubject = campaignData.subject || currentTemplate?.subject || 'Default Subject'
     const finalBody = campaignData.body || currentTemplate?.htmlContent || '<p>Default content</p>'
@@ -319,13 +373,22 @@ export default function CampaignEditPage() {
     console.log('safeBody length:', safeBody?.length)
     console.log('==================')
 
-    // 验证邮箱格式
+    // 验证邮箱格式 - 支持批量收件人
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    const recipientList = sendForm.recipients.split(',').map(email => email.trim())
-    const invalidEmails = recipientList.filter(email => !emailRegex.test(email))
+    const allRecipients = [
+      ...sendForm.recipients.split(',').map(email => email.trim()).filter(e => e),
+      ...recipientList
+    ]
+    const uniqueRecipients = [...new Set(allRecipients)]
+    const invalidEmails = uniqueRecipients.filter(email => !emailRegex.test(email))
     
     if (invalidEmails.length > 0) {
       toast.error(`Invalid email addresses: ${invalidEmails.join(', ')}`)
+      return
+    }
+
+    if (uniqueRecipients.length === 0) {
+      toast.error('Please add at least one recipient')
       return
     }
 
@@ -338,7 +401,7 @@ export default function CampaignEditPage() {
           subject: safeSubject,
           body: safeBody
         },
-        recipients: recipientList,
+        recipients: uniqueRecipients,
         senderEmail: 'noreply@novamail.world',
         senderName: sendForm.senderName || 'NovaMail'
       }
@@ -358,12 +421,13 @@ export default function CampaignEditPage() {
       const data = await response.json()
 
       if (data.success) {
-        toast.success(`Email sent successfully to ${data.data?.recipients || recipientList.length} recipient(s)!`)
+        toast.success(`Email sent successfully to ${data.data?.recipients || uniqueRecipients.length} recipient(s)!`)
         setShowSendModal(false)
         setSendForm({
           recipients: '',
           senderName: 'NovaMail'
         })
+        setRecipientList([]) // 清空收件人列表
       } else {
         throw new Error(data.error || 'Failed to send email')
       }
@@ -575,7 +639,39 @@ export default function CampaignEditPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Recipients <span className="text-red-500">*</span>
+                  <span className="text-gray-500 font-normal">
+                    ({recipientList.length + (sendForm.recipients ? sendForm.recipients.split(',').filter(e => e.trim()).length : 0)} total)
+                  </span>
                 </label>
+                
+                {/* 收件人管理按钮 */}
+                <div className="flex gap-2 mb-3">
+                  <button
+                    onClick={() => setShowRecipientManager(true)}
+                    className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
+                    disabled={isSending}
+                  >
+                    Manage Recipients
+                  </button>
+                  <button
+                    onClick={() => setImportMethod('csv')}
+                    className="px-3 py-1 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 transition-colors"
+                    disabled={isSending}
+                  >
+                    Import CSV
+                  </button>
+                  {recipientList.length > 0 && (
+                    <button
+                      onClick={clearAllRecipients}
+                      className="px-3 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600 transition-colors"
+                      disabled={isSending}
+                    >
+                      Clear All
+                    </button>
+                  )}
+                </div>
+                
+                {/* 快速输入框 */}
                 <input
                   type="text"
                   value={sendForm.recipients}
@@ -584,7 +680,38 @@ export default function CampaignEditPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   disabled={isSending}
                 />
-                <p className="text-xs text-gray-500 mt-1">Separate multiple emails with commas</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Separate multiple emails with commas, or use the "Manage Recipients" button for bulk operations
+                </p>
+                
+                {/* 收件人列表预览 */}
+                {recipientList.length > 0 && (
+                  <div className="mt-3 p-3 bg-gray-50 rounded-md">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Added Recipients:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {recipientList.slice(0, 5).map((email, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                        >
+                          {email}
+                          <button
+                            onClick={() => removeRecipient(email)}
+                            className="ml-1 text-blue-600 hover:text-blue-800"
+                            disabled={isSending}
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                      {recipientList.length > 5 && (
+                        <span className="text-xs text-gray-500">
+                          +{recipientList.length - 5} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
               
               
@@ -640,6 +767,142 @@ export default function CampaignEditPage() {
                     Send Email
                   </>
                 )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 收件人管理模态框 */}
+      {showRecipientManager && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Manage Recipients</h3>
+              <button
+                onClick={() => setShowRecipientManager(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              {/* 添加收件人 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Add Recipients
+                </label>
+                <textarea
+                  placeholder="Enter email addresses, one per line or separated by commas"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
+                  onChange={(e) => {
+                    const emails = e.target.value.split(/[,\n]/).map(email => email.trim()).filter(e => e)
+                    if (emails.length > 0) {
+                      addRecipients(emails)
+                      e.target.value = ''
+                    }
+                  }}
+                />
+              </div>
+              
+              {/* 收件人列表 */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="text-sm font-medium text-gray-700">
+                    Current Recipients ({recipientList.length})
+                  </h4>
+                  {recipientList.length > 0 && (
+                    <button
+                      onClick={clearAllRecipients}
+                      className="text-red-500 hover:text-red-700 text-sm"
+                    >
+                      Clear All
+                    </button>
+                  )}
+                </div>
+                
+                <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-md">
+                  {recipientList.length === 0 ? (
+                    <p className="p-4 text-gray-500 text-center">No recipients added yet</p>
+                  ) : (
+                    <div className="divide-y divide-gray-200">
+                      {recipientList.map((email, index) => (
+                        <div key={index} className="flex items-center justify-between p-3">
+                          <span className="text-sm text-gray-700">{email}</span>
+                          <button
+                            onClick={() => removeRecipient(email)}
+                            className="text-red-500 hover:text-red-700 text-sm"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => setShowRecipientManager(false)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CSV导入模态框 */}
+      {importMethod === 'csv' && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Import CSV</h3>
+              <button
+                onClick={() => setImportMethod('manual')}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                Upload a CSV file with email addresses. The first column should contain email addresses.
+              </p>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select CSV File
+                </label>
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={handleCSVImport}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
+              <div className="text-xs text-gray-500">
+                <p>CSV format example:</p>
+                <pre className="bg-gray-100 p-2 rounded mt-1">
+                  email,name{'\n'}
+                  user1@example.com,John Doe{'\n'}
+                  user2@example.com,Jane Smith
+                </pre>
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => setImportMethod('manual')}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+              >
+                Cancel
               </button>
             </div>
           </div>
