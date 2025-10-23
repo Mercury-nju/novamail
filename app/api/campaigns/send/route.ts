@@ -6,7 +6,8 @@ async function sendEmail(
   content: string,
   recipients: string[],
   senderEmail: string,
-  senderName: string
+  senderName: string,
+  useUserDomain: boolean = false
 ) {
   const RESEND_API_KEY = process.env.RESEND_API_KEY
   
@@ -32,16 +33,22 @@ async function sendEmail(
   
   // 智能选择发送方式
   try {
-    // 方案 1：尝试使用用户邮箱发送（如果域名已验证）
-    const userDomain = senderEmail.split('@')[1]
-    const isVerifiedDomain = await checkDomainVerification(userDomain)
-    
-    if (isVerifiedDomain) {
-      return await sendViaResendWithUserEmail(subject, content, recipients, senderEmail, senderName)
+    if (useUserDomain) {
+      // 用户选择使用自己的域名
+      const userDomain = senderEmail.split('@')[1]
+      const isVerifiedDomain = await checkDomainVerification(userDomain)
+      
+      if (isVerifiedDomain) {
+        return await sendViaResendWithUserEmail(subject, content, recipients, senderEmail, senderName)
+      } else {
+        // 域名未验证，使用别名发送
+        console.log(`Domain ${userDomain} not verified, using alias method`)
+        return await sendViaResendWithAlias(subject, content, recipients, senderEmail, senderName)
+      }
+    } else {
+      // 使用默认的别名发送方式
+      return await sendViaResendWithAlias(subject, content, recipients, senderEmail, senderName)
     }
-    
-    // 方案 2：使用验证域名 + 用户邮箱别名
-    return await sendViaResendWithAlias(subject, content, recipients, senderEmail, senderName)
     
   } catch (error) {
     console.error('Email sending error:', error)
@@ -169,7 +176,8 @@ export async function POST(request: NextRequest) {
       content, 
       recipients, 
       senderEmail, 
-      senderName = 'NovaMail' 
+      senderName = 'NovaMail',
+      useUserDomain = false
     } = body
 
     // 验证必需字段
@@ -198,7 +206,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 发送邮件
-    const result = await sendEmail(subject, content, recipients, senderEmail, senderName)
+    const result = await sendEmail(subject, content, recipients, senderEmail, senderName, useUserDomain)
     
     return NextResponse.json({
       success: true,
