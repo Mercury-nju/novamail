@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// 真实邮件发送功能 - 生产环境就绪
+// 智能邮件发送功能 - 支持多种发送方式
 async function sendEmail(
   subject: string,
   content: string,
@@ -8,7 +8,6 @@ async function sendEmail(
   senderEmail: string,
   senderName: string
 ) {
-  // 生产环境：集成 Resend API
   const RESEND_API_KEY = process.env.RESEND_API_KEY
   
   if (!RESEND_API_KEY) {
@@ -31,50 +30,134 @@ async function sendEmail(
     }
   }
   
-  // 生产环境：使用 Resend API
+  // 智能选择发送方式
   try {
-    console.log('Sending email via Resend API:', {
-      from: `${senderName} <${senderEmail}>`,
-      to: recipients,
-      subject: subject,
-      recipientsCount: recipients.length
-    })
-
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: `${senderName} <onboarding@resend.dev>`, // 使用 Resend 验证域名
-        to: recipients,
-        subject: subject,
-        html: content,
-      }),
-    })
+    // 方案 1：尝试使用用户邮箱发送（如果域名已验证）
+    const userDomain = senderEmail.split('@')[1]
+    const isVerifiedDomain = await checkDomainVerification(userDomain)
     
-    if (!response.ok) {
-      const errorData = await response.text()
-      console.error('Resend API error:', response.status, errorData)
-      throw new Error(`Resend API error: ${response.status} - ${errorData}`)
+    if (isVerifiedDomain) {
+      return await sendViaResendWithUserEmail(subject, content, recipients, senderEmail, senderName)
     }
     
-    const data = await response.json()
-    console.log('Resend API success:', data)
-    
-    return {
-      success: true,
-      messageId: data.id,
-      recipients: recipients.length,
-      sentAt: new Date().toISOString(),
-      mode: 'production',
-      provider: 'resend'
-    }
+    // 方案 2：使用验证域名 + 用户邮箱别名
+    return await sendViaResendWithAlias(subject, content, recipients, senderEmail, senderName)
     
   } catch (error) {
-    console.error('Resend API error:', error)
-    throw new Error(`Failed to send email via Resend API: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    console.error('Email sending error:', error)
+    throw new Error(`Failed to send email: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+
+// 检查域名是否已验证
+async function checkDomainVerification(domain: string): Promise<boolean> {
+  // 这里可以添加域名验证检查逻辑
+  // 暂时返回 false，使用别名发送
+  return false
+}
+
+// 使用 Resend API 发送（用户邮箱别名方式）
+async function sendViaResendWithAlias(
+  subject: string,
+  content: string,
+  recipients: string[],
+  senderEmail: string,
+  senderName: string
+) {
+  console.log('Sending email via Resend API with alias:', {
+    from: `${senderName} <${senderEmail}>`,
+    to: recipients,
+    subject: subject,
+    recipientsCount: recipients.length
+  })
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: `${senderName} <onboarding@resend.dev>`, // 使用验证域名
+      to: recipients,
+      subject: subject,
+      html: content,
+      // 添加回复地址为用户邮箱
+      reply_to: senderEmail,
+      // 在邮件内容中显示真实发件人
+      headers: {
+        'X-Original-Sender': senderEmail,
+        'X-Sender-Name': senderName
+      }
+    }),
+  })
+  
+  if (!response.ok) {
+    const errorData = await response.text()
+    console.error('Resend API error:', response.status, errorData)
+    throw new Error(`Resend API error: ${response.status} - ${errorData}`)
+  }
+  
+  const data = await response.json()
+  console.log('Resend API success:', data)
+  
+  return {
+    success: true,
+    messageId: data.id,
+    recipients: recipients.length,
+    sentAt: new Date().toISOString(),
+    mode: 'production',
+    provider: 'resend',
+    method: 'alias'
+  }
+}
+
+// 使用用户邮箱直接发送（需要域名验证）
+async function sendViaResendWithUserEmail(
+  subject: string,
+  content: string,
+  recipients: string[],
+  senderEmail: string,
+  senderName: string
+) {
+  console.log('Sending email via Resend API with user email:', {
+    from: `${senderName} <${senderEmail}>`,
+    to: recipients,
+    subject: subject,
+    recipientsCount: recipients.length
+  })
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: `${senderName} <${senderEmail}>`, // 直接使用用户邮箱
+      to: recipients,
+      subject: subject,
+      html: content,
+    }),
+  })
+  
+  if (!response.ok) {
+    const errorData = await response.text()
+    console.error('Resend API error:', response.status, errorData)
+    throw new Error(`Resend API error: ${response.status} - ${errorData}`)
+  }
+  
+  const data = await response.json()
+  console.log('Resend API success:', data)
+  
+  return {
+    success: true,
+    messageId: data.id,
+    recipients: recipients.length,
+    sentAt: new Date().toISOString(),
+    mode: 'production',
+    provider: 'resend',
+    method: 'direct'
   }
 }
 

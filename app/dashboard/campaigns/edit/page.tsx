@@ -44,6 +44,16 @@ export default function CampaignEditPage() {
     senderName: 'NovaMail'
   })
   
+  const [smtpConfig, setSmtpConfig] = useState({
+    host: '',
+    port: 587,
+    secure: false,
+    user: '',
+    pass: ''
+  })
+  
+  const [useCustomSMTP, setUseCustomSMTP] = useState(false)
+  
   
   // 根据模板ID获取当前模板
   const currentTemplate = professionalTemplates.find(template => template.id === templateId) || professionalTemplates[0]
@@ -246,25 +256,55 @@ export default function CampaignEditPage() {
       return
     }
 
+    // 如果使用自定义 SMTP，验证 SMTP 配置
+    if (useCustomSMTP) {
+      if (!smtpConfig.host || !smtpConfig.user || !smtpConfig.pass) {
+        toast.error('Please fill in all SMTP configuration fields')
+        return
+      }
+    }
+
     setIsSending(true)
     try {
-      // 智能API路由选择 - 生产环境兼容
-      const apiUrl = typeof window !== 'undefined' && window.location.hostname.includes('novamail.world')
-        ? '/api/campaigns/send'  // 生产环境也使用本地API（通过Cloudflare Pages Functions）
-        : '/api/campaigns/send'  // 开发环境
+      let apiUrl, requestBody
+
+      if (useCustomSMTP) {
+        // 使用用户自定义 SMTP
+        apiUrl = '/api/campaigns/send-smpt'
+        requestBody = {
+          subject: campaignData.subject,
+          content: campaignData.body,
+          recipients: recipientList,
+          senderEmail: sendForm.senderEmail,
+          senderName: sendForm.senderName,
+          smtpConfig: {
+            host: smtpConfig.host,
+            port: smtpConfig.port,
+            secure: smtpConfig.secure,
+            auth: {
+              user: smtpConfig.user,
+              pass: smtpConfig.pass
+            }
+          }
+        }
+      } else {
+        // 使用默认 Resend API
+        apiUrl = '/api/campaigns/send'
+        requestBody = {
+          subject: campaignData.subject,
+          content: campaignData.body,
+          recipients: recipientList,
+          senderEmail: sendForm.senderEmail,
+          senderName: sendForm.senderName
+        }
+      }
         
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          subject: campaignData.subject,
-          content: campaignData.body,
-          recipients: recipientList,
-          senderEmail: sendForm.senderEmail,
-          senderName: sendForm.senderName
-        })
+        body: JSON.stringify(requestBody)
       })
 
       const data = await response.json()
@@ -528,6 +568,90 @@ export default function CampaignEditPage() {
                 />
               </div>
 
+              {/* SMTP Configuration */}
+              <div className="border-t pt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={useCustomSMTP}
+                      onChange={(e) => setUseCustomSMTP(e.target.checked)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Use Custom SMTP</span>
+                  </label>
+                </div>
+                
+                {useCustomSMTP && (
+                  <div className="space-y-3 bg-gray-50 p-3 rounded-md">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          SMTP Host
+                        </label>
+                        <input
+                          type="text"
+                          value={smtpConfig.host}
+                          onChange={(e) => setSmtpConfig(prev => ({ ...prev, host: e.target.value }))}
+                          placeholder="smtp.gmail.com"
+                          className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Port
+                        </label>
+                        <input
+                          type="number"
+                          value={smtpConfig.port}
+                          onChange={(e) => setSmtpConfig(prev => ({ ...prev, port: parseInt(e.target.value) }))}
+                          placeholder="587"
+                          className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Username
+                        </label>
+                        <input
+                          type="text"
+                          value={smtpConfig.user}
+                          onChange={(e) => setSmtpConfig(prev => ({ ...prev, user: e.target.value }))}
+                          placeholder="your-email@gmail.com"
+                          className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Password
+                        </label>
+                        <input
+                          type="password"
+                          value={smtpConfig.pass}
+                          onChange={(e) => setSmtpConfig(prev => ({ ...prev, pass: e.target.value }))}
+                          placeholder="App password"
+                          className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={smtpConfig.secure}
+                        onChange={(e) => setSmtpConfig(prev => ({ ...prev, secure: e.target.checked }))}
+                        className="mr-2"
+                      />
+                      <span className="text-xs text-gray-600">Use SSL/TLS (port 465)</span>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      💡 For Gmail: Use App Password. For Outlook: Use your email password.
+                    </p>
+                  </div>
+                )}
+              </div>
+
               {/* Email Preview */}
               <div className="bg-gray-50 rounded-md p-3">
                 <h4 className="text-sm font-medium text-gray-700 mb-2">Email Preview</h4>
@@ -535,6 +659,7 @@ export default function CampaignEditPage() {
                   <p><strong>Subject:</strong> {campaignData.subject}</p>
                   <p><strong>From:</strong> {sendForm.senderName} &lt;{sendForm.senderEmail}&gt;</p>
                   <p><strong>To:</strong> {sendForm.recipients || 'No recipients'}</p>
+                  <p><strong>Method:</strong> {useCustomSMTP ? 'Custom SMTP' : 'Resend API'}</p>
                 </div>
               </div>
             </div>
