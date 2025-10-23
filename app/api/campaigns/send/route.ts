@@ -219,8 +219,12 @@ export async function POST(request: NextRequest) {
     console.log('recipients:', recipients)
     console.log('================')
     
+    // 更宽松的验证 - 允许空字符串但有默认值
     if (!subject || !content || !recipients) {
       console.log('❌ 验证失败 - 缺少必需字段')
+      console.log('subject 存在:', !!subject)
+      console.log('content 存在:', !!content)
+      console.log('recipients 存在:', !!recipients)
       return NextResponse.json(
         { 
           success: false, 
