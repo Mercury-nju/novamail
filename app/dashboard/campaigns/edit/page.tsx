@@ -298,12 +298,12 @@ export default function CampaignEditPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          subject: campaignData.subject,
-          content: campaignData.body,
+          campaignData: {
+            subject: campaignData.subject,
+            body: campaignData.body
+          },
           recipients: recipientList,
-          senderEmail: sendForm.senderEmail || 'noreply@novamail.world',
-          senderName: sendForm.senderName,
-          useUserDomain: false  // 简化：总是使用默认域名
+          userId: 'current-user'  // 添加用户ID
         })
       })
 
