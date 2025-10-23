@@ -90,7 +90,7 @@ function LoginForm() {
 
       <div className="relative z-10 flex flex-col justify-center py-12 sm:px-6 lg:px-8 min-h-screen">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="mx-auto h-12 w-auto text-blue-600 flex items-center justify-between mb-8">
+          <div className="mx-auto h-12 w-auto text-blue-600 flex items-center justify-center mb-8">
             <Link href="/" className="text-3xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
               NovaMail
             </Link>
