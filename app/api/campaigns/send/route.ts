@@ -219,28 +219,33 @@ export async function POST(request: NextRequest) {
     console.log('recipients:', recipients)
     console.log('================')
     
-    // 更宽松的验证 - 允许空字符串但有默认值
-    if (!subject || !content || !recipients) {
-      console.log('❌ 验证失败 - 缺少必需字段')
-      console.log('subject 存在:', !!subject)
-      console.log('content 存在:', !!content)
-      console.log('recipients 存在:', !!recipients)
-      
-      // 提供默认值而不是直接失败
-      if (!subject) subject = 'Default Subject'
-      if (!content) content = '<p>Default content</p>'
-      if (!recipients) {
-        return NextResponse.json(
-          { 
-            success: false, 
-            error: 'Recipients are required' 
-          },
-          { status: 400 }
-        )
-      }
-      
-      console.log('✅ 使用默认值继续处理')
+    // 完全移除严格验证 - 确保邮件能正常发送
+    console.log('🔧 生产环境修复 - 移除严格验证')
+    
+    // 只检查recipients，其他字段提供默认值
+    if (!recipients || recipients.length === 0) {
+      console.log('❌ 验证失败 - 缺少收件人')
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Recipients are required' 
+        },
+        { status: 400 }
+      )
     }
+    
+    // 为其他字段提供默认值
+    if (!subject) {
+      subject = 'Default Email Subject'
+      console.log('✅ 使用默认主题')
+    }
+    
+    if (!content) {
+      content = '<p>Default email content</p>'
+      console.log('✅ 使用默认内容')
+    }
+    
+    console.log('✅ 验证通过 - 所有字段都有值')
     
     console.log('✅ 验证通过 - 所有字段都存在')
 
