@@ -267,8 +267,8 @@ export default function CampaignEditPage() {
 
   // 处理邮件发送
   const handleSendEmail = async () => {
-    if (!sendForm.recipients || !sendForm.senderEmail) {
-      toast.error('Please fill in all required fields')
+    if (!sendForm.recipients) {
+      toast.error('Please fill in recipients')
       return
     }
 
@@ -282,8 +282,9 @@ export default function CampaignEditPage() {
       return
     }
 
-    if (!emailRegex.test(sendForm.senderEmail)) {
-      toast.error('Invalid sender email address')
+    // 如果用户填写了显示邮箱，则验证格式
+    if (sendForm.senderEmail && !emailRegex.test(sendForm.senderEmail)) {
+      toast.error('Invalid display email address')
       return
     }
 
@@ -299,7 +300,7 @@ export default function CampaignEditPage() {
           subject: campaignData.subject,
           content: campaignData.body,
           recipients: recipientList,
-          senderEmail: sendForm.senderEmail,
+          senderEmail: sendForm.senderEmail || 'noreply@novamail.world',
           senderName: sendForm.senderName,
           useUserDomain: useUserDomain
         })
@@ -540,14 +541,14 @@ export default function CampaignEditPage() {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Sender Email <span className="text-red-500">*</span>
+                  Display Email (Optional)
                 </label>
                 <div className="relative">
                   <input
                     type="email"
                     value={sendForm.senderEmail}
                     onChange={(e) => setSendForm(prev => ({ ...prev, senderEmail: e.target.value }))}
-                    placeholder="your-email@example.com"
+                    placeholder="support@yourcompany.com (for display only)"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     disabled={isSending}
                     list="email-aliases"
@@ -562,16 +563,14 @@ export default function CampaignEditPage() {
                     </datalist>
                   )}
                 </div>
-                {userEmailAliases.length > 0 && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    您已配置的邮箱别名会显示在下拉列表中
-                  </p>
-                )}
+                <p className="text-xs text-gray-500 mt-1">
+                  This email will be shown to recipients. Leave empty to use default NovaMail address.
+                </p>
                 {userDomains.length === 0 && (
                   <p className="text-xs text-blue-600 mt-1">
                     <a href="/dashboard/settings/email-domain" className="underline">
-                      配置您的域名
-                    </a> 以使用自己的邮箱地址发送邮件
+                      Configure your domain
+                    </a> to use your own email address for display
                   </p>
                 )}
               </div>
@@ -638,9 +637,14 @@ export default function CampaignEditPage() {
                 <h4 className="text-sm font-medium text-gray-700 mb-2">Email Preview</h4>
                 <div className="text-xs text-gray-600">
                   <p><strong>Subject:</strong> {campaignData.subject}</p>
-                  <p><strong>From:</strong> {sendForm.senderName} &lt;{sendForm.senderEmail}&gt;</p>
+                  <p><strong>From:</strong> {sendForm.senderName} &lt;{sendForm.senderEmail || 'noreply@novamail.world'}&gt;</p>
                   <p><strong>To:</strong> {sendForm.recipients || 'No recipients'}</p>
-                  <p><strong>Method:</strong> {useUserDomain ? 'User Domain' : 'Resend API'}</p>
+                  <p><strong>Method:</strong> Resend API (统一发送)</p>
+                  {sendForm.senderEmail && (
+                    <p className="text-blue-600 mt-1">
+                      💡 收件人将看到您的企业邮箱地址
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
