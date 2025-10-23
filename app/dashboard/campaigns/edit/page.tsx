@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Send, Sparkles, Check, X } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { useTranslation } from '@/lib/i18n'
+import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
 
 interface ChatMessage {
   type: 'user' | 'ai'
@@ -14,16 +15,6 @@ interface ChatMessage {
     subject: string
     textContent: string
   }
-}
-
-interface ProfessionalTemplate {
-  id: string
-  name: string
-  category: string
-  description: string
-  subject: string
-  htmlContent: string
-  features: string[]
 }
 
 export default function CampaignEditPage() {
@@ -53,176 +44,6 @@ export default function CampaignEditPage() {
     senderName: 'NovaMail'
   })
   
-  // 专业模板库
-  const professionalTemplates: ProfessionalTemplate[] = [
-    {
-      id: 'modern-gradient',
-      name: 'Modern Gradient',
-      category: 'Modern',
-      description: 'Contemporary design with vibrant gradients and bold typography',
-      subject: '🚀 Introducing [Product Name] - The Future is Here',
-      htmlContent: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; position: relative;">
-            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%); opacity: 0.6;"></div>
-            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px; position: relative; z-index: 1;">Introducing NovaAI</h1>
-            <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0 0; font-size: 16px; font-weight: 300; position: relative; z-index: 1;">The Future of Email Marketing</p>
-          </div>
-          
-          <div style="padding: 40px 30px;">
-            <p style="color: #1a202c; font-size: 16px; line-height: 1.6; margin-bottom: 20px; font-weight: 400;">
-              Hi [Customer Name],
-            </p>
-            
-            <p style="color: #2d3748; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
-              We're thrilled to announce the launch of <strong style="color: #667eea;">NovaAI</strong>, our revolutionary AI-powered email marketing platform that will transform how you connect with your audience.
-            </p>
-            
-            <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 24px; border-radius: 12px; margin: 24px 0; border-left: 4px solid #667eea;">
-              <h3 style="color: #2d3748; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">What makes NovaAI special:</h3>
-              <ul style="color: #4a5568; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
-                <li style="margin-bottom: 8px;">AI-powered content generation that writes like a human</li>
-                <li style="margin-bottom: 8px;">Advanced personalization that increases engagement by 300%</li>
-                <li style="margin-bottom: 8px;">Smart analytics that predict customer behavior</li>
-              </ul>
-            </div>
-            
-            <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); padding: 24px; border-radius: 12px; text-align: center; margin: 24px 0; position: relative; overflow: hidden;">
-              <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); animation: pulse 2s infinite;"></div>
-              <h3 style="color: white; margin: 0 0 12px 0; font-size: 18px; font-weight: 600; position: relative; z-index: 1;">🎯 Early Access Offer</h3>
-              <p style="color: white; margin: 0; font-size: 15px; position: relative; z-index: 1;">
-                Join 10,000+ marketers already using NovaAI. Get <strong>50% off</strong> your first year.
-              </p>
-              <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 13px; position: relative; z-index: 1;">
-                Limited time offer - expires in 48 hours
-              </p>
-            </div>
-            
-            <div style="text-align: center; margin: 32px 0;">
-              <a href="#" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4); transition: all 0.3s ease;">
-                Start Your Free Trial
-              </a>
-            </div>
-            
-            <div style="background: #e6fffa; padding: 20px; border-radius: 8px; margin: 24px 0; border: 1px solid #b2f5ea;">
-              <h4 style="color: #234e52; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">Why choose NovaAI?</h4>
-              <p style="color: #2c7a7b; margin: 0; font-size: 14px; line-height: 1.5;">Over 10,000 businesses trust NovaAI to power their email marketing. Join industry leaders like Shopify, Stripe, and Notion.</p>
-            </div>
-            
-            <p style="color: #4a5568; font-size: 15px; line-height: 1.6; margin: 24px 0;">
-              Ready to revolutionize your email marketing? Let's get started.
-            </p>
-            
-            <p style="color: #2d3748; font-size: 15px; line-height: 1.6; margin: 32px 0 0 0;">
-              Best regards,<br>
-              <strong>The NovaAI Team</strong><br>
-              <span style="color: #667eea;">NovaMail</span>
-            </p>
-          </div>
-        </div>
-      `,
-      features: ['Vibrant Gradients', 'Bold Typography', 'Modern Layout', 'Strong CTA']
-    },
-    {
-      id: 'minimal-clean',
-      name: 'Minimal Clean',
-      category: 'Minimal',
-      description: 'Clean and minimal design with focus on content',
-      subject: 'Important Update: [Product Name]',
-      htmlContent: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
-          <div style="background: #f8fafc; padding: 32px 30px; text-align: center; border-bottom: 1px solid #e2e8f0;">
-            <h1 style="color: #1e293b; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">Important Update</h1>
-            <p style="color: #64748b; margin: 8px 0 0 0; font-size: 16px; font-weight: 400;">Your attention is required</p>
-          </div>
-          
-          <div style="padding: 40px 30px;">
-            <p style="color: #1e293b; font-size: 16px; line-height: 1.6; margin-bottom: 24px; font-weight: 400;">
-              Hello [Customer Name],
-            </p>
-            
-            <p style="color: #334155; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
-              We have an important update regarding your account that requires your immediate attention.
-            </p>
-            
-            <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 24px 0; border-left: 4px solid #f59e0b;">
-              <h3 style="color: #92400e; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">⚠️ Action Required</h3>
-              <p style="color: #92400e; margin: 0; font-size: 14px; line-height: 1.5;">Please review and confirm your account settings by clicking the button below.</p>
-            </div>
-            
-            <div style="text-align: center; margin: 32px 0;">
-              <a href="#" style="display: inline-block; background: #1e293b; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px;">
-                Review Account Settings
-              </a>
-            </div>
-            
-            <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 32px 0 0 0;">
-              If you have any questions, please don't hesitate to contact our support team.
-            </p>
-            
-            <p style="color: #1e293b; font-size: 15px; line-height: 1.6; margin: 24px 0 0 0;">
-              Best regards,<br>
-              <strong>The Team</strong>
-            </p>
-          </div>
-        </div>
-      `,
-      features: ['Clean Design', 'Clear Messaging', 'Professional Look', 'Easy to Read']
-    },
-    {
-      id: 'newsletter-style',
-      name: 'Newsletter Style',
-      category: 'Newsletter',
-      description: 'Traditional newsletter format with multiple sections',
-      subject: 'Weekly Newsletter - [Date]',
-      htmlContent: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden;">
-          <div style="background: #3b82f6; padding: 24px 30px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 700;">Weekly Newsletter</h1>
-            <p style="color: #dbeafe; margin: 4px 0 0 0; font-size: 14px;">Stay updated with the latest news</p>
-          </div>
-          
-          <div style="padding: 30px;">
-            <div style="border-bottom: 2px solid #e5e7eb; padding-bottom: 20px; margin-bottom: 24px;">
-              <h2 style="color: #1f2937; margin: 0 0 8px 0; font-size: 20px; font-weight: 600;">This Week's Highlights</h2>
-              <p style="color: #6b7280; margin: 0; font-size: 14px;">[Date] - Issue #123</p>
-            </div>
-            
-            <div style="margin-bottom: 24px;">
-              <h3 style="color: #1f2937; margin: 0 0 12px 0; font-size: 18px; font-weight: 600;">📈 Market Update</h3>
-              <p style="color: #374151; font-size: 15px; line-height: 1.6; margin-bottom: 12px;">
-                The market showed strong performance this week with significant gains across all major indices.
-              </p>
-              <p style="color: #374151; font-size: 15px; line-height: 1.6;">
-                Key highlights include record-breaking trading volumes and positive earnings reports from leading companies.
-              </p>
-            </div>
-            
-            <div style="background: #f3f4f6; padding: 20px; border-radius: 6px; margin: 20px 0;">
-              <h3 style="color: #1f2937; margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">💡 Featured Article</h3>
-              <p style="color: #374151; font-size: 14px; line-height: 1.5; margin: 0;">
-                "Understanding Market Trends: A Comprehensive Guide to Investment Strategies"
-              </p>
-            </div>
-            
-            <div style="text-align: center; margin: 24px 0;">
-              <a href="#" style="display: inline-block; background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 14px;">
-                Read Full Article
-              </a>
-            </div>
-            
-            <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 24px;">
-              <p style="color: #6b7280; font-size: 13px; line-height: 1.5; margin: 0;">
-                Thank you for subscribing to our newsletter. If you no longer wish to receive these emails, 
-                <a href="#" style="color: #3b82f6; text-decoration: underline;">unsubscribe here</a>.
-              </p>
-            </div>
-          </div>
-        </div>
-      `,
-      features: ['Multiple Sections', 'Newsletter Format', 'Professional Layout', 'Easy Navigation']
-    }
-  ]
   
   // 根据模板ID获取当前模板
   const currentTemplate = professionalTemplates.find(template => template.id === templateId) || professionalTemplates[0]
