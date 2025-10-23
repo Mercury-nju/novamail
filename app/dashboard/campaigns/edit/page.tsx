@@ -330,20 +330,25 @@ export default function CampaignEditPage() {
 
     setIsSending(true)
     try {
-      // 使用智能邮件发送 API
+      // 直接发送到后端，使用最简单的数据结构
+      const requestData = {
+        subject: safeSubject,
+        content: safeBody,
+        recipients: recipientList,
+        senderEmail: sendForm.senderEmail || 'noreply@novamail.world',
+        senderName: sendForm.senderName || 'NovaMail'
+      }
+      
+      console.log('=== 发送到后端的数据 ===')
+      console.log('requestData:', JSON.stringify(requestData, null, 2))
+      console.log('========================')
+      
       const response = await fetch('/api/campaigns/send', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          campaignData: {
-            subject: safeSubject,
-            body: safeBody
-          },
-          recipients: recipientList,
-          userId: 'current-user'  // 添加用户ID
-        })
+        body: JSON.stringify(requestData)
       })
 
       const data = await response.json()
