@@ -268,8 +268,20 @@ export default function CampaignEditPage() {
 
   // 处理邮件发送
   const handleSendEmail = async () => {
+    console.log('=== 发送邮件调试信息 ===')
+    console.log('sendForm.recipients:', sendForm.recipients)
+    console.log('campaignData.subject:', campaignData.subject)
+    console.log('campaignData.body:', campaignData.body)
+    console.log('campaignData.body length:', campaignData.body?.length)
+    console.log('========================')
+    
     if (!sendForm.recipients) {
       toast.error('Please fill in recipients')
+      return
+    }
+    
+    if (!campaignData.subject || !campaignData.body) {
+      toast.error('Missing required fields: subject and content')
       return
     }
 
