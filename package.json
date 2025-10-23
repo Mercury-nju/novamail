@@ -13,7 +13,9 @@
     "lint": "next lint",
     "server": "cd server && npm run dev",
     "dev:full": "concurrently \"npm run dev\" \"npm run server\"",
-    "export": "next build && next export"
+    "export": "next build && next export",
+    "setup:email": "node setup-real-email.js",
+    "test:email": "node test-email-sending.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
