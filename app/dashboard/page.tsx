@@ -28,7 +28,6 @@ export default function Dashboard() {
                 <p className="text-xs text-gray-500">AI Email Marketing Platform</p>
               </div>
             </div>
-            <span className="text-gray-700">English</span>
           </div>
         </div>
       </div>

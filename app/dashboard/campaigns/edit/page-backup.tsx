@@ -998,9 +998,6 @@ export default function EditCampaignPage() {
               </div>
             </div>
             
-            <div className="flex items-center space-x-3">
-              <span className="text-gray-700">English</span>
-            </div>
           </div>
         </div>
       </div>

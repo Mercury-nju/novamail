@@ -268,18 +268,6 @@ export default function HomePage() {
               <motion.div 
                 whileHover={{ 
                   scale: 1.05,
-                  y: -2,
-                  transition: { type: "spring", stiffness: 300 }
-                }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <div className="text-gray-700 hover:text-gray-900 transition-all duration-300 py-2 px-4 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/25 hover:border-white/40 shadow-xl hover:shadow-2xl">
-                  English
-                </div>
-              </motion.div>
-              <motion.div 
-                whileHover={{ 
-                  scale: 1.05,
                   y: -3,
                   boxShadow: "0 12px 32px rgba(59, 130, 246, 0.4)",
                   transition: { type: "spring", stiffness: 300 }

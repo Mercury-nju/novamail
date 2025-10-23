@@ -404,9 +404,6 @@ export default function RegisterPage() {
               <Link href="/" className="text-3xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
                 NovaMail
               </Link>
-              <div className="flex items-center">
-                <span className="text-gray-700">English</span>
-              </div>
             </div>
             <h2 className="text-3xl font-extrabold text-gray-900">
             Create your account
