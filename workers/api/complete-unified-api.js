@@ -580,7 +580,7 @@ async function handleAIGenerateEmailAPI(request, env, ctx) {
 
       const templateInfo = templateInstructions[selectedTemplate] || templateInstructions['modern-promo']
 
-      // 检测用户输入的语言
+      // 检测用户输入的语言 - 默认英文，只有明确中文输入才用中文
       const detectLanguage = (text) => {
         if (!text) return 'en';
         // 检测中文字符
@@ -588,8 +588,12 @@ async function handleAIGenerateEmailAPI(request, env, ctx) {
         const chineseCount = (text.match(chineseRegex) || []).length;
         const totalChars = text.length;
         
-        // 如果中文字符占比超过30%，则认为是中文
-        return chineseCount / totalChars > 0.3 ? 'zh' : 'en';
+        // 更严格的中文检测：中文字符占比必须超过50%，或者包含明确的中文词汇
+        const chineseWords = ['产品', '服务', '公司', '用户', '客户', '活动', '促销', '发布', '反馈', '维护', '营销', '邮件', '请', '帮我', '生成', '写', '创建'];
+        const hasChineseWords = chineseWords.some(word => text.includes(word));
+        
+        // 只有当中文占比超过50%或包含明确中文词汇时才认为是中文
+        return (chineseCount / totalChars > 0.5) || hasChineseWords ? 'zh' : 'en';
       };
 
       const detectedLanguage = detectLanguage(

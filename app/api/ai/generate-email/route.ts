@@ -5,8 +5,27 @@ async function callDashScopeAI(userRequest: string, businessName: string, produc
   try {
     const apiKey = process.env.DASHSCOPE_API_KEY || 'sk-9bf19547ddbd4be1a87a7a43cf251097';
     
-    // 添加NovaMail产品上下文
-    const prompt = `你是NovaMail的AI助手，NovaMail是一个专业的邮件营销平台，帮助用户创建、发送和管理邮件营销活动。
+    // 检测用户输入的语言 - 默认英文，只有明确中文输入才用中文
+    const detectLanguage = (text: string) => {
+      if (!text) return 'en';
+      // 检测中文字符
+      const chineseRegex = /[\u4e00-\u9fff]/;
+      const chineseCount = (text.match(chineseRegex) || []).length;
+      const totalChars = text.length;
+      
+      // 更严格的中文检测：中文字符占比必须超过50%，或者包含明确的中文词汇
+      const chineseWords = ['产品', '服务', '公司', '用户', '客户', '活动', '促销', '发布', '反馈', '维护', '营销', '邮件', '请', '帮我', '生成', '写', '创建'];
+      const hasChineseWords = chineseWords.some(word => text.includes(word));
+      
+      // 只有当中文占比超过50%或包含明确中文词汇时才认为是中文
+      return (chineseCount / totalChars > 0.5) || hasChineseWords ? 'zh' : 'en';
+    };
+
+    const detectedLanguage = detectLanguage(userRequest);
+    
+    // 根据检测到的语言生成相应的提示词
+    const prompt = detectedLanguage === 'zh' 
+      ? `你是NovaMail的AI助手，NovaMail是一个专业的邮件营销平台，帮助用户创建、发送和管理邮件营销活动。
 
 产品信息：
 - 品牌：NovaMail
@@ -18,7 +37,20 @@ async function callDashScopeAI(userRequest: string, businessName: string, produc
 
 用户问题：${userRequest}
 
-请用中文回答，提供详细、实用的建议。`;
+请用中文回答，提供详细、实用的建议。`
+      : `You are NovaMail's AI assistant. NovaMail is a professional email marketing platform that helps users create, send, and manage email marketing campaigns.
+
+Product Information:
+- Brand: NovaMail
+- Features: Email template design, email sending, marketing campaign management, data analytics
+- Target Users: Businesses, marketers, e-commerce sellers, content creators
+- Core Value: Simplify email marketing processes and improve marketing effectiveness
+
+Please provide professional and helpful answers based on user questions. If the question is related to email marketing, please provide specific suggestions combining NovaMail's features; if it's other questions, please provide accurate answers based on your knowledge.
+
+User Question: ${userRequest}
+
+Please respond in English with detailed and practical advice.`;
 
     const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
       method: 'POST',
