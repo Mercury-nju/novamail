@@ -182,8 +182,8 @@ export default function TemplateShowcase() {
             >
               <button 
                 onClick={() => {
-                  // 首页展示，不跳转到编辑页面
-                  console.log('View all templates clicked - homepage showcase only')
+                  // 跳转到登录页面
+                  router.push('/login')
                 }}
                 className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
