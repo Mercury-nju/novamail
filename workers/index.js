@@ -2057,22 +2057,6 @@ async function handleAIGenerateEmail(request, env) {
             </div>
           `;
           break;
-          default:
-            mockBody = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <h1 style="color: #333; text-align: center;">${campaignData.purpose}</h1>
-              <p style="color: #666; line-height: 1.6;">
-                We're excited to share ${campaignData.purpose.toLowerCase()} with you. ${campaignData.productService || 'Our product'} offers professional quality and comprehensive support.
-              </p>
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${campaignData.targetUrl || '#'}" style="background: #007BFF; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">Learn More</a>
-              </div>
-              <p style="color: #666; line-height: 1.6;">
-                Best regards,<br>
-                <strong>${campaignData.businessName || 'NovaMail'} Team</strong>
-              </p>
-            </div>
-          `;
         }
       } else {
         // 简单邮件
