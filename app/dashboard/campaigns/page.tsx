@@ -15,7 +15,10 @@ import {
   TrashIcon,
   RocketLaunchIcon,
   TagIcon,
-  StarIcon
+  StarIcon,
+  CursorArrowRaysIcon,
+  ExclamationTriangleIcon,
+  UserMinusIcon
 } from '@heroicons/react/24/outline'
 
 interface Campaign {
@@ -23,7 +26,7 @@ interface Campaign {
   subject: string
   template: string
   templateName: string
-  status: 'draft' | 'sent' | 'scheduled'
+  status: 'sent' | 'scheduled'
   createdAt: string
   sentAt?: string
   recipients: number
@@ -32,6 +35,16 @@ interface Campaign {
   businessName: string
   purpose: string
   tone: string
+  events: CampaignEvent[]
+}
+
+interface CampaignEvent {
+  id: string
+  type: 'created' | 'sent' | 'opened' | 'clicked' | 'bounced' | 'unsubscribed'
+  timestamp: string
+  details: string
+  recipientEmail?: string
+  metadata?: Record<string, any>
 }
 
 export default function CampaignsPage() {
@@ -39,7 +52,8 @@ export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [loading, setLoading] = useState(true)
   const [showPreview, setShowPreview] = useState<string | null>(null)
-  const [filter, setFilter] = useState<'all' | 'draft' | 'sent' | 'scheduled'>('all')
+  const [showEvents, setShowEvents] = useState<string | null>(null)
+  const [filter, setFilter] = useState<'all' | 'sent' | 'scheduled'>('all')
 
   useEffect(() => {
     loadCampaigns()
@@ -61,7 +75,37 @@ export default function CampaignsPage() {
         clickRate: 8.2,
         businessName: 'NovaMail',
         purpose: 'Product Launch',
-        tone: 'enthusiastic'
+        tone: 'enthusiastic',
+        events: [
+          {
+            id: 'evt_1_1',
+            type: 'created',
+            timestamp: '2024-01-15T10:30:00Z',
+            details: 'Campaign created with Modern Gradient template'
+          },
+          {
+            id: 'evt_1_2',
+            type: 'sent',
+            timestamp: '2024-01-15T10:30:00Z',
+            details: 'Campaign sent to 1,250 recipients',
+            metadata: { recipientCount: 1250 }
+          },
+          {
+            id: 'evt_1_3',
+            type: 'opened',
+            timestamp: '2024-01-15T11:45:00Z',
+            details: 'First email opened by user@example.com',
+            recipientEmail: 'user@example.com'
+          },
+          {
+            id: 'evt_1_4',
+            type: 'clicked',
+            timestamp: '2024-01-15T12:15:00Z',
+            details: 'CTA button clicked by user@example.com',
+            recipientEmail: 'user@example.com',
+            metadata: { linkUrl: 'https://example.com/cta' }
+          }
+        ]
       },
       {
         id: '2',
@@ -76,19 +120,49 @@ export default function CampaignsPage() {
         clickRate: 12.5,
         businessName: 'NovaMail',
         purpose: 'Customer Onboarding',
-        tone: 'friendly'
+        tone: 'friendly',
+        events: [
+          {
+            id: 'evt_2_1',
+            type: 'created',
+            timestamp: '2024-01-14T14:20:00Z',
+            details: 'Welcome campaign created'
+          },
+          {
+            id: 'evt_2_2',
+            type: 'sent',
+            timestamp: '2024-01-14T14:20:00Z',
+            details: 'Campaign sent to 850 new customers',
+            metadata: { recipientCount: 850 }
+          },
+          {
+            id: 'evt_2_3',
+            type: 'opened',
+            timestamp: '2024-01-14T15:30:00Z',
+            details: 'High engagement - 32.1% open rate achieved',
+            metadata: { openRate: 32.1 }
+          }
+        ]
       },
       {
         id: '3',
         subject: 'You\'re Invited: [Event Name] - [Date]',
         template: 'event-invitation',
         templateName: 'Event Invitation',
-        status: 'draft',
+        status: 'scheduled',
         createdAt: '2024-01-13T09:15:00Z',
-        recipients: 0,
+        recipients: 500,
         businessName: 'NovaMail',
         purpose: 'Event Invitation',
-        tone: 'professional'
+        tone: 'professional',
+        events: [
+          {
+            id: 'evt_3_1',
+            type: 'created',
+            timestamp: '2024-01-13T09:15:00Z',
+            details: 'Event invitation campaign created and scheduled'
+          }
+        ]
       },
       {
         id: '4',
@@ -160,6 +234,30 @@ export default function CampaignsPage() {
       'authoritative': 'Authoritative'
     }
     return tones[tone] || tone
+  }
+
+  const getEventIcon = (type: string) => {
+    switch (type) {
+      case 'created': return <SparklesIcon className="h-4 w-4" />
+      case 'sent': return <RocketLaunchIcon className="h-4 w-4" />
+      case 'opened': return <EyeIcon className="h-4 w-4" />
+      case 'clicked': return <CursorArrowRaysIcon className="h-4 w-4" />
+      case 'bounced': return <ExclamationTriangleIcon className="h-4 w-4" />
+      case 'unsubscribed': return <UserMinusIcon className="h-4 w-4" />
+      default: return <ClockIcon className="h-4 w-4" />
+    }
+  }
+
+  const getEventColor = (type: string) => {
+    switch (type) {
+      case 'created': return 'text-blue-500 bg-blue-50'
+      case 'sent': return 'text-green-500 bg-green-50'
+      case 'opened': return 'text-purple-500 bg-purple-50'
+      case 'clicked': return 'text-orange-500 bg-orange-50'
+      case 'bounced': return 'text-red-500 bg-red-50'
+      case 'unsubscribed': return 'text-gray-500 bg-gray-50'
+      default: return 'text-gray-500 bg-gray-50'
+    }
   }
 
   const handleDeleteCampaign = (campaignId: string) => {
@@ -397,25 +495,14 @@ export default function CampaignsPage() {
                     <EyeIcon className="h-5 w-5" />
                   </button>
                   
-                  {campaign.status === 'draft' && (
-                    <button
-                      onClick={() => router.push(`/dashboard/campaigns/edit/${campaign.id}`)}
-                      className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                      title="Edit"
-                    >
-                      <PencilIcon className="h-5 w-5" />
-                    </button>
-                  )}
+                  <button
+                    onClick={() => setShowEvents(showEvents === campaign.id ? null : campaign.id)}
+                    className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="View Events"
+                  >
+                    <ClockIcon className="h-5 w-5" />
+                  </button>
                   
-                  {campaign.status === 'draft' && (
-                    <button
-                      onClick={() => handleSendCampaign(campaign.id)}
-                      className="p-2 text-green-400 hover:text-green-600 transition-colors"
-                      title="Send"
-                    >
-                      <RocketLaunchIcon className="h-5 w-5" />
-                    </button>
-                  )}
                   
                   <button
                     onClick={() => handleDeleteCampaign(campaign.id)}
@@ -441,6 +528,59 @@ export default function CampaignsPage() {
                       <div className="text-sm text-gray-600">
                         <p className="font-medium mb-1">Subject: {campaign.subject}</p>
                         <p className="text-gray-500">This is an AI-generated {campaign.templateName} email...</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Events Timeline */}
+              <AnimatePresence>
+                {showEvents === campaign.id && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-6 pt-6 border-t border-gray-200"
+                  >
+                    <div className="bg-white rounded-lg border border-gray-200 p-4">
+                      <h4 className="font-medium text-gray-900 mb-4 flex items-center">
+                        <ClockIcon className="h-5 w-5 mr-2" />
+                        Campaign Events Timeline
+                      </h4>
+                      <div className="space-y-3">
+                        {campaign.events?.map((event, index) => (
+                          <div key={event.id} className="flex items-start space-x-3">
+                            <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${getEventColor(event.type)}`}>
+                              {getEventIcon(event.type)}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between">
+                                <p className="text-sm font-medium text-gray-900 capitalize">
+                                  {event.type.replace('_', ' ')}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  {formatDate(event.timestamp)}
+                                </p>
+                              </div>
+                              <p className="text-sm text-gray-600 mt-1">{event.details}</p>
+                              {event.recipientEmail && (
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Recipient: {event.recipientEmail}
+                                </p>
+                              )}
+                              {event.metadata && Object.keys(event.metadata).length > 0 && (
+                                <div className="mt-2 text-xs text-gray-500">
+                                  {Object.entries(event.metadata).map(([key, value]) => (
+                                    <span key={key} className="mr-3">
+                                      {key}: {String(value)}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </motion.div>

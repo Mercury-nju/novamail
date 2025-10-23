@@ -45,13 +45,6 @@ interface Tag {
   createdAt: string
 }
 
-interface ContactGroup {
-  id: string
-  name: string
-  description: string
-  contacts: string[]
-  createdAt: string
-}
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -63,7 +56,6 @@ export default function ContactsPage() {
   const [showImportModal, setShowImportModal] = useState(false)
   const [showAddContactModal, setShowAddContactModal] = useState(false)
   const [showTagManager, setShowTagManager] = useState(false)
-  const [showGroupManager, setShowGroupManager] = useState(false)
   const [showContactDetails, setShowContactDetails] = useState(false)
   const [showBulkActions, setShowBulkActions] = useState(false)
   const [editingContact, setEditingContact] = useState<Contact | null>(null)
@@ -81,10 +73,6 @@ export default function ContactsPage() {
     name: '',
     color: 'blue'
   })
-  const [newGroup, setNewGroup] = useState({
-    name: '',
-    description: ''
-  })
   const [availableTags, setAvailableTags] = useState<Tag[]>([
     { id: '1', name: 'New User', color: 'green', count: 0, createdAt: new Date().toISOString() },
     { id: '2', name: 'Active User', color: 'blue', count: 0, createdAt: new Date().toISOString() },
@@ -92,7 +80,6 @@ export default function ContactsPage() {
     { id: '4', name: 'VIP', color: 'purple', count: 0, createdAt: new Date().toISOString() },
     { id: '5', name: 'Prospect', color: 'yellow', count: 0, createdAt: new Date().toISOString() }
   ])
-  const [contactGroups, setContactGroups] = useState<ContactGroup[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -559,13 +546,6 @@ export default function ContactsPage() {
               >
                 <TagIcon className="h-4 w-4 mr-2" />
                 Manage Tags
-              </button>
-              <button
-                onClick={() => setShowGroupManager(true)}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <UserGroupIcon className="h-4 w-4 mr-2" />
-                Groups
               </button>
               {selectedContacts.length > 0 && (
                 <button
