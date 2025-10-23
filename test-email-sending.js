@@ -5,7 +5,7 @@
  * 用于验证 Resend API 配置是否正确
  */
 
-const fetch = require('node-fetch');
+// 使用内置的 fetch (Node.js 18+)
 
 async function testEmailSending() {
   console.log('🧪 NovaMail 邮件发送功能测试\n');
