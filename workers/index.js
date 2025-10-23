@@ -1528,32 +1528,7 @@ async function handleCampaignSend(request, env) {
           : 'NovaMail <noreply@novamail.world>',
         to: recipient,
         subject: campaignData.subject || 'Email Campaign',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
-              <h1 style="color: white; margin: 0;">${campaignData.businessName || 'NovaMail'}</h1>
-            </div>
-            <div style="padding: 30px; background: #f9f9f9;">
-              <h2 style="color: #333; margin-bottom: 20px;">${campaignData.subject || 'Email Campaign'}</h2>
-              <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0;">
-                ${campaignData.body || '<h2>Welcome to Our Newsletter!</h2><p>Thank you for subscribing to our updates. We are excited to share valuable content with you.</p><p>This email was generated using AI technology to provide you with personalized content.</p>'}
-              </div>
-              ${campaignData.targetUrl ? `
-                <div style="text-align: center; margin: 20px 0;">
-                  <a href="${campaignData.targetUrl}" style="background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Visit Website</a>
-                </div>
-              ` : ''}
-              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-                <p style="color: #999; font-size: 12px;">
-                  ${userEmailConfig?.isConfigured 
-                    ? `This email was sent by ${campaignData.businessName || 'your company'}. If you have any questions, please contact us.`
-                    : 'This email was sent by NovaMail. If you have any questions, please contact our support team.'
-                  }
-                </p>
-              </div>
-            </div>
-          </div>
-        `
+        html: campaignData.body || '<h2>Welcome to Our Newsletter!</h2><p>Thank you for subscribing to our updates. We are excited to share valuable content with you.</p><p>This email was generated using AI technology to provide you with personalized content.</p>'
       };
 
       // 发送邮件
@@ -5165,19 +5140,7 @@ async function handleTestCampaignSend(request, env) {
             : 'NovaMail <noreply@novamail.world>',
           to: recipient,
           subject: campaignData.subject || 'Email Campaign',
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
-                <h1 style="color: white; margin: 0;">${campaignData.businessName || 'NovaMail'}</h1>
-              </div>
-              <div style="padding: 30px; background: #f9f9f9;">
-                <h2 style="color: #333; margin-bottom: 20px;">${campaignData.subject || 'Email Campaign'}</h2>
-                <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0;">
-                  ${campaignData.body || 'Your email content here'}
-                </div>
-              </div>
-            </div>
-          `
+          html: campaignData.body || 'Your email content here'
         };
         
         console.log('Test Campaign Send - Email data HTML length:', emailData.html.length);
