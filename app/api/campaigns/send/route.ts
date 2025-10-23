@@ -9,8 +9,8 @@ async function sendEmail(
   senderName: string,
   useUserDomain: boolean = false
 ) {
-  // 使用固定的Resend API Key
-  const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_HoZby1YY_8DhQswTinqLVqUwFjqHV4V7y"
+  // 使用完整的Resend API Key
+  const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_C2KHNFp4_tdC2FzoZ8pYNQiKwKbMuuyRX"
   
   if (!RESEND_API_KEY || RESEND_API_KEY === "re_your-resend-api-key") {
     // 开发环境：模拟发送
@@ -70,8 +70,8 @@ async function sendViaResendWithAlias(
   senderEmail: string,
   senderName: string
 ) {
-  // 使用固定的Resend API Key
-  const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_HoZby1YY_8DhQswTinqLVqUwFjqHV4V7y"
+  // 使用完整的Resend API Key
+  const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_C2KHNFp4_tdC2FzoZ8pYNQiKwKbMuuyRX"
   
   // 始终使用已验证的域名发送，确保邮件能正常发送
   const verifiedSenderEmail = 'noreply@novamail.world'
@@ -132,8 +132,8 @@ async function sendViaResendWithUserEmail(
   senderEmail: string,
   senderName: string
 ) {
-  // 使用固定的Resend API Key
-  const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_HoZby1YY_8DhQswTinqLVqUwFjqHV4V7y"
+  // 使用完整的Resend API Key
+  const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_C2KHNFp4_tdC2FzoZ8pYNQiKwKbMuuyRX"
   
   // 始终使用已验证的域名发送，确保邮件能正常发送
   const verifiedSenderEmail = 'noreply@novamail.world'
