@@ -103,7 +103,7 @@ async function sendViaResendWithAlias(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: `${senderName} <onboarding@resend.dev>`, // 使用验证域名
+      from: `${senderName} <noreply@novamail.world>`, // 使用验证域名
       to: recipients,
       subject: subject,
       html: content,
