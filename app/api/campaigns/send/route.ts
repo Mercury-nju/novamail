@@ -47,7 +47,7 @@ async function sendEmail(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: `${senderName} <${senderEmail}>`,
+        from: `${senderName} <onboarding@resend.dev>`, // 使用 Resend 验证域名
         to: recipients,
         subject: subject,
         html: content,
