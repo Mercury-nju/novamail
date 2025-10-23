@@ -1,14 +1,14 @@
-// 测试Next.js API路由
+// 测试用户邮件发送流程
 const https = require('https');
 
 const emailData = {
-  subject: 'Next.js API测试邮件 - ' + new Date().toISOString(),
+  subject: '用户测试邮件 - ' + new Date().toISOString(),
   content: `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <h1 style="color: #333;">Next.js API测试邮件</h1>
-      <p>这是通过Next.js API路由发送的测试邮件。</p>
+      <h1 style="color: #333;">用户测试邮件</h1>
+      <p>这是用户通过NovaMail平台发送的测试邮件。</p>
       <p>发送时间: ${new Date().toISOString()}</p>
-      <p>如果您收到这封邮件，说明Next.js API路由正常工作。</p>
+      <p>如果您收到这封邮件，说明用户邮件发送功能正常工作。</p>
     </div>
   `,
   recipients: ['lihongyangnju@gmail.com'],
@@ -30,10 +30,11 @@ const options = {
   }
 };
 
-console.log('📧 测试Next.js API路由...');
+console.log('📧 测试用户邮件发送流程...');
 console.log('收件人:', emailData.recipients);
 console.log('发件人:', emailData.senderEmail);
 console.log('主题:', emailData.subject);
+console.log('使用用户域名:', emailData.useUserDomain);
 
 const req = https.request(options, (res) => {
   console.log('状态码:', res.statusCode);
@@ -49,10 +50,10 @@ const req = https.request(options, (res) => {
       console.log('响应:', JSON.stringify(response, null, 2));
       
       if (res.statusCode === 200) {
-        console.log('✅ Next.js API路由测试成功！');
+        console.log('✅ 用户邮件发送成功！');
         console.log('请检查收件箱（包括垃圾邮件文件夹）');
       } else {
-        console.log('❌ Next.js API路由测试失败');
+        console.log('❌ 用户邮件发送失败');
         console.log('错误:', response.error || 'Unknown error');
       }
     } catch (e) {

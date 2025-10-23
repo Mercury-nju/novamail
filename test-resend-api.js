@@ -1,13 +1,12 @@
-// 检查邮件发送状态
+// 测试Resend API Key是否有效
 const https = require('https');
 
 const API_KEY = 're_HoZby1YY_8DhQswTinqLVqUwFjqHV4V7y';
-const EMAIL_ID = '23589c60-93a5-46d9-834b-dfc8fcd24b07';
 
 const options = {
   hostname: 'api.resend.com',
   port: 443,
-  path: `/emails/${EMAIL_ID}`,
+  path: '/domains',
   method: 'GET',
   headers: {
     'Authorization': `Bearer ${API_KEY}`,
@@ -15,8 +14,8 @@ const options = {
   }
 };
 
-console.log('🔍 检查邮件发送状态...');
-console.log('邮件ID:', EMAIL_ID);
+console.log('🔍 检查Resend API Key状态...');
+console.log('API Key:', API_KEY);
 
 const req = https.request(options, (res) => {
   console.log('状态码:', res.statusCode);
@@ -29,15 +28,14 @@ const req = https.request(options, (res) => {
   res.on('end', () => {
     try {
       const response = JSON.parse(data);
-      console.log('邮件状态:', JSON.stringify(response, null, 2));
+      console.log('响应:', JSON.stringify(response, null, 2));
       
-      if (response.object === 'email') {
-        console.log('✅ 邮件状态获取成功');
-        console.log('收件人:', response.to);
-        console.log('主题:', response.subject);
-        console.log('状态:', response.last_event);
+      if (res.statusCode === 200) {
+        console.log('✅ Resend API Key有效');
+        console.log('域名数量:', response.data?.length || 0);
       } else {
-        console.log('❌ 无法获取邮件状态');
+        console.log('❌ Resend API Key无效或过期');
+        console.log('错误:', response.message || 'Unknown error');
       }
     } catch (e) {
       console.log('响应数据:', data);

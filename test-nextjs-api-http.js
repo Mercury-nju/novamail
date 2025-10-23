@@ -1,5 +1,5 @@
-// 测试Next.js API路由
-const https = require('https');
+// 测试Next.js API路由 (HTTP)
+const http = require('http');
 
 const emailData = {
   subject: 'Next.js API测试邮件 - ' + new Date().toISOString(),
@@ -30,12 +30,12 @@ const options = {
   }
 };
 
-console.log('📧 测试Next.js API路由...');
+console.log('📧 测试Next.js API路由 (HTTP)...');
 console.log('收件人:', emailData.recipients);
 console.log('发件人:', emailData.senderEmail);
 console.log('主题:', emailData.subject);
 
-const req = https.request(options, (res) => {
+const req = http.request(options, (res) => {
   console.log('状态码:', res.statusCode);
   
   let data = '';
@@ -63,7 +63,6 @@ const req = https.request(options, (res) => {
 
 req.on('error', (e) => {
   console.error('请求错误:', e.message);
-  console.log('请确保Next.js开发服务器正在运行 (npm run dev)');
 });
 
 req.write(postData);

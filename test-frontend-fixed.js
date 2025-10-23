@@ -1,27 +1,27 @@
-// 测试Next.js API路由
+// 测试修复后的前端数据结构
 const https = require('https');
 
 const emailData = {
-  subject: 'Next.js API测试邮件 - ' + new Date().toISOString(),
-  content: `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <h1 style="color: #333;">Next.js API测试邮件</h1>
-      <p>这是通过Next.js API路由发送的测试邮件。</p>
-      <p>发送时间: ${new Date().toISOString()}</p>
-      <p>如果您收到这封邮件，说明Next.js API路由正常工作。</p>
-    </div>
-  `,
+  campaignData: {
+    subject: '修复后的前端测试 - ' + new Date().toISOString(),
+    body: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h1 style="color: #333;">修复后的前端测试</h1>
+        <p>这是测试修复后的前端数据结构的邮件。</p>
+        <p>发送时间: ${new Date().toISOString()}</p>
+        <p>数据结构已修复，应该可以正常发送了。</p>
+      </div>
+    `
+  },
   recipients: ['lihongyangnju@gmail.com'],
-  senderEmail: 'noreply@novamail.world',
-  senderName: 'NovaMail',
-  useUserDomain: false
+  userId: 'current-user'
 };
 
 const postData = JSON.stringify(emailData);
 
 const options = {
-  hostname: 'localhost',
-  port: 3000,
+  hostname: 'novamail-api.lihongyangnju.workers.dev',
+  port: 443,
   path: '/api/campaigns/send',
   method: 'POST',
   headers: {
@@ -30,10 +30,9 @@ const options = {
   }
 };
 
-console.log('📧 测试Next.js API路由...');
-console.log('收件人:', emailData.recipients);
-console.log('发件人:', emailData.senderEmail);
-console.log('主题:', emailData.subject);
+console.log('🧪 测试修复后的前端数据结构...');
+console.log('URL:', `https://${options.hostname}${options.path}`);
+console.log('数据结构:', JSON.stringify(emailData, null, 2));
 
 const req = https.request(options, (res) => {
   console.log('状态码:', res.statusCode);
@@ -49,10 +48,10 @@ const req = https.request(options, (res) => {
       console.log('响应:', JSON.stringify(response, null, 2));
       
       if (res.statusCode === 200) {
-        console.log('✅ Next.js API路由测试成功！');
+        console.log('✅ 修复后的前端数据结构测试成功！');
         console.log('请检查收件箱（包括垃圾邮件文件夹）');
       } else {
-        console.log('❌ Next.js API路由测试失败');
+        console.log('❌ 修复后的前端数据结构测试失败');
         console.log('错误:', response.error || 'Unknown error');
       }
     } catch (e) {
@@ -63,7 +62,6 @@ const req = https.request(options, (res) => {
 
 req.on('error', (e) => {
   console.error('请求错误:', e.message);
-  console.log('请确保Next.js开发服务器正在运行 (npm run dev)');
 });
 
 req.write(postData);

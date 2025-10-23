@@ -24,7 +24,7 @@ GOOGLE_CLIENT_ID = "3269831923-bu142o4r9b9f29jm8tb0qmumitgu51t9.apps.googleuserc
 GOOGLE_CLIENT_SECRET = "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"  # Google OAuth客户端密钥
 
 # KV 存储配置
-# 已配置真实的KV命名空间ID
+# 使用现有的KV命名空间ID
 [[kv_namespaces]]
 binding = "USERS_KV"
 id = "41bca314c98c4db580f450fb2e2c37bd"  # NovaMail-Users
@@ -32,13 +32,13 @@ preview_id = "41bca314c98c4db580f450fb2e2c37bd"
 
 [[kv_namespaces]]
 binding = "EMAIL_CONFIG_KV"
-id = "4a0baebc9760468f86460c891aaece66"  # NovaMail-EmailConfig
-preview_id = "4a0baebc9760468f86460c891aaece66"
+id = "c78c884ca05043979505041373ecfe18"  # NovaMail-EmailConfig
+preview_id = "c78c884ca05043979505041373ecfe18"
 
 [[kv_namespaces]]
 binding = "CAMPAIGNS_KV"
-id = "5b1cbfcd0871579f97571d992bbdfd77"  # NovaMail-Campaigns
-preview_id = "5b1cbfcd0871579f97571d992bbdfd77"
+id = "4a0baebc9760468f86460c891aaece66"  # NovaMail-Campaigns
+preview_id = "4a0baebc9760468f86460c891aaece66"
 
 [[kv_namespaces]]
 binding = "CONTACTS_KV"

@@ -59,7 +59,14 @@ export default function CampaignEditPage() {
   
   // 初始化模板内容
   useEffect(() => {
+    console.log('=== 模板初始化调试 ===')
+    console.log('currentTemplate:', currentTemplate)
+    console.log('campaignData.body:', campaignData.body)
+    console.log('campaignData.body length:', campaignData.body?.length)
+    console.log('========================')
+    
     if (currentTemplate && !campaignData.body) {
+      console.log('设置模板内容...')
       setCampaignData(prev => ({
         ...prev,
         subject: currentTemplate.subject,
@@ -280,7 +287,11 @@ export default function CampaignEditPage() {
       return
     }
     
-    if (!campaignData.subject || !campaignData.body) {
+    // 如果内容为空，使用模板默认内容
+    const finalSubject = campaignData.subject || currentTemplate?.subject || 'Default Subject'
+    const finalBody = campaignData.body || currentTemplate?.htmlContent || '<p>Default content</p>'
+    
+    if (!finalSubject || !finalBody) {
       toast.error('Missing required fields: subject and content')
       return
     }
@@ -311,8 +322,8 @@ export default function CampaignEditPage() {
         },
         body: JSON.stringify({
           campaignData: {
-            subject: campaignData.subject,
-            body: campaignData.body
+            subject: finalSubject,
+            body: finalBody
           },
           recipients: recipientList,
           userId: 'current-user'  // 添加用户ID

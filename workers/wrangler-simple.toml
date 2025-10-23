@@ -1,5 +1,5 @@
 name = "novamail-api"
-main = "index-clean.js"
+main = "index.js"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
@@ -8,7 +8,8 @@ compatibility_flags = ["nodejs_compat"]
 CREEM_API_KEY = "creem_22oMcuzUH4TeWyWVAVjTes"
 CREEM_BASE_URL = "https://api.creem.io/v1"
 CREEM_WEBHOOK_SECRET = "whsec_5uvCq8f1gQMsqz5rqwdVgZ"
-RESEND_API_KEY = "re_9LiNyCvq_4peLP18HMRSWP9dbiQaypVMS"
+RESEND_API_KEY = "re_HoZby1YY_8DhQswTinqLVqUwFjqHV4V7y"
+SENDGRID_API_KEY = "SG.your-sendgrid-api-key"
 DASHSCOPE_API_KEY = "sk-9bf19547ddbd4be1a87a7a43cf251097"
 
 # Gmail API 配置

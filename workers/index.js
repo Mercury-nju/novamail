@@ -1478,10 +1478,21 @@ async function handleCampaignSend(request, env) {
     const data = await request.json();
     const { campaignData, recipients, userId } = data;
     
-    if (!campaignData || !recipients || recipients.length === 0) {
+    // 验证必需字段（与 Next.js API 保持一致）
+    if (!recipients || recipients.length === 0) {
       return new Response(JSON.stringify({ 
         success: false, 
-        error: 'Campaign data and recipients are required' 
+        error: 'Recipients are required' 
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+    
+    if (!campaignData || !campaignData.subject || !campaignData.body) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Subject and content are required' 
       }), {
         status: 400,
         headers: corsHeaders

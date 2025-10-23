@@ -1,16 +1,18 @@
-// 测试修复后的邮件发送功能
+// 测试真实邮件发送
 const https = require('https');
 
+const API_KEY = 're_HoZby1YY_8DhQswTinqLVqUwFjqHV4V7y';
+
 const emailData = {
-  from: 'NovaMail <noreply@novamail.world>',
+  from: 'NovaMail <onboarding@resend.dev>',
   to: ['lihongyangnju@gmail.com'],
-  subject: '修复测试邮件 - ' + new Date().toISOString(),
+  subject: '测试真实邮件发送 - ' + new Date().toISOString(),
   html: `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <h1 style="color: #333;">修复测试邮件</h1>
-      <p>这是修复后的邮件发送功能测试。</p>
+      <h1 style="color: #333;">测试邮件</h1>
+      <p>这是一封测试邮件，用于验证Resend API是否正常工作。</p>
       <p>发送时间: ${new Date().toISOString()}</p>
-      <p>如果您收到这封邮件，说明修复后的功能正常工作。</p>
+      <p>如果您收到这封邮件，说明邮件发送功能正常工作。</p>
     </div>
   `
 };
@@ -23,15 +25,14 @@ const options = {
   path: '/emails',
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer re_HoZby1YY_8DhQswTinqLVqUwFjqHV4V7y',
+    'Authorization': `Bearer ${API_KEY}`,
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(postData)
   }
 };
 
-console.log('📧 测试修复后的邮件发送功能...');
+console.log('📧 发送真实测试邮件...');
 console.log('收件人:', emailData.to);
-console.log('发件人:', emailData.from);
 console.log('主题:', emailData.subject);
 
 const req = https.request(options, (res) => {
@@ -48,12 +49,11 @@ const req = https.request(options, (res) => {
       console.log('响应:', JSON.stringify(response, null, 2));
       
       if (res.statusCode === 200 || res.statusCode === 201) {
-        console.log('✅ 修复后的邮件发送成功！');
+        console.log('✅ 邮件发送成功！');
         console.log('消息ID:', response.id);
         console.log('请检查收件箱（包括垃圾邮件文件夹）');
-        console.log('发件人地址: noreply@novamail.world');
       } else {
-        console.log('❌ 修复后的邮件发送失败');
+        console.log('❌ 邮件发送失败');
         console.log('错误:', response.message || 'Unknown error');
       }
     } catch (e) {
