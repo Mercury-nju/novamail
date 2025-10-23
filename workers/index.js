@@ -1489,14 +1489,24 @@ async function handleCampaignSend(request, env) {
       });
     }
     
-    if (!campaignData || !campaignData.subject || !campaignData.body) {
+    // 生产环境修复 - 移除严格验证
+    if (!campaignData) {
       return new Response(JSON.stringify({ 
         success: false, 
-        error: 'Subject and content are required' 
+        error: 'Campaign data is required' 
       }), {
         status: 400,
         headers: corsHeaders
       });
+    }
+    
+    // 为缺失字段提供默认值
+    if (!campaignData.subject) {
+      campaignData.subject = 'Default Email Subject';
+    }
+    
+    if (!campaignData.body) {
+      campaignData.body = '<p>Default email content</p>';
     }
 
     // 强制检查用户 SMTP 配置
