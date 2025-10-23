@@ -213,7 +213,14 @@ export async function POST(request: NextRequest) {
     }
 
     // 验证必需字段
+    console.log('=== 验证字段 ===')
+    console.log('subject:', subject)
+    console.log('content:', content)
+    console.log('recipients:', recipients)
+    console.log('================')
+    
     if (!subject || !content || !recipients) {
+      console.log('❌ 验证失败 - 缺少必需字段')
       return NextResponse.json(
         { 
           success: false, 
@@ -222,6 +229,8 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+    
+    console.log('✅ 验证通过 - 所有字段都存在')
 
     // 验证邮箱格式
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
