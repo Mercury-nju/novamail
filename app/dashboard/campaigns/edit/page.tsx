@@ -27,7 +27,7 @@ export default function CampaignEditPage() {
   
   // 简单的状态管理
   const [campaignData, setCampaignData] = useState({
-    subject: '🚀 Introducing [Product Name] - The Future is Here',
+    subject: '',
     body: ''
   })
   
@@ -65,7 +65,7 @@ export default function CampaignEditPage() {
     console.log('campaignData.body length:', campaignData.body?.length)
     console.log('========================')
     
-    if (currentTemplate && !campaignData.body) {
+    if (currentTemplate && currentTemplate.htmlContent && (!campaignData.body || campaignData.body.trim() === '')) {
       console.log('设置模板内容...')
       setCampaignData(prev => ({
         ...prev,
@@ -73,7 +73,7 @@ export default function CampaignEditPage() {
         body: currentTemplate.htmlContent
       }))
     }
-  }, [currentTemplate, campaignData.body])
+  }, [currentTemplate])
 
   // 简化：移除复杂的邮箱配置加载
   // useEffect(() => {
