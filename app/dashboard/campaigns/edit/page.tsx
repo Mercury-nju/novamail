@@ -395,12 +395,10 @@ export default function CampaignEditPage() {
 
     setIsSending(true)
     try {
-      // 使用campaignData格式，兼容生产环境Cloudflare Workers
+      // 使用Next.js API格式，确保数据格式匹配
       const requestData = {
-        campaignData: {
-          subject: safeSubject,
-          body: safeBody
-        },
+        subject: safeSubject,
+        content: safeBody,
         recipients: uniqueRecipients,
         senderEmail: 'noreply@novamail.world',
         senderName: sendForm.senderName || 'NovaMail'
@@ -418,10 +416,15 @@ export default function CampaignEditPage() {
         body: JSON.stringify(requestData)
       })
 
-      const data = await response.json()
+      const responseData = await response.json()
 
-      if (data.success) {
-        toast.success(`Email sent successfully to ${data.data?.recipients || uniqueRecipients.length} recipient(s)!`)
+      console.log('=== 后端响应 ===')
+      console.log('Response Status:', response.status)
+      console.log('Response Data:', JSON.stringify(responseData, null, 2))
+      console.log('================')
+
+      if (responseData.success) {
+        toast.success(`Email sent successfully to ${responseData.data?.recipients || uniqueRecipients.length} recipient(s)!`)
         setShowSendModal(false)
         setSendForm({
           recipients: '',
@@ -429,7 +432,8 @@ export default function CampaignEditPage() {
         })
         setRecipientList([]) // 清空收件人列表
       } else {
-        throw new Error(data.error || 'Failed to send email')
+        // 使用后端返回的错误信息，如果后端没有提供，则使用通用错误信息
+        throw new Error(responseData.error || 'Failed to send email')
       }
     } catch (error) {
       console.error('Send email error:', error)
