@@ -210,8 +210,6 @@ export default function CampaignsPage() {
     switch (status) {
       case 'sent':
         return 'bg-green-100 text-green-800'
-      case 'draft':
-        return 'bg-yellow-100 text-yellow-800'
       case 'scheduled':
         return 'bg-blue-100 text-blue-800'
       default:
@@ -223,8 +221,6 @@ export default function CampaignsPage() {
     switch (status) {
       case 'sent':
         return 'Sent'
-      case 'draft':
-        return 'Draft'
       case 'scheduled':
         return 'Scheduled'
       default:
@@ -365,8 +361,8 @@ export default function CampaignsPage() {
                 <ClockIcon className="h-6 w-6 text-yellow-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Drafts</p>
-                <p className="text-2xl font-bold text-gray-900">{campaigns.filter(c => c.status === 'draft').length}</p>
+                <p className="text-sm font-medium text-gray-600">Total</p>
+                <p className="text-2xl font-bold text-gray-900">{campaigns.length}</p>
               </div>
             </div>
           </motion.div>
@@ -398,7 +394,7 @@ export default function CampaignsPage() {
         >
           <div className="flex items-center space-x-4">
             <span className="text-sm font-medium text-gray-700">Filter:</span>
-            {(['all', 'draft', 'sent', 'scheduled'] as const).map((filterType) => (
+            {(['all', 'sent', 'scheduled'] as const).map((filterType) => (
               <button
                 key={filterType}
                 onClick={() => setFilter(filterType)}
