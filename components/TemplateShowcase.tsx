@@ -135,7 +135,8 @@ export default function TemplateShowcase() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   onClick={() => {
                     setSelectedTemplate(template)
-                    handleTemplateClick(template)
+                    // 首页展示，不跳转到编辑页面
+                    console.log('Template selected:', template.name, '- homepage showcase only')
                   }}
                   className={`
                     relative group cursor-pointer transition-all duration-300 p-4 rounded-xl border-2 h-28
@@ -180,7 +181,10 @@ export default function TemplateShowcase() {
               className="text-center"
             >
               <button 
-                onClick={() => router.push('/dashboard/campaigns/new')}
+                onClick={() => {
+                  // 首页展示，不跳转到编辑页面
+                  console.log('View all templates clicked - homepage showcase only')
+                }}
                 className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 View All Templates
@@ -236,19 +240,19 @@ export default function TemplateShowcase() {
                   </div>
                 </div>
 
-                {/* Email HTML Preview */}
+                {/* Email HTML Preview - 完整展示模板 */}
                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm flex-grow">
                   <div className="bg-gray-100 px-4 py-3 border-b border-gray-200">
                     <div className="flex items-center space-x-2">
                       <div className="w-3 h-3 bg-red-400 rounded-full"></div>
                       <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                       <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                      <div className="ml-4 text-sm text-gray-500 font-medium">Live Preview</div>
+                      <div className="ml-4 text-sm text-gray-500 font-medium">Full Template Preview</div>
                     </div>
                   </div>
-                  <div className="p-4 h-full overflow-y-auto">
+                  <div className="p-2 h-full overflow-y-auto">
                     <div 
-                      className="w-full transform scale-95 origin-top pointer-events-none"
+                      className="w-full transform scale-75 origin-top pointer-events-none"
                       dangerouslySetInnerHTML={{ 
                         __html: selectedTemplate.htmlContent.replace(
                           /<a\s+([^>]*?)>/gi, 
@@ -257,22 +261,32 @@ export default function TemplateShowcase() {
                       }}
                       style={{ 
                         userSelect: 'none',
-                        '--preview-mode': 'true'
+                        '--preview-mode': 'true',
+                        minHeight: '800px' // 确保有足够空间显示完整模板
                       } as React.CSSProperties}
                     />
                   </div>
                 </div>
 
-                {/* Action Buttons */}
+                {/* Action Buttons - 首页展示用 */}
                 <div className="mt-4 flex space-x-3">
                   <button 
-                    onClick={() => handleTemplateClick(selectedTemplate)}
+                    onClick={() => {
+                      // 首页展示，不跳转到编辑页面
+                      console.log('Use template clicked - homepage showcase only')
+                    }}
                     className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
                   >
-                    Use This Template
+                    View Template Details
                   </button>
-                  <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-300">
-                    Preview
+                  <button 
+                    onClick={() => {
+                      // 首页展示，不跳转到编辑页面
+                      console.log('Preview clicked - homepage showcase only')
+                    }}
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-300"
+                  >
+                    Full Preview
                   </button>
                 </div>
               </div>
