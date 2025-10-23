@@ -73,8 +73,11 @@ async function sendViaResendWithAlias(
   // 使用固定的Resend API Key
   const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_HoZby1YY_8DhQswTinqLVqUwFjqHV4V7y"
   
+  // 始终使用已验证的域名发送，确保邮件能正常发送
+  const verifiedSenderEmail = 'noreply@novamail.world'
+  
   console.log('Sending email via Resend API with alias:', {
-    from: `${senderName} <${senderEmail}>`,
+    from: `${senderName} <${verifiedSenderEmail}>`,
     to: recipients,
     subject: subject,
     recipientsCount: recipients.length
@@ -132,8 +135,11 @@ async function sendViaResendWithUserEmail(
   // 使用固定的Resend API Key
   const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_HoZby1YY_8DhQswTinqLVqUwFjqHV4V7y"
   
+  // 始终使用已验证的域名发送，确保邮件能正常发送
+  const verifiedSenderEmail = 'noreply@novamail.world'
+  
   console.log('Sending email via Resend API with user email:', {
-    from: `${senderName} <${senderEmail}>`,
+    from: `${senderName} <${verifiedSenderEmail}>`,
     to: recipients,
     subject: subject,
     recipientsCount: recipients.length
