@@ -44,13 +44,14 @@ export default function CampaignEditPage() {
     senderName: 'NovaMail'
   })
   
-  const [useUserDomain, setUseUserDomain] = useState(false)
-  const [userDomains, setUserDomains] = useState<any[]>([])
-  const [userEmailAliases, setUserEmailAliases] = useState<Array<{
-    email: string
-    domain: string
-    label: string
-  }>>([])
+  // 移除无意义的域名功能
+  // const [useUserDomain, setUseUserDomain] = useState(false)
+  // const [userDomains, setUserDomains] = useState<any[]>([])
+  // const [userEmailAliases, setUserEmailAliases] = useState<Array<{
+  //   email: string
+  //   domain: string
+  //   label: string
+  // }>>([])
   
   
   // 根据模板ID获取当前模板
@@ -67,38 +68,38 @@ export default function CampaignEditPage() {
     }
   }, [currentTemplate, campaignData.body])
 
-  // 获取用户邮箱配置
-  useEffect(() => {
-    const loadEmailConfig = () => {
-      try {
-        const savedConfig = localStorage.getItem('emailDomainConfig')
-        if (savedConfig) {
-          const config = JSON.parse(savedConfig)
-          setUserDomains([{ domain: config.domain, status: 'configured' }])
-          
-          // 生成邮箱别名选项
-          const aliases = config.prefixes.map((prefix: string) => ({
-            email: `${prefix}@${config.domain}`,
-            domain: config.domain,
-            label: `${prefix}@${config.domain}`
-          }))
-          setUserEmailAliases(aliases)
-          
-          // 设置默认发件人邮箱
-          if (config.selectedPrefix && config.domain) {
-            setSendForm(prev => ({
-              ...prev,
-              senderEmail: `${config.selectedPrefix}@${config.domain}`
-            }))
-          }
-        }
-      } catch (error) {
-        console.error('Failed to load email config:', error)
-      }
-    }
+  // 简化：移除复杂的邮箱配置加载
+  // useEffect(() => {
+  //   const loadEmailConfig = () => {
+  //     try {
+  //       const savedConfig = localStorage.getItem('emailDomainConfig')
+  //       if (savedConfig) {
+  //         const config = JSON.parse(savedConfig)
+  //         setUserDomains([{ domain: config.domain, status: 'configured' }])
+  //         
+  //         // 生成邮箱别名选项
+  //         const aliases = config.prefixes.map((prefix: string) => ({
+  //           email: `${prefix}@${config.domain}`,
+  //           domain: config.domain,
+  //           label: `${prefix}@${config.domain}`
+  //         }))
+  //         setUserEmailAliases(aliases)
+  //         
+  //         // 设置默认发件人邮箱
+  //         if (config.selectedPrefix && config.domain) {
+  //           setSendForm(prev => ({
+  //             ...prev,
+  //             senderEmail: `${config.selectedPrefix}@${config.domain}`
+  //           }))
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('Failed to load email config:', error)
+  //     }
+  //   }
 
-    loadEmailConfig()
-  }, [])
+  //   loadEmailConfig()
+  // }, [])
   
   // 专业模板内容 - 使用当前模板
   const templateContent = currentTemplate.htmlContent
@@ -302,7 +303,7 @@ export default function CampaignEditPage() {
           recipients: recipientList,
           senderEmail: sendForm.senderEmail || 'noreply@novamail.world',
           senderName: sendForm.senderName,
-          useUserDomain: useUserDomain
+          useUserDomain: false  // 简化：总是使用默认域名
         })
       })
 
@@ -543,36 +544,17 @@ export default function CampaignEditPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Display Email (Optional)
                 </label>
-                <div className="relative">
-                  <input
-                    type="email"
-                    value={sendForm.senderEmail}
-                    onChange={(e) => setSendForm(prev => ({ ...prev, senderEmail: e.target.value }))}
-                    placeholder="support@yourcompany.com (for display only)"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    disabled={isSending}
-                    list="email-aliases"
-                  />
-                  {userEmailAliases.length > 0 && (
-                    <datalist id="email-aliases">
-                      {userEmailAliases.map((alias, index) => (
-                        <option key={index} value={alias.email}>
-                          {alias.label}
-                        </option>
-                      ))}
-                    </datalist>
-                  )}
-                </div>
+                <input
+                  type="email"
+                  value={sendForm.senderEmail}
+                  onChange={(e) => setSendForm(prev => ({ ...prev, senderEmail: e.target.value }))}
+                  placeholder="support@yourcompany.com (for display only)"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isSending}
+                />
                 <p className="text-xs text-gray-500 mt-1">
                   This email will be shown to recipients. Leave empty to use default NovaMail address.
                 </p>
-                {userDomains.length === 0 && (
-                  <p className="text-xs text-blue-600 mt-1">
-                    <a href="/dashboard/settings/email-domain" className="underline">
-                      Configure your domain
-                    </a> to use your own email address for display
-                  </p>
-                )}
               </div>
               
               <div>
@@ -589,48 +571,7 @@ export default function CampaignEditPage() {
                 />
               </div>
 
-              {/* Domain Verification */}
-              <div className="border-t pt-4">
-                <div className="flex items-center justify-between mb-3">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={useUserDomain}
-                      onChange={(e) => setUseUserDomain(e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm font-medium text-gray-700">Use Your Domain</span>
-                  </label>
-                </div>
-                
-                {useUserDomain && (
-                  <div className="bg-blue-50 p-3 rounded-md">
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0">
-                        <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <h3 className="text-sm font-medium text-blue-800">
-                          Domain Verification Required
-                        </h3>
-                        <div className="mt-2 text-sm text-blue-700">
-                          <p>To use your own domain for sending emails:</p>
-                          <ol className="list-decimal list-inside mt-2 space-y-1">
-                            <li>Go to Settings → Email Configuration</li>
-                            <li>Add and verify your domain</li>
-                            <li>Configure DNS records as instructed</li>
-                          </ol>
-                          <p className="mt-2 text-xs">
-                            💡 This ensures better deliverability and professional appearance.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
+              {/* 简化：移除复杂的域名验证UI */}
 
               {/* Email Preview */}
               <div className="bg-gray-50 rounded-md p-3">
