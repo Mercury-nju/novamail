@@ -283,6 +283,17 @@ export default function CampaignEditPage() {
     console.log('currentTemplate.htmlContent length:', currentTemplate?.htmlContent?.length)
     console.log('========================')
     
+    // 强制检查：如果campaignData为空，使用模板内容
+    if (!campaignData.subject && currentTemplate?.subject) {
+      console.log('⚠️ campaignData.subject为空，使用模板主题')
+      setCampaignData(prev => ({ ...prev, subject: currentTemplate.subject }))
+    }
+    
+    if (!campaignData.body && currentTemplate?.htmlContent) {
+      console.log('⚠️ campaignData.body为空，使用模板内容')
+      setCampaignData(prev => ({ ...prev, body: currentTemplate.htmlContent }))
+    }
+    
     if (!sendForm.recipients) {
       console.log('❌ 错误: 缺少收件人')
       toast.error('Please fill in recipients')
