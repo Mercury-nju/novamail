@@ -9,9 +9,10 @@ async function sendEmail(
   senderName: string,
   useUserDomain: boolean = false
 ) {
-  const RESEND_API_KEY = process.env.RESEND_API_KEY
+  // 使用固定的Resend API Key
+  const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_HoZby1YY_8DhQswTinqLVqUwFjqHV4V7y"
   
-  if (!RESEND_API_KEY) {
+  if (!RESEND_API_KEY || RESEND_API_KEY === "re_your-resend-api-key") {
     // 开发环境：模拟发送
     console.log('=== EMAIL SENDING SIMULATION (DEV MODE) ===')
     console.log('From:', `${senderName} <${senderEmail}>`)
