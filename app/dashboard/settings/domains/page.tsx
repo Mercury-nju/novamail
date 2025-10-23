@@ -1,15 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'react-hot-toast'
-import { 
-  CheckCircleIcon, 
-  XCircleIcon, 
-  PlusIcon,
-  GlobeAltIcon,
-  ExclamationTriangleIcon
-} from '@heroicons/react/24/outline'
 
 interface Domain {
   id: string
@@ -25,7 +16,6 @@ interface Domain {
 }
 
 export default function DomainManagementPage() {
-  const { t } = useTranslation()
   const [domains, setDomains] = useState<Domain[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showAddDomain, setShowAddDomain] = useState(false)
@@ -40,18 +30,18 @@ export default function DomainManagementPage() {
         const data = await response.json()
         setDomains(data.domains || [])
       }
-    } catch (error) {
-      console.error('Failed to fetch domains:', error)
-      toast.error('获取域名列表失败')
-    } finally {
-      setIsLoading(false)
-    }
+      } catch (error) {
+        console.error('Failed to fetch domains:', error)
+        alert('获取域名列表失败')
+      } finally {
+        setIsLoading(false)
+      }
   }
 
   // 添加新域名
   const handleAddDomain = async () => {
     if (!newDomain.trim()) {
-      toast.error('请输入域名')
+      alert('请输入域名')
       return
     }
 
@@ -70,16 +60,16 @@ export default function DomainManagementPage() {
       const result = await response.json()
       
       if (result.success) {
-        toast.success('域名添加成功，请配置DNS记录')
+        alert('域名添加成功，请配置DNS记录')
         setNewDomain('')
         setShowAddDomain(false)
         fetchDomains()
       } else {
-        toast.error(result.error || '添加域名失败')
+        alert(result.error || '添加域名失败')
       }
     } catch (error) {
       console.error('Failed to add domain:', error)
-      toast.error('添加域名失败')
+      alert('添加域名失败')
     } finally {
       setIsLoading(false)
     }
@@ -96,14 +86,14 @@ export default function DomainManagementPage() {
       const result = await response.json()
       
       if (result.success) {
-        toast.success('域名验证成功！')
+        alert('域名验证成功！')
         fetchDomains()
       } else {
-        toast.error(result.error || '域名验证失败')
+        alert(result.error || '域名验证失败')
       }
     } catch (error) {
       console.error('Failed to verify domain:', error)
-      toast.error('域名验证失败')
+      alert('域名验证失败')
     } finally {
       setIsLoading(false)
     }
@@ -125,14 +115,14 @@ export default function DomainManagementPage() {
       const result = await response.json()
       
       if (result.success) {
-        toast.success('邮箱别名添加成功')
+        alert('邮箱别名添加成功')
         fetchDomains()
       } else {
-        toast.error(result.error || '添加邮箱别名失败')
+        alert(result.error || '添加邮箱别名失败')
       }
     } catch (error) {
       console.error('Failed to add email alias:', error)
-      toast.error('添加邮箱别名失败')
+      alert('添加邮箱别名失败')
     }
   }
 
@@ -143,11 +133,11 @@ export default function DomainManagementPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'verified':
-        return <CheckCircleIcon className="h-5 w-5 text-green-500" />
+        return <span className="text-green-500">✓</span>
       case 'failed':
-        return <XCircleIcon className="h-5 w-5 text-red-500" />
+        return <span className="text-red-500">✗</span>
       default:
-        return <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500" />
+        return <span className="text-yellow-500">⚠</span>
     }
   }
 
@@ -179,7 +169,7 @@ export default function DomainManagementPage() {
             onClick={() => setShowAddDomain(true)}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
-            <PlusIcon className="h-4 w-4 mr-2" />
+            <span className="mr-2">+</span>
             添加域名
           </button>
         </div>
@@ -226,7 +216,7 @@ export default function DomainManagementPage() {
         <div className="space-y-6">
           {domains.length === 0 ? (
             <div className="text-center py-12">
-              <GlobeAltIcon className="mx-auto h-12 w-12 text-gray-400" />
+              <div className="mx-auto h-12 w-12 text-gray-400 text-4xl">🌐</div>
               <h3 className="mt-2 text-sm font-medium text-gray-900">暂无域名</h3>
               <p className="mt-1 text-sm text-gray-500">
                 添加您的域名以使用自己的邮箱地址发送邮件
@@ -237,7 +227,7 @@ export default function DomainManagementPage() {
               <div key={domain.id} className="bg-white shadow rounded-lg p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center">
-                    <GlobeAltIcon className="h-6 w-6 text-gray-400 mr-3" />
+                    <span className="h-6 w-6 text-gray-400 mr-3 text-xl">🌐</span>
                     <div>
                       <h3 className="text-lg font-medium text-gray-900">{domain.domain}</h3>
                       <div className="flex items-center mt-1">
