@@ -174,7 +174,15 @@ export default function CampaignsPage() {
         recipients: 2100,
         businessName: 'NovaMail',
         purpose: 'Newsletter',
-        tone: 'professional'
+        tone: 'professional',
+        events: [
+          {
+            id: 'evt_4_1',
+            type: 'created',
+            timestamp: '2024-01-12T16:45:00Z',
+            details: 'Monthly newsletter campaign created and scheduled for delivery'
+          }
+        ]
       }
     ]
 
