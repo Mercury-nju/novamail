@@ -33,6 +33,13 @@ async function sendEmail(
   
   // 生产环境：使用 Resend API
   try {
+    console.log('Sending email via Resend API:', {
+      from: `${senderName} <${senderEmail}>`,
+      to: recipients,
+      subject: subject,
+      recipientsCount: recipients.length
+    })
+
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -48,22 +55,26 @@ async function sendEmail(
     })
     
     if (!response.ok) {
-      throw new Error(`Resend API error: ${response.status}`)
+      const errorData = await response.text()
+      console.error('Resend API error:', response.status, errorData)
+      throw new Error(`Resend API error: ${response.status} - ${errorData}`)
     }
     
     const data = await response.json()
+    console.log('Resend API success:', data)
     
     return {
       success: true,
       messageId: data.id,
       recipients: recipients.length,
       sentAt: new Date().toISOString(),
-      mode: 'production'
+      mode: 'production',
+      provider: 'resend'
     }
     
   } catch (error) {
     console.error('Resend API error:', error)
-    throw new Error('Failed to send email via Resend API')
+    throw new Error(`Failed to send email via Resend API: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
 

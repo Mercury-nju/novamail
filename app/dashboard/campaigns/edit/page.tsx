@@ -231,6 +231,21 @@ export default function CampaignEditPage() {
       return
     }
 
+    // 验证邮箱格式
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const recipientList = sendForm.recipients.split(',').map(email => email.trim())
+    const invalidEmails = recipientList.filter(email => !emailRegex.test(email))
+    
+    if (invalidEmails.length > 0) {
+      toast.error(`Invalid email addresses: ${invalidEmails.join(', ')}`)
+      return
+    }
+
+    if (!emailRegex.test(sendForm.senderEmail)) {
+      toast.error('Invalid sender email address')
+      return
+    }
+
     setIsSending(true)
     try {
       // 智能API路由选择 - 生产环境兼容
@@ -246,7 +261,7 @@ export default function CampaignEditPage() {
         body: JSON.stringify({
           subject: campaignData.subject,
           content: campaignData.body,
-          recipients: sendForm.recipients.split(',').map(email => email.trim()),
+          recipients: recipientList,
           senderEmail: sendForm.senderEmail,
           senderName: sendForm.senderName
         })
@@ -255,7 +270,7 @@ export default function CampaignEditPage() {
       const data = await response.json()
 
       if (data.success) {
-        toast.success('Email sent successfully!')
+        toast.success(`Email sent successfully to ${data.data?.recipients || recipientList.length} recipient(s)!`)
         setShowSendModal(false)
         setSendForm({
           recipients: '',
@@ -458,12 +473,21 @@ export default function CampaignEditPage() {
       {showSendModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h3 className="text-lg font-semibold mb-4">Send Email</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Send Email Campaign</h3>
+              <button
+                onClick={() => setShowSendModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+                disabled={isSending}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
             
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Recipients (comma-separated)
+                  Recipients <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -471,12 +495,14 @@ export default function CampaignEditPage() {
                   onChange={(e) => setSendForm(prev => ({ ...prev, recipients: e.target.value }))}
                   placeholder="user1@example.com, user2@example.com"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isSending}
                 />
+                <p className="text-xs text-gray-500 mt-1">Separate multiple emails with commas</p>
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Sender Email *
+                  Sender Email <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
@@ -484,6 +510,7 @@ export default function CampaignEditPage() {
                   onChange={(e) => setSendForm(prev => ({ ...prev, senderEmail: e.target.value }))}
                   placeholder="your-email@example.com"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isSending}
                 />
               </div>
               
@@ -497,7 +524,18 @@ export default function CampaignEditPage() {
                   onChange={(e) => setSendForm(prev => ({ ...prev, senderName: e.target.value }))}
                   placeholder="Your Name"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isSending}
                 />
+              </div>
+
+              {/* Email Preview */}
+              <div className="bg-gray-50 rounded-md p-3">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Email Preview</h4>
+                <div className="text-xs text-gray-600">
+                  <p><strong>Subject:</strong> {campaignData.subject}</p>
+                  <p><strong>From:</strong> {sendForm.senderName} &lt;{sendForm.senderEmail}&gt;</p>
+                  <p><strong>To:</strong> {sendForm.recipients || 'No recipients'}</p>
+                </div>
               </div>
             </div>
             
@@ -511,7 +549,7 @@ export default function CampaignEditPage() {
               </button>
               <button
                 onClick={handleSendEmail}
-                disabled={isSending}
+                disabled={isSending || !sendForm.recipients || !sendForm.senderEmail}
                 className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {isSending ? (
@@ -522,7 +560,7 @@ export default function CampaignEditPage() {
                 ) : (
                   <>
                     <Send className="w-4 h-4" />
-                    Send
+                    Send Email
                   </>
                 )}
               </button>
