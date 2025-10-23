@@ -41,7 +41,7 @@ export default function TemplateShowcase() {
   const router = useRouter()
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0])
 
-  const handleTemplateClick = (template: Template) => {
+  const handleTemplateClick = (template: ProfessionalTemplate) => {
     // Navigate to the professional templates page with the selected template
     router.push(`/dashboard/campaigns/new?template=${template.id}`)
   }
