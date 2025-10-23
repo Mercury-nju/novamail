@@ -448,7 +448,9 @@ export default function ContactsPage() {
         tags: row['Tags'] ? row['Tags'].split(',').map((tag: string) => tag.trim()) : ['New User'],
         status: 'new' as const,
         lastContact: new Date().toISOString().split('T')[0],
-              totalEmails: 0
+        totalEmails: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       })).filter(contact => contact.name && contact.email)
 
       setContacts(prev => [...prev, ...importedContacts])
@@ -478,8 +480,10 @@ export default function ContactsPage() {
         tags: newContact.tags.length > 0 ? newContact.tags : ['New User'],
         status: 'new',
         lastContact: new Date().toISOString().split('T')[0],
-        totalEmails: 0
-        }
+        totalEmails: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
         
         setContacts(prev => [...prev, contact])
       updateTagCounts([...contacts, contact])
