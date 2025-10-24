@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowLeft, Send, Sparkles, Check, X, Bolt, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Send, Sparkles, Check, X, Zap, AlertTriangle } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
 import CreditsDisplay from '@/components/CreditsDisplay'
@@ -542,7 +542,7 @@ export default function CampaignEditPage() {
             
             {/* 积分显示 */}
             <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
-              <Bolt className="w-4 h-4 text-blue-500" />
+              <Zap className="w-4 h-4 text-blue-500" />
               <span className="text-sm font-medium text-gray-700">
                 {userCredits.subscriptionType === 'premium' ? '∞' : userCredits.remainingCredits}
               </span>
