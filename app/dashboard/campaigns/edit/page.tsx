@@ -280,6 +280,12 @@ export default function CampaignEditPage() {
     e.preventDefault()
     if (!chatInput.trim() || isGenerating) return
 
+    // 检查AI访问权限
+    if (!userCredits.aiAccess) {
+      toast.error('AI Assistant is only available for Premium users. Please upgrade to continue.')
+      return
+    }
+
     const userMessage = chatInput.trim()
     setChatInput('')
     setIsGenerating(true)
@@ -679,50 +685,80 @@ export default function CampaignEditPage() {
           </div>
 
           {/* Chat History */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {chatHistory.map((message, index) => (
-              <div key={index} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] rounded-lg p-3 ${
-                  message.type === 'user' 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-gray-100 text-gray-900'
-                }`}>
-                  <p className="text-sm">{message.message}</p>
-                  
-                  {/* AI对话功能 - 纯对话交互，无内容同步 */}
-                  
-                  <div className="text-xs opacity-70 mt-2">
-                    {message.timestamp.toLocaleTimeString()}
+          {userCredits.aiAccess ? (
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {chatHistory.map((message, index) => (
+                <div key={index} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[80%] rounded-lg p-3 ${
+                    message.type === 'user' 
+                      ? 'bg-blue-500 text-white' 
+                      : 'bg-gray-100 text-gray-900'
+                  }`}>
+                    <p className="text-sm">{message.message}</p>
+                    
+                    {/* AI对话功能 - 纯对话交互，无内容同步 */}
+                    
+                    <div className="text-xs opacity-70 mt-2">
+                      {message.timestamp.toLocaleTimeString()}
+                    </div>
                   </div>
                 </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex-1 flex items-center justify-center p-4">
+              <div className="text-center text-gray-500">
+                <Sparkles className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                <p className="text-sm">AI Assistant is available for Premium users</p>
               </div>
-            ))}
-          </div>
+            </div>
+          )}
 
           {/* Chat Input */}
-          <div className="p-4 border-t border-gray-200">
-            <form onSubmit={handleChatSubmit} className="flex gap-2">
-              <input
-                type="text"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Describe the email you want to generate..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                disabled={isGenerating}
-              />
-              <button
-                type="submit"
-                disabled={isGenerating || !chatInput.trim()}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {isGenerating ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <Send className="w-4 h-4" />
-                )}
-              </button>
-            </form>
-          </div>
+          {userCredits.aiAccess ? (
+            <div className="p-4 border-t border-gray-200">
+              <form onSubmit={handleChatSubmit} className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder="Describe the email you want to generate..."
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isGenerating}
+                />
+                <button
+                  type="submit"
+                  disabled={isGenerating || !chatInput.trim()}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {isGenerating ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div className="p-4 border-t border-gray-200">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Upgrade to Premium to use AI Assistant..."
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-400 cursor-not-allowed"
+                  disabled
+                />
+                <button
+                  type="button"
+                  onClick={() => window.open('/pricing', '_blank')}
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-md hover:from-purple-600 hover:to-blue-600 flex items-center gap-2"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Upgrade
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
