@@ -3,23 +3,42 @@ import { NextRequest, NextResponse } from 'next/server'
 // 检查用户积分
 async function checkUserCredits(userId: string) {
   // 模拟用户积分数据（实际应该从数据库查询）
-  return {
-    userId: userId,
-    totalCredits: 50,
-    usedCredits: 0,
-    remainingCredits: 50,
-    hasUnlimitedCredits: false, // 免费用户无无限积分
-    subscriptionType: 'free' // free, premium
+  if (userId === 'premium_user' || userId === 'premium') {
+    return {
+      userId: userId,
+      totalCredits: Infinity,
+      usedCredits: 0,
+      remainingCredits: Infinity,
+      hasUnlimitedCredits: true, // Premium用户有无限积分
+      subscriptionType: 'premium' // free, premium
+    }
+  } else {
+    return {
+      userId: userId,
+      totalCredits: 50,
+      usedCredits: 0,
+      remainingCredits: 50,
+      hasUnlimitedCredits: false, // 免费用户无无限积分
+      subscriptionType: 'free' // free, premium
+    }
   }
 }
 
 // 扣除用户积分
 async function deductUserCredits(userId: string, credits: number) {
   // 模拟积分扣除（实际应该更新数据库）
-  console.log(`扣除用户 ${userId} 的 ${credits} 个积分`)
-  return {
-    success: true,
-    remainingCredits: Math.max(0, 50 - credits)
+  if (userId === 'premium_user' || userId === 'premium') {
+    console.log(`Premium用户 ${userId} 发送邮件，无需扣除积分`)
+    return {
+      success: true,
+      remainingCredits: Infinity // Premium用户无限积分
+    }
+  } else {
+    console.log(`扣除免费用户 ${userId} 的 ${credits} 个积分`)
+    return {
+      success: true,
+      remainingCredits: Math.max(0, 50 - credits)
+    }
   }
 }
 

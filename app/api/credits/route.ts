@@ -8,15 +8,32 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get('userId') || 'default_user'
     
     // 模拟用户积分数据
-    const userCredits = {
-      userId: userId,
-      totalCredits: 50, // 免费用户每月50积分
-      usedCredits: 0,   // 已使用积分
-      remainingCredits: 50, // 剩余积分
-      subscriptionType: 'free', // free, premium
-      aiAccess: false, // 免费用户无AI访问权限
-      lastResetDate: new Date().toISOString().split('T')[0], // 最后重置日期
-      nextResetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 下次重置日期
+    let userCredits
+    
+    // 模拟Premium用户（用于测试）
+    if (userId === 'premium_user' || userId === 'premium') {
+      userCredits = {
+        userId: userId,
+        totalCredits: Infinity, // Premium用户无限积分
+        usedCredits: 0,   // 已使用积分
+        remainingCredits: Infinity, // 剩余积分
+        subscriptionType: 'premium', // free, premium
+        aiAccess: true, // Premium用户有AI访问权限
+        lastResetDate: new Date().toISOString().split('T')[0], // 最后重置日期
+        nextResetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 下次重置日期
+      }
+    } else {
+      // 免费用户
+      userCredits = {
+        userId: userId,
+        totalCredits: 50, // 免费用户每月50积分
+        usedCredits: 0,   // 已使用积分
+        remainingCredits: 50, // 剩余积分
+        subscriptionType: 'free', // free, premium
+        aiAccess: false, // 免费用户无AI访问权限
+        lastResetDate: new Date().toISOString().split('T')[0], // 最后重置日期
+        nextResetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 下次重置日期
+      }
     }
     
     return NextResponse.json({

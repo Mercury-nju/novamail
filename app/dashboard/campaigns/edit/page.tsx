@@ -55,6 +55,7 @@ export default function CampaignEditPage() {
     aiAccess: false
   })
   const [showCreditsModal, setShowCreditsModal] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState('default_user') // 用于切换用户类型
   
   // 移除无意义的域名功能
   // const [useUserDomain, setUseUserDomain] = useState(false)
@@ -93,7 +94,7 @@ export default function CampaignEditPage() {
   // 获取用户积分信息
   const fetchUserCredits = async () => {
     try {
-      const response = await fetch('/api/credits?userId=default_user')
+      const response = await fetch(`/api/credits?userId=${currentUserId}`)
       const data = await response.json()
       
       if (data.success) {
@@ -442,16 +443,17 @@ export default function CampaignEditPage() {
 
     setIsSending(true)
     try {
-      // 使用campaignData格式，兼容生产环境Cloudflare Workers
-      const requestData = {
-        campaignData: {
-          subject: safeSubject,
-          body: safeBody
-        },
-        recipients: uniqueRecipients,
-        senderEmail: 'noreply@novamail.world',
-        senderName: sendForm.senderName || 'NovaMail'
-      }
+            // 使用campaignData格式，兼容生产环境Cloudflare Workers
+            const requestData = {
+              campaignData: {
+                subject: safeSubject,
+                body: safeBody
+              },
+              recipients: uniqueRecipients,
+              senderEmail: 'noreply@novamail.world',
+              senderName: sendForm.senderName || 'NovaMail',
+              userId: currentUserId // 传递用户ID用于积分检查
+            }
       
       console.log('=== 发送到后端的数据 ===')
       console.log('requestData:', JSON.stringify(requestData, null, 2))
@@ -522,6 +524,22 @@ export default function CampaignEditPage() {
             </div>
           </div>
           <div className="flex items-center gap-4">
+            {/* 用户类型切换（仅开发环境） */}
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-gray-500">User Type:</label>
+              <select
+                value={currentUserId}
+                onChange={(e) => {
+                  setCurrentUserId(e.target.value)
+                  fetchUserCredits() // 重新获取积分信息
+                }}
+                className="text-xs border border-gray-300 rounded px-2 py-1"
+              >
+                <option value="default_user">Free User</option>
+                <option value="premium_user">Premium User</option>
+              </select>
+            </div>
+            
             {/* 积分显示 */}
             <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
               <Bolt className="w-4 h-4 text-blue-500" />
