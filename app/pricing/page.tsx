@@ -253,44 +253,6 @@ export default function PricingPage() {
           ))}
       </div>
 
-      {/* Credit Calculator Section */}
-      <div className="mt-16 bg-gray-50 py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Credit Calculator
-          </h2>
-          <p className="text-lg text-gray-600 mb-8">
-            See how many emails you can send with different credit amounts
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-              <div className="text-2xl font-bold text-blue-600 mb-2">50 Credits</div>
-              <div className="text-4xl font-bold text-gray-900 mb-2">10</div>
-              <div className="text-sm text-gray-600">Emails per month</div>
-              <div className="text-xs text-gray-500 mt-2">Free Plan</div>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-              <div className="text-2xl font-bold text-green-600 mb-2">100 Credits</div>
-              <div className="text-4xl font-bold text-gray-900 mb-2">20</div>
-              <div className="text-sm text-gray-600">Emails per month</div>
-              <div className="text-xs text-gray-500 mt-2">$1.90/month</div>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-purple-200 bg-purple-50">
-              <div className="text-2xl font-bold text-purple-600 mb-2">Unlimited</div>
-              <div className="text-4xl font-bold text-gray-900 mb-2">∞</div>
-              <div className="text-sm text-gray-600">Emails per month</div>
-              <div className="text-xs text-gray-500 mt-2">Premium Plan</div>
-            </div>
-          </div>
-          
-          <div className="mt-8 text-sm text-gray-600">
-            <p>💡 <strong>Pro tip:</strong> You can send to multiple recipients with one email and still only use 5 credits!</p>
-          </div>
-        </div>
-      </div>
 
       {/* FAQ Section */}
         <div className="mt-16 text-center">
