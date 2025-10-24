@@ -386,63 +386,133 @@ export const professionalTemplates: ProfessionalTemplate[] = [
     description: 'Clean, tech-focused design with modern aesthetics and digital elements',
     subject: 'Tech Update: [Product Name] v2.0 - Now Live!',
     htmlContent: `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 40px 30px; text-align: center; position: relative;">
-          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(45deg, transparent 49%, rgba(59, 130, 246, 0.1) 50%, transparent 51%); background-size: 20px 20px;"></div>
-          <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; position: relative; z-index: 1;">Tech Update</h1>
-          <p style="color: #94a3b8; margin: 12px 0 0 0; font-size: 16px; font-weight: 400; position: relative; z-index: 1;">Version 2.0 is Now Live</p>
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 8px 25px rgba(0,0,0,0.1);">
+        <!-- Tech Header with Digital Elements -->
+        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); padding: 50px 30px; text-align: center; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(45deg, transparent 49%, rgba(59, 130, 246, 0.1) 50%, transparent 51%); background-size: 20px 20px; animation: gridMove 20s linear infinite;"></div>
+          <div style="position: absolute; top: 20px; left: 20px; width: 4px; height: 4px; background: #3b82f6; border-radius: 50%; animation: blink 2s infinite;"></div>
+          <div style="position: absolute; top: 40px; right: 30px; width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: blink 2s infinite 0.5s;"></div>
+          <div style="position: absolute; bottom: 30px; left: 50px; width: 3px; height: 3px; background: #f59e0b; border-radius: 50%; animation: blink 2s infinite 1s;"></div>
+          
+          <div style="position: relative; z-index: 2;">
+            <div style="display: inline-block; background: rgba(59, 130, 246, 0.2); padding: 8px 16px; border-radius: 20px; margin-bottom: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(59, 130, 246, 0.3);">
+              <span style="color: #60a5fa; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">⚡ Tech Update</span>
+            </div>
+            <h1 style="color: #ffffff; margin: 0; font-size: 36px; font-weight: 800; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">Version 2.0</h1>
+            <p style="color: rgba(255,255,255,0.9); margin: 16px 0 0 0; font-size: 18px; font-weight: 400;">Next-Generation Technology is Here</p>
+            <div style="margin-top: 24px;">
+              <span style="display: inline-block; background: rgba(59, 130, 246, 0.25); padding: 6px 12px; border-radius: 12px; color: #60a5fa; font-size: 12px; font-weight: 500; backdrop-filter: blur(10px);">🚀 Performance</span>
+              <span style="display: inline-block; background: rgba(16, 185, 129, 0.25); padding: 6px 12px; border-radius: 12px; color: #34d399; font-size: 12px; font-weight: 500; backdrop-filter: blur(10px); margin-left: 8px;">🔒 Secure</span>
+            </div>
+          </div>
         </div>
         
-        <div style="padding: 40px 30px;">
-          <p style="color: #1e293b; font-size: 16px; line-height: 1.6; margin-bottom: 25px; font-weight: 500;">
-            Hello [Developer Name],
-          </p>
-          
-          <p style="color: #475569; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
-            We're excited to announce that <strong style="color: #3b82f6;">[Product Name] v2.0</strong> is now live! This major update brings powerful new features and significant performance improvements.
-          </p>
-          
-          <div style="background: #f8fafc; padding: 25px; border-radius: 8px; margin: 25px 0; border: 1px solid #e2e8f0;">
-            <h3 style="color: #1e293b; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">🚀 New Features</h3>
-            <ul style="color: #475569; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
-              <li style="margin-bottom: 8px;">⚡ 3x faster processing speed</li>
-              <li style="margin-bottom: 8px;">🔧 Enhanced API endpoints</li>
-              <li style="margin-bottom: 8px;">📊 Real-time analytics dashboard</li>
-              <li style="margin-bottom: 8px;">🔒 Advanced security protocols</li>
-            </ul>
-          </div>
-          
-          <div style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 25px; border-radius: 8px; text-align: center; margin: 25px 0;">
-            <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">📈 Performance Boost</h3>
-            <p style="color: white; margin: 0; font-size: 15px;">
-              Experience <strong>300% faster</strong> response times and improved reliability.
+        <div style="padding: 50px 30px;">
+          <!-- Personalized Tech Greeting -->
+          <div style="margin-bottom: 32px;">
+            <p style="color: #1e293b; font-size: 18px; line-height: 1.5; margin-bottom: 8px; font-weight: 600;">
+              Hello [Developer Name],
+            </p>
+            <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0;">
+              We're pushing the boundaries of what's possible. Here's what's new in v2.0.
             </p>
           </div>
           
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="#" style="display: inline-block; background: #3b82f6; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);">
-              Explore New Features
+          <!-- Tech Features Section -->
+          <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 32px; border-radius: 16px; margin: 32px 0; border: 1px solid #cbd5e1; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 0 2px 2px 0;"></div>
+            <h3 style="color: #1e293b; margin: 0 0 20px 0; font-size: 20px; font-weight: 700;">🚀 Revolutionary Features:</h3>
+            <div style="display: grid; gap: 16px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 50%;"></div>
+                <span style="color: #334155; font-size: 15px; line-height: 1.5;">3x faster processing with AI optimization</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 50%;"></div>
+                <span style="color: #334155; font-size: 15px; line-height: 1.5;">Enhanced API with real-time streaming</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 50%;"></div>
+                <span style="color: #334155; font-size: 15px; line-height: 1.5;">Advanced analytics with machine learning</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Performance Section -->
+          <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 32px; border-radius: 16px; text-align: center; margin: 32px 0; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); animation: pulse 3s ease-in-out infinite;"></div>
+            <div style="position: relative; z-index: 2;">
+              <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 12px; margin-bottom: 16px; backdrop-filter: blur(10px);">
+                <span style="color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">📈 Performance</span>
+              </div>
+              <h3 style="color: white; margin: 0 0 16px 0; font-size: 22px; font-weight: 700;">300% Speed Boost</h3>
+              <p style="color: white; margin: 0 0 8px 0; font-size: 16px; font-weight: 500;">
+                Lightning-fast response times
+              </p>
+              <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 14px;">
+                Zero downtime deployment • 99.9% uptime guarantee
+              </p>
+            </div>
+          </div>
+          
+          <!-- CTA Button -->
+          <div style="text-align: center; margin: 40px 0;">
+            <a href="#" style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; padding: 18px 36px; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 16px; box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4); transition: all 0.3s ease; position: relative; overflow: hidden;">
+              <span style="position: relative; z-index: 2;">Explore New Features 🚀</span>
+              <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease;"></div>
             </a>
+            <p style="color: #6b7280; font-size: 13px; margin: 12px 0 0 0;">Free migration tools • 24/7 support • Documentation</p>
           </div>
           
-          <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f59e0b;">
-            <h4 style="color: #92400e; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">⚠️ Breaking Changes</h4>
-            <p style="color: #92400e; margin: 0; font-size: 14px; line-height: 1.5;">Please review our migration guide for any breaking changes that may affect your implementation.</p>
+          <!-- Breaking Changes Alert -->
+          <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 24px; border-radius: 12px; margin: 32px 0; border: 1px solid #f59e0b; border-left: 4px solid #f59e0b;">
+            <h4 style="color: #92400e; margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">⚠️ Breaking Changes</h4>
+            <p style="color: #92400e; margin: 0; font-size: 14px; line-height: 1.5;">
+              Review our migration guide for API changes. We've provided automated migration tools to simplify the process.
+            </p>
           </div>
           
-          <p style="color: #475569; font-size: 15px; line-height: 1.6; margin: 25px 0;">
-            Thank you for being part of our developer community. We're committed to providing you with the best tools and experience.
-          </p>
+          <!-- Developer Community -->
+          <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 24px; border-radius: 12px; margin: 32px 0; border: 1px solid #86efac; text-align: center;">
+            <h4 style="color: #166534; margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">👨‍💻 Developer Community</h4>
+            <p style="color: #15803d; margin: 0; font-size: 14px; line-height: 1.5;">
+              Join 50,000+ developers • GitHub discussions • Stack Overflow support
+            </p>
+          </div>
           
-          <p style="color: #1e293b; font-size: 15px; line-height: 1.6; margin: 30px 0 0 0;">
-            Best regards,<br>
-            <strong>The Development Team</strong><br>
-            <span style="color: #3b82f6;">[Company Name]</span>
-          </p>
+          <!-- Closing Message -->
+          <div style="margin: 40px 0 0 0;">
+            <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+              Thank you for being part of our developer community. We're committed to providing cutting-edge tools.
+            </p>
+            
+            <div style="border-top: 1px solid #e2e8f0; padding-top: 24px;">
+              <p style="color: #1e293b; font-size: 15px; line-height: 1.6; margin: 0;">
+                Best regards,<br>
+                <strong style="color: #1e293b;">The Development Team</strong><br>
+                <span style="color: #3b82f6; font-weight: 600;">[Company Name]</span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
+      
+      <style>
+        @keyframes gridMove {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(20px); }
+        }
+        @keyframes blink {
+          0%, 50% { opacity: 1; }
+          51%, 100% { opacity: 0.3; }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.05); }
+        }
+      </style>
     `,
-    features: ['Tech Aesthetics', 'Modern Layout', 'Performance Focus', 'Developer Friendly'],
+    features: ['Tech Aesthetics', 'Digital Elements', 'Performance Focus', 'Developer Community'],
     isPopular: false,
     isNew: true
   },
@@ -453,63 +523,128 @@ export const professionalTemplates: ProfessionalTemplate[] = [
     description: 'Clean, calming design perfect for health, wellness, and lifestyle brands',
     subject: 'Wellness Wednesday: [Topic] - Your Health Journey Starts Here',
     htmlContent: `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center; position: relative;">
-          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.1) 0%, transparent 60%);"></div>
-          <h1 style="color: white; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.3px; position: relative; z-index: 1;">🌱 Wellness Wednesday</h1>
-          <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0 0; font-size: 16px; font-weight: 400; position: relative; z-index: 1;">Your Health Journey Starts Here</p>
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);">
+        <!-- Wellness Header with Nature Elements -->
+        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%); padding: 50px 30px; text-align: center; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: -20px; left: -20px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%); border-radius: 50%; animation: float 6s ease-in-out infinite;"></div>
+          <div style="position: absolute; bottom: -30px; right: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite reverse;"></div>
+          <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%); border-radius: 50%; animation: pulse 4s ease-in-out infinite;"></div>
+          
+          <div style="position: relative; z-index: 2;">
+            <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);">
+              <span style="color: white; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">🌱 Wellness Wednesday</span>
+            </div>
+            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">Your Health Journey</h1>
+            <p style="color: rgba(255,255,255,0.95); margin: 16px 0 0 0; font-size: 18px; font-weight: 400;">Nurturing Mind, Body & Soul</p>
+            <div style="margin-top: 24px;">
+              <span style="display: inline-block; background: rgba(255,255,255,0.25); padding: 6px 12px; border-radius: 12px; color: white; font-size: 12px; font-weight: 500; backdrop-filter: blur(10px);">🧘‍♀️ Mindfulness</span>
+              <span style="display: inline-block; background: rgba(255,255,255,0.25); padding: 6px 12px; border-radius: 12px; color: white; font-size: 12px; font-weight: 500; backdrop-filter: blur(10px); margin-left: 8px;">🌿 Natural</span>
+            </div>
+          </div>
         </div>
         
-        <div style="padding: 40px 30px;">
-          <p style="color: #1f2937; font-size: 16px; line-height: 1.6; margin-bottom: 25px; font-weight: 400;">
-            Hi [Wellness Seeker],
-          </p>
-          
-          <p style="color: #4b5563; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
-            This week, we're focusing on <strong style="color: #10b981;">[Wellness Topic]</strong> - a key component of your overall health and wellbeing journey.
-          </p>
-          
-          <div style="background: #f0fdf4; padding: 25px; border-radius: 10px; margin: 25px 0; border: 1px solid #bbf7d0;">
-            <h3 style="color: #166534; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">💚 This Week's Focus</h3>
-            <ul style="color: #15803d; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
-              <li style="margin-bottom: 8px;">🧘‍♀️ Mindful breathing exercises</li>
-              <li style="margin-bottom: 8px;">🥗 Nutritious meal planning</li>
-              <li style="margin-bottom: 8px;">🚶‍♀️ Daily movement goals</li>
-              <li style="margin-bottom: 8px;">😴 Quality sleep strategies</li>
-            </ul>
-          </div>
-          
-          <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 25px; border-radius: 10px; text-align: center; margin: 25px 0;">
-            <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">🌟 Wellness Tip</h3>
-            <p style="color: white; margin: 0; font-size: 15px;">
-              Start your day with 5 minutes of gratitude practice for a positive mindset.
+        <div style="padding: 50px 30px;">
+          <!-- Personalized Wellness Greeting -->
+          <div style="margin-bottom: 32px;">
+            <p style="color: #1f2937; font-size: 18px; line-height: 1.5; margin-bottom: 8px; font-weight: 500;">
+              Hi [Wellness Seeker],
+            </p>
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0;">
+              Your wellness journey is unique, and we're here to support every step of the way.
             </p>
           </div>
           
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="#" style="display: inline-block; background: #10b981; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 16px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
-              Start Your Journey 🌱
+          <!-- Wellness Focus Section -->
+          <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 32px; border-radius: 16px; margin: 32px 0; border: 1px solid #bbf7d0; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 0 2px 2px 0;"></div>
+            <h3 style="color: #166534; margin: 0 0 20px 0; font-size: 20px; font-weight: 700;">This Week's Wellness Focus:</h3>
+            <div style="display: grid; gap: 16px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%;"></div>
+                <span style="color: #15803d; font-size: 15px; line-height: 1.5;">Mindful breathing exercises for stress relief</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%;"></div>
+                <span style="color: #15803d; font-size: 15px; line-height: 1.5;">Nutritious meal planning for energy</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%;"></div>
+                <span style="color: #15803d; font-size: 15px; line-height: 1.5;">Gentle movement for body awareness</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Wellness Tip Section -->
+          <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 32px; border-radius: 16px; text-align: center; margin: 32px 0; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); animation: pulse 3s ease-in-out infinite;"></div>
+            <div style="position: relative; z-index: 2;">
+              <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 12px; margin-bottom: 16px; backdrop-filter: blur(10px);">
+                <span style="color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">🌟 Daily Tip</span>
+              </div>
+              <h3 style="color: white; margin: 0 0 16px 0; font-size: 22px; font-weight: 700;">Gratitude Practice</h3>
+              <p style="color: white; margin: 0 0 8px 0; font-size: 16px; font-weight: 500;">
+                Start your day with 5 minutes of gratitude
+              </p>
+              <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 14px;">
+                Write down 3 things you're grateful for • Enhances positive mindset
+              </p>
+            </div>
+          </div>
+          
+          <!-- CTA Button -->
+          <div style="text-align: center; margin: 40px 0;">
+            <a href="#" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 18px 36px; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 16px; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); transition: all 0.3s ease; position: relative; overflow: hidden;">
+              <span style="position: relative; z-index: 2;">Begin Your Journey 🌱</span>
+              <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease;"></div>
             </a>
+            <p style="color: #6b7280; font-size: 13px; margin: 12px 0 0 0;">Free wellness resources • Expert guidance • Community support</p>
           </div>
           
-          <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f59e0b;">
-            <h4 style="color: #92400e; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">💡 Remember</h4>
-            <p style="color: #92400e; margin: 0; font-size: 14px; line-height: 1.5;">Small, consistent steps lead to big changes. Be patient and kind to yourself on this journey.</p>
+          <!-- Wellness Reminder -->
+          <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 24px; border-radius: 12px; margin: 32px 0; border: 1px solid #f59e0b; text-align: center;">
+            <h4 style="color: #92400e; margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">💚 Wellness Reminder</h4>
+            <p style="color: #92400e; margin: 0; font-size: 14px; line-height: 1.5;">
+              Small, consistent steps lead to lasting change. Be patient and kind to yourself on this journey.
+            </p>
           </div>
           
-          <p style="color: #4b5563; font-size: 15px; line-height: 1.6; margin: 25px 0; text-align: center;">
-            Your wellness matters. Take care of yourself today. 💚
-          </p>
+          <!-- Social Proof -->
+          <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 24px; border-radius: 12px; margin: 32px 0; border: 1px solid #86efac; text-align: center;">
+            <h4 style="color: #166534; margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">🌿 Community Stories</h4>
+            <p style="color: #15803d; margin: 0; font-size: 14px; line-height: 1.5;">
+              "This program changed my life!" - Sarah M. • "I feel more balanced and energized!" - Mike T.
+            </p>
+          </div>
           
-          <p style="color: #1f2937; font-size: 15px; line-height: 1.6; margin: 30px 0 0 0;">
-            With care,<br>
-            <strong style="color: #10b981;">The Wellness Team</strong><br>
-            <span style="color: #059669;">[Organization Name]</span>
-          </p>
+          <!-- Closing Message -->
+          <div style="margin: 40px 0 0 0;">
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0; text-align: center;">
+              Your wellness matters. Take care of yourself today. 💚
+            </p>
+            
+            <div style="border-top: 1px solid #d1fae5; padding-top: 24px;">
+              <p style="color: #1f2937; font-size: 15px; line-height: 1.6; margin: 0;">
+                With care and support,<br>
+                <strong style="color: #1f2937;">The Wellness Team</strong><br>
+                <span style="color: #10b981; font-weight: 600;">[Organization Name]</span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
+      
+      <style>
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.05); }
+        }
+      </style>
     `,
-    features: ['Calming Colors', 'Wellness Focus', 'Clean Design', 'Health Oriented'],
+    features: ['Wellness Focus', 'Calming Design', 'Health Guidance', 'Mindful Elements'],
     isPopular: false,
     isNew: false
   },
@@ -521,57 +656,112 @@ export const professionalTemplates: ProfessionalTemplate[] = [
     subject: '🛍️ New Collection Alert - Limited Stock!',
     htmlContent: `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-        <div style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); padding: 40px 30px; text-align: center; position: relative;">
-          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%); opacity: 0.6;"></div>
-          <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; position: relative; z-index: 1;">🛍️ New Collection</h1>
-          <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0 0; font-size: 16px; font-weight: 400; position: relative; z-index: 1;">Limited Stock Alert!</p>
+        <!-- E-commerce Header with Product Showcase -->
+        <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%); padding: 40px 30px; text-align: center; position: relative;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%); opacity: 0.8;"></div>
+          <div style="position: relative; z-index: 2;">
+            <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);">
+              <span style="color: white; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">🛍️ New Arrival</span>
+            </div>
+            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">Spring Collection</h1>
+            <p style="color: rgba(255,255,255,0.95); margin: 16px 0 0 0; font-size: 18px; font-weight: 500;">Limited Stock - Shop Before It's Gone!</p>
+            <div style="margin-top: 24px;">
+              <span style="display: inline-block; background: rgba(255,255,255,0.25); padding: 6px 12px; border-radius: 12px; color: white; font-size: 12px; font-weight: 500; backdrop-filter: blur(10px);">🔥 Hot Items</span>
+              <span style="display: inline-block; background: rgba(255,255,255,0.25); padding: 6px 12px; border-radius: 12px; color: white; font-size: 12px; font-weight: 500; backdrop-filter: blur(10px); margin-left: 8px;">⚡ Fast Shipping</span>
+            </div>
+          </div>
         </div>
         
         <div style="padding: 40px 30px;">
-          <p style="color: #1f2937; font-size: 16px; line-height: 1.6; margin-bottom: 25px; font-weight: 500;">
-            Hi Fashion Enthusiast,
-          </p>
-          
-          <p style="color: #4b5563; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
-            Our hottest spring collection just dropped and we're seeing items fly off the shelves! Don't miss out on these exclusive pieces.
-          </p>
-          
-          <div style="background: #fef3c7; padding: 25px; border-radius: 10px; margin: 25px 0; border: 1px solid #fbbf24;">
-            <h3 style="color: #92400e; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">🔥 Limited Time Offers</h3>
-            <ul style="color: #b45309; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
-              <li style="margin-bottom: 8px;">🚚 Free Shipping Over $75</li>
-              <li style="margin-bottom: 8px;">⚡ Express Delivery Available</li>
-              <li style="margin-bottom: 8px;">🎯 Exclusive Early Access</li>
-              <li style="margin-bottom: 8px;">💎 VIP Member Discounts</li>
-            </ul>
-          </div>
-          
-          <div style="background: linear-gradient(135deg, #ec4899, #be185d); padding: 25px; border-radius: 10px; text-align: center; margin: 25px 0;">
-            <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">⚡ Flash Sale</h3>
-            <p style="color: white; margin: 0; font-size: 15px;">
-              Up to <strong>50% off</strong> selected items - ends in 24 hours!
+          <!-- Personalized Greeting -->
+          <div style="margin-bottom: 32px;">
+            <p style="color: #1f2937; font-size: 18px; line-height: 1.5; margin-bottom: 8px; font-weight: 600;">
+              Hi [Customer Name],
+            </p>
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0;">
+              Your style journey just got an upgrade! We've curated the perfect pieces for you.
             </p>
           </div>
           
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="#" style="display: inline-block; background: linear-gradient(135deg, #ec4899, #be185d); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);">
-              Shop Now 🛒
-            </a>
+          <!-- Product Features -->
+          <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 32px; border-radius: 16px; margin: 32px 0; border: 1px solid #f59e0b; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 0 2px 2px 0;"></div>
+            <h3 style="color: #92400e; margin: 0 0 20px 0; font-size: 20px; font-weight: 700;">Why Our Customers Love This Collection:</h3>
+            <div style="display: grid; gap: 16px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 50%;"></div>
+                <span style="color: #92400e; font-size: 15px; line-height: 1.5;">Premium quality materials that last</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 50%;"></div>
+                <span style="color: #92400e; font-size: 15px; line-height: 1.5;">Trendy designs that never go out of style</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 50%;"></div>
+                <span style="color: #92400e; font-size: 15px; line-height: 1.5;">Perfect fit guarantee or free returns</span>
+              </div>
+            </div>
           </div>
           
-          <p style="color: #4b5563; font-size: 15px; line-height: 1.6; margin: 25px 0; text-align: center;">
-            Limited quantities available. Shop now before they're gone! ⏰
-          </p>
+          <!-- Special Offer Section -->
+          <div style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); padding: 32px; border-radius: 16px; text-align: center; margin: 32px 0; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); animation: pulse 3s ease-in-out infinite;"></div>
+            <div style="position: relative; z-index: 2;">
+              <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 12px; margin-bottom: 16px; backdrop-filter: blur(10px);">
+                <span style="color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">⚡ Flash Sale</span>
+              </div>
+              <h3 style="color: white; margin: 0 0 16px 0; font-size: 22px; font-weight: 700;">Limited Time Offer</h3>
+              <p style="color: white; margin: 0 0 8px 0; font-size: 16px; font-weight: 500;">
+                Get <strong>30% off</strong> your entire order
+              </p>
+              <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 14px;">
+                Plus free shipping on orders over $75 • Expires in 48 hours
+              </p>
+            </div>
+          </div>
           
-          <p style="color: #1f2937; font-size: 15px; line-height: 1.6; margin: 30px 0 0 0;">
-            Happy Shopping,<br>
-            <strong style="color: #ec4899;">The Fashion Team</strong><br>
-            <span style="color: #be185d;">[Store Name]</span>
-          </p>
+          <!-- CTA Button -->
+          <div style="text-align: center; margin: 40px 0;">
+            <a href="#" style="display: inline-block; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 18px 36px; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 16px; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4); transition: all 0.3s ease; position: relative; overflow: hidden;">
+              <span style="position: relative; z-index: 2;">Shop Now 🛒</span>
+              <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease;"></div>
+            </a>
+            <p style="color: #6b7280; font-size: 13px; margin: 12px 0 0 0;">Free returns • 30-day guarantee • Secure checkout</p>
+          </div>
+          
+          <!-- Social Proof -->
+          <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 24px; border-radius: 12px; margin: 32px 0; border: 1px solid #86efac; text-align: center;">
+            <h4 style="color: #166534; margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">⭐ Customer Reviews</h4>
+            <p style="color: #15803d; margin: 0; font-size: 14px; line-height: 1.5;">
+              "Absolutely love the quality and fit!" - Sarah M. • "Fast shipping and great customer service!" - Mike T.
+            </p>
+          </div>
+          
+          <!-- Closing Message -->
+          <div style="margin: 40px 0 0 0;">
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+              Don't wait - these styles are selling fast! Secure your favorites before they're gone.
+            </p>
+            
+            <div style="border-top: 1px solid #e5e7eb; padding-top: 24px;">
+              <p style="color: #1f2937; font-size: 15px; line-height: 1.6; margin: 0;">
+                Happy Shopping,<br>
+                <strong style="color: #1f2937;">The [Store Name] Team</strong><br>
+                <span style="color: #f59e0b; font-weight: 600;">Your Style Destination</span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
+      
+      <style>
+        @keyframes pulse {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.05); }
+        }
+      </style>
     `,
-    features: ['Bold Colors', 'E-commerce Focus', 'Sales Oriented', 'Urgency Driven'],
+    features: ['E-commerce Focus', 'Product Showcase', 'Sales Psychology', 'Customer Trust'],
     isPopular: true,
     isNew: false
   }
