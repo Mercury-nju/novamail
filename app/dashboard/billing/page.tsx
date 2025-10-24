@@ -1,14 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
-interface BillingData {
-  currentPlan: string
-  monthlyEmails: number
-  emailsUsed: number
-  nextBillingDate: string
-  amount: number
-  status: 'active' | 'past_due' | 'canceled'
+interface CreditsData {
+  remainingCredits: number
+  totalCredits: number
+  subscriptionType: 'free' | 'premium'
+  aiAccess: boolean
+  emailsSent: number
+  lastResetDate: string
 }
 
 interface Invoice {
@@ -20,91 +21,70 @@ interface Invoice {
 }
 
 export default function BillingPage() {
-  const [billing, setBilling] = useState<BillingData | null>(null)
+  const router = useRouter()
+  const [credits, setCredits] = useState<CreditsData | null>(null)
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [loading, setLoading] = useState(true)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   useEffect(() => {
-    fetchBillingData()
+    fetchCreditsData()
   }, [])
 
-  const fetchBillingData = async () => {
+  const fetchCreditsData = async () => {
     try {
       setLoading(true)
       
-      // 从Creem API获取真实的用户订阅数据
-      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/creem/subscriptions')
+      // 获取用户信用数据
+      const response = await fetch('/api/credits?userId=default_user')
       
       if (response.ok) {
         const data = await response.json()
-        if (data.success && data.data) {
-          const subscription = data.data
-          setBilling({
-            currentPlan: subscription.plan.name,
-            monthlyEmails: subscription.plan.limits.emails,
-            emailsUsed: 0, // 从使用统计API获取
-            nextBillingDate: subscription.currentPeriodEnd,
-            amount: subscription.plan.price,
-            status: subscription.status
-          })
-          // 获取发票历史
-          const invoicesResponse = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/creem/invoices')
-          if (invoicesResponse.ok) {
-            const invoicesData = await invoicesResponse.json()
-            setInvoices(invoicesData.data || [])
-          }
-        } else {
-          // 如果用户没有订阅，显示免费计划
-          setBilling({
-            currentPlan: 'Free',
-            monthlyEmails: 1000,
-            emailsUsed: 0,
-            nextBillingDate: '',
-            amount: 0,
-            status: 'active'
-          })
-          setInvoices([])
-        }
-      } else {
-        // API失败时显示免费计划
-        setBilling({
-          currentPlan: 'Free',
-          monthlyEmails: 1000,
-          emailsUsed: 0,
-          nextBillingDate: '',
-          amount: 0,
-          status: 'active'
+        setCredits({
+          remainingCredits: data.remainingCredits,
+          totalCredits: data.totalCredits,
+          subscriptionType: data.subscriptionType,
+          aiAccess: data.aiAccess,
+          emailsSent: Math.floor((data.totalCredits - data.remainingCredits) / 5),
+          lastResetDate: new Date().toISOString()
         })
-        setInvoices([])
+      } else {
+        // 默认免费用户数据
+        setCredits({
+          remainingCredits: 50,
+          totalCredits: 50,
+          subscriptionType: 'free',
+          aiAccess: false,
+          emailsSent: 0,
+          lastResetDate: new Date().toISOString()
+        })
       }
     } catch (error) {
-      console.error('Failed to fetch billing data:', error)
-      // 错误时显示免费计划
-      setBilling({
-        currentPlan: 'Free',
-        monthlyEmails: 1000,
-        emailsUsed: 0,
-        nextBillingDate: '',
-        amount: 0,
-        status: 'active'
+      console.error('Failed to fetch credits data:', error)
+      // 错误时显示免费用户数据
+      setCredits({
+        remainingCredits: 50,
+        totalCredits: 50,
+        subscriptionType: 'free',
+        aiAccess: false,
+        emailsSent: 0,
+        lastResetDate: new Date().toISOString()
       })
-      setInvoices([])
     } finally {
       setLoading(false)
     }
   }
 
-  const getUsagePercentage = () => {
-    if (!billing) return 0
-    return Math.round((billing.emailsUsed / billing.monthlyEmails) * 100)
+  const getCreditsUsagePercentage = () => {
+    if (!credits) return 0
+    if (credits.subscriptionType === 'premium') return 0 // 无限信用
+    return Math.round(((credits.totalCredits - credits.remainingCredits) / credits.totalCredits) * 100)
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-100 text-green-800'
-      case 'past_due': return 'bg-yellow-100 text-yellow-800'
-      case 'canceled': return 'bg-red-100 text-red-800'
+  const getPlanColor = (planType: string) => {
+    switch (planType) {
+      case 'premium': return 'bg-blue-100 text-blue-800'
+      case 'free': return 'bg-green-100 text-green-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
@@ -126,10 +106,10 @@ export default function BillingPage() {
     )
   }
 
-  if (!billing) {
+  if (!credits) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">No billing data available</p>
+        <p className="text-gray-500">No credits data available</p>
       </div>
     )
   }
@@ -139,15 +119,17 @@ export default function BillingPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Billing & Usage</h1>
-          <p className="text-gray-600">Manage your subscription and view usage</p>
+          <h1 className="text-2xl font-bold text-gray-900">Credits & Usage</h1>
+          <p className="text-gray-600">Manage your credits and view email usage</p>
         </div>
-        <button 
-          onClick={() => setShowUpgradeModal(true)}
-          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-        >
-          Upgrade Plan
-        </button>
+        {credits.subscriptionType === 'free' && (
+          <button 
+            onClick={() => router.push('/pricing')}
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            Upgrade to Premium
+          </button>
+        )}
       </div>
 
       {/* Current Plan */}
@@ -155,48 +137,63 @@ export default function BillingPage() {
         <div className="flex justify-between items-start mb-6">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">Current Plan</h2>
-            <p className="text-gray-600">Your active subscription details</p>
+            <p className="text-gray-600">Your active subscription and credit details</p>
           </div>
-          <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(billing.status)}`}>
-            {billing.status.replace('_', ' ').toUpperCase()}
+          <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getPlanColor(credits.subscriptionType)}`}>
+            {credits.subscriptionType.toUpperCase()}
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div>
             <p className="text-sm font-medium text-gray-600">Plan</p>
-            <p className="text-2xl font-bold text-gray-900">{billing.currentPlan}</p>
-            <p className="text-sm text-gray-500">{billing.amount === 0 ? 'Free plan' : `$${billing.amount}/month`}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {credits.subscriptionType === 'premium' ? 'Premium' : 'Free'}
+            </p>
+            <p className="text-sm text-gray-500">
+              {credits.subscriptionType === 'premium' ? '$19/month' : 'Free plan'}
+            </p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-600">Next Billing</p>
-            <p className="text-lg font-semibold text-gray-900">
-              {billing.nextBillingDate ? new Date(billing.nextBillingDate).toLocaleDateString() : 'No billing'}
+            <p className="text-sm font-medium text-gray-600">Credits Remaining</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {credits.subscriptionType === 'premium' ? '∞' : credits.remainingCredits}
             </p>
-            <p className="text-sm text-gray-500">{billing.amount === 0 ? 'Free plan' : `$${billing.amount}`}</p>
+            <p className="text-sm text-gray-500">
+              {credits.subscriptionType === 'premium' ? 'Unlimited' : `${credits.remainingCredits} credits left`}
+            </p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-600">Emails This Month</p>
-            <p className="text-lg font-semibold text-gray-900">
-              {billing.emailsUsed.toLocaleString()} / {billing.monthlyEmails.toLocaleString()}
+            <p className="text-sm font-medium text-gray-600">Emails Sent</p>
+            <p className="text-2xl font-bold text-gray-900">{credits.emailsSent}</p>
+            <p className="text-sm text-gray-500">5 credits per email</p>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-600">AI Assistant</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {credits.aiAccess ? '✓' : '✗'}
             </p>
-            <p className="text-sm text-gray-500">{getUsagePercentage()}% used</p>
+            <p className="text-sm text-gray-500">
+              {credits.aiAccess ? 'Available' : 'Premium only'}
+            </p>
           </div>
         </div>
 
-        {/* Usage Bar */}
-        <div className="mt-6">
-          <div className="flex justify-between text-sm text-gray-600 mb-2">
-            <span>Email Usage</span>
-            <span>{getUsagePercentage()}%</span>
+        {/* Credits Usage Bar */}
+        {credits.subscriptionType === 'free' && (
+          <div className="mt-6">
+            <div className="flex justify-between text-sm text-gray-600 mb-2">
+              <span>Credits Usage</span>
+              <span>{getCreditsUsagePercentage()}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className={`h-2 rounded-full ${getCreditsUsagePercentage() > 80 ? 'bg-red-500' : getCreditsUsagePercentage() > 60 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                style={{ width: `${Math.min(getCreditsUsagePercentage(), 100)}%` }}
+              ></div>
+            </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className={`h-2 rounded-full ${getUsagePercentage() > 80 ? 'bg-red-500' : getUsagePercentage() > 60 ? 'bg-yellow-500' : 'bg-green-500'}`}
-              style={{ width: `${Math.min(getUsagePercentage(), 100)}%` }}
-            ></div>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Billing History */}
@@ -310,82 +307,65 @@ export default function BillingPage() {
       <div className="bg-white p-6 rounded-lg shadow-sm border">
         <h2 className="text-lg font-semibold text-gray-900 mb-6">Available Plans</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className={`border rounded-lg p-6 ${billing?.currentPlan === 'Free' ? 'border-2 border-primary-500 relative' : 'border-gray-200'}`}>
-            {billing?.currentPlan === 'Free' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className={`border rounded-lg p-6 ${credits.subscriptionType === 'free' ? 'border-2 border-primary-500 relative' : 'border-gray-200'}`}>
+            {credits.subscriptionType === 'free' && (
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <span className="bg-primary-500 text-white px-3 py-1 text-sm font-semibold rounded-full">Current</span>
               </div>
             )}
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Free</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Free Plan</h3>
             <p className="text-3xl font-bold text-gray-900 mb-4">$0<span className="text-lg text-gray-500">/month</span></p>
             <ul className="space-y-2 text-sm text-gray-600">
-              <li>• Up to 500 contacts</li>
-              <li>• Up to 1,000 emails/month</li>
-              <li>• Simple email templates</li>
-              <li>• AI email generation</li>
-              <li>• SMTP configuration</li>
+              <li>• 50 credits per month (10 emails)</li>
+              <li>• Professional email templates</li>
+              <li>• 100 contacts</li>
+              <li>• 10 campaigns per month</li>
+              <li>• Standard support</li>
+              <li>• Contact import (CSV)</li>
               <li>• Basic analytics</li>
-              <li>• Email support</li>
+              <li>• Email preview & testing</li>
             </ul>
             <button className={`w-full mt-4 px-4 py-2 rounded-lg transition-colors ${
-              billing?.currentPlan === 'Free' 
+              credits.subscriptionType === 'free' 
                 ? 'bg-primary-600 text-white cursor-default' 
                 : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
             }`}>
-              {billing?.currentPlan === 'Free' ? 'Current Plan' : 'Downgrade'}
+              {credits.subscriptionType === 'free' ? 'Current Plan' : 'Downgrade'}
             </button>
           </div>
 
-          <div className={`border rounded-lg p-6 ${billing?.currentPlan === 'Pro' ? 'border-2 border-primary-500 relative' : 'border-gray-200'}`}>
-            {billing?.currentPlan === 'Pro' && (
+          <div className={`border rounded-lg p-6 ${credits.subscriptionType === 'premium' ? 'border-2 border-primary-500 relative' : 'border-gray-200'}`}>
+            {credits.subscriptionType === 'premium' && (
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <span className="bg-primary-500 text-white px-3 py-1 text-sm font-semibold rounded-full">Current</span>
               </div>
             )}
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Pro</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Premium Plan</h3>
             <p className="text-3xl font-bold text-gray-900 mb-4">$19<span className="text-lg text-gray-500">/month</span></p>
             <ul className="space-y-2 text-sm text-gray-600">
-              <li>• Up to 10,000 contacts</li>
-              <li>• Up to 50,000 emails/month</li>
-              <li>• Advanced email templates</li>
-              <li>• AI email generation</li>
-              <li>• Advanced analytics</li>
-              <li>• Priority support</li>
-              <li>• Contact segmentation</li>
-              <li>• A/B testing</li>
-              <li>• Excel import support</li>
-              <li>• Email scheduling</li>
-              <li>• Custom branding</li>
-            </ul>
-            <button className={`w-full mt-4 px-4 py-2 rounded-lg transition-colors ${
-              billing?.currentPlan === 'Pro' 
-                ? 'bg-primary-600 text-white cursor-default' 
-                : 'bg-primary-600 text-white hover:bg-primary-700'
-            }`}>
-              {billing?.currentPlan === 'Pro' ? 'Current Plan' : 'Upgrade to Pro'}
-            </button>
-          </div>
-
-          <div className={`border rounded-lg p-6 ${billing?.currentPlan === 'Enterprise' ? 'border-2 border-primary-500 relative' : 'border-gray-200'}`}>
-            {billing?.currentPlan === 'Enterprise' && (
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-primary-500 text-white px-3 py-1 text-sm font-semibold rounded-full">Current</span>
-              </div>
-            )}
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Enterprise</h3>
-            <p className="text-3xl font-bold text-gray-900 mb-4">Custom<span className="text-lg text-gray-500"> pricing</span></p>
-            <ul className="space-y-2 text-sm text-gray-600">
+              <li>• Unlimited credits (unlimited emails)</li>
+              <li>• AI email assistant & content generation</li>
+              <li>• Professional email templates</li>
               <li>• Unlimited contacts</li>
-              <li>• Unlimited emails</li>
-              <li>• Custom templates</li>
-              <li>• Advanced analytics</li>
-              <li>• Dedicated support</li>
-              <li>• White-label solution</li>
-              <li>• Custom integrations</li>
+              <li>• Unlimited campaigns</li>
+              <li>• Priority support</li>
+              <li>• Advanced analytics & reporting</li>
+              <li>• Email scheduling</li>
+              <li>• A/B testing</li>
+              <li>• Contact segmentation</li>
+              <li>• Custom branding</li>
+              <li>• Bulk recipient management</li>
             </ul>
-            <button className="w-full mt-4 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
-              Contact Sales
+            <button 
+              onClick={() => router.push('/pricing')}
+              className={`w-full mt-4 px-4 py-2 rounded-lg transition-colors ${
+                credits.subscriptionType === 'premium' 
+                  ? 'bg-primary-600 text-white cursor-default' 
+                  : 'bg-primary-600 text-white hover:bg-primary-700'
+              }`}
+            >
+              {credits.subscriptionType === 'premium' ? 'Current Plan' : 'Upgrade to Premium'}
             </button>
           </div>
         </div>
@@ -395,9 +375,9 @@ export default function BillingPage() {
       {showUpgradeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Upgrade Your Plan</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Upgrade to Premium</h3>
             <p className="text-gray-600 mb-6">
-              Contact our sales team to discuss enterprise features and custom pricing.
+              Get unlimited credits, AI assistant, and advanced features for just $19/month.
             </p>
             <div className="flex space-x-3">
               <button 
@@ -406,8 +386,14 @@ export default function BillingPage() {
               >
                 Cancel
               </button>
-              <button className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-                Contact Sales
+              <button 
+                onClick={() => {
+                  setShowUpgradeModal(false)
+                  router.push('/pricing')
+                }}
+                className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                View Pricing
               </button>
             </div>
           </div>
