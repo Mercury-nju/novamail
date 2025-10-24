@@ -133,7 +133,6 @@ export default function SettingsPage() {
   const tabs = [
     { id: 'usage', name: 'Usage' },
     { id: 'billing', name: 'Billing' },
-    { id: 'team', name: 'Team' },
     { id: 'smtp', name: 'SMTP' },
     { id: 'integrations', name: 'Integrations' },
     { id: 'unsubscribe', name: 'Unsubscribe Page' },
@@ -472,32 +471,120 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {activeTab === 'team' && (
-          <div className="space-y-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Team Management</h2>
-              <p className="text-gray-600">Team features are available in Premium plans.</p>
-              <button 
-                onClick={() => router.push('/pricing')}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Upgrade to Premium
-              </button>
-            </div>
-          </div>
-        )}
 
         {activeTab === 'smtp' && (
           <div className="space-y-6">
+            {/* SMTP Status */}
             <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">SMTP Configuration</h2>
-              <p className="text-gray-600">Configure your SMTP settings for email delivery.</p>
-              <button 
-                onClick={() => router.push('/dashboard/settings/email')}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Configure SMTP
-              </button>
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">SMTP Configuration</h2>
+                  <p className="text-gray-600">Configure your SMTP settings for reliable email delivery</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="text-sm font-medium text-green-800">Available</span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Email Provider</p>
+                    <p className="text-lg font-semibold text-gray-900">Gmail, Outlook, Custom</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Security</p>
+                    <p className="text-lg font-semibold text-gray-900">TLS/SSL Encrypted</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                <div className="flex items-start space-x-3">
+                  <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <h3 className="text-sm font-medium text-blue-900">SMTP Configuration Benefits</h3>
+                    <ul className="mt-2 text-sm text-blue-800 space-y-1">
+                      <li>• Send emails from your own domain</li>
+                      <li>• Higher deliverability rates</li>
+                      <li>• Professional sender reputation</li>
+                      <li>• Custom email addresses</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 flex space-x-3">
+                <button 
+                  onClick={() => router.push('/dashboard/settings/email')}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Configure SMTP
+                </button>
+                <button 
+                  onClick={() => router.push('/dashboard/settings/email')}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Test Connection
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Setup Guide */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Setup Guide</h3>
+              
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-xs font-semibold text-blue-600">1</span>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900">Choose Your Email Provider</h4>
+                    <p className="text-sm text-gray-600">Gmail, Outlook, Yahoo, or your custom SMTP server</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-xs font-semibold text-blue-600">2</span>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900">Get App Password</h4>
+                    <p className="text-sm text-gray-600">Generate an app-specific password for secure authentication</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-xs font-semibold text-blue-600">3</span>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900">Configure Settings</h4>
+                    <p className="text-sm text-gray-600">Enter your SMTP server details and test the connection</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
