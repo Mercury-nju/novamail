@@ -37,8 +37,8 @@ export default function PricingPage() {
       id: 'premium',
       name: 'Premium',
       description: 'Unlimited email marketing for serious businesses',
-      monthlyPrice: 29,
-      yearlyPrice: 290,
+      monthlyPrice: 19,
+      yearlyPrice: 190,
       features: [
         'Unlimited credits (unlimited emails)',
         'AI email assistant & content generation',
@@ -275,7 +275,7 @@ export default function PricingPage() {
               <div className="text-2xl font-bold text-green-600 mb-2">100 Credits</div>
               <div className="text-4xl font-bold text-gray-900 mb-2">20</div>
               <div className="text-sm text-gray-600">Emails per month</div>
-              <div className="text-xs text-gray-500 mt-2">$5.80/month</div>
+              <div className="text-xs text-gray-500 mt-2">$1.90/month</div>
             </div>
             
             <div className="bg-white rounded-lg p-6 shadow-sm border border-purple-200 bg-purple-50">
