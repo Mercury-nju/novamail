@@ -395,10 +395,12 @@ export default function CampaignEditPage() {
 
     setIsSending(true)
     try {
-      // 使用Next.js API格式，确保数据格式匹配
+      // 使用campaignData格式，兼容生产环境Cloudflare Workers
       const requestData = {
-        subject: safeSubject,
-        content: safeBody,
+        campaignData: {
+          subject: safeSubject,
+          body: safeBody
+        },
         recipients: uniqueRecipients,
         senderEmail: 'noreply@novamail.world',
         senderName: sendForm.senderName || 'NovaMail'
