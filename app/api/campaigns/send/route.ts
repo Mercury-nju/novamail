@@ -101,16 +101,16 @@ async function deductUserCredits(userId: string, credits: number) {
     let creditLimit = 50 // 免费用户默认50积分
     let subscriptionType = 'free'
     
-    if (isPremium && activeSubscription) {
-      const plan = activeSubscription.plan
-      if (plan === 'premium') {
-        creditLimit = 500 // Premium用户500积分
-        subscriptionType = 'premium'
-      } else if (plan === 'enterprise') {
-        creditLimit = Infinity // Enterprise用户无限积分
-        subscriptionType = 'enterprise'
-      }
-    }
+            if (isPremium && activeSubscription) {
+              const plan = activeSubscription.plan
+              if (plan === 'premium') {
+                creditLimit = 10000 // Premium用户10000积分
+                subscriptionType = 'premium'
+              } else if (plan === 'enterprise') {
+                creditLimit = Infinity // Enterprise用户无限积分
+                subscriptionType = 'enterprise'
+              }
+            }
 
     // 检查用户是否有足够积分（Enterprise用户跳过检查）
     if (creditLimit !== Infinity && user.emailsSentThisMonth * 5 + credits > creditLimit) {

@@ -54,18 +54,18 @@ export async function GET(request: NextRequest) {
     let aiAccess = false
     let subscriptionType = 'free'
     
-    if (isPremium && activeSubscription) {
-      const plan = activeSubscription.plan
-      if (plan === 'premium') {
-        totalCredits = 500 // Premium用户500积分
-        aiAccess = true
-        subscriptionType = 'premium'
-      } else if (plan === 'enterprise') {
-        totalCredits = Infinity // Enterprise用户无限积分
-        aiAccess = true
-        subscriptionType = 'enterprise'
-      }
-    }
+            if (isPremium && activeSubscription) {
+              const plan = activeSubscription.plan
+              if (plan === 'premium') {
+                totalCredits = 10000 // Premium用户10000积分
+                aiAccess = true
+                subscriptionType = 'premium'
+              } else if (plan === 'enterprise') {
+                totalCredits = Infinity // Enterprise用户无限积分
+                aiAccess = true
+                subscriptionType = 'enterprise'
+              }
+            }
 
     // 计算积分信息
     const userCredits = {
