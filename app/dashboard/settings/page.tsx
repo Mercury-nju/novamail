@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
 interface UserSettings {
@@ -9,17 +10,30 @@ interface UserSettings {
   company: string
 }
 
+interface CreditsData {
+  remainingCredits: number
+  totalCredits: number
+  subscriptionType: 'free' | 'premium'
+  aiAccess: boolean
+  emailsSent: number
+  lastResetDate: string
+}
+
 export default function SettingsPage() {
+  const router = useRouter()
+  const [activeTab, setActiveTab] = useState('usage')
   const [settings, setSettings] = useState<UserSettings>({
     name: '',
     email: '',
     company: ''
   })
+  const [credits, setCredits] = useState<CreditsData | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     fetchSettings()
+    fetchCreditsData()
   }, [])
 
   const fetchSettings = async () => {
@@ -39,6 +53,42 @@ export default function SettingsPage() {
       console.error('Failed to fetch settings:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchCreditsData = async () => {
+    try {
+      const response = await fetch('/api/credits?userId=default_user')
+      if (response.ok) {
+        const data = await response.json()
+        setCredits({
+          remainingCredits: data.remainingCredits,
+          totalCredits: data.totalCredits,
+          subscriptionType: data.subscriptionType,
+          aiAccess: data.aiAccess,
+          emailsSent: Math.floor((data.totalCredits - data.remainingCredits) / 5),
+          lastResetDate: new Date().toISOString()
+        })
+      } else {
+        setCredits({
+          remainingCredits: 50,
+          totalCredits: 50,
+          subscriptionType: 'free',
+          aiAccess: false,
+          emailsSent: 0,
+          lastResetDate: new Date().toISOString()
+        })
+      }
+    } catch (error) {
+      console.error('Failed to fetch credits data:', error)
+      setCredits({
+        remainingCredits: 50,
+        totalCredits: 50,
+        subscriptionType: 'free',
+        aiAccess: false,
+        emailsSent: 0,
+        lastResetDate: new Date().toISOString()
+      })
     }
   }
 
@@ -80,6 +130,27 @@ export default function SettingsPage() {
     }))
   }
 
+  const tabs = [
+    { id: 'usage', name: 'Usage' },
+    { id: 'billing', name: 'Billing' },
+    { id: 'team', name: 'Team' },
+    { id: 'smtp', name: 'SMTP' },
+    { id: 'integrations', name: 'Integrations' },
+    { id: 'unsubscribe', name: 'Unsubscribe Page' },
+    { id: 'documents', name: 'Documents' }
+  ]
+
+  const getUsagePercentage = (used: number, total: number) => {
+    if (total === 0) return 0
+    return Math.round((used / total) * 100)
+  }
+
+  const getUsageColor = (percentage: number) => {
+    if (percentage >= 90) return 'text-red-500'
+    if (percentage >= 70) return 'text-yellow-500'
+    return 'text-green-500'
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -89,125 +160,386 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600">Manage your account information</p>
-        </div>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-        >
-          {saving ? 'Saving...' : 'Save Changes'}
-        </button>
-      </div>
-
-      {/* Profile Settings */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h2 className="text-lg font-semibold text-gray-900 mb-6">Profile Information</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
-            <input
-              type="text"
-              value={settings.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              placeholder="Enter your full name"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
-            />
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="py-6">
+            <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
-            <input
-              type="email"
-              value={settings.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              placeholder="Enter your email address"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
-            />
-          </div>
-          
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
-            <input
-              type="text"
-              value={settings.company}
-              onChange={(e) => handleInputChange('company', e.target.value)}
-              placeholder="Enter your company name (optional)"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+          {/* Navigation Tabs */}
+          <div className="border-t border-gray-200">
+            <nav className="flex space-x-8">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === tab.id
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  {tab.name}
+                </button>
+              ))}
+            </nav>
           </div>
         </div>
       </div>
 
-      {/* Account Information */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h2 className="text-lg font-semibold text-gray-900 mb-6">Account Information</h2>
-        
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div>
-              <h3 className="text-sm font-medium text-gray-900">Email Generation</h3>
-              <p className="text-sm text-gray-600">AI-powered email content generation</p>
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {activeTab === 'usage' && (
+          <div className="space-y-8">
+            {/* Transactional Section */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Transactional</h3>
+                  <p className="text-sm text-gray-600">Integrate email into your app using the Resend API or SMTP interface.</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm font-medium text-gray-900">Free</span>
+                  <button 
+                    onClick={() => router.push('/pricing')}
+                    className="px-3 py-1 bg-black text-white text-sm rounded-md hover:bg-gray-800 transition-colors"
+                  >
+                    Upgrade
+                  </button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                        <div className="w-4 h-4 bg-white rounded-full"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Monthly Limit</p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {credits?.emailsSent || 0} / {credits?.subscriptionType === 'premium' ? '∞' : '10'}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                        <div className="w-4 h-4 bg-white rounded-full"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Daily Limit</p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {Math.min(credits?.emailsSent || 0, 2)} / {credits?.subscriptionType === 'premium' ? '∞' : '2'}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-medium text-green-800">Active</span>
-            </div>
-          </div>
-          
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div>
-              <h3 className="text-sm font-medium text-gray-900">Professional Templates</h3>
-              <p className="text-sm text-gray-600">Rich HTML email templates</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-medium text-green-800">Available</span>
-            </div>
-          </div>
-          
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div>
-              <h3 className="text-sm font-medium text-gray-900">Email History</h3>
-              <p className="text-sm text-gray-600">Track your generated emails</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-medium text-green-800">Enabled</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Membership Status */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h2 className="text-lg font-semibold text-gray-900 mb-6">Membership Status</h2>
-        
-        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-          <div>
-            <h3 className="text-sm font-medium text-blue-900">Current Plan</h3>
-            <p className="text-sm text-blue-700">Access to all email generation features</p>
+            {/* Marketing Section */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Marketing</h3>
+                  <p className="text-sm text-gray-600">Design and send marketing emails using Broadcasts and Audiences.</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm font-medium text-gray-900">Free</span>
+                  <button 
+                    onClick={() => router.push('/pricing')}
+                    className="px-3 py-1 bg-black text-white text-sm rounded-md hover:bg-gray-800 transition-colors"
+                  >
+                    Upgrade
+                  </button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Contacts Limit</p>
+                    <p className="text-lg font-semibold text-gray-900">0 / 100</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-orange-500 rounded-full"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Audiences Limit</p>
+                    <p className="text-lg font-semibold text-gray-900">1 / 1</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Broadcasts Limit</p>
+                    <p className="text-lg font-semibold text-gray-900">unlimited</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Team Section */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Team</h3>
+                  <p className="text-sm text-gray-600">Understand the quotas and limits for your team.</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm font-medium text-gray-900">Free</span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-orange-500 rounded-full"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Domains</p>
+                    <p className="text-lg font-semibold text-gray-900">1 / 1</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Rate Limit</p>
+                    <p className="text-lg font-semibold text-gray-900">2 req/s</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <span className="text-sm font-medium text-blue-800">Active</span>
+        )}
+
+        {activeTab === 'billing' && (
+          <div className="space-y-6">
+            {/* Current Plan */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">Current Plan</h2>
+                  <p className="text-gray-600">Your active subscription and credit details</p>
+                </div>
+                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
+                  credits?.subscriptionType === 'premium' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                }`}>
+                  {credits?.subscriptionType.toUpperCase()}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Plan</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {credits?.subscriptionType === 'premium' ? 'Premium' : 'Free'}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {credits?.subscriptionType === 'premium' ? '$19/month' : 'Free plan'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Credits Remaining</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {credits?.subscriptionType === 'premium' ? '∞' : credits?.remainingCredits}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {credits?.subscriptionType === 'premium' ? 'Unlimited' : `${credits?.remainingCredits} credits left`}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Emails Sent</p>
+                  <p className="text-2xl font-bold text-gray-900">{credits?.emailsSent}</p>
+                  <p className="text-sm text-gray-500">5 credits per email</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">AI Assistant</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {credits?.aiAccess ? '✓' : '✗'}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {credits?.aiAccess ? 'Available' : 'Premium only'}
+                  </p>
+                </div>
+              </div>
+
+              {credits?.subscriptionType === 'free' && (
+                <div className="mt-6">
+                  <div className="flex justify-between text-sm text-gray-600 mb-2">
+                    <span>Credits Usage</span>
+                    <span>{getUsagePercentage((credits?.totalCredits || 0) - (credits?.remainingCredits || 0), credits?.totalCredits || 0)}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${getUsageColor(getUsagePercentage((credits?.totalCredits || 0) - (credits?.remainingCredits || 0), credits?.totalCredits || 0))}`}
+                      style={{ width: `${Math.min(getUsagePercentage((credits?.totalCredits || 0) - (credits?.remainingCredits || 0), credits?.totalCredits || 0), 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Plan Comparison */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Available Plans</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className={`border rounded-lg p-6 ${credits?.subscriptionType === 'free' ? 'border-2 border-blue-500 relative' : 'border-gray-200'}`}>
+                  {credits?.subscriptionType === 'free' && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-blue-500 text-white px-3 py-1 text-sm font-semibold rounded-full">Current</span>
+                    </div>
+                  )}
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Free Plan</h3>
+                  <p className="text-3xl font-bold text-gray-900 mb-4">$0<span className="text-lg text-gray-500">/month</span></p>
+                  <ul className="space-y-2 text-sm text-gray-600">
+                    <li>• 50 credits per month (10 emails)</li>
+                    <li>• Professional email templates</li>
+                    <li>• 100 contacts</li>
+                    <li>• 10 campaigns per month</li>
+                    <li>• Standard support</li>
+                  </ul>
+                  <button className={`w-full mt-4 px-4 py-2 rounded-lg transition-colors ${
+                    credits?.subscriptionType === 'free' 
+                      ? 'bg-blue-600 text-white cursor-default' 
+                      : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}>
+                    {credits?.subscriptionType === 'free' ? 'Current Plan' : 'Downgrade'}
+                  </button>
+                </div>
+
+                <div className={`border rounded-lg p-6 ${credits?.subscriptionType === 'premium' ? 'border-2 border-blue-500 relative' : 'border-gray-200'}`}>
+                  {credits?.subscriptionType === 'premium' && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-blue-500 text-white px-3 py-1 text-sm font-semibold rounded-full">Current</span>
+                    </div>
+                  )}
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Premium Plan</h3>
+                  <p className="text-3xl font-bold text-gray-900 mb-4">$19<span className="text-lg text-gray-500">/month</span></p>
+                  <ul className="space-y-2 text-sm text-gray-600">
+                    <li>• Unlimited credits (unlimited emails)</li>
+                    <li>• AI email assistant & content generation</li>
+                    <li>• Professional email templates</li>
+                    <li>• Unlimited contacts</li>
+                    <li>• Unlimited campaigns</li>
+                    <li>• Priority support</li>
+                  </ul>
+                  <button 
+                    onClick={() => router.push('/pricing')}
+                    className={`w-full mt-4 px-4 py-2 rounded-lg transition-colors ${
+                      credits?.subscriptionType === 'premium' 
+                        ? 'bg-blue-600 text-white cursor-default' 
+                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                    }`}
+                  >
+                    {credits?.subscriptionType === 'premium' ? 'Current Plan' : 'Upgrade to Premium'}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-          <p className="text-sm text-gray-600">
-            You have access to all email generation features including professional templates, 
-            AI-powered content generation, and email history tracking.
-          </p>
-        </div>
+        )}
+
+        {activeTab === 'team' && (
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Team Management</h2>
+              <p className="text-gray-600">Team features are available in Premium plans.</p>
+              <button 
+                onClick={() => router.push('/pricing')}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Upgrade to Premium
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'smtp' && (
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">SMTP Configuration</h2>
+              <p className="text-gray-600">Configure your SMTP settings for email delivery.</p>
+              <button 
+                onClick={() => router.push('/dashboard/settings/email')}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Configure SMTP
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'integrations' && (
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Integrations</h2>
+              <p className="text-gray-600">Connect NovaMail with your favorite tools and services.</p>
+              <button 
+                onClick={() => router.push('/integrations')}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                View Integrations
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'unsubscribe' && (
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Unsubscribe Page</h2>
+              <p className="text-gray-600">Customize your unsubscribe page and manage subscriber preferences.</p>
+              <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                Configure Unsubscribe Page
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'documents' && (
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Documents</h2>
+              <p className="text-gray-600">Access your account documents, invoices, and legal agreements.</p>
+              <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                View Documents
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
