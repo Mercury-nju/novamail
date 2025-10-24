@@ -17,17 +17,18 @@ export default function PricingPage() {
     {
       id: 'free',
       name: 'Free',
-      description: 'Perfect for getting started',
+      description: 'Perfect for trying out email marketing',
       monthlyPrice: 0,
       yearlyPrice: 0,
       features: [
         '50 credits per month (10 emails)',
-        'Basic email templates',
+        'Professional email templates',
         '100 contacts',
         '10 campaigns per month',
         'Standard support',
         'Contact import (CSV)',
-        'Basic analytics'
+        'Basic analytics',
+        'Email preview & testing'
       ],
       cta: 'Get Started Free',
       popular: false
@@ -35,21 +36,22 @@ export default function PricingPage() {
     {
       id: 'premium',
       name: 'Premium',
-      description: 'Best for growing businesses',
+      description: 'Unlimited email marketing for serious businesses',
       monthlyPrice: 29,
       yearlyPrice: 290,
       features: [
-        'Unlimited credits',
-        'AI email assistant',
-        'Advanced email templates',
+        'Unlimited credits (unlimited emails)',
+        'AI email assistant & content generation',
+        'Professional email templates',
         'Unlimited contacts',
         'Unlimited campaigns',
         'Priority support',
-        'Advanced analytics',
+        'Advanced analytics & reporting',
         'Email scheduling',
         'A/B testing',
         'Contact segmentation',
-        'Custom branding'
+        'Custom branding',
+        'Bulk recipient management'
       ],
       cta: 'Get Started',
       popular: true
@@ -136,11 +138,35 @@ export default function PricingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Simple, transparent pricing
+            Credit-based pricing that scales with you
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Choose the plan that's right for your business
+            Send emails with our credit system. Each email costs 5 credits. Start free, upgrade when you need more.
           </p>
+          
+          {/* 积分系统说明 */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-2xl mx-auto mb-8">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">⚡</span>
+              </div>
+              <h3 className="text-lg font-semibold text-blue-900">How Credits Work</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-blue-800">
+              <div className="text-center">
+                <div className="font-semibold">1 Email = 5 Credits</div>
+                <div className="text-xs text-blue-600">Simple pricing</div>
+              </div>
+              <div className="text-center">
+                <div className="font-semibold">Free: 50 Credits/Month</div>
+                <div className="text-xs text-blue-600">10 emails included</div>
+              </div>
+              <div className="text-center">
+                <div className="font-semibold">Premium: Unlimited</div>
+                <div className="text-xs text-blue-600">Send as much as you want</div>
+              </div>
+            </div>
+          </div>
             
             {/* Billing Toggle */}
           <div className="flex items-center justify-center mb-8">
@@ -227,6 +253,45 @@ export default function PricingPage() {
           ))}
       </div>
 
+      {/* Credit Calculator Section */}
+      <div className="mt-16 bg-gray-50 py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Credit Calculator
+          </h2>
+          <p className="text-lg text-gray-600 mb-8">
+            See how many emails you can send with different credit amounts
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              <div className="text-2xl font-bold text-blue-600 mb-2">50 Credits</div>
+              <div className="text-4xl font-bold text-gray-900 mb-2">10</div>
+              <div className="text-sm text-gray-600">Emails per month</div>
+              <div className="text-xs text-gray-500 mt-2">Free Plan</div>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              <div className="text-2xl font-bold text-green-600 mb-2">100 Credits</div>
+              <div className="text-4xl font-bold text-gray-900 mb-2">20</div>
+              <div className="text-sm text-gray-600">Emails per month</div>
+              <div className="text-xs text-gray-500 mt-2">$5.80/month</div>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-purple-200 bg-purple-50">
+              <div className="text-2xl font-bold text-purple-600 mb-2">Unlimited</div>
+              <div className="text-4xl font-bold text-gray-900 mb-2">∞</div>
+              <div className="text-sm text-gray-600">Emails per month</div>
+              <div className="text-xs text-gray-500 mt-2">Premium Plan</div>
+            </div>
+          </div>
+          
+          <div className="mt-8 text-sm text-gray-600">
+            <p>💡 <strong>Pro tip:</strong> You can send to multiple recipients with one email and still only use 5 credits!</p>
+          </div>
+        </div>
+      </div>
+
       {/* FAQ Section */}
         <div className="mt-16 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">
@@ -254,7 +319,7 @@ export default function PricingPage() {
                 How does the credit system work?
               </h3>
               <p className="text-gray-600">
-                Each email you send costs 5 credits. Free users get 50 credits per month (enough for 10 emails). Premium users have unlimited credits. Credits reset monthly for free users.
+                Each email you send costs 5 credits, regardless of how many recipients you include. Free users get 50 credits per month (enough for 10 emails). Premium users have unlimited credits. Credits reset monthly for free users.
               </p>
             </div>
             <div>
@@ -262,7 +327,23 @@ export default function PricingPage() {
                 What is the AI email assistant?
               </h3>
               <p className="text-gray-600">
-                The AI assistant helps you write better emails, suggests improvements, and generates content. This feature is only available to Premium subscribers.
+                The AI assistant helps you write better emails, suggests improvements, and generates content. This feature is only available to Premium subscribers and provides personalized email marketing advice.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Can I send to multiple recipients with one email?
+              </h3>
+              <p className="text-gray-600">
+                Yes! You can send to multiple recipients with a single email, and it still only costs 5 credits total. Use our bulk recipient management to import contacts via CSV or add them manually.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                What happens if I run out of credits?
+              </h3>
+              <p className="text-gray-600">
+                If you run out of credits on the free plan, you'll need to wait until next month for your credits to reset, or upgrade to Premium for unlimited credits. We'll notify you when you're running low.
               </p>
             </div>
             <div>
@@ -273,6 +354,79 @@ export default function PricingPage() {
                 Yes, you can cancel your subscription at any time. You'll continue to have access until the end of your billing period.
               </p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Feature Comparison Table */}
+      <div className="mt-16 bg-white py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Feature Comparison
+            </h2>
+            <p className="text-lg text-gray-600">
+              See exactly what's included in each plan
+            </p>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse border border-gray-200 rounded-lg overflow-hidden">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="border border-gray-200 px-6 py-4 text-left text-sm font-semibold text-gray-900">Features</th>
+                  <th className="border border-gray-200 px-6 py-4 text-center text-sm font-semibold text-gray-900">Free</th>
+                  <th className="border border-gray-200 px-6 py-4 text-center text-sm font-semibold text-gray-900 bg-purple-50">Premium</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                <tr>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Monthly Credits</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">50 (10 emails)</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">Unlimited</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">AI Email Assistant</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">❌</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">✅</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Email Templates</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">Professional</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">Professional</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Contacts</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">100</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">Unlimited</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Campaigns</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">10/month</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">Unlimited</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Bulk Recipient Management</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">✅</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">✅</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">CSV Import</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">✅</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">✅</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Analytics</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">Basic</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">Advanced</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Support</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">Standard</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">Priority</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
