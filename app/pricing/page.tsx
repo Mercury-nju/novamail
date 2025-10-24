@@ -21,36 +21,34 @@ export default function PricingPage() {
       monthlyPrice: 0,
       yearlyPrice: 0,
       features: [
-        'Up to 500 contacts',
-        'Up to 1,000 AI email generations per month',
+        '50 credits per month (10 emails)',
         'Basic email templates',
-        'AI email generation',
-        'Basic analytics',
-        'Email support',
-        'Contact import (CSV, TXT)',
-        'Basic contact groups'
+        '100 contacts',
+        '10 campaigns per month',
+        'Standard support',
+        'Contact import (CSV)',
+        'Basic analytics'
       ],
       cta: 'Get Started Free',
       popular: false
     },
     {
-      id: 'pro',
-      name: 'Pro',
+      id: 'premium',
+      name: 'Premium',
       description: 'Best for growing businesses',
-      monthlyPrice: 19,
-      yearlyPrice: 190,
+      monthlyPrice: 29,
+      yearlyPrice: 290,
       features: [
-        'Up to 10,000 contacts',
-        'Up to 50,000 AI email generations per month',
+        'Unlimited credits',
+        'AI email assistant',
         'Advanced email templates',
-        'AI email generation',
-        'Advanced analytics',
+        'Unlimited contacts',
+        'Unlimited campaigns',
         'Priority support',
-        'Contact segmentation',
-        'A/B testing',
-        'Excel import support',
-        'Advanced contact groups',
+        'Advanced analytics',
         'Email scheduling',
+        'A/B testing',
+        'Contact segmentation',
         'Custom branding'
       ],
       cta: 'Get Started',
@@ -63,13 +61,11 @@ export default function PricingPage() {
       monthlyPrice: null,
       yearlyPrice: null,
       features: [
-        'Unlimited contacts',
-        'Unlimited emails',
+        'Unlimited everything',
         'Custom email templates',
         'Advanced AI features',
         'Custom analytics',
         'Dedicated support',
-        'Advanced segmentation',
         'API access',
         'Custom integrations',
         'White-label solution',
@@ -255,10 +251,18 @@ export default function PricingPage() {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                What does "AI email generations" mean?
+                How does the credit system work?
               </h3>
               <p className="text-gray-600">
-                AI email generations refer to the number of times you can use our AI to generate email content. Each time you click "Generate Email" or create a new campaign, it counts as one generation. The generated emails can be sent to unlimited recipients.
+                Each email you send costs 5 credits. Free users get 50 credits per month (enough for 10 emails). Premium users have unlimited credits. Credits reset monthly for free users.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                What is the AI email assistant?
+              </h3>
+              <p className="text-gray-600">
+                The AI assistant helps you write better emails, suggests improvements, and generates content. This feature is only available to Premium subscribers.
               </p>
             </div>
             <div>

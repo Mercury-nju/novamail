@@ -1,5 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// 检查用户积分
+async function checkUserCredits(userId: string) {
+  // 模拟用户积分数据（实际应该从数据库查询）
+  return {
+    userId: userId,
+    totalCredits: 50,
+    usedCredits: 0,
+    remainingCredits: 50,
+    hasUnlimitedCredits: false, // 免费用户无无限积分
+    subscriptionType: 'free' // free, premium
+  }
+}
+
+// 扣除用户积分
+async function deductUserCredits(userId: string, credits: number) {
+  // 模拟积分扣除（实际应该更新数据库）
+  console.log(`扣除用户 ${userId} 的 ${credits} 个积分`)
+  return {
+    success: true,
+    remainingCredits: Math.max(0, 50 - credits)
+  }
+}
+
 // 智能邮件发送功能 - 支持多种发送方式
 async function sendEmail(
   subject: string,
@@ -189,6 +212,29 @@ export async function POST(request: NextRequest) {
     console.log('body.campaignData:', body.campaignData)
     console.log('========================')
     
+    // 积分检查 - 每次发送邮件消耗5个积分
+    const userId = body.userId || 'default_user'
+    const emailCost = 5 // 每封邮件消耗5积分
+    
+    // 检查用户积分（这里简化处理，实际应该查询数据库）
+    const userCredits = await checkUserCredits(userId)
+    console.log('用户积分检查:', userCredits)
+    
+    if (!userCredits.hasUnlimitedCredits && userCredits.remainingCredits < emailCost) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Insufficient credits',
+          details: {
+            required: emailCost,
+            available: userCredits.remainingCredits,
+            message: 'You need 5 credits to send an email. Upgrade to Premium for unlimited credits!'
+          }
+        },
+        { status: 402 } // Payment Required
+      )
+    }
+    
     // 支持两种数据结构：Workers API 格式和 Next.js API 格式
     let subject, content, recipients, senderEmail, senderName, useUserDomain
     
@@ -273,10 +319,20 @@ export async function POST(request: NextRequest) {
     const finalSenderEmail = senderEmail || 'noreply@novamail.world'
     const result = await sendEmail(subject, content, recipients, finalSenderEmail, senderName, useUserDomain)
     
+    // 邮件发送成功后扣除积分
+    if (result.success) {
+      await deductUserCredits(userId, emailCost)
+      console.log(`✅ 邮件发送成功，已扣除 ${emailCost} 个积分`)
+    }
+    
     return NextResponse.json({
       success: true,
       message: `Email sent successfully to ${recipients.length} recipient(s)`,
-      data: result
+      data: {
+        ...result,
+        creditsUsed: emailCost,
+        remainingCredits: userCredits.remainingCredits - emailCost
+      }
     })
 
   } catch (error) {

@@ -2,9 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowLeft, Send, Sparkles, Check, X } from 'lucide-react'
+import { ArrowLeft, Send, Sparkles, Check, X, Bolt, AlertTriangle } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
+import CreditsDisplay from '@/components/CreditsDisplay'
 
 interface ChatMessage {
   type: 'user' | 'ai'
@@ -46,6 +47,15 @@ export default function CampaignEditPage() {
   const [showRecipientManager, setShowRecipientManager] = useState(false)
   const [importMethod, setImportMethod] = useState<'manual' | 'csv' | 'contacts'>('manual')
   
+  // 积分和订阅状态
+  const [userCredits, setUserCredits] = useState({
+    remainingCredits: 50,
+    totalCredits: 50,
+    subscriptionType: 'free',
+    aiAccess: false
+  })
+  const [showCreditsModal, setShowCreditsModal] = useState(false)
+  
   // 移除无意义的域名功能
   // const [useUserDomain, setUseUserDomain] = useState(false)
   // const [userDomains, setUserDomains] = useState<any[]>([])
@@ -75,7 +85,29 @@ export default function CampaignEditPage() {
         body: currentTemplate.htmlContent
       }))
     }
+    
+    // 获取用户积分信息
+    fetchUserCredits()
   }, [currentTemplate])
+  
+  // 获取用户积分信息
+  const fetchUserCredits = async () => {
+    try {
+      const response = await fetch('/api/credits?userId=default_user')
+      const data = await response.json()
+      
+      if (data.success) {
+        setUserCredits({
+          remainingCredits: data.data.remainingCredits,
+          totalCredits: data.data.totalCredits,
+          subscriptionType: data.data.subscriptionType,
+          aiAccess: data.data.aiAccess
+        })
+      }
+    } catch (error) {
+      console.error('Failed to fetch user credits:', error)
+    }
+  }
 
   // 批量收件人管理功能
   const addRecipients = (emails: string[]) => {
@@ -337,6 +369,21 @@ export default function CampaignEditPage() {
     console.log('currentTemplate.htmlContent length:', currentTemplate?.htmlContent?.length)
     console.log('========================')
     
+    // 积分检查 - 每次发送邮件消耗5个积分
+    const emailCost = 5
+    const totalRecipients = [
+      ...sendForm.recipients.split(',').map(email => email.trim()).filter(e => e),
+      ...recipientList
+    ].length
+    
+    if (userCredits.subscriptionType === 'free' && userCredits.remainingCredits < emailCost) {
+      toast.error(`Insufficient credits! You need ${emailCost} credits to send an email. You have ${userCredits.remainingCredits} credits remaining.`)
+      setShowCreditsModal(true)
+      return
+    }
+    
+    console.log(`📧 准备发送邮件，消耗 ${emailCost} 个积分，收件人数量: ${totalRecipients}`)
+    
     // 强制检查：如果campaignData为空，使用模板内容
     if (!campaignData.subject && currentTemplate?.subject) {
       console.log('⚠️ campaignData.subject为空，使用模板主题')
@@ -433,6 +480,17 @@ export default function CampaignEditPage() {
           senderName: 'NovaMail'
         })
         setRecipientList([]) // 清空收件人列表
+        
+        // 更新积分状态
+        if (userCredits.subscriptionType === 'free') {
+          setUserCredits(prev => ({
+            ...prev,
+            remainingCredits: Math.max(0, prev.remainingCredits - emailCost)
+          }))
+        }
+        
+        // 刷新积分信息
+        fetchUserCredits()
       } else {
         // 使用后端返回的错误信息，如果后端没有提供，则使用通用错误信息
         throw new Error(responseData.error || 'Failed to send email')
@@ -463,13 +521,24 @@ export default function CampaignEditPage() {
               <p className="text-sm text-gray-500">Modern Gradient</p>
             </div>
           </div>
-          <button
-            onClick={() => setShowSendModal(true)}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-          >
-            <Send className="w-4 h-4" />
-            Send Email
-          </button>
+          <div className="flex items-center gap-4">
+            {/* 积分显示 */}
+            <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
+              <Bolt className="w-4 h-4 text-blue-500" />
+              <span className="text-sm font-medium text-gray-700">
+                {userCredits.subscriptionType === 'premium' ? '∞' : userCredits.remainingCredits}
+              </span>
+              <span className="text-xs text-gray-500">credits</span>
+            </div>
+            
+            <button
+              onClick={() => setShowSendModal(true)}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+            >
+              <Send className="w-4 h-4" />
+              Send Email
+            </button>
+          </div>
         </div>
       </div>
 
@@ -543,39 +612,69 @@ export default function CampaignEditPage() {
         {/* Right Panel - AI Assistant */}
         <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
           <div className="p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
-            <p className="text-sm text-gray-500">Chat with AI for email marketing advice and content ideas</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
+                <p className="text-sm text-gray-500">Chat with AI for email marketing advice and content ideas</p>
+              </div>
+              {!userCredits.aiAccess && (
+                <div className="flex items-center gap-1 px-2 py-1 bg-purple-50 rounded-full">
+                  <Sparkles className="w-3 h-3 text-purple-500" />
+                  <span className="text-xs font-medium text-purple-600">Premium</span>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* AI Hints */}
           <div className="p-4 border-b border-gray-200">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">Quick Start:</h4>
-            <div className="space-y-2">
-              <button
-                onClick={() => setChatInput('How to write better email subject lines?')}
-                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
-              >
-                💡 Email Subject Lines
-              </button>
-              <button
-                onClick={() => setChatInput('What are the best email marketing strategies?')}
-                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
-              >
-                📊 Marketing Strategies
-              </button>
-              <button
-                onClick={() => setChatInput('How to increase email open rates?')}
-                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
-              >
-                🎯 Open Rate Tips
-              </button>
-              <button
-                onClick={() => setChatInput('Give me email content ideas for my business')}
-                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
-              >
-                📝 Content Ideas
-              </button>
-            </div>
+            {userCredits.aiAccess ? (
+              <>
+                <h4 className="text-sm font-medium text-gray-700 mb-3">Quick Start:</h4>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => setChatInput('How to write better email subject lines?')}
+                    className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
+                  >
+                    💡 Email Subject Lines
+                  </button>
+                  <button
+                    onClick={() => setChatInput('What are the best email marketing strategies?')}
+                    className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
+                  >
+                    📊 Marketing Strategies
+                  </button>
+                  <button
+                    onClick={() => setChatInput('How to increase email open rates?')}
+                    className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
+                  >
+                    🎯 Open Rate Tips
+                  </button>
+                  <button
+                    onClick={() => setChatInput('Give me email content ideas for my business')}
+                    className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border text-gray-600 transition-colors"
+                  >
+                    📝 Content Ideas
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="w-8 h-8 text-purple-500" />
+                </div>
+                <h4 className="text-lg font-semibold text-gray-900 mb-2">AI Assistant</h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Get personalized email marketing advice and content suggestions
+                </p>
+                <button
+                  onClick={() => window.open('/pricing', '_blank')}
+                  className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm font-medium py-2 px-4 rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
+                >
+                  Upgrade to Premium
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Chat History */}
@@ -909,6 +1008,71 @@ export default function CampaignEditPage() {
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 积分不足模态框 */}
+      {showCreditsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Insufficient Credits</h3>
+              <button
+                onClick={() => setShowCreditsModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 p-4 bg-red-50 rounded-lg">
+                <AlertTriangle className="w-6 h-6 text-red-500" />
+                <div>
+                  <p className="text-sm font-medium text-red-800">Not enough credits</p>
+                  <p className="text-xs text-red-600">
+                    You need 5 credits to send an email. You have {userCredits.remainingCredits} credits remaining.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <h4 className="text-sm font-medium text-gray-700">Upgrade Options:</h4>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Free Plan</p>
+                      <p className="text-xs text-gray-500">50 credits per month</p>
+                    </div>
+                    <span className="text-sm text-gray-500">Current</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 border border-purple-200 bg-purple-50 rounded-lg">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Premium Plan</p>
+                      <p className="text-xs text-gray-500">Unlimited credits + AI Assistant</p>
+                    </div>
+                    <span className="text-sm font-medium text-purple-600">$29/month</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => setShowCreditsModal(false)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => window.open('/pricing', '_blank')}
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-md hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
+              >
+                Upgrade Now
               </button>
             </div>
           </div>
