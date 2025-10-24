@@ -8,7 +8,7 @@ interface CreditsData {
   totalCredits: number
   usedCredits: number
   remainingCredits: number
-  subscriptionType: 'free' | 'premium'
+  subscriptionType: 'free' | 'premium' | 'enterprise'
   aiAccess: boolean
   lastResetDate: string
   nextResetDate: string
@@ -57,7 +57,8 @@ export default function CreditsDisplay() {
   }
 
   const isLowCredits = credits.remainingCredits < 10
-  const isPremium = credits.subscriptionType === 'premium'
+  const isPremium = credits.subscriptionType === 'premium' || credits.subscriptionType === 'enterprise'
+  const isEnterprise = credits.subscriptionType === 'enterprise'
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
@@ -67,7 +68,14 @@ export default function CreditsDisplay() {
           <h3 className="text-sm font-medium text-gray-700">Credits</h3>
         </div>
         
-        {isPremium ? (
+        {isEnterprise ? (
+          <div className="flex items-center gap-1">
+            <SparklesIcon className="w-4 h-4 text-gold-500" />
+            <span className="text-xs font-medium text-gold-600 bg-gold-50 px-2 py-1 rounded-full">
+              Enterprise
+            </span>
+          </div>
+        ) : isPremium ? (
           <div className="flex items-center gap-1">
             <SparklesIcon className="w-4 h-4 text-purple-500" />
             <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
@@ -83,13 +91,13 @@ export default function CreditsDisplay() {
         {/* 积分显示 */}
         <div className="flex items-center justify-between">
           <span className="text-2xl font-bold text-gray-900">
-            {isPremium ? '∞' : credits.remainingCredits}
+            {isEnterprise ? '∞' : credits.remainingCredits}
           </span>
           <div className="text-right">
             <p className="text-xs text-gray-500">
-              {isPremium ? 'Unlimited' : `${credits.remainingCredits}/${credits.totalCredits}`}
+              {isEnterprise ? 'Unlimited' : `${credits.remainingCredits}/${credits.totalCredits}`}
             </p>
-            {!isPremium && (
+            {!isEnterprise && (
               <p className="text-xs text-gray-400">
                 Resets {new Date(credits.nextResetDate).toLocaleDateString()}
               </p>
@@ -98,11 +106,11 @@ export default function CreditsDisplay() {
         </div>
 
         {/* 积分进度条 */}
-        {!isPremium && (
+        {!isEnterprise && (
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
               className={`h-2 rounded-full transition-all duration-300 ${
-                isLowCredits ? 'bg-red-500' : 'bg-blue-500'
+                isLowCredits ? 'bg-red-500' : isPremium ? 'bg-purple-500' : 'bg-blue-500'
               }`}
               style={{ width: `${(credits.remainingCredits / credits.totalCredits) * 100}%` }}
             ></div>
@@ -119,7 +127,7 @@ export default function CreditsDisplay() {
               </p>
             </div>
             <p className="text-xs text-red-600 mt-1">
-              Each email costs 5 credits. Upgrade to Premium for unlimited credits!
+              Each email costs 5 credits. Upgrade to Premium for 500 credits/month!
             </p>
           </div>
         )}

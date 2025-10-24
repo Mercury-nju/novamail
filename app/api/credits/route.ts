@@ -49,14 +49,32 @@ export async function GET(request: NextRequest) {
                       activeSubscription.status === 'active' && 
                       activeSubscription.currentPeriodEnd > new Date()
 
+    // 根据订阅类型确定积分限制
+    let totalCredits = 50 // 免费用户默认50积分
+    let aiAccess = false
+    let subscriptionType = 'free'
+    
+    if (isPremium && activeSubscription) {
+      const plan = activeSubscription.plan
+      if (plan === 'premium') {
+        totalCredits = 500 // Premium用户500积分
+        aiAccess = true
+        subscriptionType = 'premium'
+      } else if (plan === 'enterprise') {
+        totalCredits = Infinity // Enterprise用户无限积分
+        aiAccess = true
+        subscriptionType = 'enterprise'
+      }
+    }
+
     // 计算积分信息
     const userCredits = {
       userId: userId,
-      totalCredits: isPremium ? Infinity : 50, // Premium用户无限积分，免费用户50积分
+      totalCredits: totalCredits,
       usedCredits: user.emailsSentThisMonth * 5, // 每封邮件5积分
-      remainingCredits: isPremium ? Infinity : Math.max(0, 50 - (user.emailsSentThisMonth * 5)),
-      subscriptionType: isPremium ? 'premium' : 'free',
-      aiAccess: isPremium, // Premium用户有AI访问权限
+      remainingCredits: totalCredits === Infinity ? Infinity : Math.max(0, totalCredits - (user.emailsSentThisMonth * 5)),
+      subscriptionType: subscriptionType,
+      aiAccess: aiAccess,
       lastResetDate: user.lastUsageReset.toISOString().split('T')[0],
       nextResetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       subscriptionStatus: activeSubscription?.status || 'free',

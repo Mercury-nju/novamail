@@ -97,14 +97,27 @@ async function deductUserCredits(userId: string, credits: number) {
                       activeSubscription.status === 'active' && 
                       activeSubscription.currentPeriodEnd > new Date()
 
-    if (!isPremium) {
-      // 检查免费用户是否有足够积分
-      if (user.emailsSentThisMonth * 5 + credits > 50) {
-        return {
-          success: false,
-          error: 'Insufficient credits',
-          remainingCredits: Math.max(0, 50 - (user.emailsSentThisMonth * 5))
-        }
+    // 根据订阅类型确定积分限制
+    let creditLimit = 50 // 免费用户默认50积分
+    let subscriptionType = 'free'
+    
+    if (isPremium && activeSubscription) {
+      const plan = activeSubscription.plan
+      if (plan === 'premium') {
+        creditLimit = 500 // Premium用户500积分
+        subscriptionType = 'premium'
+      } else if (plan === 'enterprise') {
+        creditLimit = Infinity // Enterprise用户无限积分
+        subscriptionType = 'enterprise'
+      }
+    }
+
+    // 检查用户是否有足够积分（Enterprise用户跳过检查）
+    if (creditLimit !== Infinity && user.emailsSentThisMonth * 5 + credits > creditLimit) {
+      return {
+        success: false,
+        error: 'Insufficient credits',
+        remainingCredits: Math.max(0, creditLimit - (user.emailsSentThisMonth * 5))
       }
     }
 
@@ -118,10 +131,10 @@ async function deductUserCredits(userId: string, credits: number) {
       }
     })
 
-    console.log(`${isPremium ? 'Premium' : 'Free'}用户 ${userId} 发送邮件，扣除 ${credits} 个积分`)
+    console.log(`${subscriptionType}用户 ${userId} 发送邮件，扣除 ${credits} 个积分`)
     return {
       success: true,
-      remainingCredits: isPremium ? Infinity : Math.max(0, 50 - ((user.emailsSentThisMonth + Math.ceil(credits / 5)) * 5))
+      remainingCredits: creditLimit === Infinity ? Infinity : Math.max(0, creditLimit - ((user.emailsSentThisMonth + Math.ceil(credits / 5)) * 5))
     }
   } catch (error) {
     console.error('Error deducting user credits:', error)
