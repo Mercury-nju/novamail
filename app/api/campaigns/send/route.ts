@@ -1,43 +1,133 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 // 检查用户积分
 async function checkUserCredits(userId: string) {
-  // 模拟用户积分数据（实际应该从数据库查询）
-  if (userId === 'premium_user' || userId === 'premium') {
+  try {
+    // 从数据库查询用户信息
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        subscriptions: {
+          where: {
+            status: 'active',
+            currentPeriodEnd: {
+              gt: new Date()
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          },
+          take: 1
+        }
+      }
+    })
+
+    if (!user) {
+      return {
+        userId: userId,
+        totalCredits: 0,
+        usedCredits: 0,
+        remainingCredits: 0,
+        hasUnlimitedCredits: false,
+        subscriptionType: 'free'
+      }
+    }
+
+    const activeSubscription = user.subscriptions[0]
+    const isPremium = activeSubscription && 
+                      activeSubscription.status === 'active' && 
+                      activeSubscription.currentPeriodEnd > new Date()
+
     return {
       userId: userId,
-      totalCredits: Infinity,
-      usedCredits: 0,
-      remainingCredits: Infinity,
-      hasUnlimitedCredits: true, // Premium用户有无限积分
-      subscriptionType: 'premium' // free, premium
+      totalCredits: isPremium ? Infinity : 50,
+      usedCredits: user.emailsSentThisMonth * 5,
+      remainingCredits: isPremium ? Infinity : Math.max(0, 50 - (user.emailsSentThisMonth * 5)),
+      hasUnlimitedCredits: isPremium,
+      subscriptionType: isPremium ? 'premium' : 'free'
     }
-  } else {
+  } catch (error) {
+    console.error('Error checking user credits:', error)
+    // 出错时返回免费用户状态
     return {
       userId: userId,
       totalCredits: 50,
       usedCredits: 0,
       remainingCredits: 50,
-      hasUnlimitedCredits: false, // 免费用户无无限积分
-      subscriptionType: 'free' // free, premium
+      hasUnlimitedCredits: false,
+      subscriptionType: 'free'
     }
   }
 }
 
 // 扣除用户积分
 async function deductUserCredits(userId: string, credits: number) {
-  // 模拟积分扣除（实际应该更新数据库）
-  if (userId === 'premium_user' || userId === 'premium') {
-    console.log(`Premium用户 ${userId} 发送邮件，无需扣除积分`)
-    return {
-      success: true,
-      remainingCredits: Infinity // Premium用户无限积分
+  try {
+    // 查询用户信息
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        subscriptions: {
+          where: {
+            status: 'active',
+            currentPeriodEnd: {
+              gt: new Date()
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          },
+          take: 1
+        }
+      }
+    })
+
+    if (!user) {
+      return {
+        success: false,
+        error: 'User not found'
+      }
     }
-  } else {
-    console.log(`扣除免费用户 ${userId} 的 ${credits} 个积分`)
+
+    const activeSubscription = user.subscriptions[0]
+    const isPremium = activeSubscription && 
+                      activeSubscription.status === 'active' && 
+                      activeSubscription.currentPeriodEnd > new Date()
+
+    if (!isPremium) {
+      // 检查免费用户是否有足够积分
+      if (user.emailsSentThisMonth * 5 + credits > 50) {
+        return {
+          success: false,
+          error: 'Insufficient credits',
+          remainingCredits: Math.max(0, 50 - (user.emailsSentThisMonth * 5))
+        }
+      }
+    }
+
+    // 更新用户邮件发送计数
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        emailsSentThisMonth: {
+          increment: Math.ceil(credits / 5) // 每5积分对应1封邮件
+        }
+      }
+    })
+
+    console.log(`${isPremium ? 'Premium' : 'Free'}用户 ${userId} 发送邮件，扣除 ${credits} 个积分`)
     return {
       success: true,
-      remainingCredits: Math.max(0, 50 - credits)
+      remainingCredits: isPremium ? Infinity : Math.max(0, 50 - ((user.emailsSentThisMonth + Math.ceil(credits / 5)) * 5))
+    }
+  } catch (error) {
+    console.error('Error deducting user credits:', error)
+    return {
+      success: false,
+      error: 'Failed to deduct credits'
     }
   }
 }
