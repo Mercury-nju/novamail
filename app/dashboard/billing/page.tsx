@@ -258,7 +258,7 @@ export default function BillingPage() {
             <h2 className="text-lg font-semibold text-gray-900">Payment Method</h2>
             <p className="text-gray-600">Manage your payment information</p>
           </div>
-          {billing?.currentPlan === 'Free' ? (
+          {credits?.subscriptionType === 'free' ? (
             <button 
               onClick={() => setShowUpgradeModal(true)}
               className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
@@ -272,7 +272,7 @@ export default function BillingPage() {
           )}
         </div>
 
-        {billing?.currentPlan === 'Free' ? (
+        {credits?.subscriptionType === 'free' ? (
           <div className="text-center py-8">
             <div className="p-4 bg-gray-50 rounded-lg">
               <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
