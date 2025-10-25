@@ -476,21 +476,19 @@ export default function TemplateDesignerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* 顶部导航栏 */}
+    <div className="min-h-screen bg-gray-50">
+      {/* 顶部导航栏 - NovaMail风格 */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-8 h-8 bg-green-500 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-sm">S</span>
-            </div>
+            <div className="text-lg font-bold text-blue-600">NovaMail</div>
             <ArrowLeftIcon className="w-5 h-5 text-gray-600 cursor-pointer" />
             <input
               type="text"
               value={template.name}
               onChange={(e) => setTemplate(prev => ({ ...prev, name: e.target.value }))}
               className="px-3 py-1 border-none text-lg font-medium focus:outline-none"
-              placeholder="New Message"
+              placeholder="New Template"
             />
           </div>
           
@@ -501,41 +499,47 @@ export default function TemplateDesignerPage() {
             <button
               onClick={() => setIsPreviewMode(!isPreviewMode)}
               className={`px-4 py-2 rounded-lg ${
-                isPreviewMode ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                isPreviewMode ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
               }`}
             >
               Preview
             </button>
             <button
               onClick={exportTemplate}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               Export
             </button>
             <ShareIcon className="w-5 h-5 text-gray-600 cursor-pointer" />
             
             {/* 设备视图切换 */}
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
               <button
                 onClick={() => setDeviceView('desktop')}
-                className={`p-2 rounded ${deviceView === 'desktop' ? 'bg-green-100 text-green-700' : 'text-gray-600'}`}
+                className={`p-2 rounded ${deviceView === 'desktop' ? 'bg-white shadow-sm' : 'text-gray-600'}`}
                 title="Desktop View"
               >
                 <ComputerDesktopIcon className="w-4 h-4" />
               </button>
               <button
+                onClick={() => setDeviceView('tablet')}
+                className={`p-2 rounded ${deviceView === 'tablet' ? 'bg-white shadow-sm' : 'text-gray-600'}`}
+                title="Tablet View"
+              >
+                <DeviceTabletIcon className="w-4 h-4" />
+              </button>
+              <button
                 onClick={() => setDeviceView('mobile')}
-                className={`p-2 rounded ${deviceView === 'mobile' ? 'bg-green-100 text-green-700' : 'text-gray-600'}`}
+                className={`p-2 rounded ${deviceView === 'mobile' ? 'bg-white shadow-sm' : 'text-gray-600'}`}
                 title="Mobile View"
               >
                 <DevicePhoneMobileIcon className="w-4 h-4" />
               </button>
-              <ChevronDownIcon className="w-4 h-4 text-gray-600" />
             </div>
             
             <QuestionMarkCircleIcon className="w-5 h-5 text-gray-600 cursor-pointer" />
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-              <span className="text-gray-600 font-medium text-sm">HL</span>
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <span className="text-blue-600 font-medium text-sm">U</span>
             </div>
           </div>
         </div>
@@ -543,19 +547,29 @@ export default function TemplateDesignerPage() {
 
       <div className="flex h-[calc(100vh-80px)]">
         {/* 左侧边栏 - 元素库 */}
-        <div className="w-16 bg-gray-50 border-r border-gray-200 p-2">
+        <div className="w-80 bg-white border-r border-gray-200 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-gray-900">Elements</h3>
+            <button
+              onClick={() => setShowTemplates(true)}
+              className="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700"
+            >
+              Templates
+            </button>
+          </div>
           <div className="space-y-2">
-            {dragItems.slice(0, 12).map((item, index) => (
+            {dragItems.map((item) => (
               <div
                 key={item.id}
                 draggable
                 onDragStart={(e) => handleDragStart(e, item)}
-                className={`w-12 h-12 flex items-center justify-center rounded-lg cursor-move hover:bg-gray-200 transition-colors ${
-                  index === 0 ? 'bg-green-100 text-green-700' : 'text-gray-600'
-                }`}
-                title={item.name}
+                className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-move hover:border-blue-300 hover:bg-blue-50 transition-colors"
               >
-                <div className="text-xl">{item.icon}</div>
+                <div className="text-2xl">{item.icon}</div>
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                  <div className="text-xs text-gray-500">{item.category}</div>
+                </div>
               </div>
             ))}
           </div>
@@ -664,7 +678,7 @@ export default function TemplateDesignerPage() {
           
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">General Background Color</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Background Color</label>
               <div className="flex items-center space-x-2">
                 <input
                   type="color"
@@ -682,40 +696,68 @@ export default function TemplateDesignerPage() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Background Image</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Content Width</label>
               <div className="flex items-center space-x-2">
-                <input type="checkbox" className="rounded" />
-                <span className="text-sm text-gray-600">Background Image</span>
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Message Content Width</label>
-              <div className="flex items-center space-x-2">
-                <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center">-</button>
+                <button 
+                  onClick={() => updateGlobalStyles({ contentWidth: template.globalStyles.contentWidth - 10 })}
+                  className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-50"
+                >
+                  -
+                </button>
                 <input
                   type="number"
                   value={template.globalStyles.contentWidth}
                   onChange={(e) => updateGlobalStyles({ contentWidth: parseInt(e.target.value) })}
                   className="w-20 px-3 py-2 border border-gray-300 rounded text-sm text-center"
                 />
-                <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center">+</button>
+                <button 
+                  onClick={() => updateGlobalStyles({ contentWidth: template.globalStyles.contentWidth + 10 })}
+                  className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-50"
+                >
+                  +
+                </button>
               </div>
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Message Alignment</label>
               <div className="flex items-center space-x-2">
-                <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center">←</button>
-                <button className="w-8 h-8 border border-gray-300 rounded bg-green-100 text-green-700 flex items-center justify-center">↔</button>
-                <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center">→</button>
+                <button 
+                  onClick={() => updateGlobalStyles({ alignment: 'left' })}
+                  className={`w-8 h-8 border border-gray-300 rounded flex items-center justify-center ${
+                    template.globalStyles.alignment === 'left' ? 'bg-blue-100 text-blue-700' : ''
+                  }`}
+                >
+                  ←
+                </button>
+                <button 
+                  onClick={() => updateGlobalStyles({ alignment: 'center' })}
+                  className={`w-8 h-8 border border-gray-300 rounded flex items-center justify-center ${
+                    template.globalStyles.alignment === 'center' ? 'bg-blue-100 text-blue-700' : ''
+                  }`}
+                >
+                  ↔
+                </button>
+                <button 
+                  onClick={() => updateGlobalStyles({ alignment: 'right' })}
+                  className={`w-8 h-8 border border-gray-300 rounded flex items-center justify-center ${
+                    template.globalStyles.alignment === 'right' ? 'bg-blue-100 text-blue-700' : ''
+                  }`}
+                >
+                  →
+                </button>
               </div>
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Underline Links</label>
               <div className="flex items-center space-x-2">
-                <input type="checkbox" defaultChecked className="rounded" />
+                <input 
+                  type="checkbox" 
+                  checked={template.globalStyles.underlineLinks}
+                  onChange={(e) => updateGlobalStyles({ underlineLinks: e.target.checked })}
+                  className="rounded" 
+                />
                 <span className="text-sm text-gray-600">Underline Links</span>
               </div>
             </div>
@@ -723,7 +765,12 @@ export default function TemplateDesignerPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Responsive Design</label>
               <div className="flex items-center space-x-2">
-                <input type="checkbox" defaultChecked className="rounded" />
+                <input 
+                  type="checkbox" 
+                  checked={template.globalStyles.responsiveDesign}
+                  onChange={(e) => updateGlobalStyles({ responsiveDesign: e.target.checked })}
+                  className="rounded" 
+                />
                 <span className="text-sm text-gray-600">Responsive Design</span>
               </div>
               <p className="text-xs text-gray-500 mt-1">
@@ -733,32 +780,26 @@ export default function TemplateDesignerPage() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Right to Left Text Direction</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Padding</label>
               <div className="flex items-center space-x-2">
-                <input type="checkbox" className="rounded" />
-                <span className="text-sm text-gray-600">Right to Left Text Direction</span>
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Custom List Styles</label>
-              <div className="flex items-center space-x-2">
-                <input type="checkbox" className="rounded" />
-                <span className="text-sm text-gray-600">Custom List Styles</span>
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Default Structure Padding on Desktop</label>
-              <div className="flex items-center space-x-2">
-                <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center">-</button>
+                <button 
+                  onClick={() => updateGlobalStyles({ padding: Math.max(0, template.globalStyles.padding - 5 })}
+                  className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-50"
+                >
+                  -
+                </button>
                 <input
                   type="number"
                   value={template.globalStyles.padding}
                   onChange={(e) => updateGlobalStyles({ padding: parseInt(e.target.value) })}
                   className="w-20 px-3 py-2 border border-gray-300 rounded text-sm text-center"
                 />
-                <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center">+</button>
+                <button 
+                  onClick={() => updateGlobalStyles({ padding: template.globalStyles.padding + 5 })}
+                  className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-50"
+                >
+                  +
+                </button>
               </div>
             </div>
           </div>
