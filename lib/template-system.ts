@@ -35,6 +35,8 @@ export interface TemplateDesigner {
     fontFamily: string
     fontSize: number
     lineHeight: number
+    textColor: string
+    linkColor: string
   }
   metadata: {
     createdAt: string
@@ -643,7 +645,9 @@ export function createNewTemplateDesigner(name: string = 'Untitled Template'): T
       padding: 20,
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
       fontSize: 16,
-      lineHeight: 1.6
+      lineHeight: 1.6,
+      textColor: '#333333',
+      linkColor: '#0066cc'
     },
     metadata: {
       createdAt: new Date().toISOString(),
@@ -675,7 +679,9 @@ export function createTemplateDesignerFromProfessional(template: ProfessionalTem
       padding: 20,
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
       fontSize: 16,
-      lineHeight: 1.6
+      lineHeight: 1.6,
+      textColor: '#333333',
+      linkColor: '#0066cc'
     },
     metadata: {
       createdAt: new Date().toISOString(),
