@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  DocumentTextIcon, 
-  PhotoIcon, 
+import {
+  DocumentTextIcon,
+  PhotoIcon,
   CursorArrowRaysIcon,
   Bars3Icon,
   CodeBracketIcon,
@@ -25,7 +25,11 @@ import {
   FolderIcon,
   SparklesIcon,
   XMarkIcon,
-  BookmarkIcon
+  BookmarkIcon,
+  PlusIcon,
+  TrashIcon,
+  PencilIcon,
+  DuplicateIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { 
@@ -33,7 +37,7 @@ import {
   TemplateElement, 
   DragItem, 
   dragItems, 
-  createNewTemplateDesigner,
+  createNewTemplateDesigner, 
   generateTemplateHTML,
   createTemplateDesignerFromProfessional
 } from '@/lib/template-system'
@@ -41,16 +45,17 @@ import { professionalTemplates } from '@/lib/templates'
 
 export default function TemplateDesignerPage() {
   const [template, setTemplate] = useState<TemplateDesigner>(createNewTemplateDesigner())
-  
   const [selectedItem, setSelectedItem] = useState<string | null>(null)
   const [isPreviewMode, setIsPreviewMode] = useState(false)
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
-  const [showGlobalStyles, setShowGlobalStyles] = useState(true)
-  const canvasRef = useRef<HTMLDivElement>(null)
-
+  const [showGlobalStyles, setShowGlobalStyles] = useState(false)
   const [showTemplates, setShowTemplates] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [activeTab, setActiveTab] = useState<'elements' | 'templates' | 'settings'>('elements')
+  
+  const canvasRef = useRef<HTMLDivElement>(null)
 
+  // 拖拽处理
   const handleDragStart = (e: React.DragEvent, item: DragItem) => {
     e.dataTransfer.setData('application/json', JSON.stringify(item))
   }
@@ -62,7 +67,7 @@ export default function TemplateDesignerPage() {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     const data = JSON.parse(e.dataTransfer.getData('application/json')) as DragItem
-    
+
     const rect = canvasRef.current?.getBoundingClientRect()
     if (!rect) return
 
@@ -74,8 +79,8 @@ export default function TemplateDesignerPage() {
       type: data.type,
       content: { ...data.defaultContent },
       position: {
-        x,
-        y,
+        x: Math.max(0, x - 10),
+        y: Math.max(0, y - 10),
         width: data.defaultSize.width,
         height: data.defaultSize.height
       },
@@ -91,6 +96,7 @@ export default function TemplateDesignerPage() {
       }
     }))
 
+    setSelectedItem(newElement.id)
     toast.success(`${data.name} added to template`)
   }
 
@@ -111,7 +117,7 @@ export default function TemplateDesignerPage() {
       })
 
       const result = await response.json()
-      
+
       if (result.success) {
         toast.success('Template saved successfully!')
         setTemplate(prev => ({
@@ -140,6 +146,7 @@ export default function TemplateDesignerPage() {
     toast.success(`Created from ${professionalTemplate.name}`)
   }
 
+  // 元素操作
   const handleItemClick = (itemId: string) => {
     setSelectedItem(selectedItem === itemId ? null : itemId)
   }
@@ -147,7 +154,7 @@ export default function TemplateDesignerPage() {
   const updateElementContent = (elementId: string, content: any) => {
     setTemplate(prev => ({
       ...prev,
-      content: prev.content.map(element => 
+      content: prev.content.map(element =>
         element.id === elementId ? { ...element, content: { ...element.content, ...content } } : element
       ),
       metadata: {
@@ -160,7 +167,7 @@ export default function TemplateDesignerPage() {
   const updateElementStyles = (elementId: string, styles: any) => {
     setTemplate(prev => ({
       ...prev,
-      content: prev.content.map(element => 
+      content: prev.content.map(element =>
         element.id === elementId ? { ...element, styles: { ...element.styles, ...styles } } : element
       ),
       metadata: {
@@ -183,6 +190,32 @@ export default function TemplateDesignerPage() {
     toast.success('Element deleted')
   }
 
+  const duplicateElement = (elementId: string) => {
+    const element = template.content.find(el => el.id === elementId)
+    if (!element) return
+
+    const newElement: TemplateElement = {
+      ...element,
+      id: `${element.type}-${Date.now()}`,
+      position: {
+        ...element.position,
+        x: element.position.x + 20,
+        y: element.position.y + 20
+      }
+    }
+
+    setTemplate(prev => ({
+      ...prev,
+      content: [...prev.content, newElement],
+      metadata: {
+        ...prev.metadata,
+        updatedAt: new Date().toISOString()
+      }
+    }))
+    setSelectedItem(newElement.id)
+    toast.success('Element duplicated')
+  }
+
   const updateGlobalStyles = (styles: Partial<TemplateDesigner['globalStyles']>) => {
     setTemplate(prev => ({
       ...prev,
@@ -203,6 +236,126 @@ export default function TemplateDesignerPage() {
   }
 
   const selectedItemData = template.content.find(item => item.id === selectedItem)
+
+  // 渲染元素内容
+  const renderElementContent = (element: TemplateElement) => {
+    switch (element.type) {
+      case 'text':
+        const tag = element.content.level || 'p'
+        return (
+          <div style={element.styles}>
+            {tag === 'h1' && <h1>{element.content.text}</h1>}
+            {tag === 'h2' && <h2>{element.content.text}</h2>}
+            {tag === 'h3' && <h3>{element.content.text}</h3>}
+            {tag === 'p' && <p>{element.content.text}</p>}
+            {tag === 'blockquote' && <blockquote>{element.content.text}</blockquote>}
+          </div>
+        )
+
+      case 'image':
+        return (
+          <div style={element.styles}>
+            <img
+              src={element.content.src}
+              alt={element.content.alt}
+              style={{ maxWidth: '100%', height: 'auto' }}
+            />
+          </div>
+        )
+
+      case 'button':
+        return (
+          <div style={element.styles}>
+            <a
+              href={element.content.url}
+              target={element.content.target || '_self'}
+              style={{
+                backgroundColor: element.styles.backgroundColor,
+                color: element.styles.color,
+                padding: element.styles.padding,
+                borderRadius: element.styles.borderRadius,
+                fontSize: element.styles.fontSize,
+                fontWeight: element.styles.fontWeight,
+                textDecoration: 'none',
+                display: 'inline-block'
+              }}
+            >
+              {element.content.text}
+            </a>
+          </div>
+        )
+
+      case 'divider':
+        if (element.content.type === 'dots') {
+          return <div style={element.styles}>• • •</div>
+        } else {
+          return <hr style={element.styles} />
+        }
+
+      case 'spacer':
+        return <div style={{ height: `${element.content.height}px` }} />
+
+      case 'social':
+        return (
+          <div style={element.styles}>
+            {element.content.platforms.map((platform: any, index: number) => (
+              <a key={index} href={platform.url} style={{ margin: '0 10px', fontSize: '24px', textDecoration: 'none' }}>
+                {platform.icon}
+              </a>
+            ))}
+          </div>
+        )
+
+      case 'product':
+        return (
+          <div style={element.styles}>
+            <img
+              src={element.content.image}
+              alt={element.content.title}
+              style={{ width: '100%', maxWidth: '200px', height: 'auto', borderRadius: '8px' }}
+            />
+            <h3 style={{ margin: '15px 0 10px 0', fontSize: '18px', color: '#1a202c' }}>
+              {element.content.title}
+            </h3>
+            <p style={{ margin: '0 0 15px 0', color: '#4a5568', fontSize: '14px' }}>
+              {element.content.description}
+            </p>
+            <div style={{ margin: '15px 0' }}>
+              <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#667eea' }}>
+                {element.content.price}
+              </span>
+            </div>
+            <a
+              href={element.content.buttonUrl}
+              style={{
+                backgroundColor: '#667eea',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: '6px',
+                textDecoration: 'none',
+                fontWeight: '600',
+                display: 'inline-block'
+              }}
+            >
+              {element.content.buttonText}
+            </a>
+          </div>
+        )
+
+      case 'countdown':
+        return (
+          <div style={element.styles}>
+            <div style={{ marginBottom: '10px' }}>{element.content.message}</div>
+            <div style={{ fontFamily: 'monospace', fontSize: '24px' }}>
+              <span>00</span>d <span>00</span>h <span>00</span>m <span>00</span>s
+            </div>
+          </div>
+        )
+
+      default:
+        return <div style={element.styles}>{element.type} element</div>
+    }
+  }
 
   // 渲染元素属性编辑面板
   const renderElementProperties = (element: TemplateElement) => {
@@ -448,274 +601,247 @@ export default function TemplateDesignerPage() {
     }
   }
 
-  // 渲染元素内容
-  const renderElementContent = (element: TemplateElement) => {
-    switch (element.type) {
-      case 'text':
-        const tag = element.content.level || 'p'
-        return (
-          <div style={element.styles}>
-            {tag === 'h1' && <h1>{element.content.text}</h1>}
-            {tag === 'h2' && <h2>{element.content.text}</h2>}
-            {tag === 'h3' && <h3>{element.content.text}</h3>}
-            {tag === 'p' && <p>{element.content.text}</p>}
-            {tag === 'blockquote' && <blockquote>{element.content.text}</blockquote>}
-          </div>
-        )
-      
-      case 'image':
-        return (
-          <div style={element.styles}>
-            <img 
-              src={element.content.src} 
-              alt={element.content.alt} 
-              style={{ maxWidth: '100%', height: 'auto' }}
-            />
-          </div>
-        )
-      
-      case 'button':
-        return (
-          <div style={element.styles}>
-            <a 
-              href={element.content.url} 
-              target={element.content.target || '_self'}
-              style={{
-                backgroundColor: element.styles.backgroundColor,
-                color: element.styles.color,
-                padding: element.styles.padding,
-                borderRadius: element.styles.borderRadius,
-                fontSize: element.styles.fontSize,
-                fontWeight: element.styles.fontWeight,
-                textDecoration: 'none',
-                display: 'inline-block'
-              }}
-            >
-              {element.content.text}
-            </a>
-          </div>
-        )
-      
-      case 'divider':
-        if (element.content.type === 'dots') {
-          return <div style={element.styles}>• • •</div>
-        } else {
-          return <hr style={element.styles} />
-        }
-      
-      case 'spacer':
-        return <div style={{ height: `${element.content.height}px` }} />
-      
-      case 'social':
-        return (
-          <div style={element.styles}>
-            {element.content.platforms.map((platform: any, index: number) => (
-              <a key={index} href={platform.url} style={{ margin: '0 10px', fontSize: '24px', textDecoration: 'none' }}>
-                {platform.icon}
-              </a>
-            ))}
-          </div>
-        )
-      
-      case 'product':
-        return (
-          <div style={element.styles}>
-            <img 
-              src={element.content.image} 
-              alt={element.content.title} 
-              style={{ width: '100%', maxWidth: '200px', height: 'auto', borderRadius: '8px' }}
-            />
-            <h3 style={{ margin: '15px 0 10px 0', fontSize: '18px', color: '#1a202c' }}>
-              {element.content.title}
-            </h3>
-            <p style={{ margin: '0 0 15px 0', color: '#4a5568', fontSize: '14px' }}>
-              {element.content.description}
-            </p>
-            <div style={{ margin: '15px 0' }}>
-              <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#667eea' }}>
-                {element.content.price}
-              </span>
-            </div>
-            <a 
-              href={element.content.buttonUrl}
-              style={{
-                backgroundColor: '#667eea',
-                color: 'white',
-                padding: '10px 20px',
-                borderRadius: '6px',
-                textDecoration: 'none',
-                fontWeight: '600',
-                display: 'inline-block'
-              }}
-            >
-              {element.content.buttonText}
-            </a>
-          </div>
-        )
-      
-      case 'countdown':
-        return (
-          <div style={element.styles}>
-            <div style={{ marginBottom: '10px' }}>{element.content.message}</div>
-            <div style={{ fontFamily: 'monospace', fontSize: '24px' }}>
-              <span>00</span>d <span>00</span>h <span>00</span>m <span>00</span>s
-            </div>
-          </div>
-        )
-      
-      default:
-        return <div style={element.styles}>{element.type} element</div>
-    }
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
+      {/* 顶部导航栏 */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
+            <div className="text-lg font-bold text-blue-600">NovaMail</div>
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-green-500 rounded flex items-center justify-center">
-                <span className="text-white font-bold text-sm">S</span>
-              </div>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={template.name}
                 onChange={(e) => setTemplate(prev => ({ ...prev, name: e.target.value }))}
-                className="border-none outline-none text-lg font-medium bg-transparent"
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Template Name"
               />
             </div>
           </div>
           
-          <div className="flex items-center space-x-4">
-            <button className="flex items-center space-x-1 text-gray-600 hover:text-gray-900">
-              <CloudArrowDownIcon className="w-5 h-5" />
-              <span>Import</span>
-            </button>
-            
-            <div className="flex items-center space-x-2">
-              <button className="p-2 text-gray-600 hover:text-gray-900">
-                <ArrowPathIcon className="w-5 h-5" />
+          <div className="flex items-center space-x-3">
+            {/* 设备视图切换 */}
+            <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setDeviceView('desktop')}
+                className={`p-2 rounded ${deviceView === 'desktop' ? 'bg-white shadow-sm' : 'text-gray-600'}`}
+                title="Desktop View"
+              >
+                <ComputerDesktopIcon className="w-4 h-4" />
               </button>
-              <button className="p-2 text-gray-600 hover:text-gray-900">
-                <ArrowPathIcon className="w-5 h-5 rotate-180" />
+              <button
+                onClick={() => setDeviceView('tablet')}
+                className={`p-2 rounded ${deviceView === 'tablet' ? 'bg-white shadow-sm' : 'text-gray-600'}`}
+                title="Tablet View"
+              >
+                <DeviceTabletIcon className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setDeviceView('mobile')}
+                className={`p-2 rounded ${deviceView === 'mobile' ? 'bg-white shadow-sm' : 'text-gray-600'}`}
+                title="Mobile View"
+              >
+                <DevicePhoneMobileIcon className="w-4 h-4" />
               </button>
             </div>
-            
-            <button className="flex items-center space-x-1 text-gray-600 hover:text-gray-900">
-              <CodeBracketIcon className="w-5 h-5" />
-            </button>
-            
-            <button 
+
+            {/* 预览模式 */}
+            <button
               onClick={() => setIsPreviewMode(!isPreviewMode)}
-              className="px-4 py-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded"
+              className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
+                isPreviewMode ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+              }`}
             >
-              Preview
+              <EyeIcon className="w-4 h-4" />
+              <span>Preview</span>
             </button>
-            
-            <button 
-              onClick={handleSaveTemplate}
-              disabled={isSaving}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 flex items-center space-x-2"
-            >
-              <BookmarkIcon className="w-4 h-4" />
-              <span>{isSaving ? 'Saving...' : 'Save'}</span>
-            </button>
-            
-            <button 
-              onClick={() => setShowTemplates(!showTemplates)}
-              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center space-x-2"
+
+            {/* 操作按钮 */}
+            <button
+              onClick={() => setShowTemplates(true)}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center space-x-2"
             >
               <SparklesIcon className="w-4 h-4" />
               <span>Templates</span>
             </button>
-            
-            <button 
-              onClick={exportTemplate}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+
+            <button
+              onClick={handleSaveTemplate}
+              disabled={isSaving}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center space-x-2"
             >
-              Export
+              <BookmarkIcon className="w-4 h-4" />
+              <span>{isSaving ? 'Saving...' : 'Save'}</span>
             </button>
-            
-            <div className="flex items-center space-x-1">
-              <button 
-                onClick={() => setDeviceView('desktop')}
-                className={`p-2 ${deviceView === 'desktop' ? 'bg-blue-100 text-blue-600' : 'text-gray-600'}`}
-              >
-                <ComputerDesktopIcon className="w-5 h-5" />
-              </button>
-              <button 
-                onClick={() => setDeviceView('tablet')}
-                className={`p-2 ${deviceView === 'tablet' ? 'bg-blue-100 text-blue-600' : 'text-gray-600'}`}
-              >
-                <DeviceTabletIcon className="w-5 h-5" />
-              </button>
-              <button 
-                onClick={() => setDeviceView('mobile')}
-                className={`p-2 ${deviceView === 'mobile' ? 'bg-blue-100 text-blue-600' : 'text-gray-600'}`}
-              >
-                <DevicePhoneMobileIcon className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <button className="p-2 text-gray-600 hover:text-gray-900">
-              <QuestionMarkCircleIcon className="w-5 h-5" />
+
+            <button
+              onClick={exportTemplate}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center space-x-2"
+            >
+              <CloudArrowDownIcon className="w-4 h-4" />
+              <span>Export</span>
             </button>
-            
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium">HL</span>
-            </div>
           </div>
         </div>
       </div>
 
       <div className="flex h-[calc(100vh-80px)]">
-        {/* Left Sidebar - Drag Items */}
-        <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
-          {/* Categories */}
+        {/* 左侧边栏 */}
+        <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+          {/* 标签页切换 */}
           <div className="p-4 border-b border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Elements</h3>
-            <div className="space-y-2">
-              {['Layout', 'Text', 'Media', 'Interactive', 'E-commerce'].map(category => (
-                <button
-                  key={category}
-                  className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded"
-                >
-                  {category}
-                </button>
-              ))}
+            <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setActiveTab('elements')}
+                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md ${
+                  activeTab === 'elements' ? 'bg-white shadow-sm' : 'text-gray-600'
+                }`}
+              >
+                Elements
+              </button>
+              <button
+                onClick={() => setActiveTab('templates')}
+                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md ${
+                  activeTab === 'templates' ? 'bg-white shadow-sm' : 'text-gray-600'
+                }`}
+              >
+                Templates
+              </button>
+              <button
+                onClick={() => setActiveTab('settings')}
+                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md ${
+                  activeTab === 'settings' ? 'bg-white shadow-sm' : 'text-gray-600'
+                }`}
+              >
+                Settings
+              </button>
             </div>
           </div>
-          
-          {/* Drag Items */}
-          <div className="flex-1 p-4 overflow-y-auto">
-            <div className="space-y-3">
-              {dragItems.map((item) => (
-                <div
-                  key={item.id}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, item)}
-                  className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-move hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                >
-                  <div className="text-2xl">{item.icon}</div>
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                    <div className="text-xs text-gray-500">{item.category}</div>
+
+          {/* 标签页内容 */}
+          <div className="flex-1 overflow-y-auto">
+            {activeTab === 'elements' && (
+              <div className="p-4">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">Drag & Drop Elements</h3>
+                <div className="space-y-3">
+                  {dragItems.map((item) => (
+                    <div
+                      key={item.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, item)}
+                      className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-move hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                    >
+                      <div className="text-2xl">{item.icon}</div>
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                        <div className="text-xs text-gray-500">{item.category}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'templates' && (
+              <div className="p-4">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">Professional Templates</h3>
+                <div className="space-y-3">
+                  {professionalTemplates.slice(0, 6).map((template) => (
+                    <div
+                      key={template.id}
+                      onClick={() => handleCreateFromTemplate(template)}
+                      className="p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-8 bg-gray-100 rounded flex items-center justify-center">
+                          <DocumentTextIcon className="w-6 h-6 text-gray-400" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-gray-900">{template.name}</div>
+                          <div className="text-xs text-gray-500">{template.category}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'settings' && (
+              <div className="p-4">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">Global Settings</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Background Color</label>
+                    <input
+                      type="color"
+                      value={template.globalStyles.backgroundColor}
+                      onChange={(e) => updateGlobalStyles({ backgroundColor: e.target.value })}
+                      className="w-full h-10 border border-gray-300 rounded"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Content Width (px)</label>
+                    <input
+                      type="number"
+                      value={template.globalStyles.contentWidth}
+                      onChange={(e) => updateGlobalStyles({ contentWidth: parseInt(e.target.value) })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Padding (px)</label>
+                    <input
+                      type="number"
+                      value={template.globalStyles.padding}
+                      onChange={(e) => updateGlobalStyles({ padding: parseInt(e.target.value) })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Font Family</label>
+                    <input
+                      type="text"
+                      value={template.globalStyles.fontFamily}
+                      onChange={(e) => updateGlobalStyles({ fontFamily: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
+                    <input
+                      type="color"
+                      value={template.globalStyles.textColor}
+                      onChange={(e) => updateGlobalStyles({ textColor: e.target.value })}
+                      className="w-full h-10 border border-gray-300 rounded"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Link Color</label>
+                    <input
+                      type="color"
+                      value={template.globalStyles.linkColor}
+                      onChange={(e) => updateGlobalStyles({ linkColor: e.target.value })}
+                      className="w-full h-10 border border-gray-300 rounded"
+                    />
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Main Canvas */}
+        {/* 主画布区域 */}
         <div className="flex-1 flex">
           <div className="flex-1 bg-gray-100 p-8 overflow-auto">
             <div 
               ref={canvasRef}
-              className="bg-white mx-auto shadow-lg min-h-[600px] relative"
+              className={`bg-white mx-auto shadow-lg relative ${
+                deviceView === 'desktop' ? 'w-[600px]' : 
+                deviceView === 'tablet' ? 'w-[480px]' : 'w-[320px]'
+              }`}
               style={{ 
-                maxWidth: `${template.globalStyles.contentWidth}px`,
+                minHeight: '600px',
                 backgroundColor: template.globalStyles.backgroundColor,
                 padding: `${template.globalStyles.padding}px`
               }}
@@ -726,15 +852,15 @@ export default function TemplateDesignerPage() {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center text-gray-500">
                     <div className="text-4xl mb-4">📧</div>
-                    <p className="text-lg">Drop content here</p>
-                    <p className="text-sm">Drag elements from the left sidebar</p>
+                    <p className="text-lg font-medium">Start Building Your Email</p>
+                    <p className="text-sm">Drag elements from the left sidebar to begin</p>
                   </div>
                 </div>
               ) : (
                 template.content.map((element) => (
                   <motion.div
                     key={element.id}
-                    className={`absolute border-2 border-dashed border-blue-300 p-4 cursor-pointer ${
+                    className={`absolute border-2 border-dashed border-blue-300 p-2 cursor-pointer ${
                       selectedItem === element.id ? 'border-blue-500 bg-blue-50' : 'hover:border-blue-400'
                     }`}
                     style={{
@@ -748,173 +874,63 @@ export default function TemplateDesignerPage() {
                     whileTap={{ scale: 0.98 }}
                   >
                     {renderElementContent(element)}
+                    
+                    {/* 元素操作按钮 */}
+                    {selectedItem === element.id && (
+                      <div className="absolute -top-8 left-0 flex space-x-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            duplicateElement(element.id)
+                          }}
+                          className="p-1 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50"
+                          title="Duplicate"
+                        >
+                          <DuplicateIcon className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            deleteElement(element.id)
+                          }}
+                          className="p-1 bg-white border border-gray-300 rounded shadow-sm hover:bg-red-50"
+                          title="Delete"
+                        >
+                          <TrashIcon className="w-3 h-3 text-red-600" />
+                        </button>
+                      </div>
+                    )}
                   </motion.div>
                 ))
               )}
             </div>
           </div>
 
-          {/* Right Sidebar - Properties */}
-          {showGlobalStyles && (
-            <div className="w-80 bg-white border-l border-gray-200 p-6">
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-4">Global Styles & Layout</h3>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      General Background Color
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="color"
-                        value={template.globalStyles.backgroundColor}
-                        onChange={(e) => updateGlobalStyles({ backgroundColor: e.target.value })}
-                        className="w-8 h-8 border border-gray-300 rounded"
-                      />
-                      <input
-                        type="text"
-                        value={template.globalStyles.backgroundColor}
-                        onChange={(e) => updateGlobalStyles({ backgroundColor: e.target.value })}
-                        className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Message Content Width
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <button 
-                        onClick={() => updateGlobalStyles({ contentWidth: Math.max(300, template.globalStyles.contentWidth - 50) })}
-                        className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center"
-                      >
-                        -
-                      </button>
-                      <input
-                        type="number"
-                        value={template.globalStyles.contentWidth}
-                        onChange={(e) => updateGlobalStyles({ contentWidth: parseInt(e.target.value) })}
-                        className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
-                      />
-                      <button 
-                        onClick={() => updateGlobalStyles({ contentWidth: Math.min(800, template.globalStyles.contentWidth + 50) })}
-                        className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Message Alignment
-                    </label>
-                    <div className="flex space-x-2">
-                      {[
-                        { value: 'left', icon: '←' },
-                        { value: 'center', icon: '↔' },
-                        { value: 'right', icon: '→' }
-                      ].map((align) => (
-                        <button
-                          key={align.value}
-                          onClick={() => updateGlobalStyles({ alignment: align.value as any })}
-                          className={`w-10 h-10 border rounded flex items-center justify-center ${
-                            template.globalStyles.alignment === align.value
-                              ? 'border-blue-500 bg-blue-50 text-blue-600'
-                              : 'border-gray-300'
-                          }`}
-                        >
-                          {align.icon}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">Underline Links</span>
-                    <button
-                      onClick={() => updateGlobalStyles({ underlineLinks: !template.globalStyles.underlineLinks })}
-                      className={`w-12 h-6 rounded-full transition-colors ${
-                        template.globalStyles.underlineLinks ? 'bg-green-500' : 'bg-gray-300'
-                      }`}
-                    >
-                      <div className={`w-5 h-5 bg-white rounded-full transition-transform ${
-                        template.globalStyles.underlineLinks ? 'translate-x-6' : 'translate-x-0.5'
-                      }`} />
-                    </button>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">Responsive Design</span>
-                    <button
-                      onClick={() => updateGlobalStyles({ responsiveDesign: !template.globalStyles.responsiveDesign })}
-                      className={`w-12 h-6 rounded-full transition-colors ${
-                        template.globalStyles.responsiveDesign ? 'bg-green-500' : 'bg-gray-300'
-                      }`}
-                    >
-                      <div className={`w-5 h-5 bg-white rounded-full transition-transform ${
-                        template.globalStyles.responsiveDesign ? 'translate-x-6' : 'translate-x-0.5'
-                      }`} />
-                    </button>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Default Structure Padding on Desktop
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <button 
-                        onClick={() => updateGlobalStyles({ padding: Math.max(0, template.globalStyles.padding - 5) })}
-                        className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center"
-                      >
-                        -
-                      </button>
-                      <input
-                        type="number"
-                        value={template.globalStyles.padding}
-                        onChange={(e) => updateGlobalStyles({ padding: parseInt(e.target.value) })}
-                        className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
-                      />
-                      <button 
-                        onClick={() => updateGlobalStyles({ padding: template.globalStyles.padding + 5 })}
-                        className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                </div>
+          {/* 右侧属性面板 */}
+          {selectedItemData && (
+            <div className="w-80 bg-white border-l border-gray-200 p-6 overflow-y-auto">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Element Properties</h3>
+                <button
+                  onClick={() => setSelectedItem(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <XMarkIcon className="w-5 h-5" />
+                </button>
               </div>
-
-              {/* Element Properties */}
-              {selectedItemData && (
-                <div className="border-t pt-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-lg font-semibold">Element Properties</h4>
-                    <button
-                      onClick={() => deleteElement(selectedItemData.id)}
-                      className="text-red-600 hover:text-red-800 text-sm"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                  {renderElementProperties(selectedItemData)}
-                </div>
-              )}
+              {renderElementProperties(selectedItemData)}
             </div>
           )}
         </div>
       </div>
 
-      {/* Template Selection Modal */}
+      {/* 专业模板选择模态框 */}
       {showTemplates && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[80vh] overflow-hidden">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">Choose a Template</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Choose a Professional Template</h3>
                 <button
                   onClick={() => setShowTemplates(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -923,7 +939,7 @@ export default function TemplateDesignerPage() {
                 </button>
               </div>
             </div>
-            
+
             <div className="p-6 overflow-y-auto max-h-[60vh]">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {professionalTemplates.map((template) => (
@@ -955,4 +971,3 @@ export default function TemplateDesignerPage() {
     </div>
   )
 }
-
