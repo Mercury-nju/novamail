@@ -204,6 +204,250 @@ export default function TemplateDesignerPage() {
 
   const selectedItemData = template.content.find(item => item.id === selectedItem)
 
+  // 渲染元素属性编辑面板
+  const renderElementProperties = (element: TemplateElement) => {
+    switch (element.type) {
+      case 'text':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Text Content</label>
+              <textarea
+                value={element.content.text}
+                onChange={(e) => updateElementContent(element.id, { text: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                rows={3}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Text Level</label>
+              <select
+                value={element.content.level}
+                onChange={(e) => updateElementContent(element.id, { level: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              >
+                <option value="p">Paragraph</option>
+                <option value="h1">Heading 1</option>
+                <option value="h2">Heading 2</option>
+                <option value="h3">Heading 3</option>
+                <option value="blockquote">Quote</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
+              <input
+                type="number"
+                value={parseInt(element.styles.fontSize) || 16}
+                onChange={(e) => updateElementStyles(element.id, { fontSize: `${e.target.value}px` })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
+              <input
+                type="color"
+                value={element.styles.color || '#000000'}
+                onChange={(e) => updateElementStyles(element.id, { color: e.target.value })}
+                className="w-full h-10 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Text Align</label>
+              <select
+                value={element.styles.textAlign || 'left'}
+                onChange={(e) => updateElementStyles(element.id, { textAlign: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              >
+                <option value="left">Left</option>
+                <option value="center">Center</option>
+                <option value="right">Right</option>
+              </select>
+            </div>
+          </div>
+        )
+
+      case 'image':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+              <input
+                type="url"
+                value={element.content.src}
+                onChange={(e) => updateElementContent(element.id, { src: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Alt Text</label>
+              <input
+                type="text"
+                value={element.content.alt}
+                onChange={(e) => updateElementContent(element.id, { alt: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                placeholder="Image description"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Link URL</label>
+              <input
+                type="url"
+                value={element.content.link || ''}
+                onChange={(e) => updateElementContent(element.id, { link: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                placeholder="https://example.com"
+              />
+            </div>
+          </div>
+        )
+
+      case 'button':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
+              <input
+                type="text"
+                value={element.content.text}
+                onChange={(e) => updateElementContent(element.id, { text: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Link URL</label>
+              <input
+                type="url"
+                value={element.content.url}
+                onChange={(e) => updateElementContent(element.id, { url: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Background Color</label>
+              <input
+                type="color"
+                value={element.styles.backgroundColor || '#667eea'}
+                onChange={(e) => updateElementStyles(element.id, { backgroundColor: e.target.value })}
+                className="w-full h-10 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
+              <input
+                type="color"
+                value={element.styles.color || '#ffffff'}
+                onChange={(e) => updateElementStyles(element.id, { color: e.target.value })}
+                className="w-full h-10 border border-gray-300 rounded"
+              />
+            </div>
+          </div>
+        )
+
+      case 'product':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Product Title</label>
+              <input
+                type="text"
+                value={element.content.title}
+                onChange={(e) => updateElementContent(element.id, { title: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+              <textarea
+                value={element.content.description}
+                onChange={(e) => updateElementContent(element.id, { description: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                rows={2}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
+              <input
+                type="text"
+                value={element.content.price}
+                onChange={(e) => updateElementContent(element.id, { price: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+              <input
+                type="url"
+                value={element.content.image}
+                onChange={(e) => updateElementContent(element.id, { image: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
+              <input
+                type="text"
+                value={element.content.buttonText}
+                onChange={(e) => updateElementContent(element.id, { buttonText: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Button URL</label>
+              <input
+                type="url"
+                value={element.content.buttonUrl}
+                onChange={(e) => updateElementContent(element.id, { buttonUrl: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              />
+            </div>
+          </div>
+        )
+
+      case 'countdown':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+              <input
+                type="text"
+                value={element.content.message}
+                onChange={(e) => updateElementContent(element.id, { message: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+              <input
+                type="datetime-local"
+                value={element.content.endDate}
+                onChange={(e) => updateElementContent(element.id, { endDate: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              />
+            </div>
+          </div>
+        )
+
+      case 'spacer':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Height (px)</label>
+              <input
+                type="number"
+                value={element.content.height}
+                onChange={(e) => updateElementContent(element.id, { height: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              />
+            </div>
+          </div>
+        )
+
+      default:
+        return <div className="text-gray-500">No properties available for this element type.</div>
+    }
+  }
+
   // 渲染元素内容
   const renderElementContent = (element: TemplateElement) => {
     switch (element.type) {
@@ -710,249 +954,5 @@ export default function TemplateDesignerPage() {
       )}
     </div>
   )
-}
-
-// 渲染元素属性编辑面板
-const renderElementProperties = (element: TemplateElement) => {
-  switch (element.type) {
-    case 'text':
-      return (
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Text Content</label>
-            <textarea
-              value={element.content.text}
-              onChange={(e) => updateElementContent(element.id, { text: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              rows={3}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Text Level</label>
-            <select
-              value={element.content.level}
-              onChange={(e) => updateElementContent(element.id, { level: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            >
-              <option value="p">Paragraph</option>
-              <option value="h1">Heading 1</option>
-              <option value="h2">Heading 2</option>
-              <option value="h3">Heading 3</option>
-              <option value="blockquote">Quote</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
-            <input
-              type="number"
-              value={parseInt(element.styles.fontSize) || 16}
-              onChange={(e) => updateElementStyles(element.id, { fontSize: `${e.target.value}px` })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
-            <input
-              type="color"
-              value={element.styles.color || '#000000'}
-              onChange={(e) => updateElementStyles(element.id, { color: e.target.value })}
-              className="w-full h-10 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Text Align</label>
-            <select
-              value={element.styles.textAlign || 'left'}
-              onChange={(e) => updateElementStyles(element.id, { textAlign: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            >
-              <option value="left">Left</option>
-              <option value="center">Center</option>
-              <option value="right">Right</option>
-            </select>
-          </div>
-        </div>
-      )
-    
-    case 'image':
-      return (
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
-            <input
-              type="url"
-              value={element.content.src}
-              onChange={(e) => updateElementContent(element.id, { src: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              placeholder="https://example.com/image.jpg"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Alt Text</label>
-            <input
-              type="text"
-              value={element.content.alt}
-              onChange={(e) => updateElementContent(element.id, { alt: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              placeholder="Image description"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Link URL</label>
-            <input
-              type="url"
-              value={element.content.link || ''}
-              onChange={(e) => updateElementContent(element.id, { link: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              placeholder="https://example.com"
-            />
-          </div>
-        </div>
-      )
-    
-    case 'button':
-      return (
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
-            <input
-              type="text"
-              value={element.content.text}
-              onChange={(e) => updateElementContent(element.id, { text: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Link URL</label>
-            <input
-              type="url"
-              value={element.content.url}
-              onChange={(e) => updateElementContent(element.id, { url: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Background Color</label>
-            <input
-              type="color"
-              value={element.styles.backgroundColor || '#667eea'}
-              onChange={(e) => updateElementStyles(element.id, { backgroundColor: e.target.value })}
-              className="w-full h-10 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
-            <input
-              type="color"
-              value={element.styles.color || '#ffffff'}
-              onChange={(e) => updateElementStyles(element.id, { color: e.target.value })}
-              className="w-full h-10 border border-gray-300 rounded"
-            />
-          </div>
-        </div>
-      )
-    
-    case 'product':
-      return (
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Product Title</label>
-            <input
-              type="text"
-              value={element.content.title}
-              onChange={(e) => updateElementContent(element.id, { title: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <textarea
-              value={element.content.description}
-              onChange={(e) => updateElementContent(element.id, { description: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              rows={2}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
-            <input
-              type="text"
-              value={element.content.price}
-              onChange={(e) => updateElementContent(element.id, { price: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
-            <input
-              type="url"
-              value={element.content.image}
-              onChange={(e) => updateElementContent(element.id, { image: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
-            <input
-              type="text"
-              value={element.content.buttonText}
-              onChange={(e) => updateElementContent(element.id, { buttonText: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Button URL</label>
-            <input
-              type="url"
-              value={element.content.buttonUrl}
-              onChange={(e) => updateElementContent(element.id, { buttonUrl: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            />
-          </div>
-        </div>
-      )
-    
-    case 'countdown':
-      return (
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
-            <input
-              type="text"
-              value={element.content.message}
-              onChange={(e) => updateElementContent(element.id, { message: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
-            <input
-              type="datetime-local"
-              value={element.content.endDate}
-              onChange={(e) => updateElementContent(element.id, { endDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            />
-          </div>
-        </div>
-      )
-    
-    case 'spacer':
-      return (
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Height (px)</label>
-            <input
-              type="number"
-              value={element.content.height}
-              onChange={(e) => updateElementContent(element.id, { height: parseInt(e.target.value) })}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            />
-          </div>
-        </div>
-      )
-    
-    default:
-      return <div className="text-gray-500">No properties available for this element type.</div>
-  }
 }
 
