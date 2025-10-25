@@ -390,41 +390,24 @@ export default function CampaignEditPage() {
     
     console.log(`📧 准备发送邮件，消耗 ${emailCost} 个积分，收件人数量: ${totalRecipients}`)
     
-    // 强制检查：如果campaignData为空，使用模板内容
-    if (!campaignData.subject && currentTemplate?.subject) {
-      console.log('⚠️ campaignData.subject为空，使用模板主题')
-      setCampaignData(prev => ({ ...prev, subject: currentTemplate.subject }))
-    }
+    // 🔧 彻底修复：确保所有字段都有值，使用强制默认值
+    const finalSubject = campaignData.subject || currentTemplate?.subject || 'Welcome to NovaMail'
+    const finalBody = campaignData.body || currentTemplate?.htmlContent || '<p>Thank you for using NovaMail!</p>'
+    const finalSenderName = sendForm.senderName || 'NovaMail'
     
-    if (!campaignData.body && currentTemplate?.htmlContent) {
-      console.log('⚠️ campaignData.body为空，使用模板内容')
-      setCampaignData(prev => ({ ...prev, body: currentTemplate.htmlContent }))
-    }
+    console.log('=== 强制修复后的数据 ===')
+    console.log('finalSubject:', finalSubject)
+    console.log('finalBody length:', finalBody?.length)
+    console.log('finalSenderName:', finalSenderName)
+    console.log('recipients:', sendForm.recipients)
+    console.log('==================')
     
-    if (!sendForm.recipients) {
+    // 验证收件人
+    if (!sendForm.recipients || sendForm.recipients.trim() === '') {
       console.log('❌ 错误: 缺少收件人')
       toast.error('Please fill in recipients')
       return
     }
-
-    // 使用模板默认内容作为后备
-    const finalSubject = campaignData.subject || currentTemplate?.subject || 'Default Subject'
-    const finalBody = campaignData.body || currentTemplate?.htmlContent || '<p>Default content</p>'
-    
-    console.log('=== 最终发送数据 ===')
-    console.log('finalSubject:', finalSubject)
-    console.log('finalBody length:', finalBody?.length)
-    console.log('recipients:', sendForm.recipients)
-    console.log('==================')
-    
-    // 确保内容不为空（使用强制后备）
-    const safeSubject = finalSubject || 'Default Email Subject'
-    const safeBody = finalBody || '<p>Default email content</p>'
-    
-    console.log('=== 安全内容检查 ===')
-    console.log('safeSubject:', safeSubject)
-    console.log('safeBody length:', safeBody?.length)
-    console.log('==================')
 
     // 验证邮箱格式 - 支持批量收件人
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -448,15 +431,15 @@ export default function CampaignEditPage() {
 
     setIsSending(true)
     try {
-            // 使用campaignData格式，兼容生产环境Cloudflare Workers
+            // 🔧 彻底修复：使用强制默认值，确保所有字段都有值
             const requestData = {
               campaignData: {
-                subject: safeSubject,
-                body: safeBody
+                subject: finalSubject,
+                body: finalBody
               },
               recipients: uniqueRecipients,
               senderEmail: 'noreply@novamail.world',
-              senderName: sendForm.senderName || 'NovaMail',
+              senderName: finalSenderName,
             }
       
       console.log('=== 发送到后端的数据 ===')
