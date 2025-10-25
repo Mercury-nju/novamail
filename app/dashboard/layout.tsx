@@ -15,7 +15,8 @@ import {
   XMarkIcon,
   ArrowRightOnRectangleIcon,
   CreditCardIcon,
-  CurrencyDollarIcon
+  CurrencyDollarIcon,
+  DocumentTextIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { fetchUserSubscription } from '@/lib/permissions'
