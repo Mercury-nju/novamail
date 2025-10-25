@@ -29,7 +29,7 @@ import {
   PlusIcon,
   TrashIcon,
   PencilIcon,
-  DuplicateIcon
+  DocumentDuplicateIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { 
@@ -886,7 +886,7 @@ export default function TemplateDesignerPage() {
                           className="p-1 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50"
                           title="Duplicate"
                         >
-                          <DuplicateIcon className="w-3 h-3" />
+                          <DocumentDuplicateIcon className="w-3 h-3" />
                         </button>
                         <button
                           onClick={(e) => {
