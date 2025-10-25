@@ -217,7 +217,7 @@ export default {
     }
 
     // 处理管理员设置用户高级会员
-    if (path === '/api/admin/set-user-premium' && request.method === 'POST') {
+    if (path === '/api/admin/set-premium' && request.method === 'POST') {
       return await handleAdminSetPremium(request, env);
     }
 
@@ -227,7 +227,7 @@ export default {
       error: 'Endpoint not found',
       availableEndpoints: [
         '/api/auth/send-verification',
-        '/api/admin/set-user-premium'
+        '/api/admin/set-premium'
       ]
     }), {
       status: 404,
