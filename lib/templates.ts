@@ -17,126 +17,98 @@ export const professionalTemplates: ProfessionalTemplate[] = [
     id: 'modern-gradient',
     name: 'Modern Gradient',
     category: 'Modern',
-    description: 'Contemporary design with vibrant gradients and bold typography',
-    subject: '🚀 Introducing [Product Name] - The Future is Here',
+    description: 'Clean, professional design with subtle gradients and modern typography',
+    subject: 'Introducing [Product Name] - The Future is Here',
     htmlContent: `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 8px 25px rgba(0,0,0,0.1);">
-        <!-- Hero Section with Enhanced Gradient -->
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); padding: 50px 30px; text-align: center; position: relative; overflow: hidden;">
-          <!-- Animated Background Elements -->
-          <div style="position: absolute; top: -20px; left: -20px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%); border-radius: 50%; animation: float 6s ease-in-out infinite;"></div>
-          <div style="position: absolute; bottom: -30px; right: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite reverse;"></div>
-          <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); border-radius: 50%; animation: pulse 4s ease-in-out infinite;"></div>
-          
-          <!-- Main Content -->
-          <div style="position: relative; z-index: 2;">
-            <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);">
-              <span style="color: white; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">🚀 New Launch</span>
-            </div>
-            <h1 style="color: white; margin: 0; font-size: 36px; font-weight: 800; letter-spacing: -1px; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">Introducing NovaAI</h1>
-            <p style="color: rgba(255,255,255,0.95); margin: 16px 0 0 0; font-size: 18px; font-weight: 400; line-height: 1.4;">The Future of Email Marketing is Here</p>
-            <div style="margin-top: 24px;">
-              <span style="display: inline-block; background: rgba(255,255,255,0.25); padding: 6px 12px; border-radius: 12px; color: white; font-size: 12px; font-weight: 500; backdrop-filter: blur(10px);">✨ AI-Powered</span>
-              <span style="display: inline-block; background: rgba(255,255,255,0.25); padding: 6px 12px; border-radius: 12px; color: white; font-size: 12px; font-weight: 500; backdrop-filter: blur(10px); margin-left: 8px;">🎯 Smart Analytics</span>
-            </div>
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <!-- Clean Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+          <div style="display: inline-block; background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 16px; margin-bottom: 16px;">
+            <span style="color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">New Launch</span>
           </div>
+          <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2;">Introducing NovaAI</h1>
+          <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0 0; font-size: 16px; font-weight: 400;">The Future of Email Marketing is Here</p>
         </div>
         
         <!-- Main Content Section -->
-        <div style="padding: 50px 30px;">
+        <div style="padding: 40px 30px;">
           <!-- Personalized Greeting -->
-          <div style="margin-bottom: 32px;">
-            <p style="color: #1a202c; font-size: 18px; line-height: 1.5; margin-bottom: 8px; font-weight: 500;">
+          <div style="margin-bottom: 24px;">
+            <p style="color: #1a202c; font-size: 16px; line-height: 1.5; margin-bottom: 8px; font-weight: 500;">
               Hi [Customer Name],
             </p>
-            <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0;">
-              We're thrilled to announce something that will transform your business forever.
+            <p style="color: #4a5568; font-size: 15px; line-height: 1.6; margin: 0;">
+              We're excited to announce something that will transform your business.
             </p>
           </div>
           
           <!-- Main Message -->
-          <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 32px; border-radius: 16px; margin: 32px 0; border: 1px solid #e2e8f0; position: relative;">
-            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 0 2px 2px 0;"></div>
-            <h3 style="color: #1a202c; margin: 0 0 20px 0; font-size: 20px; font-weight: 700;">What makes NovaAI revolutionary:</h3>
-            <div style="display: grid; gap: 16px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%;"></div>
-                <span style="color: #2d3748; font-size: 15px; line-height: 1.5;">AI-powered content generation that writes like a human</span>
+          <div style="background: #f8fafc; padding: 24px; border-radius: 8px; margin: 24px 0; border: 1px solid #e2e8f0; border-left: 4px solid #667eea;">
+            <h3 style="color: #1a202c; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">What makes NovaAI revolutionary:</h3>
+            <div style="display: grid; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 6px; height: 6px; background: #667eea; border-radius: 50%;"></div>
+                <span style="color: #2d3748; font-size: 14px; line-height: 1.5;">AI-powered content generation that writes like a human</span>
               </div>
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%;"></div>
-                <span style="color: #2d3748; font-size: 15px; line-height: 1.5;">Advanced personalization that increases engagement by 300%</span>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 6px; height: 6px; background: #667eea; border-radius: 50%;"></div>
+                <span style="color: #2d3748; font-size: 14px; line-height: 1.5;">Advanced personalization that increases engagement by 300%</span>
               </div>
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%;"></div>
-                <span style="color: #2d3748; font-size: 15px; line-height: 1.5;">Smart analytics that predict customer behavior</span>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 6px; height: 6px; background: #667eea; border-radius: 50%;"></div>
+                <span style="color: #2d3748; font-size: 14px; line-height: 1.5;">Smart analytics that predict customer behavior</span>
               </div>
             </div>
           </div>
           
           <!-- Special Offer Section -->
-          <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); padding: 32px; border-radius: 16px; text-align: center; margin: 32px 0; position: relative; overflow: hidden;">
-            <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); animation: pulse 3s ease-in-out infinite;"></div>
-            <div style="position: relative; z-index: 2;">
-              <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 12px; margin-bottom: 16px; backdrop-filter: blur(10px);">
-                <span style="color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">🎯 Limited Time</span>
-              </div>
-              <h3 style="color: white; margin: 0 0 16px 0; font-size: 22px; font-weight: 700;">Early Access Offer</h3>
-              <p style="color: white; margin: 0 0 8px 0; font-size: 16px; font-weight: 500;">
-                Join 10,000+ marketers already using NovaAI
-              </p>
-              <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 14px;">
-                Get <strong>50% off</strong> your first year • Expires in 48 hours
-              </p>
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 24px; border-radius: 8px; text-align: center; margin: 24px 0;">
+            <div style="display: inline-block; background: rgba(255,255,255,0.15); padding: 4px 8px; border-radius: 8px; margin-bottom: 12px;">
+              <span style="color: white; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Limited Time</span>
             </div>
+            <h3 style="color: white; margin: 0 0 12px 0; font-size: 20px; font-weight: 600;">Early Access Offer</h3>
+            <p style="color: white; margin: 0 0 6px 0; font-size: 15px; font-weight: 500;">
+              Join 10,000+ marketers already using NovaAI
+            </p>
+            <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 13px;">
+              Get <strong>50% off</strong> your first year • Expires in 48 hours
+            </p>
           </div>
           
           <!-- CTA Button -->
-          <div style="text-align: center; margin: 40px 0;">
-            <a href="#" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 18px 36px; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 16px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); transition: all 0.3s ease; position: relative; overflow: hidden;">
-              <span style="position: relative; z-index: 2;">Start Your Free Trial</span>
-              <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease;"></div>
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="#" style="display: inline-block; background: #667eea; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">
+              Start Your Free Trial
             </a>
-            <p style="color: #718096; font-size: 13px; margin: 12px 0 0 0;">No credit card required • 14-day free trial</p>
+            <p style="color: #718096; font-size: 12px; margin: 8px 0 0 0;">No credit card required • 14-day free trial</p>
           </div>
           
           <!-- Social Proof -->
-          <div style="background: linear-gradient(135deg, #e6fffa 0%, #b2f5ea 100%); padding: 24px; border-radius: 12px; margin: 32px 0; border: 1px solid #81e6d9; text-align: center;">
-            <h4 style="color: #234e52; margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">Trusted by Industry Leaders</h4>
-            <p style="color: #2c7a7b; margin: 0; font-size: 14px; line-height: 1.5;">
+          <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 24px 0; border: 1px solid #bae6fd; text-align: center;">
+            <h4 style="color: #1e40af; margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Trusted by Industry Leaders</h4>
+            <p style="color: #1e40af; margin: 0; font-size: 13px; line-height: 1.4;">
               Over 10,000 businesses trust NovaAI • Join Shopify, Stripe, and Notion
             </p>
           </div>
           
           <!-- Closing Message -->
-          <div style="margin: 40px 0 0 0;">
-            <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+          <div style="margin: 32px 0 0 0;">
+            <p style="color: #4a5568; font-size: 15px; line-height: 1.5; margin: 0 0 20px 0;">
               Ready to revolutionize your email marketing? Let's get started together.
             </p>
             
-            <div style="border-top: 1px solid #e2e8f0; padding-top: 24px;">
-              <p style="color: #2d3748; font-size: 15px; line-height: 1.6; margin: 0;">
+            <div style="border-top: 1px solid #e2e8f0; padding-top: 20px;">
+              <p style="color: #2d3748; font-size: 14px; line-height: 1.5; margin: 0;">
                 Best regards,<br>
                 <strong style="color: #1a202c;">The NovaAI Team</strong><br>
-                <span style="color: #667eea; font-weight: 600;">NovaMail</span>
+                <span style="color: #667eea; font-weight: 500;">NovaMail</span>
               </p>
             </div>
           </div>
         </div>
       </div>
-      
-      <style>
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-10px) rotate(5deg); }
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 0.3; transform: scale(1); }
-          50% { opacity: 0.6; transform: scale(1.05); }
-        }
-      </style>
     `,
-    features: ['Vibrant Gradients', 'Bold Typography', 'Modern Layout', 'Strong CTA'],
+    features: ['Clean Design', 'Subtle Gradients', 'Professional Layout', 'Clear CTA'],
     isPopular: true,
     isNew: false
   },
