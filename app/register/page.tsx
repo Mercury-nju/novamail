@@ -130,7 +130,8 @@ export default function RegisterPage() {
           email: formData.email,
           code: verificationCode,
           firstName: formData.firstName,
-          lastName: formData.lastName
+          lastName: formData.lastName,
+          password: formData.password
         })
       })
 

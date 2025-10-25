@@ -320,6 +320,16 @@ async function handleVerifyCode(request, env) {
       });
     }
 
+    if (!password) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Password is required' 
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
     console.log('🔧 验证验证码:', email, code);
     
     // 从KV存储获取验证码数据
@@ -382,7 +392,7 @@ async function handleVerifyCode(request, env) {
       name: firstName ? `${firstName} ${lastName || ''}`.trim() : email.split('@')[0],
       firstName: firstName || email.split('@')[0],
       lastName: lastName || '',
-      password: password || 'default123', // 保存密码
+      password: password, // 保存用户设置的密码
       token: userToken,
       emailVerified: true,
       createdAt: new Date().toISOString(),
@@ -937,7 +947,7 @@ async function handleAdminSetPremium(request, env) {
 
   try {
     const data = await request.json();
-    const { email, duration } = data;
+    const { email, duration, password, action } = data;
     
     if (!email) {
       return new Response(JSON.stringify({ 
@@ -950,6 +960,45 @@ async function handleAdminSetPremium(request, env) {
     }
 
     console.log('🔧 管理员设置用户高级会员:', email, '期限:', duration || 365, '天');
+    
+    // 检查是否是密码更新操作
+    if (action === 'update_password' && password) {
+      console.log('🔧 更新用户密码:', email);
+      
+      // 查找现有用户
+      const userKey = `user_${email.toLowerCase()}`;
+      const existingUserData = await env.USERS_KV.get(userKey);
+      
+      if (existingUserData) {
+        const user = JSON.parse(existingUserData);
+        user.password = password;
+        user.updatedAt = new Date().toISOString();
+        
+        await env.USERS_KV.put(userKey, JSON.stringify(user));
+        
+        console.log('✅ 用户密码更新成功:', email);
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Password updated successfully',
+          user: {
+            email: user.email,
+            name: user.name,
+            plan: user.plan
+          }
+        }), {
+          headers: corsHeaders
+        });
+      } else {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'User not found'
+        }), {
+          status: 404,
+          headers: corsHeaders
+        });
+      }
+    }
     
     // 创建用户数据
     const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
