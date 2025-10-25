@@ -41,7 +41,8 @@ async function handleSendVerification(request, env) {
     // 检查用户是否已存在
     let existingUser = null;
     try {
-      existingUser = await env.USERS_KV.get(email);
+      const userKey = `user_${email.toLowerCase()}`;
+      existingUser = await env.USERS_KV.get(userKey);
     } catch (error) {
       console.log('Failed to check existing user:', error);
     }
