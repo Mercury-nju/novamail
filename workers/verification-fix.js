@@ -1,8 +1,6 @@
-// 🔧 修复版Cloudflare Workers - 只使用Resend API发送验证码
-
 // 简化的验证码发送函数 - 只使用Resend API
 async function handleSendVerification(request, env) {
-  console.log('🔧 修复版验证码发送函数 - 只使用Resend API');
+  console.log('handleSendVerification called with method:', request.method);
   
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -148,27 +146,4 @@ async function handleSendVerification(request, env) {
   }
 }
 
-// 简化的主函数
-export default {
-  async fetch(request, env, ctx) {
-    const url = new URL(request.url);
-    const path = url.pathname;
-
-    // 处理验证码发送
-    if (path === '/api/auth/send-verification' && request.method === 'POST') {
-      return await handleSendVerification(request, env);
-    }
-
-    // 其他路由保持不变
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Endpoint not found'
-    }), {
-      status: 404,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
-      }
-    });
-  }
-};
+module.exports = { handleSendVerification };
