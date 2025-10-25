@@ -57,7 +57,33 @@ export default function RegisterPage() {
       const result = await response.json()
       
       if (result.success) {
-        toast.success('Verification code sent! Please check your email.')
+        toast.success('Verification code sent! Please check your email.', {
+          duration: 6000,
+          style: {
+            background: '#10B981',
+            color: 'white',
+            fontSize: '14px',
+            padding: '12px 16px',
+            borderRadius: '8px',
+            maxWidth: '400px'
+          }
+        })
+        
+        // 显示详细的用户指导
+        setTimeout(() => {
+          toast('📬 If you don\'t see the email, check your spam folder!', {
+            duration: 8000,
+            style: {
+              background: '#3B82F6',
+              color: 'white',
+              fontSize: '14px',
+              padding: '12px 16px',
+              borderRadius: '8px',
+              maxWidth: '400px'
+            }
+          })
+        }, 2000)
+        
         setStep('verify')
         // 在开发环境中显示验证码（仅用于测试）
         if (result.code) {
@@ -288,6 +314,29 @@ export default function RegisterPage() {
                 placeholder="000000"
                 autoComplete="one-time-code"
               />
+              
+              {/* 用户指导信息 */}
+              <div className="mt-4 p-4 bg-blue-50/80 backdrop-blur-sm border border-blue-200/50 rounded-lg">
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0">
+                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-xs">💡</span>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-medium text-blue-900 mb-2">
+                      Can't find the verification code?
+                    </h4>
+                    <ul className="text-xs text-blue-800 space-y-1">
+                      <li>• Check your <strong>spam/junk folder</strong></li>
+                      <li>• Look in <strong>other folders</strong> (Promotions, Updates, etc.)</li>
+                      <li>• Wait <strong>5-10 minutes</strong> for delivery</li>
+                      <li>• Search for <strong>"NovaMail"</strong> or <strong>"verification"</strong></li>
+                      <li>• Add <strong>noreply@novamail.world</strong> to your contacts</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
 
                 <div className="space-y-3 mt-6">
