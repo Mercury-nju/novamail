@@ -62,7 +62,7 @@ export default function PricingPage() {
       emails: -1, // Unlimited
       features: [
         'Unlimited contacts',
-        'Unlimited emails',
+        '10,000 emails per month',
         'Custom email templates',
         'Advanced AI features',
         'Custom analytics',
@@ -158,7 +158,7 @@ export default function PricingPage() {
                 )}
               </div>
               <p className="text-gray-600 mt-2">
-                {plan.emails === -1 ? 'Unlimited' : plan.emails.toLocaleString()} AI email generations per month
+                {plan.emails === -1 ? '10,000' : plan.emails.toLocaleString()} AI email generations per month
               </p>
             </div>
 

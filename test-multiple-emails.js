@@ -1,85 +1,91 @@
-// 测试发送到多个不同的邮箱地址
-// 验证系统是否有邮箱限制
+#!/usr/bin/env node
+
+/**
+ * 测试多个邮箱服务商的邮件发送
+ */
+
+console.log('🔍 测试多个邮箱服务商的邮件发送\n');
 
 async function testMultipleEmails() {
-  console.log('📧 测试发送到多个邮箱地址...');
-  
-  const url = 'https://novamail.world/api/campaigns/send';
-  
-  // 测试多个不同的邮箱地址
-  const testEmails = [
-    '2945235656@qq.com',  // QQ邮箱
-    'lihongyangnju@gmail.com',  // Gmail
-    'test@example.com',  // 示例邮箱
-    'user@test.com'  // 测试邮箱
-  ];
-
-  const now = new Date();
-  const timeStr = now.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
-
-  for (let i = 0; i < testEmails.length; i++) {
-    const testEmail = testEmails[i];
-    console.log(`\n📤 测试 ${i + 1}/${testEmails.length}: ${testEmail}`);
+  try {
+    const RESEND_API_KEY = "re_C2KHNFp4_tdC2FzoZ8pYNQiKwKbMuuyRX";
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
     
-    const requestData = {
-      campaignData: {
-        subject: `多邮箱测试 ${i + 1} - ${timeStr}`,
-        body: `
-          <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; background: #ffffff; border: 1px solid #ddd; border-radius: 5px;">
-            <h2 style="color: #333; margin-bottom: 20px;">📧 多邮箱发送测试</h2>
-            
-            <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-              <p style="margin: 0; color: #333;"><strong>测试编号:</strong> ${i + 1}</p>
-              <p style="margin: 5px 0 0 0; color: #333;"><strong>收件人:</strong> ${testEmail}</p>
-              <p style="margin: 5px 0 0 0; color: #333;"><strong>发送时间:</strong> ${timeStr}</p>
-              <p style="margin: 5px 0 0 0; color: #333;"><strong>状态:</strong> 无邮箱限制</p>
-            </div>
-            
-            <div style="background: #ecfdf5; padding: 15px; border-radius: 5px; border-left: 4px solid #10b981;">
-              <h3 style="margin: 0 0 10px 0; color: #065f46;">✅ 系统无邮箱限制</h3>
-              <p style="margin: 0; color: #065f46;">可以发送到任何有效的邮箱地址</p>
-            </div>
-            
-            <p style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">
-              此邮件由 NovaMail 系统发送 - 测试 ${i + 1}
-            </p>
-          </div>
-        `
-      },
-      recipients: [testEmail],
-      senderEmail: 'noreply@novamail.world',
-      senderName: 'NovaMail 多邮箱测试'
-    };
-
-    try {
-      const response = await fetch(url, {
+    // 测试多个邮箱服务商
+    const testEmails = [
+      '66597405@qq.com',           // QQ邮箱
+      'test@gmail.com',            // Gmail
+      'test@outlook.com',          // Outlook
+      'test@163.com'              // 163邮箱
+    ];
+    
+    console.log('🔑 验证码:', verificationCode);
+    console.log('📧 测试邮箱列表:', testEmails);
+    
+    for (const email of testEmails) {
+      console.log(`\n📤 发送到: ${email}`);
+      
+      const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestData),
+        body: JSON.stringify({
+          from: 'NovaMail <noreply@novamail.world>',
+          to: email,
+          subject: `NovaMail Verification Code - ${email.split('@')[1]}`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
+                <h1 style="color: white; margin: 0;">NovaMail</h1>
+              </div>
+              <div style="padding: 30px; background: #f9f9f9;">
+                <h2 style="color: #333; margin-bottom: 20px;">Verify Your Email Address</h2>
+                <p style="color: #666; font-size: 16px; line-height: 1.5;">
+                  Thank you for signing up for NovaMail! To complete your registration, please use the verification code below:
+                </p>
+                <div style="background: white; border: 2px solid #667eea; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">
+                  <span style="font-size: 32px; font-weight: bold; color: #667eea; letter-spacing: 5px;">${verificationCode}</span>
+                </div>
+                <p style="color: #666; font-size: 14px;">
+                  This code will expire in 10 minutes. If you didn't request this code, please ignore this email.
+                </p>
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+                  <p style="color: #999; font-size: 12px;">
+                    This email was sent by NovaMail. If you have any questions, please contact our support team.
+                  </p>
+                </div>
+              </div>
+            </div>
+          `
+        })
       });
-
-      const responseData = await response.json();
-
-      if (response.ok && responseData.success) {
-        console.log(`✅ 成功发送到: ${testEmail}`);
-        console.log(`📧 邮件ID: ${responseData.data?.messageId || 'N/A'}`);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log(`✅ ${email} - 发送成功！邮件ID: ${result.id}`);
       } else {
-        console.log(`❌ 发送失败到: ${testEmail}`);
-        console.log(`错误: ${responseData.error || '未知错误'}`);
+        const errorText = await response.text();
+        console.log(`❌ ${email} - 发送失败: ${response.status} - ${errorText}`);
       }
-    } catch (error) {
-      console.error(`❌ 请求失败 (${testEmail}):`, error.message);
     }
     
-    // 等待1秒再发送下一个
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('\n📊 测试总结:');
+    console.log('   - QQ邮箱: 可能被过滤或分类到垃圾邮件');
+    console.log('   - Gmail: 通常能正常接收');
+    console.log('   - Outlook: 通常能正常接收');
+    console.log('   - 163邮箱: 可能被过滤');
+    
+    console.log('\n💡 建议解决方案:');
+    console.log('   1. 使用Gmail或Outlook邮箱注册');
+    console.log('   2. 将发件人添加到白名单');
+    console.log('   3. 检查垃圾邮件文件夹');
+    console.log('   4. 联系客服获取验证码');
+    
+  } catch (error) {
+    console.error('❌ 测试失败:', error.message);
   }
-  
-  console.log('\n🎯 测试完成！');
-  console.log('📋 结论: 系统没有邮箱限制，可以发送到任何邮箱地址');
-  console.log('💡 如果收不到邮件，请检查垃圾邮件文件夹');
 }
 
 testMultipleEmails();

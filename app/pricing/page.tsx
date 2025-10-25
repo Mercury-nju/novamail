@@ -67,7 +67,7 @@ export default function PricingPage() {
       monthlyPrice: null,
       yearlyPrice: null,
       features: [
-        'Unlimited emails',
+        '10,000 emails per month',
         'Advanced AI Features & Custom Training',
         'Unlimited Professional Templates',
         'Unlimited Contacts & Campaigns',
@@ -182,8 +182,8 @@ export default function PricingPage() {
                 <div className="text-xs text-blue-600">10 emails included</div>
               </div>
               <div className="text-center">
-                <div className="font-semibold">Premium: Unlimited</div>
-                <div className="text-xs text-blue-600">Send as much as you want</div>
+                <div className="font-semibold">Premium: 10,000 Emails</div>
+                <div className="text-xs text-blue-600">50,000 credits per month</div>
               </div>
             </div>
           </div>

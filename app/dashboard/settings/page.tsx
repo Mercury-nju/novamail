@@ -448,7 +448,7 @@ export default function SettingsPage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Premium Plan</h3>
                   <p className="text-3xl font-bold text-gray-900 mb-4">$19<span className="text-lg text-gray-500">/month</span></p>
                   <ul className="space-y-2 text-sm text-gray-600">
-                    <li>• Unlimited credits (unlimited emails)</li>
+                    <li>• 50,000 credits (10,000 emails per month)</li>
                     <li>• AI email assistant & content generation</li>
                     <li>• Professional email templates</li>
                     <li>• Unlimited contacts</li>

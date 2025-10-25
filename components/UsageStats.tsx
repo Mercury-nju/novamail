@@ -143,7 +143,7 @@ export default function UsageStats({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-blue-900">Upgrade to Pro</p>
-              <p className="text-xs text-blue-700">Get unlimited contacts, emails, and campaigns</p>
+              <p className="text-xs text-blue-700">Get 10,000 emails, unlimited contacts, and campaigns</p>
             </div>
             <button 
               onClick={() => window.open('/pricing', '_blank')}
