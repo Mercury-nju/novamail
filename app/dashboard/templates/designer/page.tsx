@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useRef } from 'react'
+import { motion } from 'framer-motion'
 import {
   DocumentTextIcon,
   PhotoIcon,
@@ -48,10 +48,8 @@ export default function TemplateDesignerPage() {
   const [selectedItem, setSelectedItem] = useState<string | null>(null)
   const [isPreviewMode, setIsPreviewMode] = useState(false)
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
-  const [showGlobalStyles, setShowGlobalStyles] = useState(false)
   const [showTemplates, setShowTemplates] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
-  const [activeTab, setActiveTab] = useState<'elements' | 'templates' | 'settings'>('elements')
   
   const canvasRef = useRef<HTMLDivElement>(null)
 
@@ -97,7 +95,7 @@ export default function TemplateDesignerPage() {
     }))
 
     setSelectedItem(newElement.id)
-    toast.success(`${data.name} added to template`)
+    toast.success(`${data.name} added`)
   }
 
   // 保存模板
@@ -119,14 +117,7 @@ export default function TemplateDesignerPage() {
       const result = await response.json()
 
       if (result.success) {
-        toast.success('Template saved successfully!')
-        setTemplate(prev => ({
-          ...prev,
-          metadata: {
-            ...prev.metadata,
-            updatedAt: new Date().toISOString()
-          }
-        }))
+        toast.success('Template saved!')
       } else {
         toast.error(result.error || 'Failed to save template')
       }
@@ -232,7 +223,7 @@ export default function TemplateDesignerPage() {
     a.download = `${template.name}.html`
     a.click()
     URL.revokeObjectURL(url)
-    toast.success('Template exported successfully')
+    toast.success('Template exported')
   }
 
   const selectedItemData = template.content.find(item => item.id === selectedItem)
@@ -404,18 +395,6 @@ export default function TemplateDesignerPage() {
                 className="w-full h-10 border border-gray-300 rounded"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Text Align</label>
-              <select
-                value={element.styles.textAlign || 'left'}
-                onChange={(e) => updateElementStyles(element.id, { textAlign: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              >
-                <option value="left">Left</option>
-                <option value="center">Center</option>
-                <option value="right">Right</option>
-              </select>
-            </div>
           </div>
         )
 
@@ -440,16 +419,6 @@ export default function TemplateDesignerPage() {
                 onChange={(e) => updateElementContent(element.id, { alt: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
                 placeholder="Image description"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Link URL</label>
-              <input
-                type="url"
-                value={element.content.link || ''}
-                onChange={(e) => updateElementContent(element.id, { link: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                placeholder="https://example.com"
               />
             </div>
           </div>
@@ -497,105 +466,6 @@ export default function TemplateDesignerPage() {
           </div>
         )
 
-      case 'product':
-        return (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Product Title</label>
-              <input
-                type="text"
-                value={element.content.title}
-                onChange={(e) => updateElementContent(element.id, { title: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-              <textarea
-                value={element.content.description}
-                onChange={(e) => updateElementContent(element.id, { description: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                rows={2}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
-              <input
-                type="text"
-                value={element.content.price}
-                onChange={(e) => updateElementContent(element.id, { price: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
-              <input
-                type="url"
-                value={element.content.image}
-                onChange={(e) => updateElementContent(element.id, { image: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
-              <input
-                type="text"
-                value={element.content.buttonText}
-                onChange={(e) => updateElementContent(element.id, { buttonText: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Button URL</label>
-              <input
-                type="url"
-                value={element.content.buttonUrl}
-                onChange={(e) => updateElementContent(element.id, { buttonUrl: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              />
-            </div>
-          </div>
-        )
-
-      case 'countdown':
-        return (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
-              <input
-                type="text"
-                value={element.content.message}
-                onChange={(e) => updateElementContent(element.id, { message: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
-              <input
-                type="datetime-local"
-                value={element.content.endDate}
-                onChange={(e) => updateElementContent(element.id, { endDate: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              />
-            </div>
-          </div>
-        )
-
-      case 'spacer':
-        return (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Height (px)</label>
-              <input
-                type="number"
-                value={element.content.height}
-                onChange={(e) => updateElementContent(element.id, { height: parseInt(e.target.value) })}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              />
-            </div>
-          </div>
-        )
-
       default:
         return <div className="text-gray-500">No properties available for this element type.</div>
     }
@@ -608,15 +478,13 @@ export default function TemplateDesignerPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="text-lg font-bold text-blue-600">NovaMail</div>
-            <div className="flex items-center space-x-2">
-              <input
-                type="text"
-                value={template.name}
-                onChange={(e) => setTemplate(prev => ({ ...prev, name: e.target.value }))}
-                className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Template Name"
-              />
-            </div>
+            <input
+              type="text"
+              value={template.name}
+              onChange={(e) => setTemplate(prev => ({ ...prev, name: e.target.value }))}
+              className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Template Name"
+            />
           </div>
           
           <div className="flex items-center space-x-3">
@@ -645,18 +513,6 @@ export default function TemplateDesignerPage() {
               </button>
             </div>
 
-            {/* 预览模式 */}
-            <button
-              onClick={() => setIsPreviewMode(!isPreviewMode)}
-              className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
-                isPreviewMode ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
-              }`}
-            >
-              <EyeIcon className="w-4 h-4" />
-              <span>Preview</span>
-            </button>
-
-            {/* 操作按钮 */}
             <button
               onClick={() => setShowTemplates(true)}
               className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center space-x-2"
@@ -686,148 +542,24 @@ export default function TemplateDesignerPage() {
       </div>
 
       <div className="flex h-[calc(100vh-80px)]">
-        {/* 左侧边栏 */}
-        <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-          {/* 标签页切换 */}
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
-              <button
-                onClick={() => setActiveTab('elements')}
-                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'elements' ? 'bg-white shadow-sm' : 'text-gray-600'
-                }`}
+        {/* 左侧边栏 - 元素库 */}
+        <div className="w-80 bg-white border-r border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Elements</h3>
+          <div className="space-y-2">
+            {dragItems.map((item) => (
+              <div
+                key={item.id}
+                draggable
+                onDragStart={(e) => handleDragStart(e, item)}
+                className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-move hover:border-blue-300 hover:bg-blue-50 transition-colors"
               >
-                Elements
-              </button>
-              <button
-                onClick={() => setActiveTab('templates')}
-                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'templates' ? 'bg-white shadow-sm' : 'text-gray-600'
-                }`}
-              >
-                Templates
-              </button>
-              <button
-                onClick={() => setActiveTab('settings')}
-                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'settings' ? 'bg-white shadow-sm' : 'text-gray-600'
-                }`}
-              >
-                Settings
-              </button>
-            </div>
-          </div>
-
-          {/* 标签页内容 */}
-          <div className="flex-1 overflow-y-auto">
-            {activeTab === 'elements' && (
-              <div className="p-4">
-                <h3 className="text-sm font-semibold text-gray-900 mb-4">Drag & Drop Elements</h3>
-                <div className="space-y-3">
-                  {dragItems.map((item) => (
-                    <div
-                      key={item.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, item)}
-                      className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-move hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                    >
-                      <div className="text-2xl">{item.icon}</div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                        <div className="text-xs text-gray-500">{item.category}</div>
-                      </div>
-                    </div>
-                  ))}
+                <div className="text-2xl">{item.icon}</div>
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                  <div className="text-xs text-gray-500">{item.category}</div>
                 </div>
               </div>
-            )}
-
-            {activeTab === 'templates' && (
-              <div className="p-4">
-                <h3 className="text-sm font-semibold text-gray-900 mb-4">Professional Templates</h3>
-                <div className="space-y-3">
-                  {professionalTemplates.slice(0, 6).map((template) => (
-                    <div
-                      key={template.id}
-                      onClick={() => handleCreateFromTemplate(template)}
-                      className="p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="w-12 h-8 bg-gray-100 rounded flex items-center justify-center">
-                          <DocumentTextIcon className="w-6 h-6 text-gray-400" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-900">{template.name}</div>
-                          <div className="text-xs text-gray-500">{template.category}</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'settings' && (
-              <div className="p-4">
-                <h3 className="text-sm font-semibold text-gray-900 mb-4">Global Settings</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Background Color</label>
-                    <input
-                      type="color"
-                      value={template.globalStyles.backgroundColor}
-                      onChange={(e) => updateGlobalStyles({ backgroundColor: e.target.value })}
-                      className="w-full h-10 border border-gray-300 rounded"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Content Width (px)</label>
-                    <input
-                      type="number"
-                      value={template.globalStyles.contentWidth}
-                      onChange={(e) => updateGlobalStyles({ contentWidth: parseInt(e.target.value) })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Padding (px)</label>
-                    <input
-                      type="number"
-                      value={template.globalStyles.padding}
-                      onChange={(e) => updateGlobalStyles({ padding: parseInt(e.target.value) })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Font Family</label>
-                    <input
-                      type="text"
-                      value={template.globalStyles.fontFamily}
-                      onChange={(e) => updateGlobalStyles({ fontFamily: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
-                    <input
-                      type="color"
-                      value={template.globalStyles.textColor}
-                      onChange={(e) => updateGlobalStyles({ textColor: e.target.value })}
-                      className="w-full h-10 border border-gray-300 rounded"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Link Color</label>
-                    <input
-                      type="color"
-                      value={template.globalStyles.linkColor}
-                      onChange={(e) => updateGlobalStyles({ linkColor: e.target.value })}
-                      className="w-full h-10 border border-gray-300 rounded"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+            ))}
           </div>
         </div>
 
