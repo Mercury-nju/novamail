@@ -29,7 +29,10 @@ import {
   PlusIcon,
   TrashIcon,
   PencilIcon,
-  DocumentDuplicateIcon
+  DocumentDuplicateIcon,
+  ArrowLeftIcon,
+  ShareIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { 
@@ -50,6 +53,7 @@ export default function TemplateDesignerPage() {
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
   const [showTemplates, setShowTemplates] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [showGlobalStyles, setShowGlobalStyles] = useState(false)
   
   const canvasRef = useRef<HTMLDivElement>(null)
 
@@ -472,184 +476,297 @@ export default function TemplateDesignerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* 顶部导航栏 */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="text-lg font-bold text-blue-600">NovaMail</div>
+            <div className="w-8 h-8 bg-green-500 rounded flex items-center justify-center">
+              <span className="text-white font-bold text-sm">S</span>
+            </div>
+            <ArrowLeftIcon className="w-5 h-5 text-gray-600 cursor-pointer" />
             <input
               type="text"
               value={template.name}
               onChange={(e) => setTemplate(prev => ({ ...prev, name: e.target.value }))}
-              className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Template Name"
+              className="px-3 py-1 border-none text-lg font-medium focus:outline-none"
+              placeholder="New Message"
             />
           </div>
           
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
+            <ArrowPathIcon className="w-5 h-5 text-gray-600 cursor-pointer" />
+            <ArrowPathIcon className="w-5 h-5 text-gray-600 cursor-pointer rotate-180" />
+            <CodeBracketIcon className="w-5 h-5 text-gray-600 cursor-pointer" />
+            <button
+              onClick={() => setIsPreviewMode(!isPreviewMode)}
+              className={`px-4 py-2 rounded-lg ${
+                isPreviewMode ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+              }`}
+            >
+              Preview
+            </button>
+            <button
+              onClick={exportTemplate}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Export
+            </button>
+            <ShareIcon className="w-5 h-5 text-gray-600 cursor-pointer" />
+            
             {/* 设备视图切换 */}
-            <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
+            <div className="flex items-center space-x-1">
               <button
                 onClick={() => setDeviceView('desktop')}
-                className={`p-2 rounded ${deviceView === 'desktop' ? 'bg-white shadow-sm' : 'text-gray-600'}`}
+                className={`p-2 rounded ${deviceView === 'desktop' ? 'bg-green-100 text-green-700' : 'text-gray-600'}`}
                 title="Desktop View"
               >
                 <ComputerDesktopIcon className="w-4 h-4" />
               </button>
               <button
-                onClick={() => setDeviceView('tablet')}
-                className={`p-2 rounded ${deviceView === 'tablet' ? 'bg-white shadow-sm' : 'text-gray-600'}`}
-                title="Tablet View"
-              >
-                <DeviceTabletIcon className="w-4 h-4" />
-              </button>
-              <button
                 onClick={() => setDeviceView('mobile')}
-                className={`p-2 rounded ${deviceView === 'mobile' ? 'bg-white shadow-sm' : 'text-gray-600'}`}
+                className={`p-2 rounded ${deviceView === 'mobile' ? 'bg-green-100 text-green-700' : 'text-gray-600'}`}
                 title="Mobile View"
               >
                 <DevicePhoneMobileIcon className="w-4 h-4" />
               </button>
+              <ChevronDownIcon className="w-4 h-4 text-gray-600" />
             </div>
-
-            <button
-              onClick={() => setShowTemplates(true)}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center space-x-2"
-            >
-              <SparklesIcon className="w-4 h-4" />
-              <span>Templates</span>
-            </button>
-
-            <button
-              onClick={handleSaveTemplate}
-              disabled={isSaving}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center space-x-2"
-            >
-              <BookmarkIcon className="w-4 h-4" />
-              <span>{isSaving ? 'Saving...' : 'Save'}</span>
-            </button>
-
-            <button
-              onClick={exportTemplate}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center space-x-2"
-            >
-              <CloudArrowDownIcon className="w-4 h-4" />
-              <span>Export</span>
-            </button>
+            
+            <QuestionMarkCircleIcon className="w-5 h-5 text-gray-600 cursor-pointer" />
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+              <span className="text-gray-600 font-medium text-sm">HL</span>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="flex h-[calc(100vh-80px)]">
         {/* 左侧边栏 - 元素库 */}
-        <div className="w-80 bg-white border-r border-gray-200 p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">Elements</h3>
+        <div className="w-16 bg-gray-50 border-r border-gray-200 p-2">
           <div className="space-y-2">
-            {dragItems.map((item) => (
+            {dragItems.slice(0, 12).map((item, index) => (
               <div
                 key={item.id}
                 draggable
                 onDragStart={(e) => handleDragStart(e, item)}
-                className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-move hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                className={`w-12 h-12 flex items-center justify-center rounded-lg cursor-move hover:bg-gray-200 transition-colors ${
+                  index === 0 ? 'bg-green-100 text-green-700' : 'text-gray-600'
+                }`}
+                title={item.name}
               >
-                <div className="text-2xl">{item.icon}</div>
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                  <div className="text-xs text-gray-500">{item.category}</div>
-                </div>
+                <div className="text-xl">{item.icon}</div>
               </div>
             ))}
           </div>
         </div>
 
         {/* 主画布区域 */}
-        <div className="flex-1 flex">
-          <div className="flex-1 bg-gray-100 p-8 overflow-auto">
-            <div 
-              ref={canvasRef}
-              className={`bg-white mx-auto shadow-lg relative ${
-                deviceView === 'desktop' ? 'w-[600px]' : 
-                deviceView === 'tablet' ? 'w-[480px]' : 'w-[320px]'
-              }`}
-              style={{ 
-                minHeight: '600px',
-                backgroundColor: template.globalStyles.backgroundColor,
-                padding: `${template.globalStyles.padding}px`
-              }}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-            >
-              {template.content.length === 0 ? (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center text-gray-500">
-                    <div className="text-4xl mb-4">📧</div>
-                    <p className="text-lg font-medium">Start Building Your Email</p>
-                    <p className="text-sm">Drag elements from the left sidebar to begin</p>
-                  </div>
+        <div className="flex-1 bg-gray-100 p-8 overflow-auto">
+          <div 
+            ref={canvasRef}
+            className={`bg-white mx-auto shadow-lg relative ${
+              deviceView === 'desktop' ? 'w-[600px]' : 
+              deviceView === 'tablet' ? 'w-[480px]' : 'w-[320px]'
+            }`}
+            style={{ 
+              minHeight: '600px',
+              backgroundColor: template.globalStyles.backgroundColor,
+              padding: `${template.globalStyles.padding}px`
+            }}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          >
+            {template.content.length === 0 ? (
+              <div className="grid grid-cols-2 gap-4 h-full">
+                <div className="border-2 border-dashed border-blue-300 rounded-lg flex flex-col items-center justify-center p-8">
+                  <div className="text-blue-400 mb-2">↓</div>
+                  <p className="text-gray-500 text-sm">Drop content here</p>
                 </div>
-              ) : (
-                template.content.map((element) => (
-                  <motion.div
-                    key={element.id}
-                    className={`absolute border-2 border-dashed border-blue-300 p-2 cursor-pointer ${
-                      selectedItem === element.id ? 'border-blue-500 bg-blue-50' : 'hover:border-blue-400'
-                    }`}
-                    style={{
-                      left: element.position.x,
-                      top: element.position.y,
-                      width: element.position.width,
-                      height: element.position.height
-                    }}
-                    onClick={() => handleItemClick(element.id)}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    {renderElementContent(element)}
-                    
-                    {/* 元素操作按钮 */}
-                    {selectedItem === element.id && (
-                      <div className="absolute -top-8 left-0 flex space-x-1">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            duplicateElement(element.id)
-                          }}
-                          className="p-1 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50"
-                          title="Duplicate"
-                        >
-                          <DocumentDuplicateIcon className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            deleteElement(element.id)
-                          }}
-                          className="p-1 bg-white border border-gray-300 rounded shadow-sm hover:bg-red-50"
-                          title="Delete"
-                        >
-                          <TrashIcon className="w-3 h-3 text-red-600" />
-                        </button>
-                      </div>
-                    )}
-                  </motion.div>
-                ))
-              )}
+                <div className="border-2 border-dashed border-blue-300 rounded-lg flex flex-col items-center justify-center p-8">
+                  <div className="text-blue-400 mb-2">↓</div>
+                  <p className="text-gray-500 text-sm">Drop content here</p>
+                </div>
+                <div className="col-span-2 border-2 border-dashed border-blue-300 rounded-lg flex flex-col items-center justify-center p-8">
+                  <div className="text-blue-400 mb-2">↓</div>
+                  <p className="text-gray-500 text-sm">Drop content here</p>
+                </div>
+                <div className="border-2 border-dashed border-blue-300 rounded-lg flex flex-col items-center justify-center p-8">
+                  <div className="text-blue-400 mb-2">↓</div>
+                  <p className="text-gray-500 text-sm">Drop content here</p>
+                </div>
+                <div className="border-2 border-dashed border-blue-300 rounded-lg flex flex-col items-center justify-center p-8">
+                  <div className="text-blue-400 mb-2">↓</div>
+                  <p className="text-gray-500 text-sm">Drop content here</p>
+                </div>
+              </div>
+            ) : (
+              template.content.map((element) => (
+                <motion.div
+                  key={element.id}
+                  className={`absolute border-2 border-dashed border-blue-300 p-2 cursor-pointer ${
+                    selectedItem === element.id ? 'border-blue-500 bg-blue-50' : 'hover:border-blue-400'
+                  }`}
+                  style={{
+                    left: element.position.x,
+                    top: element.position.y,
+                    width: element.position.width,
+                    height: element.position.height
+                  }}
+                  onClick={() => handleItemClick(element.id)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {renderElementContent(element)}
+                  
+                  {/* 元素操作按钮 */}
+                  {selectedItem === element.id && (
+                    <div className="absolute -top-8 left-0 flex space-x-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          duplicateElement(element.id)
+                        }}
+                        className="p-1 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50"
+                        title="Duplicate"
+                      >
+                        <DocumentDuplicateIcon className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          deleteElement(element.id)
+                        }}
+                        className="p-1 bg-white border border-gray-300 rounded shadow-sm hover:bg-red-50"
+                        title="Delete"
+                      >
+                        <TrashIcon className="w-3 h-3 text-red-600" />
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* 右侧属性面板 */}
+        <div className="w-80 bg-white border-l border-gray-200 p-6 overflow-y-auto">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Global Styles & Layout</h3>
+            <button
+              onClick={() => setShowGlobalStyles(!showGlobalStyles)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <XMarkIcon className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">General Background Color</label>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="color"
+                  value={template.globalStyles.backgroundColor}
+                  onChange={(e) => updateGlobalStyles({ backgroundColor: e.target.value })}
+                  className="w-12 h-8 border border-gray-300 rounded"
+                />
+                <input
+                  type="text"
+                  value={template.globalStyles.backgroundColor}
+                  onChange={(e) => updateGlobalStyles({ backgroundColor: e.target.value })}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Background Image</label>
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" className="rounded" />
+                <span className="text-sm text-gray-600">Background Image</span>
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Message Content Width</label>
+              <div className="flex items-center space-x-2">
+                <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center">-</button>
+                <input
+                  type="number"
+                  value={template.globalStyles.contentWidth}
+                  onChange={(e) => updateGlobalStyles({ contentWidth: parseInt(e.target.value) })}
+                  className="w-20 px-3 py-2 border border-gray-300 rounded text-sm text-center"
+                />
+                <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center">+</button>
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Message Alignment</label>
+              <div className="flex items-center space-x-2">
+                <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center">←</button>
+                <button className="w-8 h-8 border border-gray-300 rounded bg-green-100 text-green-700 flex items-center justify-center">↔</button>
+                <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center">→</button>
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Underline Links</label>
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" defaultChecked className="rounded" />
+                <span className="text-sm text-gray-600">Underline Links</span>
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Responsive Design</label>
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" defaultChecked className="rounded" />
+                <span className="text-sm text-gray-600">Responsive Design</span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Your email will automatically adjust for smaller screens by displaying content in a single column. 
+                Side-by-side blocks will be stacked vertically.
+              </p>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Right to Left Text Direction</label>
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" className="rounded" />
+                <span className="text-sm text-gray-600">Right to Left Text Direction</span>
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Custom List Styles</label>
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" className="rounded" />
+                <span className="text-sm text-gray-600">Custom List Styles</span>
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Default Structure Padding on Desktop</label>
+              <div className="flex items-center space-x-2">
+                <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center">-</button>
+                <input
+                  type="number"
+                  value={template.globalStyles.padding}
+                  onChange={(e) => updateGlobalStyles({ padding: parseInt(e.target.value) })}
+                  className="w-20 px-3 py-2 border border-gray-300 rounded text-sm text-center"
+                />
+                <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center">+</button>
+              </div>
             </div>
           </div>
 
-          {/* 右侧属性面板 */}
+          {/* 元素属性编辑 */}
           {selectedItemData && (
-            <div className="w-80 bg-white border-l border-gray-200 p-6 overflow-y-auto">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Element Properties</h3>
-                <button
-                  onClick={() => setSelectedItem(null)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <XMarkIcon className="w-5 h-5" />
-                </button>
-              </div>
+            <div className="border-t pt-6 mt-6">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">Element Properties</h4>
               {renderElementProperties(selectedItemData)}
             </div>
           )}
