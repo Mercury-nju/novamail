@@ -21,48 +21,26 @@ import {
   DevicePhoneMobileIcon,
   ComputerDesktopIcon,
   DeviceTabletIcon,
-  QuestionMarkCircleIcon
+  QuestionMarkCircleIcon,
+  SaveIcon,
+  FolderIcon,
+  SparklesIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
-
-interface DragItem {
-  id: string
-  type: string
-  content: any
-  x: number
-  y: number
-  width: number
-  height: number
-}
-
-interface TemplateDesigner {
-  id: string
-  name: string
-  content: DragItem[]
-  globalStyles: {
-    backgroundColor: string
-    contentWidth: number
-    alignment: 'left' | 'center' | 'right'
-    underlineLinks: boolean
-    responsiveDesign: boolean
-    padding: number
-  }
-}
+import { 
+  TemplateDesigner, 
+  TemplateElement, 
+  DragItem, 
+  dragItems, 
+  createNewTemplateDesigner,
+  generateTemplateHTML,
+  createTemplateDesignerFromProfessional
+} from '@/lib/template-system'
+import { professionalTemplates } from '@/lib/templates'
 
 export default function TemplateDesignerPage() {
-  const [template, setTemplate] = useState<TemplateDesigner>({
-    id: 'new-template',
-    name: 'Empty template',
-    content: [],
-    globalStyles: {
-      backgroundColor: '#f6f6f6',
-      contentWidth: 600,
-      alignment: 'center',
-      underlineLinks: true,
-      responsiveDesign: true,
-      padding: 20
-    }
-  })
+  const [template, setTemplate] = useState<TemplateDesigner>(createNewTemplateDesigner())
   
   const [selectedItem, setSelectedItem] = useState<string | null>(null)
   const [isPreviewMode, setIsPreviewMode] = useState(false)
@@ -70,26 +48,10 @@ export default function TemplateDesignerPage() {
   const [showGlobalStyles, setShowGlobalStyles] = useState(true)
   const canvasRef = useRef<HTMLDivElement>(null)
 
-  const dragItems = [
-    { id: 'layout', type: 'layout', icon: Square3Stack3DIcon, label: 'Layout' },
-    { id: 'image', type: 'image', icon: PhotoIcon, label: 'Image' },
-    { id: 'text', type: 'text', icon: DocumentTextIcon, label: 'Text' },
-    { id: 'button', type: 'button', icon: CursorArrowRaysIcon, label: 'Button' },
-    { id: 'divider', type: 'divider', icon: Bars3Icon, label: 'Divider' },
-    { id: 'social', type: 'social', icon: LinkIcon, label: 'Social' },
-    { id: 'menu', type: 'menu', icon: Bars3Icon, label: 'Menu' },
-    { id: 'html', type: 'html', icon: CodeBracketIcon, label: 'HTML' },
-    { id: 'calendar', type: 'calendar', icon: CalendarIcon, label: 'Calendar' },
-    { id: 'video', type: 'video', icon: PlayIcon, label: 'Video' },
-    { id: 'spacer', type: 'spacer', icon: Square3Stack3DIcon, label: 'Spacer' },
-    { id: 'footer', type: 'footer', icon: Square3Stack3DIcon, label: 'Footer' },
-    { id: 'header', type: 'header', icon: Square3Stack3DIcon, label: 'Header' },
-    { id: 'product', type: 'product', icon: ShoppingCartIcon, label: 'Product' },
-    { id: 'countdown', type: 'countdown', icon: ClockIcon, label: 'Countdown' },
-    { id: 'amp', type: 'amp', icon: CodeBracketIcon, label: 'AMP' }
-  ]
+  const [showTemplates, setShowTemplates] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
 
-  const handleDragStart = (e: React.DragEvent, item: any) => {
+  const handleDragStart = (e: React.DragEvent, item: DragItem) => {
     e.dataTransfer.setData('application/json', JSON.stringify(item))
   }
 
@@ -99,7 +61,7 @@ export default function TemplateDesignerPage() {
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
-    const data = JSON.parse(e.dataTransfer.getData('application/json'))
+    const data = JSON.parse(e.dataTransfer.getData('application/json')) as DragItem
     
     const rect = canvasRef.current?.getBoundingClientRect()
     if (!rect) return
@@ -107,91 +69,118 @@ export default function TemplateDesignerPage() {
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
 
-    const newItem: DragItem = {
+    const newElement: TemplateElement = {
       id: `${data.type}-${Date.now()}`,
       type: data.type,
-      content: getDefaultContent(data.type),
-      x,
-      y,
-      width: getDefaultWidth(data.type),
-      height: getDefaultHeight(data.type)
+      content: { ...data.defaultContent },
+      position: {
+        x,
+        y,
+        width: data.defaultSize.width,
+        height: data.defaultSize.height
+      },
+      styles: { ...data.defaultStyles }
     }
 
     setTemplate(prev => ({
       ...prev,
-      content: [...prev.content, newItem]
+      content: [...prev.content, newElement],
+      metadata: {
+        ...prev.metadata,
+        updatedAt: new Date().toISOString()
+      }
     }))
 
-    toast.success(`${data.label} added to template`)
+    toast.success(`${data.name} added to template`)
   }
 
-  const getDefaultContent = (type: string) => {
-    switch (type) {
-      case 'text':
-        return { text: 'Your text here', fontSize: 16, color: '#000000' }
-      case 'image':
-        return { src: '', alt: 'Image', width: 300, height: 200 }
-      case 'button':
-        return { text: 'Click me', url: '#', backgroundColor: '#007bff', color: '#ffffff' }
-      case 'divider':
-        return { color: '#cccccc', height: 1 }
-      case 'social':
-        return { platforms: ['facebook', 'twitter', 'instagram'] }
-      case 'spacer':
-        return { height: 20 }
-      default:
-        return {}
+  // 保存模板
+  const handleSaveTemplate = async () => {
+    setIsSaving(true)
+    try {
+      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/templates/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          templateId: template.id,
+          templateData: template,
+          userId: localStorage.getItem('user-id') || 'anonymous'
+        })
+      })
+
+      const result = await response.json()
+      
+      if (result.success) {
+        toast.success('Template saved successfully!')
+        setTemplate(prev => ({
+          ...prev,
+          metadata: {
+            ...prev.metadata,
+            updatedAt: new Date().toISOString()
+          }
+        }))
+      } else {
+        toast.error(result.error || 'Failed to save template')
+      }
+    } catch (error) {
+      console.error('Save error:', error)
+      toast.error('Failed to save template')
+    } finally {
+      setIsSaving(false)
     }
   }
 
-  const getDefaultWidth = (type: string) => {
-    switch (type) {
-      case 'image':
-        return 300
-      case 'button':
-        return 150
-      case 'divider':
-        return 100
-      default:
-        return 200
-    }
-  }
-
-  const getDefaultHeight = (type: string) => {
-    switch (type) {
-      case 'image':
-        return 200
-      case 'button':
-        return 40
-      case 'divider':
-        return 1
-      case 'spacer':
-        return 20
-      default:
-        return 50
-    }
+  // 从专业模板创建
+  const handleCreateFromTemplate = (professionalTemplate: any) => {
+    const newTemplate = createTemplateDesignerFromProfessional(professionalTemplate)
+    setTemplate(newTemplate)
+    setShowTemplates(false)
+    toast.success(`Created from ${professionalTemplate.name}`)
   }
 
   const handleItemClick = (itemId: string) => {
     setSelectedItem(selectedItem === itemId ? null : itemId)
   }
 
-  const updateItemContent = (itemId: string, content: any) => {
+  const updateElementContent = (elementId: string, content: any) => {
     setTemplate(prev => ({
       ...prev,
-      content: prev.content.map(item => 
-        item.id === itemId ? { ...item, content: { ...item.content, ...content } } : item
-      )
+      content: prev.content.map(element => 
+        element.id === elementId ? { ...element, content: { ...element.content, ...content } } : element
+      ),
+      metadata: {
+        ...prev.metadata,
+        updatedAt: new Date().toISOString()
+      }
     }))
   }
 
-  const deleteItem = (itemId: string) => {
+  const updateElementStyles = (elementId: string, styles: any) => {
     setTemplate(prev => ({
       ...prev,
-      content: prev.content.filter(item => item.id !== itemId)
+      content: prev.content.map(element => 
+        element.id === elementId ? { ...element, styles: { ...element.styles, ...styles } } : element
+      ),
+      metadata: {
+        ...prev.metadata,
+        updatedAt: new Date().toISOString()
+      }
+    }))
+  }
+
+  const deleteElement = (elementId: string) => {
+    setTemplate(prev => ({
+      ...prev,
+      content: prev.content.filter(element => element.id !== elementId),
+      metadata: {
+        ...prev.metadata,
+        updatedAt: new Date().toISOString()
+      }
     }))
     setSelectedItem(null)
-    toast.success('Item deleted')
+    toast.success('Element deleted')
   }
 
   const updateGlobalStyles = (styles: Partial<TemplateDesigner['globalStyles']>) => {
@@ -202,7 +191,7 @@ export default function TemplateDesignerPage() {
   }
 
   const exportTemplate = () => {
-    const html = generateHTML(template)
+    const html = generateTemplateHTML(template)
     const blob = new Blob([html], { type: 'text/html' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -213,60 +202,127 @@ export default function TemplateDesignerPage() {
     toast.success('Template exported successfully')
   }
 
-  const generateHTML = (template: TemplateDesigner) => {
-    const { globalStyles, content } = template
-    
-    return `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${template.name}</title>
-    <style>
-        body { margin: 0; padding: 0; background-color: ${globalStyles.backgroundColor}; }
-        .email-container { 
-            max-width: ${globalStyles.contentWidth}px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: ${globalStyles.padding}px;
-        }
-        .email-item { 
-            margin: 10px 0; 
-            text-align: ${globalStyles.alignment};
-        }
-        ${globalStyles.underlineLinks ? 'a { text-decoration: underline; }' : ''}
-        @media (max-width: 600px) {
-            .email-container { padding: 10px; }
-        }
-    </style>
-</head>
-<body>
-    <div class="email-container">
-        ${content.map(item => generateItemHTML(item)).join('')}
-    </div>
-</body>
-</html>`
-  }
+  const selectedItemData = template.content.find(item => item.id === selectedItem)
 
-  const generateItemHTML = (item: DragItem) => {
-    switch (item.type) {
+  // 渲染元素内容
+  const renderElementContent = (element: TemplateElement) => {
+    switch (element.type) {
       case 'text':
-        return `<div class="email-item" style="font-size: ${item.content.fontSize}px; color: ${item.content.color};">${item.content.text}</div>`
+        const tag = element.content.level || 'p'
+        return (
+          <div style={element.styles}>
+            {tag === 'h1' && <h1>{element.content.text}</h1>}
+            {tag === 'h2' && <h2>{element.content.text}</h2>}
+            {tag === 'h3' && <h3>{element.content.text}</h3>}
+            {tag === 'p' && <p>{element.content.text}</p>}
+            {tag === 'blockquote' && <blockquote>{element.content.text}</blockquote>}
+          </div>
+        )
+      
       case 'image':
-        return `<div class="email-item"><img src="${item.content.src}" alt="${item.content.alt}" style="max-width: 100%; height: auto;" /></div>`
+        return (
+          <div style={element.styles}>
+            <img 
+              src={element.content.src} 
+              alt={element.content.alt} 
+              style={{ maxWidth: '100%', height: 'auto' }}
+            />
+          </div>
+        )
+      
       case 'button':
-        return `<div class="email-item"><a href="${item.content.url}" style="background-color: ${item.content.backgroundColor}; color: ${item.content.color}; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">${item.content.text}</a></div>`
+        return (
+          <div style={element.styles}>
+            <a 
+              href={element.content.url} 
+              target={element.content.target || '_self'}
+              style={{
+                backgroundColor: element.styles.backgroundColor,
+                color: element.styles.color,
+                padding: element.styles.padding,
+                borderRadius: element.styles.borderRadius,
+                fontSize: element.styles.fontSize,
+                fontWeight: element.styles.fontWeight,
+                textDecoration: 'none',
+                display: 'inline-block'
+              }}
+            >
+              {element.content.text}
+            </a>
+          </div>
+        )
+      
       case 'divider':
-        return `<div class="email-item"><hr style="border: none; border-top: ${item.content.height}px solid ${item.content.color};" /></div>`
+        if (element.content.type === 'dots') {
+          return <div style={element.styles}>• • •</div>
+        } else {
+          return <hr style={element.styles} />
+        }
+      
       case 'spacer':
-        return `<div class="email-item" style="height: ${item.content.height}px;"></div>`
+        return <div style={{ height: `${element.content.height}px` }} />
+      
+      case 'social':
+        return (
+          <div style={element.styles}>
+            {element.content.platforms.map((platform: any, index: number) => (
+              <a key={index} href={platform.url} style={{ margin: '0 10px', fontSize: '24px', textDecoration: 'none' }}>
+                {platform.icon}
+              </a>
+            ))}
+          </div>
+        )
+      
+      case 'product':
+        return (
+          <div style={element.styles}>
+            <img 
+              src={element.content.image} 
+              alt={element.content.title} 
+              style={{ width: '100%', maxWidth: '200px', height: 'auto', borderRadius: '8px' }}
+            />
+            <h3 style={{ margin: '15px 0 10px 0', fontSize: '18px', color: '#1a202c' }}>
+              {element.content.title}
+            </h3>
+            <p style={{ margin: '0 0 15px 0', color: '#4a5568', fontSize: '14px' }}>
+              {element.content.description}
+            </p>
+            <div style={{ margin: '15px 0' }}>
+              <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#667eea' }}>
+                {element.content.price}
+              </span>
+            </div>
+            <a 
+              href={element.content.buttonUrl}
+              style={{
+                backgroundColor: '#667eea',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: '6px',
+                textDecoration: 'none',
+                fontWeight: '600',
+                display: 'inline-block'
+              }}
+            >
+              {element.content.buttonText}
+            </a>
+          </div>
+        )
+      
+      case 'countdown':
+        return (
+          <div style={element.styles}>
+            <div style={{ marginBottom: '10px' }}>{element.content.message}</div>
+            <div style={{ fontFamily: 'monospace', fontSize: '24px' }}>
+              <span>00</span>d <span>00</span>h <span>00</span>m <span>00</span>s
+            </div>
+          </div>
+        )
+      
       default:
-        return `<div class="email-item">${item.type} element</div>`
+        return <div style={element.styles}>{element.type} element</div>
     }
   }
-
-  const selectedItemData = template.content.find(item => item.id === selectedItem)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -314,6 +370,23 @@ export default function TemplateDesignerPage() {
             </button>
             
             <button 
+              onClick={handleSaveTemplate}
+              disabled={isSaving}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 flex items-center space-x-2"
+            >
+              <SaveIcon className="w-4 h-4" />
+              <span>{isSaving ? 'Saving...' : 'Save'}</span>
+            </button>
+            
+            <button 
+              onClick={() => setShowTemplates(!showTemplates)}
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center space-x-2"
+            >
+              <SparklesIcon className="w-4 h-4" />
+              <span>Templates</span>
+            </button>
+            
+            <button 
               onClick={exportTemplate}
               className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
             >
@@ -354,21 +427,41 @@ export default function TemplateDesignerPage() {
 
       <div className="flex h-[calc(100vh-80px)]">
         {/* Left Sidebar - Drag Items */}
-        <div className="w-16 bg-white border-r border-gray-200 flex flex-col items-center py-4 space-y-4">
-          {dragItems.map((item) => {
-            const Icon = item.icon
-            return (
-              <div
-                key={item.id}
-                draggable
-                onDragStart={(e) => handleDragStart(e, item)}
-                className="w-12 h-12 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded cursor-move"
-                title={item.label}
-              >
-                <Icon className="w-6 h-6" />
-              </div>
-            )
-          })}
+        <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
+          {/* Categories */}
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">Elements</h3>
+            <div className="space-y-2">
+              {['Layout', 'Text', 'Media', 'Interactive', 'E-commerce'].map(category => (
+                <button
+                  key={category}
+                  className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded"
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Drag Items */}
+          <div className="flex-1 p-4 overflow-y-auto">
+            <div className="space-y-3">
+              {dragItems.map((item) => (
+                <div
+                  key={item.id}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, item)}
+                  className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-move hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                >
+                  <div className="text-2xl">{item.icon}</div>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                    <div className="text-xs text-gray-500">{item.category}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Main Canvas */}
@@ -394,23 +487,23 @@ export default function TemplateDesignerPage() {
                   </div>
                 </div>
               ) : (
-                template.content.map((item) => (
+                template.content.map((element) => (
                   <motion.div
-                    key={item.id}
+                    key={element.id}
                     className={`absolute border-2 border-dashed border-blue-300 p-4 cursor-pointer ${
-                      selectedItem === item.id ? 'border-blue-500 bg-blue-50' : 'hover:border-blue-400'
+                      selectedItem === element.id ? 'border-blue-500 bg-blue-50' : 'hover:border-blue-400'
                     }`}
                     style={{
-                      left: item.x,
-                      top: item.y,
-                      width: item.width,
-                      height: item.height
+                      left: element.position.x,
+                      top: element.position.y,
+                      width: element.position.width,
+                      height: element.position.height
                     }}
-                    onClick={() => handleItemClick(item.id)}
+                    onClick={() => handleItemClick(element.id)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    {renderItemContent(item)}
+                    {renderElementContent(element)}
                   </motion.div>
                 ))
               )}
@@ -551,101 +644,172 @@ export default function TemplateDesignerPage() {
                 </div>
               </div>
 
-              {/* Item Properties */}
+              {/* Element Properties */}
               {selectedItemData && (
                 <div className="border-t pt-6">
-                  <h4 className="text-lg font-semibold mb-4">Item Properties</h4>
-                  {renderItemProperties(selectedItemData)}
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-lg font-semibold">Element Properties</h4>
+                    <button
+                      onClick={() => deleteElement(selectedItemData.id)}
+                      className="text-red-600 hover:text-red-800 text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  {renderElementProperties(selectedItemData)}
                 </div>
               )}
             </div>
           )}
         </div>
       </div>
+
+      {/* Template Selection Modal */}
+      {showTemplates && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[80vh] overflow-hidden">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900">Choose a Template</h3>
+                <button
+                  onClick={() => setShowTemplates(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <XMarkIcon className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {professionalTemplates.map((template) => (
+                  <div
+                    key={template.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+                    onClick={() => handleCreateFromTemplate(template)}
+                  >
+                    <div className="aspect-video bg-gray-100 rounded mb-3 flex items-center justify-center">
+                      <DocumentTextIcon className="w-12 h-12 text-gray-400" />
+                    </div>
+                    <h4 className="font-medium text-gray-900 mb-1">{template.name}</h4>
+                    <p className="text-sm text-gray-600 mb-2">{template.description}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-500">{template.category}</span>
+                      {template.isPopular && (
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                          Popular
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
-const renderItemContent = (item: DragItem) => {
-  switch (item.type) {
-    case 'text':
-      return (
-        <div style={{ fontSize: `${item.content.fontSize}px`, color: item.content.color }}>
-          {item.content.text}
-        </div>
-      )
-    case 'image':
-      return (
-        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-          {item.content.src ? (
-            <img src={item.content.src} alt={item.content.alt} className="max-w-full max-h-full object-contain" />
-          ) : (
-            <div className="text-gray-500 text-center">
-              <PhotoIcon className="w-8 h-8 mx-auto mb-2" />
-              <p className="text-sm">No image</p>
-            </div>
-          )}
-        </div>
-      )
-    case 'button':
-      return (
-        <button
-          style={{
-            backgroundColor: item.content.backgroundColor,
-            color: item.content.color,
-            padding: '8px 16px',
-            border: 'none',
-            borderRadius: '4px'
-          }}
-        >
-          {item.content.text}
-        </button>
-      )
-    case 'divider':
-      return (
-        <hr style={{ border: 'none', borderTop: `${item.content.height}px solid ${item.content.color}` }} />
-      )
-    case 'spacer':
-      return <div style={{ height: `${item.content.height}px` }} />
-    default:
-      return <div className="text-gray-500">{item.type}</div>
-  }
-}
-
-const renderItemProperties = (item: DragItem) => {
-  switch (item.type) {
+// 渲染元素属性编辑面板
+const renderElementProperties = (element: TemplateElement) => {
+  switch (element.type) {
     case 'text':
       return (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Text</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Text Content</label>
             <textarea
-              value={item.content.text}
-              onChange={(e) => updateItemContent(item.id, { text: e.target.value })}
+              value={element.content.text}
+              onChange={(e) => updateElementContent(element.id, { text: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
               rows={3}
             />
           </div>
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Text Level</label>
+            <select
+              value={element.content.level}
+              onChange={(e) => updateElementContent(element.id, { level: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+            >
+              <option value="p">Paragraph</option>
+              <option value="h1">Heading 1</option>
+              <option value="h2">Heading 2</option>
+              <option value="h3">Heading 3</option>
+              <option value="blockquote">Quote</option>
+            </select>
+          </div>
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
             <input
               type="number"
-              value={item.content.fontSize}
-              onChange={(e) => updateItemContent(item.id, { fontSize: parseInt(e.target.value) })}
+              value={parseInt(element.styles.fontSize) || 16}
+              onChange={(e) => updateElementStyles(element.id, { fontSize: `${e.target.value}px` })}
               className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
             <input
               type="color"
-              value={item.content.color}
-              onChange={(e) => updateItemContent(item.id, { color: e.target.value })}
+              value={element.styles.color || '#000000'}
+              onChange={(e) => updateElementStyles(element.id, { color: e.target.value })}
               className="w-full h-10 border border-gray-300 rounded"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Text Align</label>
+            <select
+              value={element.styles.textAlign || 'left'}
+              onChange={(e) => updateElementStyles(element.id, { textAlign: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+            >
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+        </div>
+      )
+    
+    case 'image':
+      return (
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+            <input
+              type="url"
+              value={element.content.src}
+              onChange={(e) => updateElementContent(element.id, { src: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              placeholder="https://example.com/image.jpg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Alt Text</label>
+            <input
+              type="text"
+              value={element.content.alt}
+              onChange={(e) => updateElementContent(element.id, { alt: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              placeholder="Image description"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Link URL</label>
+            <input
+              type="url"
+              value={element.content.link || ''}
+              onChange={(e) => updateElementContent(element.id, { link: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              placeholder="https://example.com"
             />
           </div>
         </div>
       )
+    
     case 'button':
       return (
         <div className="space-y-4">
@@ -653,17 +817,17 @@ const renderItemProperties = (item: DragItem) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
             <input
               type="text"
-              value={item.content.text}
-              onChange={(e) => updateItemContent(item.id, { text: e.target.value })}
+              value={element.content.text}
+              onChange={(e) => updateElementContent(element.id, { text: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">URL</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Link URL</label>
             <input
-              type="text"
-              value={item.content.url}
-              onChange={(e) => updateItemContent(item.id, { url: e.target.value })}
+              type="url"
+              value={element.content.url}
+              onChange={(e) => updateElementContent(element.id, { url: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
             />
           </div>
@@ -671,8 +835,8 @@ const renderItemProperties = (item: DragItem) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">Background Color</label>
             <input
               type="color"
-              value={item.content.backgroundColor}
-              onChange={(e) => updateItemContent(item.id, { backgroundColor: e.target.value })}
+              value={element.styles.backgroundColor || '#667eea'}
+              onChange={(e) => updateElementStyles(element.id, { backgroundColor: e.target.value })}
               className="w-full h-10 border border-gray-300 rounded"
             />
           </div>
@@ -680,20 +844,115 @@ const renderItemProperties = (item: DragItem) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
             <input
               type="color"
-              value={item.content.color}
-              onChange={(e) => updateItemContent(item.id, { color: e.target.value })}
+              value={element.styles.color || '#ffffff'}
+              onChange={(e) => updateElementStyles(element.id, { color: e.target.value })}
               className="w-full h-10 border border-gray-300 rounded"
             />
           </div>
         </div>
       )
+    
+    case 'product':
+      return (
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Product Title</label>
+            <input
+              type="text"
+              value={element.content.title}
+              onChange={(e) => updateElementContent(element.id, { title: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+            <textarea
+              value={element.content.description}
+              onChange={(e) => updateElementContent(element.id, { description: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+              rows={2}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
+            <input
+              type="text"
+              value={element.content.price}
+              onChange={(e) => updateElementContent(element.id, { price: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+            <input
+              type="url"
+              value={element.content.image}
+              onChange={(e) => updateElementContent(element.id, { image: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
+            <input
+              type="text"
+              value={element.content.buttonText}
+              onChange={(e) => updateElementContent(element.id, { buttonText: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Button URL</label>
+            <input
+              type="url"
+              value={element.content.buttonUrl}
+              onChange={(e) => updateElementContent(element.id, { buttonUrl: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+            />
+          </div>
+        </div>
+      )
+    
+    case 'countdown':
+      return (
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+            <input
+              type="text"
+              value={element.content.message}
+              onChange={(e) => updateElementContent(element.id, { message: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+            <input
+              type="datetime-local"
+              value={element.content.endDate}
+              onChange={(e) => updateElementContent(element.id, { endDate: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+            />
+          </div>
+        </div>
+      )
+    
+    case 'spacer':
+      return (
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Height (px)</label>
+            <input
+              type="number"
+              value={element.content.height}
+              onChange={(e) => updateElementContent(element.id, { height: parseInt(e.target.value) })}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+            />
+          </div>
+        </div>
+      )
+    
     default:
-      return <div className="text-gray-500">No properties available</div>
+      return <div className="text-gray-500">No properties available for this element type.</div>
   }
 }
 
-// Helper function to update item content
-const updateItemContent = (itemId: string, content: any) => {
-  // This would be implemented in the parent component
-  console.log('Update item content:', itemId, content)
-}
