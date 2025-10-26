@@ -16,10 +16,7 @@ import {
   CheckIcon,
   CpuChipIcon,
   LightBulbIcon,
-  DocumentTextIcon,
-  ArrowDownTrayIcon,
-  ShareIcon,
-  ClipboardDocumentIcon
+  DocumentTextIcon
 } from '@heroicons/react/24/outline'
 import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
 import AIAssistant from '@/components/AIAssistant'
@@ -123,43 +120,6 @@ export default function NewCampaignPage() {
     toast.success(`Selected ${template.name} template!`)
   }
 
-  const handleSaveTemplate = () => {
-    const templateData = {
-      name: currentTemplate.name,
-      category: currentTemplate.category,
-      subject: currentTemplate.subject,
-      htmlContent: currentTemplate.htmlContent,
-      features: currentTemplate.features,
-      savedAt: new Date().toISOString()
-    }
-
-    // Create downloadable file
-    const dataStr = JSON.stringify(templateData, null, 2)
-    const dataBlob = new Blob([dataStr], { type: 'application/json' })
-    const url = URL.createObjectURL(dataBlob)
-    
-    // Create download link
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${currentTemplate.name.replace(/\s+/g, '_')}_template.json`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-
-    toast.success(`Template "${currentTemplate.name}" saved successfully!`)
-  }
-
-  const handleCopyHTML = () => {
-    navigator.clipboard.writeText(currentTemplate.htmlContent)
-    toast.success('HTML code copied to clipboard!')
-  }
-
-  const handleCopySubject = () => {
-    navigator.clipboard.writeText(currentTemplate.subject)
-    toast.success('Subject line copied to clipboard!')
-  }
-
   const handleBack = () => {
     router.push('/dashboard')
   }
@@ -207,82 +167,31 @@ export default function NewCampaignPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* 重新设计的布局：AI助手在左边，模板在右边 */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Left Column - AI Assistant */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6">
-              <div className="flex items-center space-x-2 mb-4">
-                <CpuChipIcon className="w-6 h-6 text-purple-600" />
-                <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                  Premium
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">
-                Chat with AI for email marketing advice and content ideas
-              </p>
-              
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setShowAIAssistant(true)}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
-              >
-                <LightBulbIcon className="w-5 h-5" />
-                <span>Ask AI Assistant</span>
-              </motion.button>
-            </div>
+        {/* AI Assistant Button */}
+        <div className="mb-6">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setShowAIAssistant(true)}
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-3"
+          >
+            <CpuChipIcon className="w-6 h-6" />
+            <span>Ask AI Assistant for Template Recommendations</span>
+            <LightBulbIcon className="w-5 h-5" />
+          </motion.button>
+        </div>
 
-            {/* Template Actions */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Template Actions</h3>
-              <div className="space-y-3">
-                <button
-                  onClick={handleSaveTemplate}
-                  className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
-                >
-                  <ArrowDownTrayIcon className="w-5 h-5 text-green-600" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Save Template</p>
-                    <p className="text-xs text-gray-500">Download as JSON file</p>
-                  </div>
-                </button>
-                
-                <button
-                  onClick={handleCopyHTML}
-                  className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
-                >
-                  <ClipboardDocumentIcon className="w-5 h-5 text-blue-600" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Copy HTML</p>
-                    <p className="text-xs text-gray-500">Copy HTML code</p>
-                  </div>
-                </button>
-                
-                <button
-                  onClick={handleCopySubject}
-                  className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
-                >
-                  <ShareIcon className="w-5 h-5 text-purple-600" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Copy Subject</p>
-                    <p className="text-xs text-gray-500">Copy subject line</p>
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column - Template Details and Preview */}
-          <div className="lg:col-span-3">
-            <motion.div
-              key={currentTemplate.id}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 h-full"
-            >
+        {/* 统一的3列布局 */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Template Details */}
+          <motion.div
+            key={currentTemplate.id}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-2"
+          >
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 h-full">
               {/* Template Info Header */}
               <div className="px-6 py-5 border-b border-gray-200">
                 <div className="flex items-center justify-between mb-4">
@@ -364,89 +273,122 @@ export default function NewCampaignPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </motion.div>
 
-              {/* Template Selection and Actions */}
-              <div className="px-6 py-5 border-t border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">All Templates</h3>
-                    <div className="grid grid-cols-4 gap-3">
-                      {professionalTemplates.map((template, index) => (
-                        <motion.div
-                          key={template.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.1 }}
-                          onClick={() => setCurrentTemplateIndex(index)}
-                          className={`
-                            relative cursor-pointer transition-all duration-300 p-3 rounded-xl border-2 h-20
-                            ${currentTemplateIndex === index 
-                              ? 'border-blue-500 bg-gradient-to-r from-blue-50 to-purple-50 shadow-lg shadow-blue-100/50' 
-                              : 'border-gray-200 hover:border-blue-300 hover:shadow-lg hover:bg-white hover:shadow-gray-100/50'
-                            }
-                          `}
-                        >
-                          {/* Selected Indicator */}
-                          {currentTemplateIndex === index && (
-                            <motion.div
-                              initial={{ scale: 0, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              transition={{ duration: 0.2, ease: "easeOut" }}
-                              className="absolute -top-1 -right-1"
-                            >
-                              <div className="w-5 h-5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
-                                <CheckIcon className="w-3 h-3 text-white" />
-                              </div>
-                            </motion.div>
-                          )}
-                          
-                          <div className="flex flex-col items-center text-center h-full justify-center space-y-1">
-                            <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
-                              <SparklesIcon className="w-3 h-3 text-white" />
-                            </div>
-                            <div>
-                              <h4 className="text-xs font-bold text-gray-900">{template.name}</h4>
-                              <p className="text-xs text-gray-600">{template.category}</p>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="ml-6 flex flex-col space-y-4">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handleUseTemplate}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
-                    >
-                      <RocketLaunchIcon className="w-5 h-5" />
-                      <span>Use This Template</span>
-                    </motion.button>
+          {/* Right Column - Template Selection & Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="space-y-6"
+          >
+            {/* Template Grid */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">All Templates</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {professionalTemplates.map((template, index) => (
+                  <motion.div
+                    key={template.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    onClick={() => setCurrentTemplateIndex(index)}
+                    className={`
+                      relative cursor-pointer transition-all duration-300 p-3 rounded-xl border-2 h-20
+                      ${currentTemplateIndex === index 
+                        ? 'border-blue-500 bg-gradient-to-r from-blue-50 to-purple-50 shadow-lg shadow-blue-100/50' 
+                        : 'border-gray-200 hover:border-blue-300 hover:shadow-lg hover:bg-white hover:shadow-gray-100/50'
+                      }
+                    `}
+                  >
+                    {/* Selected Indicator */}
+                    {currentTemplateIndex === index && (
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="absolute -top-1 -right-1"
+                      >
+                        <div className="w-5 h-5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                          <CheckIcon className="w-3 h-3 text-white" />
+                        </div>
+                      </motion.div>
+                    )}
                     
-                    <div className="text-center">
-                      <p className="text-sm text-gray-500 mb-2">Use arrow keys to navigate</p>
-                      <div className="flex justify-center space-x-4">
-                        <button
-                          onClick={handlePrevTemplate}
-                          className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                        >
-                          <ArrowLeftIcon className="h-5 w-5" />
-                        </button>
-                        <button
-                          onClick={handleNextTemplate}
-                          className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                        >
-                          <ArrowRightIcon className="h-5 w-5" />
-                        </button>
+                    <div className="flex flex-col items-center text-center h-full justify-center space-y-1">
+                      <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
+                        <SparklesIcon className="w-3 h-3 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-gray-900">{template.name}</h4>
+                        <p className="text-xs text-gray-600">{template.category}</p>
                       </div>
                     </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+              <div className="space-y-4">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleUseTemplate}
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center"
+                >
+                  <RocketLaunchIcon className="w-5 h-5 mr-2" />
+                  Use This Template
+                  <ArrowRightIcon className="w-5 h-5 ml-2" />
+                </motion.button>
+                
+                <div className="text-center">
+                  <p className="text-sm text-gray-500 mb-2">Use arrow keys to navigate</p>
+                  <div className="flex justify-center space-x-4">
+                    <button
+                      onClick={handlePrevTemplate}
+                      className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      <ArrowLeftIcon className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={handleNextTemplate}
+                      className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      <ArrowRightIcon className="h-5 w-5" />
+                    </button>
                   </div>
                 </div>
               </div>
-            </motion.div>
-          </div>
+            </div>
+
+            {/* Getting Started */}
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-5">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Getting Started</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Choose a template and customize it to match your brand perfectly.
+              </p>
+              <div className="space-y-2">
+                <button
+                  onClick={() => setShowAIAssistant(true)}
+                  className="w-full text-left p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors flex items-center space-x-2"
+                >
+                  <CpuChipIcon className="w-4 h-4 text-purple-600" />
+                  <span className="text-sm font-medium text-purple-600">Ask AI for recommendations</span>
+                </button>
+                <Link
+                  href="/dashboard/campaigns/new"
+                  className="w-full text-left p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors flex items-center space-x-2"
+                >
+                  <DocumentTextIcon className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-600">Browse all templates</span>
+                  <ArrowRightIcon className="h-4 w-4 ml-auto" />
+                </Link>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
 

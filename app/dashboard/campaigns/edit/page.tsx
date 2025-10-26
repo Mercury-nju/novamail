@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowLeft, Send, Sparkles, Check, X, Zap, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Send, Sparkles, Check, X, Zap, AlertTriangle, ArrowDownTrayIcon, ShareIcon, ClipboardDocumentIcon } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
 import CreditsDisplay from '@/components/CreditsDisplay'
@@ -90,8 +90,49 @@ export default function CampaignEditPage() {
     fetchUserCredits()
   }, [currentTemplate])
   
-  // 获取用户积分信息
-  const fetchUserCredits = async () => {
+  // 模板保存功能
+  const handleSaveTemplate = () => {
+    const templateData = {
+      name: currentTemplate.name,
+      category: currentTemplate.category,
+      subject: campaignData.subject || currentTemplate.subject,
+      htmlContent: campaignData.body || currentTemplate.htmlContent,
+      features: currentTemplate.features,
+      savedAt: new Date().toISOString(),
+      customizations: {
+        subject: campaignData.subject,
+        body: campaignData.body
+      }
+    }
+
+    // Create downloadable file
+    const dataStr = JSON.stringify(templateData, null, 2)
+    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(dataBlob)
+    
+    // Create download link
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${currentTemplate.name.replace(/\s+/g, '_')}_template.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+
+    toast.success(`Template "${currentTemplate.name}" saved successfully!`)
+  }
+
+  const handleCopyHTML = () => {
+    const htmlContent = campaignData.body || currentTemplate.htmlContent
+    navigator.clipboard.writeText(htmlContent)
+    toast.success('HTML code copied to clipboard!')
+  }
+
+  const handleCopySubject = () => {
+    const subject = campaignData.subject || currentTemplate.subject
+    navigator.clipboard.writeText(subject)
+    toast.success('Subject line copied to clipboard!')
+  }
     try {
       const response = await fetch('/api/credits')
       const data = await response.json()
@@ -574,73 +615,9 @@ export default function CampaignEditPage() {
 
       {/* Main Content */}
       <div className="flex h-[calc(100vh-80px)]">
-        {/* Left Panel - Email Template */}
-        <div className="flex-1 p-6 overflow-auto">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Subject Line:
-              </label>
-              <input
-                type="text"
-                value={campaignData.subject}
-                onChange={(e) => setCampaignData(prev => ({ ...prev, subject: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter email subject..."
-              />
-            </div>
-            
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-              <div
-                contentEditable
-                suppressContentEditableWarning={true}
-                onInput={(e) => {
-                  const newContent = e.currentTarget.innerHTML
-                  setCampaignData(prev => ({ ...prev, body: newContent }))
-                }}
-                className="min-h-[500px] focus:outline-none"
-                style={{
-                  lineHeight: '1.6',
-                  fontSize: '16px',
-                  color: '#374151',
-                  userSelect: 'text',
-                  WebkitUserSelect: 'text',
-                  MozUserSelect: 'text',
-                  msUserSelect: 'text',
-                  cursor: 'text'
-                }}
-                onKeyDown={(e) => {
-                  // 防止Tab键跳转焦点
-                  if (e.key === 'Tab') {
-                    e.preventDefault()
-                    document.execCommand('insertText', false, '    ')
-                  }
-                }}
-                onPaste={(e) => {
-                  e.preventDefault()
-                  const text = e.clipboardData.getData('text/plain')
-                  document.execCommand('insertText', false, text)
-                }}
-                onMouseDown={(e) => {
-                  // 防止点击时焦点跳转
-                  e.stopPropagation()
-                }}
-                onFocus={(e) => {
-                  // 完全阻止默认焦点行为
-                  e.stopPropagation()
-                }}
-                ref={(el) => {
-                  if (el && !el.innerHTML) {
-                    el.innerHTML = campaignData.body || templateContent
-                  }
-                }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Right Panel - AI Assistant */}
-        <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
+        {/* Left Panel - AI Assistant & Template Actions */}
+        <div className="w-96 bg-white border-r border-gray-200 flex flex-col">
+          {/* AI Assistant Section */}
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div>
@@ -718,9 +695,6 @@ export default function CampaignEditPage() {
                       : 'bg-gray-100 text-gray-900'
                   }`}>
                     <p className="text-sm">{message.message}</p>
-                    
-                    {/* AI对话功能 - 纯对话交互，无内容同步 */}
-                    
                     <div className="text-xs opacity-70 mt-2">
                       {message.timestamp.toLocaleTimeString()}
                     </div>
@@ -782,6 +756,110 @@ export default function CampaignEditPage() {
               </div>
             </div>
           )}
+
+          {/* Template Actions Section */}
+          <div className="border-t border-gray-200 p-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Template Actions</h3>
+            <div className="space-y-3">
+              <button
+                onClick={handleSaveTemplate}
+                className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
+              >
+                <ArrowDownTrayIcon className="w-5 h-5 text-green-600" />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Save Template</p>
+                  <p className="text-xs text-gray-500">Download as JSON file</p>
+                </div>
+              </button>
+              
+              <button
+                onClick={handleCopyHTML}
+                className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
+              >
+                <ClipboardDocumentIcon className="w-5 h-5 text-blue-600" />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Copy HTML</p>
+                  <p className="text-xs text-gray-500">Copy HTML code</p>
+                </div>
+              </button>
+              
+              <button
+                onClick={handleCopySubject}
+                className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
+              >
+                <ShareIcon className="w-5 h-5 text-purple-600" />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Copy Subject</p>
+                  <p className="text-xs text-gray-500">Copy subject line</p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Panel - Email Editor */}
+        <div className="flex-1 p-6 overflow-auto">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Subject Line:
+              </label>
+              <input
+                type="text"
+                value={campaignData.subject}
+                onChange={(e) => setCampaignData(prev => ({ ...prev, subject: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter email subject..."
+              />
+            </div>
+            
+            <div className="border border-gray-200 rounded-lg overflow-hidden">
+              <div
+                contentEditable
+                suppressContentEditableWarning={true}
+                onInput={(e) => {
+                  const newContent = e.currentTarget.innerHTML
+                  setCampaignData(prev => ({ ...prev, body: newContent }))
+                }}
+                className="min-h-[500px] focus:outline-none"
+                style={{
+                  lineHeight: '1.6',
+                  fontSize: '16px',
+                  color: '#374151',
+                  userSelect: 'text',
+                  WebkitUserSelect: 'text',
+                  MozUserSelect: 'text',
+                  msUserSelect: 'text',
+                  cursor: 'text'
+                }}
+                onKeyDown={(e) => {
+                  // 防止Tab键跳转焦点
+                  if (e.key === 'Tab') {
+                    e.preventDefault()
+                    document.execCommand('insertText', false, '    ')
+                  }
+                }}
+                onPaste={(e) => {
+                  e.preventDefault()
+                  const text = e.clipboardData.getData('text/plain')
+                  document.execCommand('insertText', false, text)
+                }}
+                onMouseDown={(e) => {
+                  // 防止点击时焦点跳转
+                  e.stopPropagation()
+                }}
+                onFocus={(e) => {
+                  // 完全阻止默认焦点行为
+                  e.stopPropagation()
+                }}
+                ref={(el) => {
+                  if (el && !el.innerHTML) {
+                    el.innerHTML = campaignData.body || templateContent
+                  }
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
