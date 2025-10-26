@@ -14,13 +14,15 @@ class MailchimpAdapter extends BaseESPAdapter {
     this.redirectUri = config.redirectUri || process.env.MAILCHIMP_REDIRECT_URI
     this.accessToken = config.accessToken
     this.dc = config.dc // Mailchimp数据中心标识
+    this.apiKey = config.apiKey || process.env.MAILCHIMP_API_KEY
   }
 
   /**
    * 验证配置
    */
   validateConfig() {
-    return !!(this.clientId && this.clientSecret && this.redirectUri)
+    // 支持API Key模式或OAuth模式
+    return !!(this.apiKey || (this.clientId && this.clientSecret && this.redirectUri))
   }
 
   /**
@@ -83,6 +85,39 @@ class MailchimpAdapter extends BaseESPAdapter {
    * 检查授权状态
    */
   async checkAuth() {
+    // 如果使用API Key模式
+    if (this.apiKey) {
+      try {
+        // 从API Key中提取数据中心
+        const dc = this.apiKey.split('-').pop()
+        
+        // 验证API Key是否有效
+        const response = await axios.get(`https://${dc}.api.mailchimp.com/3.0/`, {
+          headers: {
+            'Authorization': `Basic ${Buffer.from(`anystring:${this.apiKey}`).toString('base64')}`
+          }
+        })
+
+        return {
+          authorized: true,
+          user_info: response.data,
+          auth_type: 'api_key'
+        }
+      } catch (error) {
+        if (error.response?.status === 401) {
+          return {
+            authorized: false,
+            error: 'API Key无效或已过期'
+          }
+        }
+        return {
+          authorized: false,
+          error: this.formatError(error)
+        }
+      }
+    }
+
+    // OAuth模式
     if (!this.accessToken || !this.dc) {
       return {
         authorized: false,
@@ -100,7 +135,8 @@ class MailchimpAdapter extends BaseESPAdapter {
 
       return {
         authorized: true,
-        user_info: response.data
+        user_info: response.data,
+        auth_type: 'oauth'
       }
     } catch (error) {
       if (error.response?.status === 401) {
@@ -130,6 +166,19 @@ class MailchimpAdapter extends BaseESPAdapter {
         }
       }
 
+      // 确定数据中心和认证方式
+      let dc, authHeader
+      
+      if (this.apiKey) {
+        // API Key模式
+        dc = this.apiKey.split('-').pop()
+        authHeader = `Basic ${Buffer.from(`anystring:${this.apiKey}`).toString('base64')}`
+      } else {
+        // OAuth模式
+        dc = this.dc
+        authHeader = `OAuth ${this.accessToken}`
+      }
+
       // 创建模板数据
       const templateData = {
         name: name,
@@ -145,11 +194,11 @@ class MailchimpAdapter extends BaseESPAdapter {
 
       // 调用Mailchimp API创建模板
       const response = await axios.post(
-        `https://${this.dc}.api.mailchimp.com/3.0/templates`,
+        `https://${dc}.api.mailchimp.com/3.0/templates`,
         templateData,
         {
           headers: {
-            'Authorization': `OAuth ${this.accessToken}`,
+            'Authorization': authHeader,
             'Content-Type': 'application/json'
           }
         }
@@ -160,7 +209,7 @@ class MailchimpAdapter extends BaseESPAdapter {
       return {
         success: true,
         id: template.id,
-        edit_url: `https://us1.admin.mailchimp.com/templates/edit?id=${template.id}`,
+        edit_url: `https://${dc}.admin.mailchimp.com/templates/edit?id=${template.id}`,
         template_name: template.name
       }
 
