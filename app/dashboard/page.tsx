@@ -48,47 +48,27 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // 模拟加载数据
+    // 加载真实的用户数据
     const loadDashboardData = async () => {
-      // 模拟API调用延迟
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // 模拟数据
-      setStats({
-        totalCampaigns: 12,
-        totalContacts: 2847,
-        totalEmailsSent: 15680,
-        averageOpenRate: 24.5,
-        averageClickRate: 8.2,
-        recentCampaigns: [
-          {
-            id: '1',
-            subject: '🚀 Introducing [Product Name] - The Future is Here',
-            status: 'sent',
-            recipients: 1250,
-            openRate: 24.5,
-            clickRate: 8.2,
-            createdAt: '2024-01-15T10:30:00Z'
-          },
-          {
-            id: '2',
-            subject: '📧 Welcome to NovaMail - Let\'s Get Started!',
-            status: 'sent',
-            recipients: 892,
-            openRate: 31.2,
-            clickRate: 12.1,
-            createdAt: '2024-01-14T14:20:00Z'
-          },
-          {
-            id: '3',
-            subject: '💡 Monthly Newsletter - December 2024',
-            status: 'scheduled',
-            recipients: 2847,
-            createdAt: '2024-01-13T09:15:00Z'
-          }
-        ]
-      })
-      setIsLoading(false)
+      try {
+        // TODO: 实现真实的API调用
+        // const response = await fetch('/api/dashboard/stats')
+        // const data = await response.json()
+        
+        // 暂时显示空状态
+        setStats({
+          totalCampaigns: 0,
+          totalContacts: 0,
+          totalEmailsSent: 0,
+          averageOpenRate: 0,
+          averageClickRate: 0,
+          recentCampaigns: []
+        })
+        setIsLoading(false)
+      } catch (error) {
+        console.error('Failed to load dashboard data:', error)
+        setIsLoading(false)
+      }
     }
 
     loadDashboardData()
@@ -172,6 +152,9 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Campaigns</p>
                 <p className="text-2xl font-bold text-gray-900">{isLoading ? '...' : stats.totalCampaigns}</p>
+                {!isLoading && stats.totalCampaigns === 0 && (
+                  <p className="text-xs text-gray-500 mt-1">No campaigns created yet</p>
+                )}
               </div>
               <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
                 <RocketLaunchIcon className="h-6 w-6 text-blue-600" />
@@ -185,6 +168,9 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Contacts</p>
                 <p className="text-2xl font-bold text-gray-900">{isLoading ? '...' : formatNumber(stats.totalContacts)}</p>
+                {!isLoading && stats.totalContacts === 0 && (
+                  <p className="text-xs text-gray-500 mt-1">No contacts imported yet</p>
+                )}
               </div>
               <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
                 <UserGroupIcon className="h-6 w-6 text-green-600" />
@@ -198,6 +184,9 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Emails Sent</p>
                 <p className="text-2xl font-bold text-gray-900">{isLoading ? '...' : formatNumber(stats.totalEmailsSent)}</p>
+                {!isLoading && stats.totalEmailsSent === 0 && (
+                  <p className="text-xs text-gray-500 mt-1">No emails sent yet</p>
+                )}
               </div>
               <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
                 <EnvelopeIcon className="h-6 w-6 text-purple-600" />
@@ -211,6 +200,9 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Avg. Open Rate</p>
                 <p className="text-2xl font-bold text-gray-900">{isLoading ? '...' : `${stats.averageOpenRate}%`}</p>
+                {!isLoading && stats.averageOpenRate === 0 && (
+                  <p className="text-xs text-gray-500 mt-1">No data available</p>
+                )}
               </div>
               <div className="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center">
                 <EyeIcon className="h-6 w-6 text-orange-600" />
@@ -248,6 +240,19 @@ export default function Dashboard() {
                         <div className="h-3 bg-gray-200 rounded w-1/2"></div>
                       </div>
                     ))}
+                  </div>
+                ) : stats.recentCampaigns.length === 0 ? (
+                  <div className="text-center py-8">
+                    <RocketLaunchIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No campaigns yet</h3>
+                    <p className="text-gray-600 mb-4">Create your first email campaign to get started</p>
+                    <Link
+                      href="/dashboard/campaigns/new"
+                      className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      <RocketLaunchIcon className="h-4 w-4 mr-2" />
+                      Create Campaign
+                    </Link>
                   </div>
                 ) : (
                   <div className="space-y-3">
