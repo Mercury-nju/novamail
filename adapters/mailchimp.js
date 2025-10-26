@@ -46,12 +46,19 @@ class MailchimpAdapter extends BaseESPAdapter {
    */
   async handleCallback(code) {
     try {
-      const response = await axios.post('https://login.mailchimp.com/oauth2/token', {
+      // Mailchimp OAuth token请求需要使用URL编码格式
+      const params = new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: this.clientId,
         client_secret: this.clientSecret,
         redirect_uri: this.redirectUri,
         code: code
+      })
+
+      const response = await axios.post('https://login.mailchimp.com/oauth2/token', params, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
       })
 
       const { access_token, dc } = response.data

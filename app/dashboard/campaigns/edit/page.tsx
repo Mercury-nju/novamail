@@ -173,6 +173,12 @@ export default function CampaignEditPage() {
     try {
       const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
       
+      if (!userEmail) {
+        toast.error('User email not found. Please log in again.')
+        setIsExporting(false)
+        return
+      }
+      
       const response = await fetch('/api/export', {
         method: 'POST',
         headers: {
@@ -186,6 +192,10 @@ export default function CampaignEditPage() {
           userEmail: userEmail
         })
       })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
 
       const result = await response.json()
 
@@ -204,15 +214,24 @@ export default function CampaignEditPage() {
         setShowExportModal(false)
         setSelectedESP('')
       } else {
+        // 处理不同类型的错误
         if (result.error === 'token_expired') {
           toast.error('Mailchimp authorization expired. Please reconnect your account.')
+        } else if (result.error.includes('configuration is incomplete')) {
+          toast.error(`${selectedESP} is not properly configured. Please contact support.`)
+        } else if (result.error.includes('not supported')) {
+          toast.error(`${selectedESP} template feature is not supported. Please try another ESP.`)
         } else {
           toast.error(`Export failed: ${result.error}`)
         }
       }
     } catch (error) {
       console.error('Export error:', error)
-      toast.error('Failed to export template. Please try again.')
+      if (error.message.includes('Failed to fetch')) {
+        toast.error('Network error. Please check your connection and try again.')
+      } else {
+        toast.error('Failed to export template. Please try again.')
+      }
     } finally {
       setIsExporting(false)
     }
@@ -221,6 +240,11 @@ export default function CampaignEditPage() {
   const handleMailchimpConnect = async () => {
     try {
       const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
+      
+      if (!userEmail) {
+        toast.error('User email not found. Please log in again.')
+        return
+      }
       
       const response = await fetch('/api/mailchimp/connect', {
         method: 'POST',
@@ -232,20 +256,42 @@ export default function CampaignEditPage() {
         })
       })
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
       const result = await response.json()
 
       if (result.success) {
         // 打开Mailchimp授权页面
-        window.open(result.auth_url, '_blank')
+        const authWindow = window.open(result.auth_url, '_blank', 'width=600,height=600')
+        
+        if (!authWindow) {
+          toast.error('Please allow popups to complete Mailchimp authorization')
+          return
+        }
         
         // 提示用户完成授权后返回
-        toast.success('Please complete Mailchimp authorization and return to this page')
+        toast.success('Please complete Mailchimp authorization in the new window')
+        
+        // 监听窗口关闭事件
+        const checkClosed = setInterval(() => {
+          if (authWindow.closed) {
+            clearInterval(checkClosed)
+            toast.success('Authorization window closed. You can now try exporting to Mailchimp.')
+          }
+        }, 1000)
+        
       } else {
         toast.error(`Failed to connect Mailchimp: ${result.error}`)
       }
     } catch (error) {
       console.error('Mailchimp connect error:', error)
-      toast.error('Failed to connect Mailchimp. Please try again.')
+      if (error.message.includes('Failed to fetch')) {
+        toast.error('Network error. Please check your connection and try again.')
+      } else {
+        toast.error('Failed to connect Mailchimp. Please try again.')
+      }
     }
   }
 
