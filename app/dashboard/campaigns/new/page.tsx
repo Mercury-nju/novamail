@@ -14,12 +14,9 @@ import {
   PencilIcon,
   EyeIcon,
   CheckIcon,
-  CpuChipIcon,
-  LightBulbIcon,
   DocumentTextIcon
 } from '@heroicons/react/24/outline'
 import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
-import AIAssistant from '@/components/AIAssistant'
 
 interface CampaignData {
   templateId: string
@@ -37,7 +34,6 @@ export default function NewCampaignPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [currentTemplateIndex, setCurrentTemplateIndex] = useState(0)
-  const [showAIAssistant, setShowAIAssistant] = useState(false)
   const [campaignData, setCampaignData] = useState<CampaignData>({
     templateId: '',
     subject: '',
@@ -114,11 +110,6 @@ export default function NewCampaignPage() {
     router.push(`/dashboard/campaigns/edit?template=${currentTemplate.id}`)
   }
 
-  const handleAITemplateSelect = (template: ProfessionalTemplate) => {
-    setCurrentTemplateIndex(professionalTemplates.findIndex(t => t.id === template.id))
-    setShowAIAssistant(false)
-    toast.success(`Selected ${template.name} template!`)
-  }
 
   const handleBack = () => {
     router.push('/dashboard')
@@ -167,19 +158,6 @@ export default function NewCampaignPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* AI Assistant Button */}
-        <div className="mb-6">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setShowAIAssistant(true)}
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-3"
-          >
-            <CpuChipIcon className="w-6 h-6" />
-            <span>Ask AI Assistant for Template Recommendations</span>
-            <LightBulbIcon className="w-5 h-5" />
-          </motion.button>
-        </div>
 
         {/* 统一的3列布局 */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -371,13 +349,6 @@ export default function NewCampaignPage() {
                 Choose a template and customize it to match your brand perfectly.
               </p>
               <div className="space-y-2">
-                <button
-                  onClick={() => setShowAIAssistant(true)}
-                  className="w-full text-left p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors flex items-center space-x-2"
-                >
-                  <CpuChipIcon className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm font-medium text-purple-600">Ask AI for recommendations</span>
-                </button>
                 <Link
                   href="/dashboard/campaigns/new"
                   className="w-full text-left p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors flex items-center space-x-2"
@@ -392,15 +363,6 @@ export default function NewCampaignPage() {
         </div>
       </div>
 
-      {/* AI Assistant Modal */}
-      <AnimatePresence>
-        {showAIAssistant && (
-          <AIAssistant
-            onTemplateSelect={handleAITemplateSelect}
-            onClose={() => setShowAIAssistant(false)}
-          />
-        )}
-      </AnimatePresence>
     </div>
   )
 }
