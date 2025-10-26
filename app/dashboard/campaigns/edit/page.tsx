@@ -133,6 +133,9 @@ export default function CampaignEditPage() {
     navigator.clipboard.writeText(subject)
     toast.success('Subject line copied to clipboard!')
   }
+
+  // 获取用户积分信息
+  const fetchUserCredits = async () => {
     try {
       const response = await fetch('/api/credits')
       const data = await response.json()
