@@ -296,6 +296,84 @@ export default function Dashboard() {
             </div>
           </motion.div>
 
+          {/* Additional Content Area */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="lg:col-span-2 mt-6"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Email Performance Tips */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Email Best Practices</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <CheckCircleIcon className="h-4 w-4 text-green-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">Subject Line Tips</h4>
+                      <p className="text-sm text-gray-600">Keep subject lines under 50 characters for better mobile display</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <EyeIcon className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">Open Rate Optimization</h4>
+                      <p className="text-sm text-gray-600">Send emails at optimal times for your audience</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <CursorArrowRaysIcon className="h-4 w-4 text-purple-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">Call-to-Action</h4>
+                      <p className="text-sm text-gray-600">Use clear, action-oriented buttons for better engagement</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Stats Overview */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Platform Overview</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                        <DocumentTextIcon className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <span className="font-medium text-gray-900">Available Templates</span>
+                    </div>
+                    <span className="text-lg font-bold text-blue-600">4</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
+                        <SparklesIcon className="h-4 w-4 text-green-600" />
+                      </div>
+                      <span className="font-medium text-gray-900">AI Features</span>
+                    </div>
+                    <span className="text-lg font-bold text-green-600">Active</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">
+                        <ChartBarIcon className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <span className="font-medium text-gray-900">Analytics</span>
+                    </div>
+                    <span className="text-lg font-bold text-purple-600">Ready</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
           {/* Quick Actions & Features */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
