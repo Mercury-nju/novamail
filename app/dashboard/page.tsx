@@ -219,7 +219,7 @@ export default function Dashboard() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="lg:col-span-2"
           >
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col">
               <div className="px-5 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-900">Recent Campaigns</h3>
@@ -231,7 +231,7 @@ export default function Dashboard() {
                   </Link>
                 </div>
               </div>
-              <div className="p-5">
+              <div className="p-5 flex-grow flex items-center justify-center">
                 {isLoading ? (
                   <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
@@ -242,15 +242,15 @@ export default function Dashboard() {
                     ))}
                   </div>
                 ) : stats.recentCampaigns.length === 0 ? (
-                  <div className="text-center py-8">
-                    <RocketLaunchIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No campaigns yet</h3>
-                    <p className="text-gray-600 mb-4">Create your first email campaign to get started</p>
+                  <div className="text-center py-12">
+                    <RocketLaunchIcon className="h-16 w-16 text-gray-400 mx-auto mb-6" />
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">No campaigns yet</h3>
+                    <p className="text-gray-600 mb-6 max-w-sm mx-auto">Create your first email campaign to get started with NovaMail</p>
                     <Link
                       href="/dashboard/campaigns/new"
-                      className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                     >
-                      <RocketLaunchIcon className="h-4 w-4 mr-2" />
+                      <RocketLaunchIcon className="h-5 w-5 mr-2" />
                       Create Campaign
                     </Link>
                   </div>
@@ -313,13 +313,6 @@ export default function Dashboard() {
                 >
                   <RocketLaunchIcon className="h-5 w-5 text-blue-600 mr-3" />
                   <span className="font-medium text-gray-900">Create Campaign</span>
-                </Link>
-                <Link
-                  href="/dashboard/templates"
-                  className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <DocumentTextIcon className="h-5 w-5 text-gray-600 mr-3" />
-                  <span className="font-medium text-gray-900">Browse Templates</span>
                 </Link>
                 <Link
                   href="/dashboard/contacts"
