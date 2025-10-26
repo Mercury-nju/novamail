@@ -24,6 +24,8 @@ import {
 interface Campaign {
   id: string
   subject: string
+  template: string
+  templateName: string
   status: 'sent' | 'scheduled'
   createdAt: string
   sentAt?: string
@@ -63,6 +65,8 @@ export default function CampaignsPage() {
       {
         id: '1',
         subject: '🚀 Introducing [Product Name] - The Future is Here',
+        template: 'modern-gradient',
+        templateName: 'Modern Gradient',
         status: 'sent',
         createdAt: '2024-01-15T10:30:00Z',
         sentAt: '2024-01-15T10:30:00Z',
@@ -77,7 +81,7 @@ export default function CampaignsPage() {
             id: 'evt_1_1',
             type: 'created',
             timestamp: '2024-01-15T10:30:00Z',
-            details: 'Campaign created'
+            details: 'Campaign created with Modern Gradient template'
           },
           {
             id: 'evt_1_2',
@@ -428,7 +432,7 @@ export default function CampaignsPage() {
                     </span>
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                       <TagIcon className="h-3 w-3 mr-1" />
-                      Email Campaign
+                      {campaign.templateName}
                     </span>
                   </div>
 
@@ -521,7 +525,7 @@ export default function CampaignsPage() {
                       <h4 className="font-medium text-gray-900 mb-2">Email Preview</h4>
                       <div className="text-sm text-gray-600">
                         <p className="font-medium mb-1">Subject: {campaign.subject}</p>
-                        <p className="text-gray-500">This is an AI-generated email campaign...</p>
+                        <p className="text-gray-500">This is an AI-generated {campaign.templateName} email...</p>
                       </div>
                     </div>
                   </motion.div>

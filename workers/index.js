@@ -907,6 +907,58 @@ async function handleAdminSetPremium(request, env) {
   }
 }
 
+// Template API handlers
+async function handleSaveTemplate(request, env) {
+  try {
+    const { templateId, templateData } = await request.json()
+    
+    if (!templateId || !templateData) {
+      return new Response(JSON.stringify({ error: 'Missing templateId or templateData' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    // Save template to KV storage
+    await env.NOVAMAIL_KV.put(`template:${templateId}`, JSON.stringify(templateData))
+    
+    return new Response(JSON.stringify({ success: true, templateId }), {
+      headers: { 'Content-Type': 'application/json' }
+    })
+  } catch (error) {
+    console.error('Error saving template:', error)
+    return new Response(JSON.stringify({ error: 'Failed to save template' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+}
+
+async function handleLoadTemplates(request, env) {
+  try {
+    // Load all templates from KV storage
+    const templates = []
+    const list = await env.NOVAMAIL_KV.list({ prefix: 'template:' })
+    
+    for (const key of list.keys) {
+      const templateData = await env.NOVAMAIL_KV.get(key.name)
+      if (templateData) {
+        templates.push(JSON.parse(templateData))
+      }
+    }
+    
+    return new Response(JSON.stringify({ templates }), {
+      headers: { 'Content-Type': 'application/json' }
+    })
+  } catch (error) {
+    console.error('Error loading templates:', error)
+    return new Response(JSON.stringify({ error: 'Failed to load templates' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+}
+
 // 主函数
 export default {
   async fetch(request, env, ctx) {
@@ -956,6 +1008,16 @@ export default {
       return await handleAdminSetPremium(request, env);
     }
 
+    // 处理模板保存
+    if (path === '/api/templates/save' && method === 'POST') {
+      return await handleSaveTemplate(request, env);
+    }
+
+    // 处理模板加载
+    if (path === '/api/templates/load' && method === 'GET') {
+      return await handleLoadTemplates(request, env);
+    }
+
     // 其他路由
     return new Response(JSON.stringify({
       success: false,
@@ -966,7 +1028,9 @@ export default {
         '/api/auth/login',
         '/api/auth/google-callback',
         '/api/creem/subscriptions',
-        '/api/admin/set-user-premium'
+        '/api/admin/set-user-premium',
+        '/api/templates/save',
+        '/api/templates/load'
       ]
     }), {
       status: 404,
