@@ -13,9 +13,13 @@ import {
   RocketLaunchIcon,
   PencilIcon,
   EyeIcon,
-  CheckIcon
+  CheckIcon,
+  CpuChipIcon,
+  LightBulbIcon,
+  DocumentTextIcon
 } from '@heroicons/react/24/outline'
 import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
+import AIAssistant from '@/components/AIAssistant'
 
 interface CampaignData {
   templateId: string
@@ -33,6 +37,7 @@ export default function NewCampaignPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [currentTemplateIndex, setCurrentTemplateIndex] = useState(0)
+  const [showAIAssistant, setShowAIAssistant] = useState(false)
   const [campaignData, setCampaignData] = useState<CampaignData>({
     templateId: '',
     subject: '',
@@ -81,6 +86,11 @@ export default function NewCampaignPage() {
       case 'Creative': return 'bg-gray-100 text-gray-700'
       case 'Elegant': return 'bg-gray-100 text-gray-700'
       case 'Bold': return 'bg-gray-100 text-gray-700'
+      case 'Newsletter': return 'bg-gray-100 text-gray-700'
+      case 'Product': return 'bg-gray-100 text-gray-700'
+      case 'Onboarding': return 'bg-gray-100 text-gray-700'
+      case 'Events': return 'bg-gray-100 text-gray-700'
+      case 'Sales': return 'bg-gray-100 text-gray-700'
       default: return 'bg-gray-100 text-gray-700'
     }
   }
@@ -102,6 +112,12 @@ export default function NewCampaignPage() {
     }))
     // Navigate to the editing page
     router.push(`/dashboard/campaigns/edit?template=${currentTemplate.id}`)
+  }
+
+  const handleAITemplateSelect = (template: ProfessionalTemplate) => {
+    setCurrentTemplateIndex(professionalTemplates.findIndex(t => t.id === template.id))
+    setShowAIAssistant(false)
+    toast.success(`Selected ${template.name} template!`)
   }
 
   const handleBack = () => {
@@ -151,6 +167,20 @@ export default function NewCampaignPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* AI Assistant Button */}
+        <div className="mb-6">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setShowAIAssistant(true)}
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-3"
+          >
+            <CpuChipIcon className="w-6 h-6" />
+            <span>Ask AI Assistant for Template Recommendations</span>
+            <LightBulbIcon className="w-5 h-5" />
+          </motion.button>
+        </div>
+
         {/* 统一的3列布局 */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Template Details */}
@@ -176,16 +206,18 @@ export default function NewCampaignPage() {
                       </span>
                     </div>
                   </div>
-                  {currentTemplate.isPopular && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Popular
-                    </span>
-                  )}
-                  {currentTemplate.isNew && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      New
-                    </span>
-                  )}
+                  <div className="flex space-x-2">
+                    {currentTemplate.isPopular && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Popular
+                      </span>
+                    )}
+                    {currentTemplate.isNew && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        New
+                      </span>
+                    )}
+                  </div>
                 </div>
                 
                 <p className="text-gray-600 mb-4">{currentTemplate.description}</p>
@@ -338,17 +370,37 @@ export default function NewCampaignPage() {
               <p className="text-sm text-gray-600 mb-4">
                 Choose a template and customize it to match your brand perfectly.
               </p>
-              <Link
-                href="/dashboard/campaigns/new"
-                className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
-              >
-                Browse all templates
-                <ArrowRightIcon className="h-4 w-4 ml-1" />
-              </Link>
+              <div className="space-y-2">
+                <button
+                  onClick={() => setShowAIAssistant(true)}
+                  className="w-full text-left p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors flex items-center space-x-2"
+                >
+                  <CpuChipIcon className="w-4 h-4 text-purple-600" />
+                  <span className="text-sm font-medium text-purple-600">Ask AI for recommendations</span>
+                </button>
+                <Link
+                  href="/dashboard/campaigns/new"
+                  className="w-full text-left p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors flex items-center space-x-2"
+                >
+                  <DocumentTextIcon className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-600">Browse all templates</span>
+                  <ArrowRightIcon className="h-4 w-4 ml-auto" />
+                </Link>
+              </div>
             </div>
           </motion.div>
         </div>
       </div>
+
+      {/* AI Assistant Modal */}
+      <AnimatePresence>
+        {showAIAssistant && (
+          <AIAssistant
+            onTemplateSelect={handleAITemplateSelect}
+            onClose={() => setShowAIAssistant(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
