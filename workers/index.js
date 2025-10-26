@@ -907,6 +907,137 @@ async function handleAdminSetPremium(request, env) {
   }
 }
 
+// Campaign API handlers
+async function handleSaveCampaign(request, env) {
+  try {
+    const { userEmail, campaignData } = await request.json()
+    
+    if (!userEmail || !campaignData) {
+      return new Response(JSON.stringify({ error: 'Missing userEmail or campaignData' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    // 获取现有campaigns
+    const campaignsKey = `campaigns_${userEmail.toLowerCase()}`
+    const existingCampaignsData = await env.NOVAMAIL_KV.get(campaignsKey)
+    const campaigns = existingCampaignsData ? JSON.parse(existingCampaignsData) : []
+    
+    // 添加新campaign
+    const newCampaign = {
+      id: campaignData.id || `campaign_${Date.now()}`,
+      subject: campaignData.subject,
+      body: campaignData.body,
+      recipients: campaignData.recipients || 0,
+      status: campaignData.status || 'sent',
+      createdAt: campaignData.createdAt || new Date().toISOString(),
+      sentAt: campaignData.status === 'sent' ? new Date().toISOString() : null,
+      openRate: campaignData.openRate,
+      clickRate: campaignData.clickRate,
+      templateId: campaignData.templateId,
+      templateName: campaignData.templateName
+    }
+    
+    campaigns.push(newCampaign)
+    
+    // 保存到KV存储
+    await env.NOVAMAIL_KV.put(campaignsKey, JSON.stringify(campaigns))
+    
+    return new Response(JSON.stringify({ success: true, campaignId: newCampaign.id }), {
+      headers: { 'Content-Type': 'application/json' }
+    })
+  } catch (error) {
+    console.error('Error saving campaign:', error)
+    return new Response(JSON.stringify({ error: 'Failed to save campaign' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+}
+
+// Dashboard API handlers
+async function handleGetDashboardStats(request, env) {
+  try {
+    const url = new URL(request.url)
+    const userEmail = url.searchParams.get('email')
+    
+    if (!userEmail) {
+      return new Response(JSON.stringify({ error: 'Email parameter is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    // 获取用户数据
+    const userKey = `user_${userEmail.toLowerCase()}`
+    const userData = await env.USERS_KV.get(userKey)
+    
+    if (!userData) {
+      return new Response(JSON.stringify({ error: 'User not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    const user = JSON.parse(userData)
+    
+    // 获取用户的campaigns
+    const campaignsKey = `campaigns_${userEmail.toLowerCase()}`
+    const campaignsData = await env.NOVAMAIL_KV.get(campaignsKey)
+    const campaigns = campaignsData ? JSON.parse(campaignsData) : []
+    
+    // 计算统计数据
+    const totalCampaigns = campaigns.length
+    const totalContacts = campaigns.reduce((sum, campaign) => sum + (campaign.recipients || 0), 0)
+    const totalEmailsSent = campaigns.filter(c => c.status === 'sent').reduce((sum, campaign) => sum + (campaign.recipients || 0), 0)
+    
+    // 计算平均打开率和点击率
+    const sentCampaigns = campaigns.filter(c => c.status === 'sent' && c.openRate !== undefined)
+    const averageOpenRate = sentCampaigns.length > 0 
+      ? sentCampaigns.reduce((sum, c) => sum + c.openRate, 0) / sentCampaigns.length 
+      : 0
+    
+    const clickedCampaigns = campaigns.filter(c => c.status === 'sent' && c.clickRate !== undefined)
+    const averageClickRate = clickedCampaigns.length > 0 
+      ? clickedCampaigns.reduce((sum, c) => sum + c.clickRate, 0) / clickedCampaigns.length 
+      : 0
+
+    // 获取最近的campaigns（最多5个）
+    const recentCampaigns = campaigns
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 5)
+      .map(campaign => ({
+        id: campaign.id,
+        subject: campaign.subject,
+        status: campaign.status,
+        recipients: campaign.recipients || 0,
+        openRate: campaign.openRate,
+        clickRate: campaign.clickRate,
+        createdAt: campaign.createdAt
+      }))
+
+    const stats = {
+      totalCampaigns,
+      totalContacts,
+      totalEmailsSent,
+      averageOpenRate: Math.round(averageOpenRate * 10) / 10, // 保留一位小数
+      averageClickRate: Math.round(averageClickRate * 10) / 10,
+      recentCampaigns
+    }
+
+    return new Response(JSON.stringify({ stats }), {
+      headers: { 'Content-Type': 'application/json' }
+    })
+  } catch (error) {
+    console.error('Error getting dashboard stats:', error)
+    return new Response(JSON.stringify({ error: 'Failed to get dashboard stats' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+}
+
 // Template API handlers
 async function handleSaveTemplate(request, env) {
   try {
@@ -1018,6 +1149,16 @@ export default {
       return await handleLoadTemplates(request, env);
     }
 
+    // 处理Dashboard统计数据
+    if (path === '/api/dashboard/stats' && method === 'GET') {
+      return await handleGetDashboardStats(request, env);
+    }
+
+    // 处理Campaign保存
+    if (path === '/api/campaigns/save' && method === 'POST') {
+      return await handleSaveCampaign(request, env);
+    }
+
     // 其他路由
     return new Response(JSON.stringify({
       success: false,
@@ -1030,7 +1171,9 @@ export default {
         '/api/creem/subscriptions',
         '/api/admin/set-user-premium',
         '/api/templates/save',
-        '/api/templates/load'
+        '/api/templates/load',
+        '/api/dashboard/stats',
+        '/api/campaigns/save'
       ]
     }), {
       status: 404,

@@ -51,11 +51,50 @@ export default function Dashboard() {
     // 加载真实的用户数据
     const loadDashboardData = async () => {
       try {
-        // TODO: 实现真实的API调用
-        // const response = await fetch('/api/dashboard/stats')
-        // const data = await response.json()
+        // 获取当前用户邮箱（从localStorage或session）
+        const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
         
-        // 暂时显示空状态
+        if (!userEmail) {
+          console.log('No user email found, showing empty state')
+          setStats({
+            totalCampaigns: 0,
+            totalContacts: 0,
+            totalEmailsSent: 0,
+            averageOpenRate: 0,
+            averageClickRate: 0,
+            recentCampaigns: []
+          })
+          setIsLoading(false)
+          return
+        }
+
+        // 调用真实的API
+        const response = await fetch(`/api/dashboard/stats?email=${encodeURIComponent(userEmail)}`)
+        
+        if (!response.ok) {
+          throw new Error(`API call failed: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        
+        if (data.stats) {
+          setStats(data.stats)
+        } else {
+          // 如果API返回错误，显示空状态
+          setStats({
+            totalCampaigns: 0,
+            totalContacts: 0,
+            totalEmailsSent: 0,
+            averageOpenRate: 0,
+            averageClickRate: 0,
+            recentCampaigns: []
+          })
+        }
+        
+        setIsLoading(false)
+      } catch (error) {
+        console.error('Failed to load dashboard data:', error)
+        // 出错时显示空状态
         setStats({
           totalCampaigns: 0,
           totalContacts: 0,
@@ -64,9 +103,6 @@ export default function Dashboard() {
           averageClickRate: 0,
           recentCampaigns: []
         })
-        setIsLoading(false)
-      } catch (error) {
-        console.error('Failed to load dashboard data:', error)
         setIsLoading(false)
       }
     }

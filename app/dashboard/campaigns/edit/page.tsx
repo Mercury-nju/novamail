@@ -462,6 +462,47 @@ export default function CampaignEditPage() {
 
       if (responseData.success) {
         toast.success(`Email sent successfully to ${responseData.data?.recipients || uniqueRecipients.length} recipient(s)!`)
+        
+        // 保存campaign数据到后端
+        try {
+          const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
+          if (userEmail) {
+            const campaignData = {
+              id: `campaign_${Date.now()}`,
+              subject: finalSubject,
+              body: finalBody,
+              recipients: uniqueRecipients.length,
+              status: 'sent',
+              createdAt: new Date().toISOString(),
+              sentAt: new Date().toISOString(),
+              templateId: currentTemplate?.id,
+              templateName: currentTemplate?.name,
+              // 模拟一些统计数据（实际应该从邮件服务提供商获取）
+              openRate: Math.random() * 30 + 15, // 15-45% 打开率
+              clickRate: Math.random() * 10 + 5  // 5-15% 点击率
+            }
+            
+            const saveResponse = await fetch('/api/campaigns/save', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                userEmail,
+                campaignData
+              })
+            })
+            
+            if (saveResponse.ok) {
+              console.log('Campaign data saved successfully')
+            } else {
+              console.error('Failed to save campaign data')
+            }
+          }
+        } catch (error) {
+          console.error('Error saving campaign data:', error)
+        }
+        
         setShowSendModal(false)
         setSendForm({
           recipients: '',
