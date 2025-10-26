@@ -227,7 +227,7 @@ export default function CampaignEditPage() {
       }
     } catch (error) {
       console.error('Export error:', error)
-      if (error.message.includes('Failed to fetch')) {
+      if (error instanceof Error && error.message.includes('Failed to fetch')) {
         toast.error('Network error. Please check your connection and try again.')
       } else {
         toast.error('Failed to export template. Please try again.')
@@ -287,7 +287,7 @@ export default function CampaignEditPage() {
       }
     } catch (error) {
       console.error('Mailchimp connect error:', error)
-      if (error.message.includes('Failed to fetch')) {
+      if (error instanceof Error && error.message.includes('Failed to fetch')) {
         toast.error('Network error. Please check your connection and try again.')
       } else {
         toast.error('Failed to connect Mailchimp. Please try again.')

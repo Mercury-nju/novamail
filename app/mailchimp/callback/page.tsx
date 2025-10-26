@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
-export default function MailchimpCallbackPage() {
+function MailchimpCallbackContent() {
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [message, setMessage] = useState('')
@@ -123,5 +123,24 @@ export default function MailchimpCallbackPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function MailchimpCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 mx-auto mb-4">
+            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Loading...
+          </h2>
+        </div>
+      </div>
+    }>
+      <MailchimpCallbackContent />
+    </Suspense>
   )
 }
