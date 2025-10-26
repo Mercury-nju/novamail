@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowLeft, Send, Sparkles, Check, X, Zap, AlertTriangle, ArrowDownTrayIcon, ShareIcon, ClipboardDocumentIcon } from 'lucide-react'
+import { ArrowLeft, Send, Sparkles, Check, X, Zap, AlertTriangle, Download, Share, Clipboard } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
 import CreditsDisplay from '@/components/CreditsDisplay'
@@ -768,7 +768,7 @@ export default function CampaignEditPage() {
                 onClick={handleSaveTemplate}
                 className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
               >
-                <ArrowDownTrayIcon className="w-5 h-5 text-green-600" />
+                <Download className="w-5 h-5 text-green-600" />
                 <div>
                   <p className="text-sm font-medium text-gray-900">Save Template</p>
                   <p className="text-xs text-gray-500">Download as JSON file</p>
@@ -779,7 +779,7 @@ export default function CampaignEditPage() {
                 onClick={handleCopyHTML}
                 className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
               >
-                <ClipboardDocumentIcon className="w-5 h-5 text-blue-600" />
+                <Clipboard className="w-5 h-5 text-blue-600" />
                 <div>
                   <p className="text-sm font-medium text-gray-900">Copy HTML</p>
                   <p className="text-xs text-gray-500">Copy HTML code</p>
@@ -790,7 +790,7 @@ export default function CampaignEditPage() {
                 onClick={handleCopySubject}
                 className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
               >
-                <ShareIcon className="w-5 h-5 text-purple-600" />
+                <Share className="w-5 h-5 text-purple-600" />
                 <div>
                   <p className="text-sm font-medium text-gray-900">Copy Subject</p>
                   <p className="text-xs text-gray-500">Copy subject line</p>
