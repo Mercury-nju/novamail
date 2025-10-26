@@ -110,6 +110,8 @@ export default function CampaignsPage() {
       {
         id: '2',
         subject: 'Welcome to [Company Name] - Let\'s Get Started!',
+        template: 'minimal-clean',
+        templateName: 'Minimal Clean',
         status: 'sent',
         createdAt: '2024-01-14T14:20:00Z',
         sentAt: '2024-01-14T14:20:00Z',
@@ -145,6 +147,8 @@ export default function CampaignsPage() {
       {
         id: '3',
         subject: 'You\'re Invited: [Event Name] - [Date]',
+        template: 'corporate-professional',
+        templateName: 'Corporate Professional',
         status: 'scheduled',
         createdAt: '2024-01-13T09:15:00Z',
         recipients: 500,
@@ -163,6 +167,8 @@ export default function CampaignsPage() {
       {
         id: '4',
         subject: '[Company Name] Monthly Newsletter - [Month Year]',
+        template: 'ecommerce',
+        templateName: 'E-commerce',
         status: 'scheduled',
         createdAt: '2024-01-12T16:45:00Z',
         recipients: 2100,
