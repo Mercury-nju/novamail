@@ -17,7 +17,7 @@ import {
   CpuChipIcon,
   LightBulbIcon,
   DocumentTextIcon,
-  DownloadIcon,
+  ArrowDownTrayIcon,
   ShareIcon,
   ClipboardDocumentIcon
 } from '@heroicons/react/24/outline'
@@ -242,7 +242,7 @@ export default function NewCampaignPage() {
                   onClick={handleSaveTemplate}
                   className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
                 >
-                  <DownloadIcon className="w-5 h-5 text-green-600" />
+                  <ArrowDownTrayIcon className="w-5 h-5 text-green-600" />
                   <div>
                     <p className="text-sm font-medium text-gray-900">Save Template</p>
                     <p className="text-xs text-gray-500">Download as JSON file</p>
