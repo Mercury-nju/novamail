@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Send, Sparkles, Check, X, Zap, AlertTriangle } from 'lucide-react'
 import { toast } from 'react-hot-toast'
-import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
 import CreditsDisplay from '@/components/CreditsDisplay'
 
 interface ChatMessage {
@@ -21,8 +20,8 @@ export default function CampaignEditPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   
-  // 从URL参数获取模板ID
-  const templateId = searchParams.get('template') || 'modern-gradient'
+  // 移除模板相关功能
+  // const templateId = searchParams.get('template') || 'modern-gradient'
   
   // 简单的状态管理
   const [campaignData, setCampaignData] = useState({
@@ -66,29 +65,14 @@ export default function CampaignEditPage() {
   // }>>([])
   
   
-  // 根据模板ID获取当前模板
-  const currentTemplate = professionalTemplates.find(template => template.id === templateId) || professionalTemplates[0]
+  // 移除模板相关功能
+  // const currentTemplate = professionalTemplates.find(template => template.id === templateId) || professionalTemplates[0]
   
-  // 初始化模板内容
+  // 初始化内容
   useEffect(() => {
-    console.log('=== 模板初始化调试 ===')
-    console.log('currentTemplate:', currentTemplate)
-    console.log('campaignData.body:', campaignData.body)
-    console.log('campaignData.body length:', campaignData.body?.length)
-    console.log('========================')
-    
-    if (currentTemplate && currentTemplate.htmlContent && (!campaignData.body || campaignData.body.trim() === '')) {
-      console.log('设置模板内容...')
-      setCampaignData(prev => ({
-        ...prev,
-        subject: currentTemplate.subject,
-        body: currentTemplate.htmlContent
-      }))
-    }
-    
     // 获取用户积分信息
     fetchUserCredits()
-  }, [currentTemplate])
+  }, [])
   
   // 获取用户积分信息
   const fetchUserCredits = async () => {
@@ -192,7 +176,8 @@ export default function CampaignEditPage() {
   // }, [])
   
   // 专业模板内容 - 使用当前模板
-  const templateContent = currentTemplate.htmlContent
+  // 移除模板相关功能
+  // const templateContent = currentTemplate.htmlContent
 
   // 简单的文本转HTML函数
   const convertTextToHtml = (text: string): string => {
@@ -370,9 +355,8 @@ export default function CampaignEditPage() {
     console.log('campaignData.subject:', campaignData.subject)
     console.log('campaignData.body:', campaignData.body)
     console.log('campaignData.body length:', campaignData.body?.length)
-    console.log('currentTemplate:', currentTemplate)
-    console.log('currentTemplate.subject:', currentTemplate?.subject)
-    console.log('currentTemplate.htmlContent length:', currentTemplate?.htmlContent?.length)
+    console.log('=== 调试信息 ===')
+    console.log('campaignData:', campaignData)
     console.log('========================')
     
     // 积分检查 - 每次发送邮件消耗5个积分

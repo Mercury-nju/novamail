@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import TemplateShowcase from '@/components/TemplateShowcase'
 import { 
   SparklesIcon, 
   EnvelopeIcon, 
@@ -772,10 +771,7 @@ export default function HomePage() {
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-100 rounded-full filter blur-3xl opacity-20"></div>
         </div>
 
-        {/* Add full professional template showcase */}
-      <TemplateShowcase />
-        
-        {/* Old simple showcase - keeping for backup */}
+        {/* Remove template showcase section */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" style={{ display: 'none' }}>
           <div className="text-center mb-16">
             <motion.span

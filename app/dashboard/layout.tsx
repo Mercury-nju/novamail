@@ -25,7 +25,6 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
   { name: 'Contacts', href: '/dashboard/contacts', icon: UserGroupIcon },
   { name: 'Campaigns', href: '/dashboard/campaigns', icon: EnvelopeIcon },
-  { name: 'Templates', href: '/dashboard/templates', icon: DocumentTextIcon },
   { name: 'Billing', href: '/dashboard/billing', icon: CreditCardIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
   { name: 'Pricing', href: '/pricing', icon: CurrencyDollarIcon },

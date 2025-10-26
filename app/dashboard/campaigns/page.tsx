@@ -24,8 +24,6 @@ import {
 interface Campaign {
   id: string
   subject: string
-  template: string
-  templateName: string
   status: 'sent' | 'scheduled'
   createdAt: string
   sentAt?: string
@@ -65,8 +63,6 @@ export default function CampaignsPage() {
       {
         id: '1',
         subject: '🚀 Introducing [Product Name] - The Future is Here',
-        template: 'product-launch',
-        templateName: 'Product Launch',
         status: 'sent',
         createdAt: '2024-01-15T10:30:00Z',
         sentAt: '2024-01-15T10:30:00Z',
@@ -81,7 +77,7 @@ export default function CampaignsPage() {
             id: 'evt_1_1',
             type: 'created',
             timestamp: '2024-01-15T10:30:00Z',
-            details: 'Campaign created with Modern Gradient template'
+            details: 'Campaign created'
           },
           {
             id: 'evt_1_2',
@@ -110,8 +106,6 @@ export default function CampaignsPage() {
       {
         id: '2',
         subject: 'Welcome to [Company Name] - Let\'s Get Started!',
-        template: 'customer-onboarding',
-        templateName: 'Customer Onboarding',
         status: 'sent',
         createdAt: '2024-01-14T14:20:00Z',
         sentAt: '2024-01-14T14:20:00Z',
@@ -147,8 +141,6 @@ export default function CampaignsPage() {
       {
         id: '3',
         subject: 'You\'re Invited: [Event Name] - [Date]',
-        template: 'event-invitation',
-        templateName: 'Event Invitation',
         status: 'scheduled',
         createdAt: '2024-01-13T09:15:00Z',
         recipients: 500,
@@ -167,8 +159,6 @@ export default function CampaignsPage() {
       {
         id: '4',
         subject: '[Company Name] Monthly Newsletter - [Month Year]',
-        template: 'newsletter-professional',
-        templateName: 'Professional Newsletter',
         status: 'scheduled',
         createdAt: '2024-01-12T16:45:00Z',
         recipients: 2100,
@@ -438,7 +428,7 @@ export default function CampaignsPage() {
                     </span>
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                       <TagIcon className="h-3 w-3 mr-1" />
-                      {campaign.templateName}
+                      Email Campaign
                     </span>
                   </div>
 
@@ -531,7 +521,7 @@ export default function CampaignsPage() {
                       <h4 className="font-medium text-gray-900 mb-2">Email Preview</h4>
                       <div className="text-sm text-gray-600">
                         <p className="font-medium mb-1">Subject: {campaign.subject}</p>
-                        <p className="text-gray-500">This is an AI-generated {campaign.templateName} email...</p>
+                        <p className="text-gray-500">This is an AI-generated email campaign...</p>
                       </div>
                     </div>
                   </motion.div>
