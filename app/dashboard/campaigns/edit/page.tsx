@@ -37,6 +37,7 @@ export default function CampaignEditPage() {
   // 邮件发送状态
   const [isSending, setIsSending] = useState(false)
   const [showSendModal, setShowSendModal] = useState(false)
+  const [showSaveModal, setShowSaveModal] = useState(false)
   const [sendForm, setSendForm] = useState({
     recipients: '',
     senderName: 'NovaMail'
@@ -132,6 +133,30 @@ export default function CampaignEditPage() {
     const subject = campaignData.subject || currentTemplate.subject
     navigator.clipboard.writeText(subject)
     toast.success('Subject line copied to clipboard!')
+  }
+
+  const handleDownloadHTML = () => {
+    const htmlContent = campaignData.body || currentTemplate.htmlContent
+    const blob = new Blob([htmlContent], { type: 'text/html' })
+    const url = URL.createObjectURL(blob)
+    
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${currentTemplate.name.replace(/\s+/g, '_')}_template.html`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    
+    toast.success('HTML file downloaded successfully!')
+    setShowSaveModal(false)
+  }
+
+  const handleCopySourceCode = () => {
+    const htmlContent = campaignData.body || currentTemplate.htmlContent
+    navigator.clipboard.writeText(htmlContent)
+    toast.success('HTML source code copied to clipboard!')
+    setShowSaveModal(false)
   }
 
   // 获取用户积分信息
@@ -608,28 +633,12 @@ export default function CampaignEditPage() {
               {/* Template Actions */}
               <div className="flex items-center gap-2">
                 <button
-                  onClick={handleSaveTemplate}
+                  onClick={() => setShowSaveModal(true)}
                   className="px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
-                  title="Save Template as JSON"
+                  title="Save Template"
                 >
                   <Download className="w-4 h-4" />
                   Save Template
-                </button>
-                <button
-                  onClick={handleCopyHTML}
-                  className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-                  title="Copy HTML Code"
-                >
-                  <Clipboard className="w-4 h-4" />
-                  Copy HTML
-                </button>
-                <button
-                  onClick={handleCopySubject}
-                  className="px-3 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center gap-2"
-                  title="Copy Subject Line"
-                >
-                  <Share className="w-4 h-4" />
-                  Copy Subject
                 </button>
               </div>
               
@@ -1204,6 +1213,60 @@ export default function CampaignEditPage() {
                 className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-md hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
               >
                 Upgrade Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save Template Modal */}
+      {showSaveModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Save Template</h3>
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <p className="text-sm text-gray-600 mb-6">
+              Choose how you'd like to save your template:
+            </p>
+            
+            <div className="space-y-3">
+              <button
+                onClick={handleDownloadHTML}
+                className="w-full flex items-center space-x-3 p-4 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
+              >
+                <Download className="w-5 h-5 text-green-600" />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Download HTML File</p>
+                  <p className="text-xs text-gray-500">Save as .html file to your computer</p>
+                </div>
+              </button>
+              
+              <button
+                onClick={handleCopySourceCode}
+                className="w-full flex items-center space-x-3 p-4 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
+              >
+                <Clipboard className="w-5 h-5 text-blue-600" />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Copy Source Code</p>
+                  <p className="text-xs text-gray-500">Copy HTML code to clipboard</p>
+                </div>
+              </button>
+            </div>
+            
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Cancel
               </button>
             </div>
           </div>
