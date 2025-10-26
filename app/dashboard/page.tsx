@@ -133,13 +133,7 @@ export default function Dashboard() {
                 <p className="text-xs text-gray-500">AI Email Marketing Platform</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/dashboard/templates"
-                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                Browse Templates
-              </Link>
+            <div className="flex items-center">
               <Link
                 href="/dashboard/campaigns/new"
                 className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -153,15 +147,15 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Welcome Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-8"
+          className="mb-6"
         >
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome back!</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-1">Welcome back!</h2>
           <p className="text-gray-600">Here's what's happening with your email campaigns today.</p>
         </motion.div>
 
@@ -170,10 +164,10 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
         >
           {/* Total Campaigns */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Campaigns</p>
@@ -186,7 +180,7 @@ export default function Dashboard() {
           </div>
 
           {/* Total Contacts */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Contacts</p>
@@ -199,7 +193,7 @@ export default function Dashboard() {
           </div>
 
           {/* Emails Sent */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Emails Sent</p>
@@ -212,7 +206,7 @@ export default function Dashboard() {
           </div>
 
           {/* Average Open Rate */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Avg. Open Rate</p>
@@ -225,7 +219,7 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recent Campaigns */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -234,7 +228,7 @@ export default function Dashboard() {
             className="lg:col-span-2"
           >
             <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-              <div className="px-6 py-4 border-b border-gray-200">
+              <div className="px-5 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-900">Recent Campaigns</h3>
                   <Link
@@ -245,7 +239,7 @@ export default function Dashboard() {
                   </Link>
                 </div>
               </div>
-              <div className="p-6">
+              <div className="p-5">
                 {isLoading ? (
                   <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
@@ -256,9 +250,9 @@ export default function Dashboard() {
                     ))}
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {stats.recentCampaigns.map((campaign) => (
-                      <div key={campaign.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div key={campaign.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                         <div className="flex-1">
                           <div className="flex items-center space-x-3 mb-2">
                             <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(campaign.status)}`}>
@@ -302,10 +296,10 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="space-y-6"
+            className="space-y-5"
           >
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-3">
                 <Link
@@ -333,7 +327,7 @@ export default function Dashboard() {
             </div>
 
             {/* Feature Highlights */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Platform Features</h3>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
@@ -367,7 +361,7 @@ export default function Dashboard() {
             </div>
 
             {/* Getting Started */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-6">
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-5">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Getting Started</h3>
               <p className="text-sm text-gray-600 mb-4">
                 New to NovaMail? Start with our professional templates and create your first campaign.
