@@ -221,9 +221,9 @@ export default function NewCampaignPage() {
                   <div className="ml-4 text-sm text-gray-500 font-medium">Template Preview</div>
                 </div>
               </div>
-              <div className="p-4 h-96 overflow-y-auto">
+              <div className="p-4">
                 <div 
-                  className="w-full transform scale-75 origin-top pointer-events-none"
+                  className="w-full transform scale-50 origin-top pointer-events-none mx-auto"
                   dangerouslySetInnerHTML={{ 
                     __html: currentTemplate.htmlContent.replace(
                       /<a\s+([^>]*?)>/gi, 
@@ -233,7 +233,8 @@ export default function NewCampaignPage() {
                   style={{ 
                     userSelect: 'none',
                     '--preview-mode': 'true',
-                    minHeight: '600px'
+                    width: '200%', // 确保完整显示
+                    marginLeft: '-50%' // 居中显示
                   } as React.CSSProperties}
                 />
               </div>
