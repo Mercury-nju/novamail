@@ -375,8 +375,8 @@ export default function CampaignEditPage() {
     console.log(`📧 准备发送邮件，消耗 ${emailCost} 个积分，收件人数量: ${totalRecipients}`)
     
     // 🔧 彻底修复：确保所有字段都有值，使用强制默认值
-    const finalSubject = campaignData.subject || currentTemplate?.subject || 'Welcome to NovaMail'
-    const finalBody = campaignData.body || currentTemplate?.htmlContent || '<p>Thank you for using NovaMail!</p>'
+    const finalSubject = campaignData.subject || 'Welcome to NovaMail'
+    const finalBody = campaignData.body || '<p>Thank you for using NovaMail!</p>'
     const finalSenderName = sendForm.senderName || 'NovaMail'
     
     console.log('=== 强制修复后的数据 ===')
