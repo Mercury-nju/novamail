@@ -575,7 +575,7 @@ export default function CampaignEditPage() {
                 }}
                 ref={(el) => {
                   if (el && !el.innerHTML) {
-                    el.innerHTML = campaignData.body || templateContent
+                    el.innerHTML = campaignData.body || '<p>Thank you for using NovaMail!</p>'
                   }
                 }}
               />
