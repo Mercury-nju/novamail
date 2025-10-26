@@ -38,6 +38,9 @@ export default function CampaignEditPage() {
   const [isSending, setIsSending] = useState(false)
   const [showSendModal, setShowSendModal] = useState(false)
   const [showSaveModal, setShowSaveModal] = useState(false)
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
+  const [selectedESP, setSelectedESP] = useState('')
   const [sendForm, setSendForm] = useState({
     recipients: '',
     senderName: 'NovaMail'
@@ -157,6 +160,93 @@ export default function CampaignEditPage() {
     navigator.clipboard.writeText(htmlContent)
     toast.success('HTML source code copied to clipboard!')
     setShowSaveModal(false)
+  }
+
+  const handleExportToESP = async () => {
+    if (!selectedESP) {
+      toast.error('Please select an ESP to export to')
+      return
+    }
+
+    setIsExporting(true)
+    
+    try {
+      const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
+      
+      const response = await fetch('/api/export', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          esp: selectedESP,
+          name: currentTemplate.name,
+          html: campaignData.body || currentTemplate.htmlContent,
+          subject: campaignData.subject || currentTemplate.subject,
+          userEmail: userEmail
+        })
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        toast.success(`Template exported to ${selectedESP} successfully!`)
+        
+        // 显示成功消息和跳转按钮
+        const shouldOpenEditor = confirm(
+          `Template "${result.template_name}" has been exported to ${selectedESP} successfully!\n\nWould you like to open the editor in ${selectedESP}?`
+        )
+        
+        if (shouldOpenEditor && result.edit_url) {
+          window.open(result.edit_url, '_blank')
+        }
+        
+        setShowExportModal(false)
+        setSelectedESP('')
+      } else {
+        if (result.error === 'token_expired') {
+          toast.error('Mailchimp authorization expired. Please reconnect your account.')
+        } else {
+          toast.error(`Export failed: ${result.error}`)
+        }
+      }
+    } catch (error) {
+      console.error('Export error:', error)
+      toast.error('Failed to export template. Please try again.')
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  const handleMailchimpConnect = async () => {
+    try {
+      const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
+      
+      const response = await fetch('/api/mailchimp/connect', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userEmail: userEmail
+        })
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        // 打开Mailchimp授权页面
+        window.open(result.auth_url, '_blank')
+        
+        // 提示用户完成授权后返回
+        toast.success('Please complete Mailchimp authorization and return to this page')
+      } else {
+        toast.error(`Failed to connect Mailchimp: ${result.error}`)
+      }
+    } catch (error) {
+      console.error('Mailchimp connect error:', error)
+      toast.error('Failed to connect Mailchimp. Please try again.')
+    }
   }
 
   // 获取用户积分信息
@@ -643,11 +733,11 @@ export default function CampaignEditPage() {
               </div>
               
               <button
-                onClick={() => setShowSendModal(true)}
+                onClick={() => setShowExportModal(true)}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
               >
                 <Send className="w-4 h-4" />
-                Send Email
+                Export to ESP
               </button>
             </div>
         </div>
@@ -1267,6 +1357,126 @@ export default function CampaignEditPage() {
                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Export to ESP Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Export to ESP</h3>
+              <button
+                onClick={() => setShowExportModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <p className="text-sm text-gray-600 mb-6">
+              Choose an Email Service Provider to export your template:
+            </p>
+            
+            <div className="space-y-3 mb-6">
+              <button
+                onClick={() => setSelectedESP('mailchimp')}
+                className={`w-full flex items-center space-x-3 p-4 text-left rounded-lg transition-colors border ${
+                  selectedESP === 'mailchimp' 
+                    ? 'border-blue-500 bg-blue-50' 
+                    : 'border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">M</span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Mailchimp</p>
+                  <p className="text-xs text-gray-500">Requires OAuth authorization</p>
+                </div>
+                {selectedESP === 'mailchimp' && (
+                  <Check className="w-5 h-5 text-blue-500 ml-auto" />
+                )}
+              </button>
+              
+              <button
+                onClick={() => setSelectedESP('sendgrid')}
+                className={`w-full flex items-center space-x-3 p-4 text-left rounded-lg transition-colors border ${
+                  selectedESP === 'sendgrid' 
+                    ? 'border-blue-500 bg-blue-50' 
+                    : 'border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">SG</span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">SendGrid</p>
+                  <p className="text-xs text-gray-500">Uses API Key authentication</p>
+                </div>
+                {selectedESP === 'sendgrid' && (
+                  <Check className="w-5 h-5 text-blue-500 ml-auto" />
+                )}
+              </button>
+              
+              <button
+                onClick={() => setSelectedESP('resend')}
+                className={`w-full flex items-center space-x-3 p-4 text-left rounded-lg transition-colors border ${
+                  selectedESP === 'resend' 
+                    ? 'border-blue-500 bg-blue-50' 
+                    : 'border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">R</span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Resend</p>
+                  <p className="text-xs text-gray-500">Template feature not supported</p>
+                </div>
+                {selectedESP === 'resend' && (
+                  <Check className="w-5 h-5 text-blue-500 ml-auto" />
+                )}
+              </button>
+            </div>
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowExportModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                disabled={isExporting}
+              >
+                Cancel
+              </button>
+              
+              {selectedESP === 'mailchimp' && (
+                <button
+                  onClick={handleMailchimpConnect}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  Connect Mailchimp
+                </button>
+              )}
+              
+              <button
+                onClick={handleExportToESP}
+                disabled={!selectedESP || isExporting}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isExporting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    Export
+                  </>
+                )}
               </button>
             </div>
           </div>

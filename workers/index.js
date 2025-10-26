@@ -1,5 +1,10 @@
 // 🔧 完整版Cloudflare Workers - 包含所有API和管理员功能
 
+// ESP适配器导入
+const MailchimpAdapter = require('./adapters/mailchimp');
+const SendGridAdapter = require('./adapters/sendgrid');
+const ResendAdapter = require('./adapters/resend');
+
 // 简化的验证码发送函数 - 只使用Resend API
 async function handleSendVerification(request, env) {
   console.log('🔧 修复版验证码发送函数 - 只使用Resend API');
@@ -956,6 +961,294 @@ async function handleSaveCampaign(request, env) {
   }
 }
 
+// ESP导出API处理函数
+async function handleExportToESP(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: 'Method not allowed' 
+    }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    const data = await request.json();
+    const { esp, name, html, subject, userEmail } = data;
+    
+    if (!esp || !name || !html) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Missing required fields: esp, name, html' 
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    // 根据ESP类型创建适配器
+    let adapter;
+    let userConfig = {};
+
+    switch (esp.toLowerCase()) {
+      case 'mailchimp':
+        // 从KV获取用户的Mailchimp配置
+        if (userEmail) {
+          const userKey = `user_${userEmail.toLowerCase()}`;
+          const userData = await env.USERS_KV.get(userKey);
+          if (userData) {
+            const user = JSON.parse(userData);
+            userConfig = {
+              accessToken: user.mailchimpAccessToken,
+              dc: user.mailchimpDc
+            };
+          }
+        }
+        
+        adapter = new MailchimpAdapter({
+          clientId: env.MAILCHIMP_CLIENT_ID,
+          clientSecret: env.MAILCHIMP_CLIENT_SECRET,
+          redirectUri: env.MAILCHIMP_REDIRECT_URI,
+          ...userConfig
+        });
+        break;
+
+      case 'sendgrid':
+        adapter = new SendGridAdapter({
+          apiKey: env.SENDGRID_API_KEY
+        });
+        break;
+
+      case 'resend':
+        adapter = new ResendAdapter({
+          apiKey: env.RESEND_API_KEY
+        });
+        break;
+
+      default:
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: `Unsupported ESP: ${esp}` 
+        }), {
+          status: 400,
+          headers: corsHeaders
+        });
+    }
+
+    // 验证适配器配置
+    if (!adapter.validateConfig()) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: `${esp} configuration is incomplete` 
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    // 创建模板
+    const result = await adapter.createTemplate({ 
+      name, 
+      html, 
+      subject: subject || '' 
+    });
+
+    if (result.success) {
+      return new Response(JSON.stringify({ 
+        success: true,
+        id: result.id,
+        edit_url: result.edit_url,
+        template_name: result.template_name,
+        esp: esp
+      }), {
+        status: 200,
+        headers: corsHeaders
+      });
+    } else {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: result.error 
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Export to ESP error:', error);
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: 'Failed to export template to ESP' 
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// Mailchimp OAuth连接处理函数
+async function handleMailchimpConnect(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: 'Method not allowed' 
+    }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    const data = await request.json();
+    const { userEmail } = data;
+    
+    if (!userEmail) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'User email is required' 
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    const adapter = new MailchimpAdapter({
+      clientId: env.MAILCHIMP_CLIENT_ID,
+      clientSecret: env.MAILCHIMP_CLIENT_SECRET,
+      redirectUri: env.MAILCHIMP_REDIRECT_URI
+    });
+
+    const authUrl = adapter.getAuthUrl();
+    
+    return new Response(JSON.stringify({ 
+      success: true,
+      auth_url: authUrl
+    }), {
+      status: 200,
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    console.error('Mailchimp connect error:', error);
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: 'Failed to generate Mailchimp auth URL' 
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+// Mailchimp OAuth回调处理函数
+async function handleMailchimpCallback(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: 'Method not allowed' 
+    }), {
+      status: 405,
+      headers: corsHeaders
+    });
+  }
+
+  try {
+    const data = await request.json();
+    const { code, userEmail } = data;
+    
+    if (!code || !userEmail) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Authorization code and user email are required' 
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    const adapter = new MailchimpAdapter({
+      clientId: env.MAILCHIMP_CLIENT_ID,
+      clientSecret: env.MAILCHIMP_CLIENT_SECRET,
+      redirectUri: env.MAILCHIMP_REDIRECT_URI
+    });
+
+    const result = await adapter.handleCallback(code);
+    
+    if (result.success) {
+      // 保存用户的Mailchimp配置到KV
+      const userKey = `user_${userEmail.toLowerCase()}`;
+      let userData = await env.USERS_KV.get(userKey);
+      
+      if (userData) {
+        const user = JSON.parse(userData);
+        user.mailchimpAccessToken = result.access_token;
+        user.mailchimpDc = result.dc;
+        user.mailchimpConnected = true;
+        user.mailchimpConnectedAt = new Date().toISOString();
+        
+        await env.USERS_KV.put(userKey, JSON.stringify(user));
+      }
+      
+      return new Response(JSON.stringify({ 
+        success: true,
+        message: 'Mailchimp account connected successfully'
+      }), {
+        status: 200,
+        headers: corsHeaders
+      });
+    } else {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: result.error 
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+  } catch (error) {
+    console.error('Mailchimp callback error:', error);
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: 'Failed to process Mailchimp callback' 
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
 // Dashboard API handlers
 async function handleGetDashboardStats(request, env) {
   try {
@@ -1159,6 +1452,21 @@ export default {
       return await handleSaveCampaign(request, env);
     }
 
+    // 处理ESP导出
+    if (path === '/api/export' && method === 'POST') {
+      return await handleExportToESP(request, env);
+    }
+
+    // 处理Mailchimp OAuth连接
+    if (path === '/api/mailchimp/connect' && method === 'POST') {
+      return await handleMailchimpConnect(request, env);
+    }
+
+    // 处理Mailchimp OAuth回调
+    if (path === '/api/mailchimp/callback' && method === 'POST') {
+      return await handleMailchimpCallback(request, env);
+    }
+
     // 其他路由
     return new Response(JSON.stringify({
       success: false,
@@ -1173,7 +1481,10 @@ export default {
         '/api/templates/save',
         '/api/templates/load',
         '/api/dashboard/stats',
-        '/api/campaigns/save'
+        '/api/campaigns/save',
+        '/api/export',
+        '/api/mailchimp/connect',
+        '/api/mailchimp/callback'
       ]
     }), {
       status: 404,
