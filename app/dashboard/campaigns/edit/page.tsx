@@ -594,25 +594,53 @@ export default function CampaignEditPage() {
               <p className="text-sm text-gray-500">Modern Gradient</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            
-            {/* 积分显示 */}
-            <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
-              <Zap className="w-4 h-4 text-blue-500" />
-              <span className="text-sm font-medium text-gray-700">
-                {userCredits.subscriptionType === 'premium' ? '∞' : userCredits.remainingCredits}
-              </span>
-              <span className="text-xs text-gray-500">credits</span>
+            <div className="flex items-center gap-4">
+              
+              {/* 积分显示 */}
+              <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
+                <Zap className="w-4 h-4 text-blue-500" />
+                <span className="text-sm font-medium text-gray-700">
+                  {userCredits.subscriptionType === 'premium' ? '∞' : userCredits.remainingCredits}
+                </span>
+                <span className="text-xs text-gray-500">credits</span>
+              </div>
+              
+              {/* Template Actions */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleSaveTemplate}
+                  className="px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
+                  title="Save Template as JSON"
+                >
+                  <Download className="w-4 h-4" />
+                  Save Template
+                </button>
+                <button
+                  onClick={handleCopyHTML}
+                  className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                  title="Copy HTML Code"
+                >
+                  <Clipboard className="w-4 h-4" />
+                  Copy HTML
+                </button>
+                <button
+                  onClick={handleCopySubject}
+                  className="px-3 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center gap-2"
+                  title="Copy Subject Line"
+                >
+                  <Share className="w-4 h-4" />
+                  Copy Subject
+                </button>
+              </div>
+              
+              <button
+                onClick={() => setShowSendModal(true)}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+              >
+                <Send className="w-4 h-4" />
+                Send Email
+              </button>
             </div>
-            
-            <button
-              onClick={() => setShowSendModal(true)}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-            >
-              <Send className="w-4 h-4" />
-              Send Email
-            </button>
-          </div>
         </div>
       </div>
 
@@ -760,44 +788,6 @@ export default function CampaignEditPage() {
             </div>
           )}
 
-          {/* Template Actions Section */}
-          <div className="border-t border-gray-200 p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Template Actions</h3>
-            <div className="space-y-3">
-              <button
-                onClick={handleSaveTemplate}
-                className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
-              >
-                <Download className="w-5 h-5 text-green-600" />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Save Template</p>
-                  <p className="text-xs text-gray-500">Download as JSON file</p>
-                </div>
-              </button>
-              
-              <button
-                onClick={handleCopyHTML}
-                className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
-              >
-                <Clipboard className="w-5 h-5 text-blue-600" />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Copy HTML</p>
-                  <p className="text-xs text-gray-500">Copy HTML code</p>
-                </div>
-              </button>
-              
-              <button
-                onClick={handleCopySubject}
-                className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-200"
-              >
-                <Share className="w-5 h-5 text-purple-600" />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Copy Subject</p>
-                  <p className="text-xs text-gray-500">Copy subject line</p>
-                </div>
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Right Panel - Email Editor */}
