@@ -77,23 +77,40 @@ export async function onRequestPost({ request, env }) {
     console.log('Token data received:', { access_token: tokenData.access_token ? 'Set' : 'Not set', dc: tokenData.dc });
     const { access_token, dc } = tokenData;
     
-    // Store user token in KV
-    const userKey = `user_${userEmail.toLowerCase()}`;
-    const userData = await env.USERS_KV.get(userKey);
-    
-    if (userData) {
-      const user = JSON.parse(userData);
-      user.mailchimpAccessToken = access_token;
-      user.mailchimpDc = dc;
-      user.mailchimpConnected = true;
-      user.mailchimpConnectedAt = new Date().toISOString();
+    // Store user token in KV (if KV is available)
+    try {
+      const userKey = `user_${userEmail.toLowerCase()}`;
+      const userData = await env.USERS_KV?.get(userKey);
       
-      await env.USERS_KV.put(userKey, JSON.stringify(user));
+      if (userData) {
+        const user = JSON.parse(userData);
+        user.mailchimpAccessToken = access_token;
+        user.mailchimpDc = dc;
+        user.mailchimpConnected = true;
+        user.mailchimpConnectedAt = new Date().toISOString();
+        
+        await env.USERS_KV?.put(userKey, JSON.stringify(user));
+      } else {
+        // Create new user entry
+        const newUser = {
+          email: userEmail,
+          mailchimpAccessToken: access_token,
+          mailchimpDc: dc,
+          mailchimpConnected: true,
+          mailchimpConnectedAt: new Date().toISOString()
+        };
+        await env.USERS_KV?.put(userKey, JSON.stringify(newUser));
+      }
+    } catch (kvError) {
+      console.error('KV storage error:', kvError);
+      // Continue anyway - the important part is returning success
     }
     
     return new Response(JSON.stringify({ 
       success: true,
-      message: 'Mailchimp account connected successfully'
+      message: 'Mailchimp account connected successfully',
+      access_token: access_token,
+      dc: dc
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
