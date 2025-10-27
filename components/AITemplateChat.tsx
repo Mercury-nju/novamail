@@ -185,11 +185,43 @@ export default function AITemplateChat() {
         
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 rounded-lg px-4 py-3">
-              <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            <div className="bg-gray-100 rounded-lg px-6 py-4 max-w-[600px]">
+              <div className="mb-3">
+                <div className="flex items-center space-x-2 mb-2">
+                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                    <SparklesIcon className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">Generating your template...</div>
+                    <div className="text-xs text-gray-500">AI is creating a professional email template for you</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Animated skeleton template */}
+              <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden animate-pulse">
+                <div className="h-12 bg-gradient-to-r from-blue-100 to-blue-50"></div>
+                <div className="p-4 space-y-3">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-full"></div>
+                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                  <div className="h-8 bg-blue-100 rounded w-32"></div>
+                </div>
+              </div>
+              
+              {/* Progress indicator */}
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between text-xs text-gray-600">
+                  <span>Processing your request...</span>
+                  <span className="flex items-center space-x-1">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                  <div className="bg-blue-600 h-1.5 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+                </div>
               </div>
             </div>
           </div>
