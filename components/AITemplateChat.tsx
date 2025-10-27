@@ -176,28 +176,34 @@ export default function AITemplateChat() {
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-gray-200 px-6 py-4">
-        <div className="flex items-end space-x-2">
-          <textarea
-            rows={3}
-            className="flex-1 resize-none rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-            placeholder="描述你想要的邮件模板..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            style={{ resize: 'none' }}
-          />
-          <button
-            onClick={handleSend}
-            disabled={!input.trim() || isLoading}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-          >
-            <PaperAirplaneIcon className="h-5 w-5" />
-          </button>
+      <div className="border-t border-gray-200 px-4 py-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-end gap-2">
+            <div className="flex-1 bg-gray-50 rounded-2xl px-4 py-3 border border-gray-200 focus-within:border-blue-500 focus-within:bg-white transition-all shadow-sm">
+              <textarea
+                rows={1}
+                className="w-full resize-none bg-transparent border-0 focus:outline-none focus:ring-0 text-sm text-gray-900 placeholder-gray-400"
+                placeholder="输入消息..."
+                value={input}
+                onChange={(e) => {
+                  setInput(e.target.value)
+                  // Auto-resize textarea
+                  e.target.style.height = 'auto'
+                  e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px'
+                }}
+                onKeyPress={handleKeyPress}
+                style={{ minHeight: '24px', maxHeight: '200px', overflowY: 'auto' }}
+              />
+            </div>
+            <button
+              onClick={handleSend}
+              disabled={!input.trim() || isLoading}
+              className="flex-shrink-0 w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+            >
+              <PaperAirplaneIcon className="h-5 w-5" />
+            </button>
+          </div>
         </div>
-        <p className="mt-2 text-xs text-gray-500">
-          Shift + Enter 换行，Enter 发送
-        </p>
       </div>
     </div>
   )
