@@ -288,6 +288,8 @@ export default function CampaignEditPage() {
         return
       }
       
+      console.log('Calling /api/mailchimp/connect with userEmail:', userEmail)
+      
       const response = await fetch('/api/mailchimp/connect', {
         method: 'POST',
         headers: {
@@ -298,11 +300,16 @@ export default function CampaignEditPage() {
         })
       })
 
+      console.log('Response status:', response.status, response.statusText)
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorText = await response.text()
+        console.error('HTTP error response:', errorText)
+        throw new Error(`HTTP ${response.status}: ${errorText}`)
       }
 
       const result = await response.json()
+      console.log('Response result:', result)
 
       if (result.success) {
         // 打开Mailchimp授权页面
@@ -329,8 +336,16 @@ export default function CampaignEditPage() {
       }
     } catch (error) {
       console.error('Mailchimp connect error:', error)
-      if (error instanceof Error && error.message.includes('Failed to fetch')) {
-        toast.error('Network error. Please check your connection and try again.')
+      if (error instanceof Error) {
+        console.error('Error message:', error.message)
+        console.error('Error stack:', error.stack)
+        if (error.message.includes('Failed to fetch')) {
+          toast.error('Network error. Please check your connection and try again.')
+        } else if (error.message.includes('401') || error.message.includes('403')) {
+          toast.error('Authentication failed. Please try again.')
+        } else {
+          toast.error(`Failed to connect Mailchimp: ${error.message}`)
+        }
       } else {
         toast.error('Failed to connect Mailchimp. Please try again.')
       }
