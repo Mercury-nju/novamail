@@ -248,82 +248,82 @@ export default function Dashboard() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="lg:col-span-2"
         >
-            <div className="bg-white rounded-xl border border-gray-100 h-full">
-              <div className="px-5 py-4 border-b border-gray-100">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Recent Campaigns</h3>
-                  <Link
-                    href="/dashboard/campaigns"
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    View all
-                  </Link>
-                </div>
-              </div>
-              <div className="p-5">
-                {isLoading ? (
-                  <div className="space-y-4">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="animate-pulse">
-                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                      </div>
-                    ))}
-                  </div>
-                ) : stats.recentCampaigns.length === 0 ? (
-                  <div className="text-center py-8">
-                    <RocketLaunchIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No campaigns yet</h3>
-                    <p className="text-gray-600 mb-4">Create your first email campaign to get started</p>
-              <Link
-                href="/dashboard/campaigns/new"
-                      className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      <RocketLaunchIcon className="h-4 w-4 mr-2" />
-                      Create Campaign
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {stats.recentCampaigns.map((campaign) => (
-                      <div key={campaign.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(campaign.status)}`}>
-                              {getStatusIcon(campaign.status)}
-                              <span className="ml-1 capitalize">{campaign.status}</span>
-                            </span>
-                            <span className="text-sm text-gray-500">{campaign.recipients} recipients</span>
-                          </div>
-                          <h4 className="font-medium text-gray-900 mb-1">{campaign.subject}</h4>
-                          <div className="flex items-center space-x-4 text-sm text-gray-500">
-                            {campaign.openRate && (
-                              <span className="flex items-center">
-                                <EyeIcon className="w-4 h-4 mr-1" />
-                                {campaign.openRate}% open
-                              </span>
-                            )}
-                            {campaign.clickRate && (
-                              <span className="flex items-center">
-                                <CursorArrowRaysIcon className="w-4 h-4 mr-1" />
-                                {campaign.clickRate}% click
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <Link
-                          href={`/dashboard/campaigns/edit?id=${campaign.id}`}
-                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                        >
-                          View
-              </Link>
-                      </div>
-                    ))}
-                  </div>
-                )}
+          <div className="bg-white rounded-xl border border-gray-100 h-full">
+            <div className="px-5 py-4 border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900">Recent Campaigns</h3>
+                <Link
+                  href="/dashboard/campaigns"
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  View all
+                </Link>
               </div>
             </div>
-            </motion.div>
+            <div className="p-5">
+              {isLoading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="animate-pulse">
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : stats.recentCampaigns.length === 0 ? (
+                <div className="text-center py-8">
+                  <RocketLaunchIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No campaigns yet</h3>
+                  <p className="text-gray-600 mb-4">Create your first email campaign to get started</p>
+                  <Link
+                    href="/dashboard/campaigns/new"
+                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <RocketLaunchIcon className="h-4 w-4 mr-2" />
+                    Create Campaign
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {stats.recentCampaigns.map((campaign) => (
+                    <div key={campaign.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(campaign.status)}`}>
+                            {getStatusIcon(campaign.status)}
+                            <span className="ml-1 capitalize">{campaign.status}</span>
+                          </span>
+                          <span className="text-sm text-gray-500">{campaign.recipients} recipients</span>
+                        </div>
+                        <h4 className="font-medium text-gray-900 mb-1">{campaign.subject}</h4>
+                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          {campaign.openRate && (
+                            <span className="flex items-center">
+                              <EyeIcon className="w-4 h-4 mr-1" />
+                              {campaign.openRate}% open
+                            </span>
+                          )}
+                          {campaign.clickRate && (
+                            <span className="flex items-center">
+                              <CursorArrowRaysIcon className="w-4 h-4 mr-1" />
+                              {campaign.clickRate}% click
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <Link
+                        href={`/dashboard/campaigns/edit?id=${campaign.id}`}
+                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                      >
+                        View
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
 
         {/* Right Column - Sidebar */}
         <motion.div
@@ -332,77 +332,76 @@ export default function Dashboard() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="space-y-6"
         >
-            {/* Quick Actions */}
-            <div className="bg-white rounded-xl border border-gray-100 p-5">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-              <div className="space-y-3">
-                <Link
-                  href="/dashboard/campaigns/new"
-                  className="flex items-center p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg hover:from-blue-100 hover:to-purple-100 transition-colors"
-                >
-                  <RocketLaunchIcon className="h-5 w-5 text-blue-600 mr-3" />
-                  <span className="font-medium text-gray-900">Create Campaign</span>
-                </Link>
-                <Link
-                  href="/dashboard/contacts"
-                  className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <UserGroupIcon className="h-5 w-5 text-gray-600 mr-3" />
-                  <span className="font-medium text-gray-900">Manage Contacts</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* Platform Features */}
-            <div className="bg-white rounded-xl border border-gray-100 p-5">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Platform Features</h3>
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <StarIcon className="h-4 w-4 text-blue-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">Professional Templates</h4>
-                    <p className="text-sm text-gray-600">Expertly designed templates for every business need</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <SparklesIcon className="h-4 w-4 text-purple-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">AI-Powered Content</h4>
-                    <p className="text-sm text-gray-600">Generate personalized content with AI assistance</p>
-                  </div>
-                          </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <ChartBarIcon className="h-4 w-4 text-green-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">Advanced Analytics</h4>
-                    <p className="text-sm text-gray-600">Track performance with detailed insights</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Getting Started */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-5">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Getting Started</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                New to NovaMail? Start with our professional templates and create your first campaign.
-              </p>
+          {/* Quick Actions */}
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+            <div className="space-y-3">
               <Link
                 href="/dashboard/campaigns/new"
-                className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
+                className="flex items-center p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg hover:from-blue-100 hover:to-purple-100 transition-colors"
               >
-                Create your first campaign
-                <ArrowRightIcon className="h-4 w-4 ml-1" />
+                <RocketLaunchIcon className="h-5 w-5 text-blue-600 mr-3" />
+                <span className="font-medium text-gray-900">Create Campaign</span>
+              </Link>
+              <Link
+                href="/dashboard/contacts"
+                className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <UserGroupIcon className="h-5 w-5 text-gray-600 mr-3" />
+                <span className="font-medium text-gray-900">Manage Contacts</span>
               </Link>
             </div>
-          </motion.div>
-        </div>
+          </div>
+
+          {/* Platform Features */}
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Platform Features</h3>
+            <div className="space-y-4">
+              <div className="flex items-start space-x-3">
+                <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <StarIcon className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-gray-900">Professional Templates</h4>
+                  <p className="text-sm text-gray-600">Expertly designed templates for every business need</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <SparklesIcon className="h-4 w-4 text-purple-600" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-gray-900">AI-Powered Content</h4>
+                  <p className="text-sm text-gray-600">Generate personalized content with AI assistance</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <ChartBarIcon className="h-4 w-4 text-green-600" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-gray-900">Advanced Analytics</h4>
+                  <p className="text-sm text-gray-600">Track performance with detailed insights</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Getting Started */}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-5">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Getting Started</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              New to NovaMail? Start with our professional templates and create your first campaign.
+            </p>
+            <Link
+              href="/dashboard/campaigns/new"
+              className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
+            >
+              Create your first campaign
+              <ArrowRightIcon className="h-4 w-4 ml-1" />
+            </Link>
+          </div>
+        </motion.div>
       </div>
     </div>
   )
