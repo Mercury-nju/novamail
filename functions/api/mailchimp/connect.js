@@ -27,24 +27,39 @@ export async function onRequestPost({ request, env }) {
 
     // Generate OAuth URL
     const clientId = env.MAILCHIMP_CLIENT_ID;
-    const redirectUri = env.MAILCHIMP_REDIRECT_URI;
+    // 使用实际的域名
+    const redirectUri = env.MAILCHIMP_REDIRECT_URI || 'https://novamail.world/api/mailchimp/callback';
     
     console.log('Mailchimp OAuth config check:');
     console.log('Client ID:', clientId ? 'Set' : 'Not set');
-    console.log('Redirect URI:', redirectUri ? 'Set' : 'Not set');
+    console.log('Redirect URI:', redirectUri);
+    console.log('User Email:', userEmail);
     
-    if (!clientId || !redirectUri) {
-      console.error('Mailchimp OAuth not configured - missing environment variables');
+    if (!clientId) {
+      console.error('Mailchimp OAuth not configured - missing client ID');
       return new Response(JSON.stringify({ 
         success: false, 
-        error: 'Mailchimp OAuth not configured' 
+        error: 'Mailchimp OAuth not configured. Please contact support.', 
+        debug: {
+          clientIdSet: !!clientId,
+          redirectUri: redirectUri
+        }
       }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    const authUrl = `https://login.mailchimp.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=templates`;
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      scope: 'templates'
+    });
+    
+    const authUrl = `https://login.mailchimp.com/oauth2/authorize?${params.toString()}`;
+    
+    console.log('Generated auth URL:', authUrl);
     
     return new Response(JSON.stringify({ 
       success: true,
@@ -56,9 +71,10 @@ export async function onRequestPost({ request, env }) {
 
   } catch (error) {
     console.error('Mailchimp connect error:', error);
+    console.error('Error stack:', error.stack);
     return new Response(JSON.stringify({ 
       success: false, 
-      error: 'Failed to generate Mailchimp auth URL' 
+      error: error.message || 'Failed to generate Mailchimp auth URL' 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
