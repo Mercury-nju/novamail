@@ -135,9 +135,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="px-6 py-6">
+    <>
       {/* Header Section */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="px-6 pt-6 pb-8 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
             <SparklesIcon className="h-5 w-5 text-white" />
@@ -161,7 +161,7 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="mb-8"
+        className="px-6 mb-8"
       >
         <h2 className="text-xl font-semibold text-gray-900">Welcome back!</h2>
         <p className="text-sm text-gray-500 mt-1">Here's what's happening with your email campaigns today.</p>
@@ -172,7 +172,7 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 px-6"
       >
           {/* Total Campaigns */}
           <div className="bg-white rounded-xl border border-gray-100 p-5">
@@ -240,7 +240,7 @@ export default function Dashboard() {
         </motion.div>
 
       {/* Main Content Grid - 统一的3列布局 */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6">
         {/* Left Column - Recent Campaigns */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -403,6 +403,6 @@ export default function Dashboard() {
           </div>
         </motion.div>
       </div>
-    </div>
+    </>
   )
 }
