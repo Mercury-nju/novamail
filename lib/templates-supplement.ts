@@ -544,6 +544,138 @@ export const supplementTemplates: ProfessionalTemplate[] = [
     features: ['Gratitude', 'Appreciation', 'Relationship'],
     isPopular: true,
     isNew: false
+  },
+
+  {
+    id: 'early-bird-exclusive',
+    name: 'Early Bird Exclusive',
+    category: 'Marketing',
+    description: 'Early access exclusive offer',
+    subject: 'Early Bird Access: 48 Hours Only',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Early Access</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#1f2937"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:50px 40px;background:#1f2937;text-align:center"><h1 style="color:#fbbf24;margin:0;font-size:26px">Early Bird Access</h1><p style="color:#fff;margin:10px 0 0">48 Hours Only</p></td></tr><tr><td style="padding:40px"><p style="color:#6b7280;margin:0 0 20px;line-height:1.6">Be the first to get exclusive deals before everyone else.</p><a href="#" style="background:#1f2937;color:#fbbf24;text-decoration:none;padding:16px 40px;border-radius:8px;font-weight:bold;display:inline-block">Claim Access</a></td></tr></table></body></html>`,
+    features: ['Exclusive', 'Limited Time', 'Early Access'],
+    isPopular: true,
+    isNew: true
+  },
+
+  {
+    id: 'vip-welcome',
+    name: 'VIP Welcome',
+    category: 'Marketing',
+    description: 'VIP membership welcome',
+    subject: 'Welcome to VIP Membership',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>VIP</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:50px 40px;background:#fef3c7;text-align:center"><h1 style="color:#d97706;margin:0;font-size:28px">VIP Member</h1></td></tr><tr><td style="padding:40px"><p style="color:#6b7280;margin:0 0 20px;line-height:1.6">Thank you for joining our VIP program. Enjoy exclusive benefits and priority support.</p><div style="background:#f9fafb;padding:20px;border-radius:8px;margin:20px 0"><p style="margin:0 0 10px;color:#1f2937;font-weight:bold">Your VIP Benefits:</p><ul style="margin:0;padding-left:20px;color:#6b7280"><li>Priority customer support</li><li>Exclusive early access</li><li>Special member discounts</li><li>VIP-only events</li></ul></div></td></tr></table></body></html>`,
+    features: ['VIP', 'Membership', 'Exclusive Benefits'],
+    isPopular: true,
+    isNew: false
+  },
+
+  {
+    id: 'unsubscribe-confirmation',
+    name: 'Unsubscribe Confirmation',
+    category: 'Transactional',
+    description: 'Confirm unsubscribe request',
+    subject: 'You have been unsubscribed',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Unsubscribed</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Unsubscribed</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">You've been removed from our mailing list. You won't receive further emails from us.</p></td></tr></table></body></html>`,
+    features: ['Confirmation', 'Unsubscribe', 'Final'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'feedback-request',
+    name: 'Feedback Request',
+    category: 'Marketing',
+    description: 'Request customer feedback',
+    subject: 'How was your experience?',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Feedback</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#eff6ff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#3b82f6;margin:0;font-size:22px">Share Your Feedback</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">We'd love to hear about your experience with us.</p><div style="margin:25px 0"><a href="#" style="background:#3b82f6;color:#fff;text-decoration:none;padding:14px 35px;border-radius:8px;font-weight:bold;display:inline-block">Leave Feedback</a></div></td></tr></table></body></html>`,
+    features: ['Feedback', 'Survey', 'Customer Voice'],
+    isPopular: false,
+    isNew: true
+  },
+
+  {
+    id: 'referral-success',
+    name: 'Referral Success',
+    category: 'Marketing',
+    description: 'Friend joined via referral',
+    subject: 'Your friend just joined!',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Referral</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#f0fdf4"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#16a34a;margin:0;font-size:22px">Referral Bonus!</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Your friend joined! You've earned $10 credit.</p><div style="background:#f0fdf4;padding:20px;border-radius:8px;margin:20px 0;border:2px solid #16a34a"><p style="margin:0;color:#16a34a;font-weight:bold">$10 credit added to your account</p></div></td></tr></table></body></html>`,
+    features: ['Referral', 'Reward', 'Credit'],
+    isPopular: true,
+    isNew: false
+  },
+
+  {
+    id: 'payment-update-needed',
+    name: 'Payment Update Needed',
+    category: 'Transactional',
+    description: 'Request payment method update',
+    subject: 'Please update your payment method',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Payment Update</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#dc2626;margin:0;font-size:22px">Action Required</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Your payment method failed. Please update it to continue service.</p><div style="margin:25px 0"><a href="#" style="background:#dc2626;color:#fff;text-decoration:none;padding:14px 35px;border-radius:8px;font-weight:bold;display:inline-block">Update Payment</a></div></td></tr></table></body></html>`,
+    features: ['Urgent', 'Payment', 'Action Required'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'workshop-invitation',
+    name: 'Workshop Invitation',
+    category: 'Events',
+    description: 'Invite to educational workshop',
+    subject: 'Join our free workshop',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Workshop</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fef3c7"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#d97706;margin:0;font-size:22px">Free Workshop</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Learn valuable skills in our upcoming workshop. Limited seats available.</p><div style="background:#fef3c7;padding:20px;border-radius:8px;margin:20px 0"><p style="margin:0;color:#78350f"><strong>Date:</strong> March 30, 2024</p><p style="margin:5px 0 0;color:#78350f"><strong>Time:</strong> 2:00 PM - 4:00 PM</p><p style="margin:5px 0 0;color:#78350f"><strong>Location:</strong> Online</p></div><div style="margin:25px 0"><a href="#" style="background:#d97706;color:#fff;text-decoration:none;padding:14px 35px;border-radius:8px;font-weight:bold;display:inline-block">Register Now</a></div></td></tr></table></body></html>`,
+    features: ['Educational', 'Free', 'Learning'],
+    isPopular: true,
+    isNew: true
+  },
+
+  {
+    id: 'account-upgrade',
+    name: 'Account Upgrade',
+    category: 'Transactional',
+    description: 'Account upgraded successfully',
+    subject: 'Congratulations! Your account has been upgraded',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Upgraded</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#f0fdf4"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:50px 40px;background:linear-gradient(135deg,#10b981,#059669);text-align:center"><h1 style="color:#fff;margin:0;font-size:28px">Upgraded!</h1><p style="color:#d1fae5;margin:10px 0 0">Premium Features Unlocked</p></td></tr><tr><td style="padding:40px"><p style="color:#6b7280;margin:0 0 20px;line-height:1.6">Your account has been successfully upgraded to Premium. Enjoy all the premium features!</p><div style="background:#eff6ff;padding:20px;border-radius:8px"><p style="margin:0;color:#1f2937;font-weight:bold">New Premium Features:</p><ul style="margin:10px 0 0;padding-left:20px;color:#4b5563"><li>Advanced analytics</li><li>Priority support</li><li>Unlimited exports</li><li>Custom branding</li></ul></div></td></tr></table></body></html>`,
+    features: ['Upgrade', 'Premium', 'Success'],
+    isPopular: true,
+    isNew: false
+  },
+
+  {
+    id: 'wishlist-item-sale',
+    name: 'Wishlist Item on Sale',
+    category: 'E-commerce',
+    description: 'Notify wishlist item price drop',
+    subject: 'Items in your wishlist are now on sale!',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Wishlist Sale</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#dc2626;margin:0;font-size:22px">Sale Alert!</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Items in your wishlist are now on sale. Don't miss out!</p><div style="background:#fef2f2;padding:20px;border-radius:8px;margin:20px 0"><p style="margin:0;color:#991b1b"><strong>Save up to 40% on items you saved</strong></p></div><div style="margin:25px 0"><a href="#" style="background:#dc2626;color:#fff;text-decoration:none;padding:14px 35px;border-radius:8px;font-weight:bold;display:inline-block">View Sale</a></div></td></tr></table></body></html>`,
+    features: ['Sale', 'Wishlist', 'Price Drop'],
+    isPopular: true,
+    isNew: true
+  },
+
+  {
+    id: 'system-maintenance',
+    name: 'System Maintenance',
+    category: 'Business',
+    description: 'Notify scheduled maintenance',
+    subject: 'Scheduled System Maintenance Tonight',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Maintenance</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#f59e0b;margin:0;font-size:22px">Maintenance Notice</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">We'll be performing scheduled maintenance tonight from 12:00 AM to 4:00 AM EST. Services may be temporarily unavailable.</p><div style="background:#fffbeb;padding:20px;border-radius:8px;margin:20px 0;border-left:4px solid #f59e0b"><p style="margin:0;color:#78350f"><strong>Maintenance Window:</strong></p><p style="margin:5px 0 0;color:#92400e">March 25, 12:00 AM - 4:00 AM EST</p></div></td></tr></table></body></html>`,
+    features: ['Notice', 'Scheduled', 'Downtime'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'last-chance-reminder',
+    name: 'Last Chance Reminder',
+    category: 'Marketing',
+    description: 'Final reminder for limited offer',
+    subject: 'Last 24 hours - Don\'t miss out!',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Last Chance</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fef2f2"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border:3px solid #dc2626;border-radius:8px"><tr><td style="padding:40px;text-align:center"><h1 style="color:#dc2626;margin:0;font-size:24px">LAST CHANCE!</h1><p style="color:#991b1b;margin:10px 0 0;font-weight:bold">Only 24 hours left</p></td></tr><tr><td style="padding:40px"><p style="color:#6b7280;margin:0 0 20px;line-height:1.6">This is your final reminder. The offer expires in just 24 hours.</p><div style="background:#dc2626;padding:25px;border-radius:8px;text-align:center;margin:25px 0"><p style="margin:0;color:#fff;font-size:18px;font-weight:bold">Don't miss out on this exclusive offer!</p></div><div style="text-align:center"><a href="#" style="background:#dc2626;color:#fff;text-decoration:none;padding:18px 50px;border-radius:8px;font-weight:bold;display:inline-block;font-size:18px">Claim Offer Now</a></div></td></tr></table></body></html>`,
+    features: ['Urgency', 'Final', 'Limited Time'],
+    isPopular: true,
+    isNew: false
   }
 ]
 
