@@ -80,26 +80,37 @@ export async function onRequestPost({ request, env }) {
     // Store user token in KV (if KV is available)
     try {
       const userKey = `user_${userEmail.toLowerCase()}`;
-      const userData = await env.USERS_KV?.get(userKey);
+      console.log('Storing user token in KV, key:', userKey);
+      console.log('KV available:', !!env.USERS_KV);
       
-      if (userData) {
-        const user = JSON.parse(userData);
-        user.mailchimpAccessToken = access_token;
-        user.mailchimpDc = dc;
-        user.mailchimpConnected = true;
-        user.mailchimpConnectedAt = new Date().toISOString();
+      try {
+        // Get existing user data if any
+        const userData = await env.USERS_KV.get(userKey);
         
-        await env.USERS_KV?.put(userKey, JSON.stringify(user));
-      } else {
-        // Create new user entry
-        const newUser = {
-          email: userEmail,
-          mailchimpAccessToken: access_token,
-          mailchimpDc: dc,
-          mailchimpConnected: true,
-          mailchimpConnectedAt: new Date().toISOString()
-        };
-        await env.USERS_KV?.put(userKey, JSON.stringify(newUser));
+        if (userData) {
+          const user = JSON.parse(userData);
+          user.mailchimpAccessToken = access_token;
+          user.mailchimpDc = dc;
+          user.mailchimpConnected = true;
+          user.mailchimpConnectedAt = new Date().toISOString();
+          
+          await env.USERS_KV.put(userKey, JSON.stringify(user));
+          console.log('Updated existing user in KV');
+        } else {
+          // Create new user entry
+          const newUser = {
+            email: userEmail,
+            mailchimpAccessToken: access_token,
+            mailchimpDc: dc,
+            mailchimpConnected: true,
+            mailchimpConnectedAt: new Date().toISOString()
+          };
+          await env.USERS_KV.put(userKey, JSON.stringify(newUser));
+          console.log('Created new user in KV');
+        }
+      } catch (kvError) {
+        console.error('KV storage error:', kvError);
+        // Continue anyway - the token is still returned
       }
     } catch (kvError) {
       console.error('KV storage error:', kvError);

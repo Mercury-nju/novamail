@@ -47,7 +47,9 @@ export async function onRequestPost({ request, env }) {
         if (userEmail) {
           try {
             const userKey = `user_${userEmail.toLowerCase()}`;
-            const userData = await env.USERS_KV?.get(userKey);
+            console.log('Looking for user in KV, key:', userKey);
+            const userData = await env.USERS_KV.get(userKey);
+            console.log('User data from KV:', userData ? 'Found' : 'Not found');
             
             if (userData) {
               const user = JSON.parse(userData);
