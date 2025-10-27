@@ -148,12 +148,35 @@ export default function AITemplateChat() {
               
               {message.html && (
                 <div className="mt-4 pt-4 border-t border-gray-300">
-                  <button
-                    onClick={handleUseTemplate}
-                    className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                  >
-                    Use This Template
-                  </button>
+                  {/* Template Preview */}
+                  <div className="mb-4 p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <div 
+                      dangerouslySetInnerHTML={{ __html: message.html }} 
+                      style={{ 
+                        transform: 'scale(0.5)',
+                        transformOrigin: 'top left',
+                        width: '200%',
+                        height: '200%',
+                        pointerEvents: 'none'
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleUseTemplate}
+                      className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                    >
+                      Use This Template
+                    </button>
+                    <button
+                      onClick={handleUseTemplate}
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                    >
+                      Edit
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
