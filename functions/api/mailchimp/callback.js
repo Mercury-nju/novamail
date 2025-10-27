@@ -31,7 +31,12 @@ export async function onRequestPost(context) {
     const clientSecret = env.MAILCHIMP_CLIENT_SECRET;
     const redirectUri = env.MAILCHIMP_REDIRECT_URI;
     
+    console.log('Mailchimp callback - clientId:', clientId ? 'Set' : 'Not set');
+    console.log('Mailchimp callback - clientSecret:', clientSecret ? 'Set' : 'Not set');
+    console.log('Mailchimp callback - redirectUri:', redirectUri);
+    
     if (!clientId || !clientSecret || !redirectUri) {
+      console.error('Mailchimp OAuth not configured');
       return new Response(JSON.stringify({ 
         success: false, 
         error: 'Mailchimp OAuth not configured' 
@@ -51,6 +56,8 @@ export async function onRequestPost(context) {
       code: code
     });
 
+    console.log('Exchanging code for token...');
+    
     const tokenResponse = await fetch(tokenUrl, {
       method: 'POST',
       headers: {
@@ -59,11 +66,16 @@ export async function onRequestPost(context) {
       body: params.toString()
     });
 
+    console.log('Token response status:', tokenResponse.status);
+
     if (!tokenResponse.ok) {
-      throw new Error('Failed to exchange code for token');
+      const errorText = await tokenResponse.text();
+      console.error('Failed to exchange code for token:', errorText);
+      throw new Error(`Failed to exchange code for token: ${errorText}`);
     }
 
     const tokenData = await tokenResponse.json();
+    console.log('Token data received:', { access_token: tokenData.access_token ? 'Set' : 'Not set', dc: tokenData.dc });
     const { access_token, dc } = tokenData;
     
     // Store user token in KV
@@ -90,9 +102,12 @@ export async function onRequestPost(context) {
 
   } catch (error) {
     console.error('Mailchimp callback error:', error);
+    console.error('Error details:', error.message);
+    console.error('Error stack:', error.stack);
+    
     return new Response(JSON.stringify({ 
       success: false, 
-      error: 'Failed to process Mailchimp callback' 
+      error: error.message || 'Failed to process Mailchimp callback' 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
