@@ -171,7 +171,7 @@ export default function CampaignEditPage() {
     setIsExporting(true)
     
     try {
-      const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
+      const userEmail = localStorage.getItem('user-email') || sessionStorage.getItem('user-email') || localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
       
       if (!userEmail) {
         toast.error('User email not found. Please log in again.')
@@ -252,7 +252,7 @@ export default function CampaignEditPage() {
 
   const handleMailchimpConnect = async () => {
     try {
-      const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
+      const userEmail = localStorage.getItem('user-email') || sessionStorage.getItem('user-email') || localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
       
       if (!userEmail) {
         toast.error('User email not found. Please log in again.')
@@ -683,7 +683,7 @@ export default function CampaignEditPage() {
         
         // 保存campaign数据到后端
         try {
-          const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
+          const userEmail = localStorage.getItem('user-email') || sessionStorage.getItem('user-email') || localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
           if (userEmail) {
             const campaignData = {
               id: `campaign_${Date.now()}`,

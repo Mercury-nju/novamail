@@ -28,7 +28,7 @@ function MailchimpCallbackContent() {
 
       try {
         // 获取用户邮箱（从localStorage或sessionStorage）
-        const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
+        const userEmail = localStorage.getItem('user-email') || sessionStorage.getItem('user-email') || localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
         
         if (!userEmail) {
           setStatus('error')

@@ -10,7 +10,7 @@ export default function ESPTestPage() {
 
   useEffect(() => {
     // 尝试获取用户邮箱，如果不存在则设置测试邮箱
-    const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
+    const userEmail = localStorage.getItem('user-email') || sessionStorage.getItem('user-email') || localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
     if (!userEmail) {
       setTestEmail('test@novamail.dev')
       // 模拟登录状态
