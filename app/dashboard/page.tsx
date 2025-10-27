@@ -135,12 +135,12 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
+      <div className="border-b border-gray-200 bg-white">
+        <div className="px-6 py-5">
+          <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                 <SparklesIcon className="h-5 w-5 text-white" />
               </div>
@@ -152,9 +152,9 @@ export default function Dashboard() {
             <div className="flex items-center">
               <Link
                 href="/dashboard/campaigns/new"
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
               >
-                <RocketLaunchIcon className="h-5 w-5 mr-2" />
+                <RocketLaunchIcon className="h-4 w-4 mr-2" />
                 Start Creating
               </Link>
             </div>
@@ -163,16 +163,16 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="px-6 py-6">
         {/* Welcome Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-6"
+          className="mb-8"
         >
-          <h2 className="text-2xl font-bold text-gray-900 mb-1">Welcome back!</h2>
-          <p className="text-gray-600">Here's what's happening with your email campaigns today.</p>
+          <h2 className="text-xl font-semibold text-gray-900">Welcome back!</h2>
+          <p className="text-sm text-gray-500 mt-1">Here's what's happening with your email campaigns today.</p>
         </motion.div>
 
         {/* Stats Grid */}
@@ -183,7 +183,7 @@ export default function Dashboard() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
         >
           {/* Total Campaigns */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <div className="bg-gray-50 rounded-xl p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Campaigns</p>
@@ -199,7 +199,7 @@ export default function Dashboard() {
           </div>
 
           {/* Total Contacts */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <div className="bg-gray-50 rounded-xl p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Contacts</p>
@@ -215,7 +215,7 @@ export default function Dashboard() {
           </div>
 
           {/* Emails Sent */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <div className="bg-gray-50 rounded-xl p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Emails Sent</p>
@@ -231,7 +231,7 @@ export default function Dashboard() {
           </div>
 
           {/* Average Open Rate */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <div className="bg-gray-50 rounded-xl p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Avg. Open Rate</p>
@@ -256,8 +256,8 @@ export default function Dashboard() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="lg:col-span-2"
           >
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 h-full">
-              <div className="px-5 py-4 border-b border-gray-200">
+            <div className="bg-gray-50 rounded-xl h-full">
+              <div className="px-5 py-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-900">Recent Campaigns</h3>
                   <Link
@@ -283,8 +283,8 @@ export default function Dashboard() {
                     <RocketLaunchIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">No campaigns yet</h3>
                     <p className="text-gray-600 mb-4">Create your first email campaign to get started</p>
-                    <Link
-                      href="/dashboard/campaigns/new"
+              <Link
+                href="/dashboard/campaigns/new"
                       className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
                       <RocketLaunchIcon className="h-4 w-4 mr-2" />
@@ -324,24 +324,24 @@ export default function Dashboard() {
                           className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                         >
                           View
-                        </Link>
+              </Link>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
             </div>
-          </motion.div>
+            </motion.div>
 
           {/* Right Column - Sidebar */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="space-y-6"
           >
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <div className="bg-gray-50 rounded-xl p-5">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-3">
                 <Link
@@ -362,7 +362,7 @@ export default function Dashboard() {
             </div>
 
             {/* Platform Features */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <div className="bg-gray-50 rounded-xl p-5">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Platform Features</h3>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
@@ -382,7 +382,7 @@ export default function Dashboard() {
                     <h4 className="font-medium text-gray-900">AI-Powered Content</h4>
                     <p className="text-sm text-gray-600">Generate personalized content with AI assistance</p>
                   </div>
-                </div>
+                          </div>
                 <div className="flex items-start space-x-3">
                   <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
                     <ChartBarIcon className="h-4 w-4 text-green-600" />
