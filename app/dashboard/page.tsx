@@ -135,11 +135,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Main Content */}
-      <div className="px-6 py-6">
-        {/* Header Section */}
-        <div className="flex items-center justify-between mb-8">
+    <>
+      {/* Header Section */}
+      <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <SparklesIcon className="h-5 w-5 text-white" />
@@ -406,6 +404,6 @@ export default function Dashboard() {
           </motion.div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
