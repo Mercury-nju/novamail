@@ -99,6 +99,67 @@ export const supplementTemplates: ProfessionalTemplate[] = [
     features: ['Tech', 'News', 'Weekly'],
     isPopular: false,
     isNew: false
+  },
+
+  // ========== MORE UNIQUE VARIATIONS ==========
+  {
+    id: 'review-request',
+    name: 'Review Request',
+    category: 'E-commerce',
+    description: 'Ask for product review',
+    subject: 'How was your purchase?',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Review Request</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">How was your purchase?</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">We'd love to hear about your experience.</p></td></tr></table></body></html>`,
+    features: ['Feedback', 'Simple', 'Direct'],
+    isPopular: true,
+    isNew: true
+  },
+
+  {
+    id: 'refund-processed',
+    name: 'Refund Processed',
+    category: 'E-commerce',
+    description: 'Refund confirmation',
+    subject: 'Your refund has been processed',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Refund</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#f0f9ff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#16a34a;margin:0;font-size:22px">Refund Processed</h1><p style="color:#6b7280;margin:10px 0 0">Amount: $99.99</p><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Expected to arrive in 5-7 business days.</p></td></tr></table></body></html>`,
+    features: ['Confirmation', 'Amount', 'Timeline'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'subscription-renewal',
+    name: 'Subscription Renewal',
+    category: 'Transactional',
+    description: 'Subscription renewal reminder',
+    subject: 'Your subscription renews in 7 days',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Renewal</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Renewal Reminder</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Your subscription renews on April 10.</p></td></tr></table></body></html>`,
+    features: ['Reminder', 'Payment', 'Date'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'trial-ending',
+    name: 'Trial Ending',
+    category: 'Transactional',
+    description: 'Trial period ending soon',
+    subject: 'Your trial ends in 3 days',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Trial Ending</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-left:4px solid #dc2626"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Trial Ending Soon</h1><p style="color:#6b7280;margin:10px 0 0">3 days remaining</p></td></tr></table></body></html>`,
+    features: ['Urgent', 'Time-sensitive', 'Conversion'],
+    isPopular: true,
+    isNew: false
+  },
+
+  {
+    id: 'order-out-of-stock',
+    name: 'Order Out of Stock',
+    category: 'E-commerce',
+    description: 'Notify item is out of stock',
+    subject: 'Item no longer available',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Out of Stock</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Out of Stock</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">This item is currently unavailable.</p></td></tr></table></body></html>`,
+    features: ['Notification', 'Status', 'Clear'],
+    isPopular: false,
+    isNew: false
   }
 ]
 
