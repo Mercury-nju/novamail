@@ -270,37 +270,9 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <div className="flex-1 min-w-0 lg:pl-64">
-        {/* Top bar */}
-        <div className="sticky top-0 z-40 flex h-20 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-          <button
-            type="button"
-            className="-m-2.5 p-2.5 text-gray-700 hover:text-gray-900 lg:hidden transition-colors"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Bars3Icon className="h-6 w-6" />
-          </button>
-
-          <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-            <div className="flex flex-1" />
-            <div className="flex items-center gap-x-4 lg:gap-x-6">
-              {userSubscription && userSubscription.plan === 'pro' && (
-                <motion.span
-                  className="inline-flex items-center rounded-md bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  ⭐ PRO
-                </motion.span>
-              )}
-            </div>
-          </div>
-        </div>
-
         {/* Page content */}
         <main className="py-6">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="px-6">
             {children}
           </div>
         </main>
