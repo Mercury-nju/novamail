@@ -2,7 +2,7 @@
 
 import { Fragment, useState, useRef, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { XMarkIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon, PaperAirplaneIcon, SparklesIcon } from '@heroicons/react/24/outline'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
@@ -19,12 +19,7 @@ interface AIAssistantProps {
 
 export default function AIAssistant({ isOpen, setIsOpen }: AIAssistantProps) {
   const router = useRouter()
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      content: '你好！我是你的AI邮件模板助手。请描述你想要的邮件模板，我会为你创建一个专业的模板。'
-    }
-  ])
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [generatedTemplate, setGeneratedTemplate] = useState<{
@@ -165,6 +160,17 @@ export default function AIAssistant({ isOpen, setIsOpen }: AIAssistantProps) {
 
                 {/* Chat Messages */}
                 <div className="h-[500px] overflow-y-auto px-6 py-4 space-y-4">
+                  {messages.length === 0 && (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-center">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center mx-auto mb-4">
+                          <SparklesIcon className="h-8 w-8 text-white" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">AI 邮件模板助手</h3>
+                        <p className="text-sm text-gray-500">描述你想要的邮件模板，我会为你创建</p>
+                      </div>
+                    </div>
+                  )}
                   {messages.map((message, index) => (
                     <div
                       key={index}
