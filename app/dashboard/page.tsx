@@ -15,6 +15,7 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
+import AITemplateGenerator from '@/components/AITemplateGenerator'
 
 interface DashboardStats {
   totalCampaigns: number
@@ -35,6 +36,7 @@ export default function Dashboard() {
     recentCampaigns: []
   })
   const [isLoading, setIsLoading] = useState(true)
+  const [showAIGenerator, setShowAIGenerator] = useState(false)
 
   useEffect(() => {
     // 加载真实的用户数据
@@ -118,13 +120,13 @@ export default function Dashboard() {
     <>
       {/* Header Section */}
       <div className="px-6 pt-6 pb-8 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-            <SparklesIcon className="h-5 w-5 text-white" />
-          </div>
-          <div>
+          <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <SparklesIcon className="h-5 w-5 text-white" />
+              </div>
+              <div>
             <h1 className="text-lg font-medium text-gray-900">Dashboard</h1>
-            <p className="text-xs text-gray-500">AI Email Marketing Platform</p>
+                <p className="text-xs text-gray-500">AI Email Marketing Platform</p>
           </div>
         </div>
         <Link
@@ -182,17 +184,17 @@ export default function Dashboard() {
               </div>
               <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
                 <UserGroupIcon className="h-6 w-6 text-green-600" />
-              </div>
-            </div>
           </div>
+        </div>
+      </div>
         </motion.div>
 
       {/* Main Content Grid - 统一的3列布局 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6">
         {/* Left Column - Recent Campaigns */}
-        <motion.div
+          <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="lg:col-span-2"
         >
@@ -260,12 +262,12 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Right Column - Sidebar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           className="space-y-6"
-        >
+            >
           {/* Quick Actions */}
           <div className="bg-white rounded-xl border border-gray-100 p-5">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
@@ -303,16 +305,16 @@ export default function Dashboard() {
               <div className="flex items-start space-x-3">
                 <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0">
                   <SparklesIcon className="h-4 w-4 text-purple-600" />
-                </div>
+                  </div>
                 <div>
                   <h4 className="font-medium text-gray-900">AI-Powered Content</h4>
                   <p className="text-sm text-gray-600">Generate personalized content with AI assistance</p>
-                </div>
-              </div>
+                          </div>
+                  </div>
               <div className="flex items-start space-x-3">
                 <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
                   <ChartBarIcon className="h-4 w-4 text-green-600" />
-                </div>
+                  </div>
                 <div>
                   <h4 className="font-medium text-gray-900">Advanced Analytics</h4>
                   <p className="text-sm text-gray-600">Track performance with detailed insights</p>
@@ -320,6 +322,24 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
+
+          {/* AI Template Generator */}
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-200 p-5">
+            <div className="flex items-center space-x-2 mb-2">
+              <SparklesIcon className="h-5 w-5 text-purple-600" />
+              <h3 className="text-lg font-semibold text-gray-900">AI Template Generator</h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              Describe your email needs and let AI create a custom template for you.
+            </p>
+            <button
+              onClick={() => setShowAIGenerator(true)}
+              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-md hover:shadow-lg"
+            >
+              Generate Template
+              <SparklesIcon className="h-4 w-4 ml-2" />
+            </button>
+            </div>
 
           {/* Getting Started */}
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-5">
@@ -336,7 +356,13 @@ export default function Dashboard() {
             </Link>
           </div>
         </motion.div>
-      </div>
+    </div>
+
+      {/* AI Template Generator Modal */}
+      <AITemplateGenerator
+        isOpen={showAIGenerator}
+        setIsOpen={setShowAIGenerator}
+      />
     </>
   )
 }
