@@ -3,8 +3,7 @@
  * Handles Mailchimp OAuth callback and stores user tokens
  */
 
-export async function onRequestPost(context) {
-  const { request, env } = context;
+export async function onRequestPost({ request, env }) {
   
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -115,7 +114,7 @@ export async function onRequestPost(context) {
   }
 }
 
-export async function onRequestOptions(context) {
+export async function onRequestOptions() {
   return new Response(null, {
     headers: {
       'Access-Control-Allow-Origin': '*',
