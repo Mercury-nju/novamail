@@ -1,6 +1,6 @@
 /**
  * Mailchimp OAuth Connect Handler
- * Handles Mailchimp OAuth connection requests
+ * Handles Mailchimp connection requests
  */
 
 export async function onRequestPost({ request, env }) {
@@ -25,45 +25,36 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
-    // Generate OAuth URL
-    const clientId = env.MAILCHIMP_CLIENT_ID;
-    // 使用实际的域名
-    const redirectUri = env.MAILCHIMP_REDIRECT_URI || 'https://novamail.world/api/mailchimp/callback';
+    // 使用 API Key 模式而不是 OAuth
+    // Mailchimp API Key 格式: <key>-<dc>
+    const apiKey = env.MAILCHIMP_API_KEY;
     
-    console.log('Mailchimp OAuth config check:');
-    console.log('Client ID:', clientId ? 'Set' : 'Not set');
-    console.log('Redirect URI:', redirectUri);
-    console.log('User Email:', userEmail);
-    
-    if (!clientId) {
-      console.error('Mailchimp OAuth not configured - missing client ID');
+    if (!apiKey) {
+      console.error('Mailchimp API Key not configured');
       return new Response(JSON.stringify({ 
         success: false, 
-        error: 'Mailchimp OAuth not configured. Please contact support.', 
-        debug: {
-          clientIdSet: !!clientId,
-          redirectUri: redirectUri
-        }
+        error: 'Mailchimp API Key not configured' 
       }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    const params = new URLSearchParams({
-      response_type: 'code',
-      client_id: clientId,
-      redirect_uri: redirectUri,
-      scope: 'templates'
-    });
+    // 从 API Key 中提取数据中心
+    const dc = apiKey.split('-').pop();
     
-    const authUrl = `https://login.mailchimp.com/oauth2/authorize?${params.toString()}`;
+    console.log('Mailchimp API Key mode:');
+    console.log('API Key:', apiKey ? 'Set' : 'Not set');
+    console.log('DC:', dc);
+    console.log('User Email:', userEmail);
     
-    console.log('Generated auth URL:', authUrl);
-    
+    // 返回成功状态，表示可以使用 API Key
+    // 前端会直接尝试导出，而不需要 OAuth 授权页面
     return new Response(JSON.stringify({ 
       success: true,
-      auth_url: authUrl
+      mode: 'api_key',
+      dc: dc,
+      message: 'Mailchimp API Key configured. You can now export templates.'
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -74,7 +65,7 @@ export async function onRequestPost({ request, env }) {
     console.error('Error stack:', error.stack);
     return new Response(JSON.stringify({ 
       success: false, 
-      error: error.message || 'Failed to generate Mailchimp auth URL' 
+      error: error.message || 'Failed to connect Mailchimp' 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
