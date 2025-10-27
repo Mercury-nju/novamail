@@ -90,8 +90,50 @@ export default function AITemplateChat() {
       html: generatedTemplate.html,
     }
 
+    // Save to sessionStorage
     sessionStorage.setItem('ai-generated-template', JSON.stringify(templateData))
+    
+    // Save chat history to localStorage
+    try {
+      const chatHistory = {
+        messages: messages,
+        generatedTemplate: generatedTemplate,
+        timestamp: new Date().toISOString()
+      }
+      localStorage.setItem('template-ai-chat-history', JSON.stringify(chatHistory))
+    } catch (e) {
+      console.error('Failed to save chat history:', e)
+    }
+
     router.push('/dashboard/campaigns/edit?ai-generated=true')
+    toast.success('Opening editor...')
+  }
+
+  const handleEditTemplate = () => {
+    if (!generatedTemplate) return
+
+    const templateData = {
+      name: generatedTemplate.name,
+      subject: generatedTemplate.subject,
+      html: generatedTemplate.html,
+    }
+
+    // Save to sessionStorage
+    sessionStorage.setItem('ai-generated-template', JSON.stringify(templateData))
+    
+    // Save chat history
+    try {
+      const chatHistory = {
+        messages: messages,
+        generatedTemplate: generatedTemplate,
+        timestamp: new Date().toISOString()
+      }
+      localStorage.setItem('template-ai-chat-history', JSON.stringify(chatHistory))
+    } catch (e) {
+      console.error('Failed to save chat history:', e)
+    }
+
+    router.push('/dashboard/campaigns/edit?ai-generated=true&edit-mode=true')
     toast.success('Opening editor...')
   }
 
@@ -166,16 +208,16 @@ export default function AITemplateChat() {
                   {/* Action Buttons */}
                   <div className="flex gap-2">
                     <button
-                      onClick={handleUseTemplate}
+                      onClick={handleEditTemplate}
                       className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                     >
-                      Use This Template
+                      Edit Template
                     </button>
                     <button
                       onClick={handleUseTemplate}
                       className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                     >
-                      Edit
+                      Use Directly
                     </button>
                   </div>
                 </div>

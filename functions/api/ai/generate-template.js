@@ -53,22 +53,24 @@ async function generateTemplateWithAI(prompt) {
 
   try {
     // Construct the AI prompt
-    const aiPrompt = `Create a professional email template based on: "${prompt}"
+    const aiPrompt = `Create a professional, visually appealing email template based on: "${prompt}"
 
 Return ONLY a JSON object with this exact format:
 {
   "name": "Template Name",
   "subject": "Email Subject Line",
-  "html": "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><table width='100%' style='max-width:600px;margin:0 auto'><tr><td style='padding:20px;background:#f0f4f8'><h1 style='color:#333;text-align:center'>Header</h1></td></tr><tr><td style='padding:40px;background:#fff'><p style='font-size:16px;line-height:1.6;color:#555'>Professional email content here</p></td></tr></table></body></html>"
+  "html": "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><table width='100%' style='max-width:600px;margin:0 auto;background:#f8fafc' cellpadding='0' cellspacing='0'><tr><td style='padding:40px 30px;background:linear-gradient(135deg,#3b82f6,#2563eb);text-align:center'><h1 style='margin:0;color:#fff;font-size:28px'>Welcome</h1></td></tr><tr><td style='padding:40px 30px;background:#fff'><p style='margin:0 0 20px;font-size:16px;line-height:1.6;color:#333'>Professional content</p><a href='#' style='display:inline-block;padding:12px 24px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:6px'>Action</a></td></tr></table></body></html>"
 }
 
-Rules:
-- Name should describe the template (max 40 chars)
-- Subject should be engaging (max 80 chars)  
-- HTML must be complete, single-line, with inline styles
-- Use email-safe HTML (tables, inline CSS, no external stylesheets)
-- Include colors, buttons, professional layout
-- Keep HTML concise but complete`
+Requirements:
+- Use beautiful color gradients (blue, purple, or green theme)
+- Add professional spacing (padding: 30-40px)
+- Include engaging CTA buttons with hover effects
+- Use modern typography (font-size: 16-28px, line-height: 1.6)
+- Create visually appealing layouts with headers, content sections, and footers
+- Make it email-safe: use tables, inline styles only
+- Keep HTML as single-line string (no newlines in HTML)
+- Make it professional and polished, not simple/basic`
 
     const response = await fetch(API_URL, {
       method: 'POST',
