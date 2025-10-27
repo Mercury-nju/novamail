@@ -281,9 +281,27 @@ export default function CampaignEditPage() {
 
   const handleMailchimpConnect = async () => {
     try {
-      const userEmail = localStorage.getItem('user-email') || sessionStorage.getItem('user-email') || localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
+      // 先尝试所有可能的 key
+      const userEmail = 
+        localStorage.getItem('user-email') || 
+        sessionStorage.getItem('user-email') || 
+        localStorage.getItem('userEmail') || 
+        sessionStorage.getItem('userEmail') ||
+        localStorage.getItem('user_email') ||
+        sessionStorage.getItem('user_email')
+      
+      // 输出所有可能的值用于调试
+      console.log('=== Checking all localStorage keys ===')
+      console.log("localStorage.getItem('user-email'):", localStorage.getItem('user-email'))
+      console.log("localStorage.getItem('userEmail'):", localStorage.getItem('userEmail'))
+      console.log("localStorage.getItem('user_email'):", localStorage.getItem('user_email'))
+      console.log("localStorage.getItem('user-name'):", localStorage.getItem('user-name'))
+      console.log("localStorage.getItem('user-id'):", localStorage.getItem('user-id'))
+      console.log("localStorage.getItem('user-token'):", localStorage.getItem('user-token'))
+      console.log('All localStorage keys:', Object.keys(localStorage))
       
       if (!userEmail) {
+        console.error('User email not found in any storage location!')
         toast.error('User email not found. Please log in again.')
         return
       }
