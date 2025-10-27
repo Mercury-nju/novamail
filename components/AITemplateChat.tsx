@@ -234,19 +234,10 @@ export default function AITemplateChat() {
     <div className="h-full flex bg-white">
       {/* Left Sidebar - History */}
       <div className={`${showSidebar ? 'w-56' : 'w-0'} transition-all duration-300 border-r border-gray-200 overflow-hidden flex flex-col bg-gray-50`}>
-        <div className="flex-1 overflow-y-auto p-3">
-          <button
-            onClick={handleNewChat}
-            className="w-full mb-3 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center space-x-2 text-sm"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            <span>New Chat</span>
-          </button>
-          
-          <div className="mb-3">
-            <h3 className="text-[10px] font-semibold text-gray-400 uppercase mb-1.5 px-1">Recent</h3>
+        {/* Scrollable history area */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-2">
+            <h3 className="text-[10px] font-semibold text-gray-400 uppercase mb-1.5 px-2 py-1">Recent</h3>
             <div className="space-y-0.5">
               {chatHistory.map((item) => (
                 <div
@@ -272,6 +263,19 @@ export default function AITemplateChat() {
               ))}
             </div>
           </div>
+        </div>
+        
+        {/* New Chat button at bottom */}
+        <div className="border-t border-gray-200 p-3">
+          <button
+            onClick={handleNewChat}
+            className="w-full px-3 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center space-x-2 text-sm"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            <span>New Chat</span>
+          </button>
         </div>
       </div>
 
