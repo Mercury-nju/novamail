@@ -16,7 +16,7 @@ import {
   CheckIcon,
   DocumentTextIcon
 } from '@heroicons/react/24/outline'
-import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
+import { allTemplates, type ProfessionalTemplate } from '@/lib/templates'
 
 interface CampaignData {
   templateId: string
@@ -50,7 +50,7 @@ export default function NewCampaignPage() {
   useEffect(() => {
     const templateId = searchParams.get('template')
     if (templateId) {
-      const index = professionalTemplates.findIndex(t => t.id === templateId)
+      const index = allTemplates.findIndex(t => t.id === templateId)
       if (index !== -1) {
         setCurrentTemplateIndex(index)
       }
@@ -73,15 +73,15 @@ export default function NewCampaignPage() {
     return () => document.removeEventListener('keydown', handleKeyPress)
   }, [])
 
-  const currentTemplate = professionalTemplates[currentTemplateIndex]
+  const currentTemplate = allTemplates[currentTemplateIndex]
 
   // Get unique categories
-  const categories = ['All', ...Array.from(new Set(professionalTemplates.map(t => t.category)))]
+  const categories = ['All', ...Array.from(new Set(allTemplates.map(t => t.category)))]
   
   // Filter templates by category
   const filteredTemplates = selectedCategory === 'All' 
-    ? professionalTemplates 
-    : professionalTemplates.filter(t => t.category === selectedCategory)
+    ? allTemplates 
+    : allTemplates.filter(t => t.category === selectedCategory)
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -99,11 +99,11 @@ export default function NewCampaignPage() {
   }
 
   const handleNextTemplate = () => {
-    setCurrentTemplateIndex((prev) => (prev + 1) % professionalTemplates.length)
+    setCurrentTemplateIndex((prev) => (prev + 1) % allTemplates.length)
   }
 
   const handlePrevTemplate = () => {
-    setCurrentTemplateIndex((prev) => (prev - 1 + professionalTemplates.length) % professionalTemplates.length)
+    setCurrentTemplateIndex((prev) => (prev - 1 + allTemplates.length) % allTemplates.length)
   }
 
   const handleUseTemplate = () => {
@@ -142,7 +142,7 @@ export default function NewCampaignPage() {
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-500">
-                {currentTemplateIndex + 1} of {professionalTemplates.length}
+                {currentTemplateIndex + 1} of {allTemplates.length}
               </div>
               <div className="flex space-x-2">
                 <button
@@ -287,7 +287,7 @@ export default function NewCampaignPage() {
                     >
                       {category}
                       {category !== 'All' && (
-                        <span className="ml-1 text-xs">({professionalTemplates.filter(t => t.category === category).length})</span>
+                        <span className="ml-1 text-xs">({allTemplates.filter(t => t.category === category).length})</span>
                       )}
                     </button>
                   ))}
@@ -296,8 +296,8 @@ export default function NewCampaignPage() {
               
               <div className="grid grid-cols-2 gap-3 max-h-[400px] overflow-y-auto">
                 {filteredTemplates.map((template, index) => {
-                  // Find original index in professionalTemplates array
-                  const originalIndex = professionalTemplates.findIndex(t => t.id === template.id)
+                  // Find original index in allTemplates array
+                  const originalIndex = allTemplates.findIndex(t => t.id === template.id)
                   return <motion.div
                     key={template.id}
                     initial={{ opacity: 0, y: 20 }}
