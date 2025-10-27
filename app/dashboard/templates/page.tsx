@@ -10,16 +10,19 @@ import {
   EyeIcon,
   DocumentTextIcon,
   CalendarIcon,
-  TagIcon
+  TagIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
+import AIAssistant from '@/components/AIAssistant'
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<ProfessionalTemplate[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [showAIAssistant, setShowAIAssistant] = useState(false)
 
   const categories = [
     { id: 'all', name: 'All Templates', count: 0 },
@@ -76,13 +79,22 @@ export default function TemplatesPage() {
               <h1 className="text-3xl font-bold text-gray-900">Professional Templates</h1>
               <p className="mt-2 text-gray-600">Choose from our collection of professional email templates</p>
             </div>
-            <Link
-              href="/dashboard/campaigns/new"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <PlusIcon className="w-5 h-5 mr-2" />
-              Create Campaign
-            </Link>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setShowAIAssistant(true)}
+                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-colors shadow-md hover:shadow-lg"
+              >
+                <SparklesIcon className="w-5 h-5 mr-2" />
+                AI 生成模板
+              </button>
+              <Link
+                href="/dashboard/campaigns/new"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <PlusIcon className="w-5 h-5 mr-2" />
+                Create Campaign
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -256,6 +268,12 @@ export default function TemplatesPage() {
           </div>
         </div>
       </div>
+
+      {/* AI Assistant */}
+      <AIAssistant
+        isOpen={showAIAssistant}
+        setIsOpen={setShowAIAssistant}
+      />
     </div>
   )
 }
