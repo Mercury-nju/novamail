@@ -3,6 +3,12 @@ compatibility_date = "2024-01-01"
 
 pages_build_output_dir = "out"
 
+# KV Namespace bindings for Pages Functions
+[[kv_namespaces]]
+binding = "USERS_KV"
+id = "41bca314c98c4db580f450fb2e2c37bd"
+preview_id = "41bca314c98c4db580f450fb2e2c37bd"
+
 # 环境变量
 [vars]
 CREEM_API_KEY = "creem_22oMcuzUH4TeWyWVAVjTes"
