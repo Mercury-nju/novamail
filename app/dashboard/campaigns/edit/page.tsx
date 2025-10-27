@@ -38,9 +38,6 @@ export default function CampaignEditPage() {
   const [isSending, setIsSending] = useState(false)
   const [showSendModal, setShowSendModal] = useState(false)
   const [showSaveModal, setShowSaveModal] = useState(false)
-  const [showExportModal, setShowExportModal] = useState(false)
-  const [isExporting, setIsExporting] = useState(false)
-  const [selectedESP, setSelectedESP] = useState('')
   const [sendForm, setSendForm] = useState({
     recipients: '',
     senderName: 'NovaMail'
@@ -852,14 +849,6 @@ export default function CampaignEditPage() {
                   Save Template
                 </button>
               </div>
-              
-              <button
-                onClick={() => setShowExportModal(true)}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-              >
-                <Send className="w-4 h-4" />
-                Export to ESP
-              </button>
             </div>
         </div>
       </div>
