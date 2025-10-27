@@ -1003,32 +1003,26 @@ async function handleExportToESP(request, env) {
 
     switch (esp.toLowerCase()) {
       case 'mailchimp':
-        // 优先使用API Key模式，如果没有则使用OAuth模式
-        if (env.MAILCHIMP_API_KEY) {
-          adapter = new MailchimpAdapter({
-            apiKey: env.MAILCHIMP_API_KEY
-          });
-        } else {
-          // 从KV获取用户的Mailchimp配置
-          if (userEmail) {
-            const userKey = `user_${userEmail.toLowerCase()}`;
-            const userData = await env.USERS_KV.get(userKey);
-            if (userData) {
-              const user = JSON.parse(userData);
-              userConfig = {
-                accessToken: user.mailchimpAccessToken,
-                dc: user.mailchimpDc
-              };
-            }
+        // 从KV获取用户的Mailchimp OAuth配置
+        if (userEmail) {
+          const userKey = `user_${userEmail.toLowerCase()}`;
+          const userData = await env.USERS_KV.get(userKey);
+          if (userData) {
+            const user = JSON.parse(userData);
+            userConfig = {
+              accessToken: user.mailchimpAccessToken,
+              dc: user.mailchimpDc
+            };
           }
-          
-          adapter = new MailchimpAdapter({
-            clientId: env.MAILCHIMP_CLIENT_ID,
-            clientSecret: env.MAILCHIMP_CLIENT_SECRET,
-            redirectUri: env.MAILCHIMP_REDIRECT_URI,
-            ...userConfig
-          });
         }
+        
+        // 使用OAuth模式（每个用户自己的账户）
+        adapter = new MailchimpAdapter({
+          clientId: env.MAILCHIMP_CLIENT_ID,
+          clientSecret: env.MAILCHIMP_CLIENT_SECRET,
+          redirectUri: env.MAILCHIMP_REDIRECT_URI,
+          ...userConfig
+        });
         break;
 
       case 'sendgrid':

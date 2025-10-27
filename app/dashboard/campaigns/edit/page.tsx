@@ -179,11 +179,6 @@ export default function CampaignEditPage() {
         return
       }
 
-      // 对于Mailchimp，添加用户标识到模板名称
-      const templateName = selectedESP === 'mailchimp' 
-        ? `${currentTemplate.name} - ${userEmail.split('@')[0]}`
-        : currentTemplate.name
-      
       const response = await fetch('/api/export', {
         method: 'POST',
         headers: {
@@ -191,7 +186,7 @@ export default function CampaignEditPage() {
         },
         body: JSON.stringify({
           esp: selectedESP,
-          name: templateName,
+          name: currentTemplate.name,
           html: campaignData.body || currentTemplate.htmlContent,
           subject: campaignData.subject || currentTemplate.subject,
           userEmail: userEmail
@@ -222,6 +217,19 @@ export default function CampaignEditPage() {
         // 处理不同类型的错误
         if (result.error === 'token_expired') {
           toast.error('Mailchimp authorization expired. Please reconnect your account.')
+          // 显示重新连接按钮
+          if (selectedESP === 'mailchimp') {
+            setTimeout(() => {
+              handleMailchimpConnect()
+            }, 2000)
+          }
+        } else if (result.error.includes('未授权') || result.error.includes('not connected')) {
+          toast.error('Please connect your Mailchimp account first.')
+          if (selectedESP === 'mailchimp') {
+            setTimeout(() => {
+              handleMailchimpConnect()
+            }, 2000)
+          }
         } else if (result.error.includes('configuration is incomplete')) {
           toast.error(`${selectedESP} is not properly configured. Please contact support.`)
         } else if (result.error.includes('not supported')) {
@@ -1506,8 +1514,9 @@ export default function CampaignEditPage() {
               {selectedESP === 'mailchimp' && (
                 <button
                   onClick={handleMailchimpConnect}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
                 >
+                  <span>🔗</span>
                   Connect Mailchimp
                 </button>
               )}
