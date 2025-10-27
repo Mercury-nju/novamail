@@ -1,4 +1,5 @@
 import { additionalTemplates } from './templates-additional'
+import { supplementTemplates } from './templates-supplement'
 
 export interface ProfessionalTemplate {
   id: string
@@ -375,9 +376,14 @@ export const getNewTemplates = (): ProfessionalTemplate[] => {
   return professionalTemplates.filter(template => template.isNew)
 }
 
-// 导出包含所有100个模板的数组
+// 导出包含所有模板的数组  
+// Currently: 30 core templates + 24 additional = 54 templates
+// For now, we'll use all available templates
 export const allTemplates: ProfessionalTemplate[] = [
   ...professionalTemplates,
-  ...additionalTemplates
+  ...additionalTemplates,
+  ...supplementTemplates
 ]
+
+// Total template count: 57 templates (30 + 24 + 2 + 1)
 
