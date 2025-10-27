@@ -61,6 +61,44 @@ export const supplementTemplates: ProfessionalTemplate[] = [
     features: ['Price Alert', 'Personalized', 'Saving'],
     isPopular: true,
     isNew: true
+  },
+
+  // ========== MORE UNIQUE BUSINESS TEMPLATES ==========
+  {
+    id: 'policy-update',
+    name: 'Policy Update',
+    category: 'Business',
+    description: 'Important policy changes notice',
+    subject: 'Policy Update Notice',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Policy Update</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-top:4px solid #2563eb"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Policy Update</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Effective date: April 15, 2024</p></td></tr><tr><td style="padding:0 40px 40px"><p style="color:#6b7280;margin:0;line-height:1.6">Please review the updated terms in your account settings.</p></td></tr></table></body></html>`,
+    features: ['Legal', 'Compliance', 'Update'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'capacity-warning',
+    name: 'Capacity Warning',
+    category: 'Business',
+    description: 'Resource capacity alert',
+    subject: 'Storage capacity at 85%',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Capacity Alert</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-left:4px solid #f59e0b"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Storage Alert</h1><p style="color:#6b7280;margin:10px 0 0">Current usage: 85%</p></td></tr><tr><td style="padding:0 40px 40px"><div style="background:#f9fafb;height:8px;border-radius:4px"><div style="background:#f59e0b;height:8px;width:85%;border-radius:4px"></div></div></td></tr></table></body></html>`,
+    features: ['Alert', 'Progress', 'Technical'],
+    isPopular: false,
+    isNew: false
+  },
+
+  // ========== NEWSLETTER VARIATIONS ==========
+  {
+    id: 'tech-news',
+    name: 'Tech News',
+    category: 'Newsletter',
+    description: 'Technology news digest',
+    subject: 'This Week in Tech',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Tech News</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#f8fafc"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:24px">Tech Weekly</h1><p style="color:#6b7280;margin:10px 0 20px">Latest innovations and breakthroughs</p><div style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:20px"><p style="color:#6b7280;margin:0 0 10px;font-weight:600">AI Breakthrough</p><p style="color:#6b7280;margin:0;font-size:14px">New developments in machine learning...</p></div></td></tr></table></body></html>`,
+    features: ['Tech', 'News', 'Weekly'],
+    isPopular: false,
+    isNew: false
   }
 ]
 
