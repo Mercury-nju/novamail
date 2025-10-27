@@ -183,12 +183,18 @@ export default function CampaignEditPage() {
       const templateName = currentTemplate.name
       const templateSubject = campaignData.subject || currentTemplate.subject
       
+      // Check for Mailchimp token in localStorage
+      const mailchimpToken = localStorage.getItem('mailchimp_access_token')
+      const mailchimpDc = localStorage.getItem('mailchimp_dc')
+      
       console.log('=== Export Request Debug ===')
       console.log('ESP:', selectedESP)
       console.log('Template Name:', templateName)
       console.log('User Email:', userEmail)
       console.log('HTML Length:', htmlContent.length)
       console.log('Subject:', templateSubject)
+      console.log('Mailchimp Token:', mailchimpToken ? 'Found' : 'Not found')
+      console.log('Mailchimp DC:', mailchimpDc)
       
       const response = await fetch('/api/export', {
         method: 'POST',
@@ -200,7 +206,10 @@ export default function CampaignEditPage() {
           name: templateName,
           html: htmlContent,
           subject: templateSubject,
-          userEmail: userEmail
+          userEmail: userEmail,
+          // Include token in request if available
+          accessToken: mailchimpToken,
+          dc: mailchimpDc
         })
       })
 

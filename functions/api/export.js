@@ -10,15 +10,17 @@ export async function onRequestPost({ request, env }) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 
-  try {
+    try {
     const data = await request.json();
-    const { esp, name, html, subject, userEmail } = data;
+    const { esp, name, html, subject, userEmail, accessToken, dc } = data;
     
     console.log('=== Export Request Received ===');
     console.log('ESP:', esp);
     console.log('Name:', name);
     console.log('User Email:', userEmail);
     console.log('HTML length:', html?.length);
+    console.log('Access Token provided:', !!accessToken);
+    console.log('DC provided:', dc);
     
     if (!esp || !name || !html) {
       console.error('Missing required fields');
@@ -33,36 +35,35 @@ export async function onRequestPost({ request, env }) {
 
     // Handle Mailchimp export
     if (esp.toLowerCase() === 'mailchimp') {
-      // Get user's Mailchimp token
-      let accessToken = null;
-      let dc = null;
+      // Get user's Mailchimp token - use token from request if available
+      let mailchimpAccessToken = accessToken;
+      let mailchimpDc = dc;
       
-      if (userEmail) {
-        try {
-          console.log('Checking for user token...');
-          const userKey = `user_${userEmail.toLowerCase()}`;
-          console.log('User key:', userKey);
-          console.log('KV available:', !!env.USERS_KV);
-          
-          const userData = await env.USERS_KV?.get(userKey);
-          console.log('User data from KV:', userData ? 'Found' : 'Not found');
-          
-          if (userData) {
-            const user = JSON.parse(userData);
-            accessToken = user.mailchimpAccessToken;
-            dc = user.mailchimpDc;
-            console.log('User token found:', { accessToken: accessToken ? 'Set' : 'Not set', dc });
-          } else {
-            console.log('No user data in KV - user needs to connect Mailchimp');
+      console.log('Initial token check:', { hasToken: !!mailchimpAccessToken, hasDc: !!mailchimpDc });
+      
+      // If not in request, try to get from KV
+      if (!mailchimpAccessToken || !mailchimpDc) {
+        console.log('No token in request, checking KV...');
+        if (userEmail) {
+          try {
+            const userKey = `user_${userEmail.toLowerCase()}`;
+            const userData = await env.USERS_KV?.get(userKey);
+            
+            if (userData) {
+              const user = JSON.parse(userData);
+              mailchimpAccessToken = user.mailchimpAccessToken;
+              mailchimpDc = user.mailchimpDc;
+              console.log('User token found in KV');
+            }
+          } catch (error) {
+            console.error('Error getting user token from KV:', error);
           }
-        } catch (error) {
-          console.error('Error getting user token:', error);
         }
       } else {
-        console.error('No userEmail provided');
+        console.log('Using token from request');
       }
 
-      if (!accessToken || !dc) {
+      if (!mailchimpAccessToken || !mailchimpDc) {
         console.error('Missing access token or DC - user needs to connect first');
         return new Response(JSON.stringify({ 
           success: false, 
@@ -87,11 +88,12 @@ export async function onRequestPost({ request, env }) {
         }
 
         console.log('Creating Mailchimp template...');
+        console.log('Using DC:', mailchimpDc);
         
-        const response = await fetch(`https://${dc}.api.mailchimp.com/3.0/templates`, {
+        const response = await fetch(`https://${mailchimpDc}.api.mailchimp.com/3.0/templates`, {
           method: 'POST',
           headers: {
-            'Authorization': `OAuth ${accessToken}`,
+            'Authorization': `OAuth ${mailchimpAccessToken}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(templateData)
@@ -110,7 +112,7 @@ export async function onRequestPost({ request, env }) {
         return new Response(JSON.stringify({ 
           success: true,
           id: template.id,
-          edit_url: `https://${dc}.admin.mailchimp.com/templates/edit?id=${template.id}`,
+          edit_url: `https://${mailchimpDc}.admin.mailchimp.com/templates/edit?id=${template.id}`,
           template_name: template.name,
           esp: 'mailchimp'
         }), {

@@ -51,6 +51,14 @@ function MailchimpCallbackContent() {
         const result = await response.json()
 
         if (result.success) {
+          // Store token in localStorage
+          if (result.access_token && result.dc) {
+            localStorage.setItem('mailchimp_access_token', result.access_token)
+            localStorage.setItem('mailchimp_dc', result.dc)
+            localStorage.setItem('mailchimp_connected', 'true')
+            console.log('Mailchimp token stored in localStorage')
+          }
+          
           setStatus('success')
           setMessage('Mailchimp account connected successfully!')
           

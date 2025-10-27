@@ -106,11 +106,13 @@ export async function onRequestPost({ request, env }) {
       // Continue anyway - the important part is returning success
     }
     
+    // Return token to be stored in browser localStorage
     return new Response(JSON.stringify({ 
       success: true,
       message: 'Mailchimp account connected successfully',
       access_token: access_token,
-      dc: dc
+      dc: dc,
+      userEmail: userEmail
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
