@@ -178,6 +178,11 @@ export default function CampaignEditPage() {
         setIsExporting(false)
         return
       }
+
+      // 对于Mailchimp，添加用户标识到模板名称
+      const templateName = selectedESP === 'mailchimp' 
+        ? `${currentTemplate.name} - ${userEmail.split('@')[0]}`
+        : currentTemplate.name
       
       const response = await fetch('/api/export', {
         method: 'POST',
@@ -186,7 +191,7 @@ export default function CampaignEditPage() {
         },
         body: JSON.stringify({
           esp: selectedESP,
-          name: currentTemplate.name,
+          name: templateName,
           html: campaignData.body || currentTemplate.htmlContent,
           subject: campaignData.subject || currentTemplate.subject,
           userEmail: userEmail
