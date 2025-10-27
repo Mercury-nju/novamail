@@ -1,6 +1,6 @@
 /**
  * Mailchimp OAuth Connect Handler
- * Handles Mailchimp connection requests
+ * Handles Mailchimp OAuth connection requests
  */
 
 export async function onRequestPost({ request, env }) {
@@ -25,36 +25,29 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
-    // 使用 API Key 模式而不是 OAuth
-    // Mailchimp API Key 格式: <key>-<dc>
+    // 使用 API Key 作为 OAuth Client ID 的临时方案
+    // 真正的 OAuth 需要创建 OAuth App
     const apiKey = env.MAILCHIMP_API_KEY;
+    const dc = apiKey ? apiKey.split('-').pop() : 'us20';
     
-    if (!apiKey) {
-      console.error('Mailchimp API Key not configured');
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'Mailchimp API Key not configured' 
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    // 从 API Key 中提取数据中心
-    const dc = apiKey.split('-').pop();
-    
-    console.log('Mailchimp API Key mode:');
+    console.log('Mailchimp OAuth config:');
     console.log('API Key:', apiKey ? 'Set' : 'Not set');
     console.log('DC:', dc);
     console.log('User Email:', userEmail);
     
-    // 返回成功状态，表示可以使用 API Key
-    // 前端会直接尝试导出，而不需要 OAuth 授权页面
+    // 使用临时的 OAuth URL，实际需要创建正确的 OAuth App
+    const redirectUri = `${request.headers.get('origin') || 'https://novamail.world'}/mailchimp/callback`;
+    const state = btoa(JSON.stringify({ userEmail, timestamp: Date.now() }));
+    
+    // 构建 OAuth URL - 注意这里需要正确的 Client ID
+    const authUrl = `https://login.mailchimp.com/oauth2/authorize?response_type=code&client_id=${apiKey}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=templates&state=${encodeURIComponent(state)}`;
+    
+    console.log('Generated auth URL:', authUrl.substring(0, 200) + '...');
+    
     return new Response(JSON.stringify({ 
       success: true,
-      mode: 'api_key',
-      dc: dc,
-      message: 'Mailchimp API Key configured. You can now export templates.'
+      auth_url: authUrl,
+      dc: dc
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
