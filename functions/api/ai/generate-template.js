@@ -19,9 +19,8 @@ export async function onRequestPost(context) {
       )
     }
 
-    // Generate template using AI
-    // For now, we'll create a basic template structure based on common patterns
-    const template = generateTemplateFromPrompt(prompt)
+    // Generate template using TongYi AI
+    const template = await generateTemplateWithAI(prompt)
 
     return new Response(
       JSON.stringify({
@@ -45,6 +44,105 @@ export async function onRequestPost(context) {
         headers: { 'Content-Type': 'application/json' }
       }
     )
+  }
+}
+
+async function generateTemplateWithAI(prompt) {
+  const API_KEY = 'sk-9bf19547ddbd4be1a87a7a43cf251097'
+  const API_URL = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation'
+
+  try {
+    // Construct the AI prompt
+    const aiPrompt = `You are an expert email designer. Based on the user's requirements, create a professional, responsive HTML email template.
+
+User Requirements:
+${prompt}
+
+Requirements for the email template:
+1. Create a complete, well-structured HTML email template
+2. Use inline CSS for email compatibility
+3. Include proper meta tags and DOCTYPE
+4. Make it responsive and mobile-friendly
+5. Use modern, professional design
+6. Include placeholder content that fits the business/industry described
+7. Use appropriate color scheme based on the business type
+8. Include clear call-to-action buttons
+9. Ensure proper spacing and typography
+
+Please return a JSON object with the following structure:
+{
+  "name": "Template name based on requirements",
+  "subject": "Email subject line",
+  "html": "Complete HTML email template with inline styles"
+}
+
+Important: 
+- The HTML should be complete and ready to use
+- Use inline CSS for email compatibility (not external stylesheets)
+- Make it visually appealing and professional
+- Include placeholder content that makes sense for the described use case`
+
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_KEY}`,
+        'X-DashScope-SSE': 'disable'
+      },
+      body: JSON.stringify({
+        model: 'qwen-plus',
+        input: {
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert email template designer. Always respond with valid JSON containing name, subject, and html fields.'
+            },
+            {
+              role: 'user',
+              content: aiPrompt
+            }
+          ]
+        },
+        parameters: {
+          temperature: 0.7,
+          max_tokens: 4000,
+          result_format: 'message'
+        }
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status}`)
+    }
+
+    const data = await response.json()
+    
+    // Extract the generated content
+    if (data.output && data.output.choices && data.output.choices.length > 0) {
+      const content = data.output.choices[0].message.content
+      
+      // Try to parse JSON from the response
+      try {
+        const parsedTemplate = JSON.parse(content)
+        
+        if (parsedTemplate.name && parsedTemplate.subject && parsedTemplate.html) {
+          return parsedTemplate
+        }
+      } catch (e) {
+        console.error('Failed to parse AI response as JSON:', e)
+      }
+    }
+    
+    // Fallback: if parsing fails, create a template with the AI response
+    return {
+      name: 'AI Generated Template',
+      subject: 'Your Email Subject',
+      html: generateTemplateFromPrompt(prompt)
+    }
+  } catch (error) {
+    console.error('AI template generation error:', error)
+    // Fallback to rule-based generation
+    return generateTemplateFromPrompt(prompt)
   }
 }
 
