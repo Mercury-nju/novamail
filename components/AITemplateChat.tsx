@@ -176,13 +176,13 @@ export default function AITemplateChat() {
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-gray-200 bg-white px-6 py-4">
+      <div className="border-t-2 border-gray-300 bg-gray-50 px-6 py-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-end gap-3">
-            <div className="flex-1 border-2 border-gray-300 rounded-xl px-4 py-3 bg-white focus-within:border-blue-500 focus-within:shadow-lg transition-all">
+            <div className="flex-1 border-2 border-blue-400 shadow-lg rounded-2xl px-5 py-4 bg-white focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-100 focus-within:shadow-xl transition-all">
               <textarea
                 rows={1}
-                className="w-full resize-none bg-transparent border-0 focus:outline-none focus:ring-0 text-base text-gray-900 placeholder-gray-400"
+                className="w-full resize-none bg-transparent border-0 focus:outline-none focus:ring-0 text-base text-gray-900 placeholder-gray-500"
                 placeholder="Type your message..."
                 value={input}
                 onChange={(e) => {
@@ -192,15 +192,15 @@ export default function AITemplateChat() {
                   e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px'
                 }}
                 onKeyPress={handleKeyPress}
-                style={{ minHeight: '28px', maxHeight: '200px', overflowY: 'auto' }}
+                style={{ minHeight: '32px', maxHeight: '200px', overflowY: 'auto' }}
               />
             </div>
             <button
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
-              className="flex-shrink-0 w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl hover:scale-105"
+              className="flex-shrink-0 w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl hover:shadow-2xl hover:scale-110"
             >
-              <PaperAirplaneIcon className="h-5 w-5" />
+              <PaperAirplaneIcon className="h-6 w-6" />
             </button>
           </div>
         </div>
