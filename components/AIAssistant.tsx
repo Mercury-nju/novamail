@@ -144,7 +144,7 @@ export default function AIAssistant({ isOpen, setIsOpen }: AIAssistantProps) {
                     </div>
                     <div>
                       <Dialog.Title as="h3" className="text-base font-semibold text-gray-900">
-                        AI 邮件模板助手
+                        Template AI
                       </Dialog.Title>
                       <p className="text-xs text-gray-500">描述你的需求，我来创建专业模板</p>
                     </div>
@@ -166,7 +166,7 @@ export default function AIAssistant({ isOpen, setIsOpen }: AIAssistantProps) {
                         <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center mx-auto mb-4">
                           <SparklesIcon className="h-8 w-8 text-white" />
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">AI 邮件模板助手</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Template AI</h3>
                         <p className="text-sm text-gray-500">描述你想要的邮件模板，我会为你创建</p>
                       </div>
                     </div>
