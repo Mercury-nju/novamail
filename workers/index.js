@@ -1281,21 +1281,14 @@ async function handleGetDashboardStats(request, env) {
     const campaignsData = await env.NOVAMAIL_KV.get(campaignsKey)
     const campaigns = campaignsData ? JSON.parse(campaignsData) : []
     
+    // 获取用户的联系人数据
+    const contactsKey = `contacts_${userEmail.toLowerCase()}`
+    const contactsData = await env.NOVAMAIL_KV.get(contactsKey)
+    const contacts = contactsData ? JSON.parse(contactsData) : []
+    
     // 计算统计数据
     const totalCampaigns = campaigns.length
-    const totalContacts = campaigns.reduce((sum, campaign) => sum + (campaign.recipients || 0), 0)
-    const totalEmailsSent = campaigns.filter(c => c.status === 'sent').reduce((sum, campaign) => sum + (campaign.recipients || 0), 0)
-    
-    // 计算平均打开率和点击率
-    const sentCampaigns = campaigns.filter(c => c.status === 'sent' && c.openRate !== undefined)
-    const averageOpenRate = sentCampaigns.length > 0 
-      ? sentCampaigns.reduce((sum, c) => sum + c.openRate, 0) / sentCampaigns.length 
-      : 0
-    
-    const clickedCampaigns = campaigns.filter(c => c.status === 'sent' && c.clickRate !== undefined)
-    const averageClickRate = clickedCampaigns.length > 0 
-      ? clickedCampaigns.reduce((sum, c) => sum + c.clickRate, 0) / clickedCampaigns.length 
-      : 0
+    const totalContacts = contacts.length
 
     // 获取最近的campaigns（最多5个）
     const recentCampaigns = campaigns
@@ -1306,17 +1299,12 @@ async function handleGetDashboardStats(request, env) {
         subject: campaign.subject,
         status: campaign.status,
         recipients: campaign.recipients || 0,
-        openRate: campaign.openRate,
-        clickRate: campaign.clickRate,
         createdAt: campaign.createdAt
       }))
 
     const stats = {
       totalCampaigns,
       totalContacts,
-      totalEmailsSent,
-      averageOpenRate: Math.round(averageOpenRate * 10) / 10, // 保留一位小数
-      averageClickRate: Math.round(averageClickRate * 10) / 10,
       recentCampaigns
     }
 

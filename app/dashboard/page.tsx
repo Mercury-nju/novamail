@@ -7,31 +7,23 @@ import {
   ArrowRightIcon,
   RocketLaunchIcon,
   StarIcon,
-  EnvelopeIcon,
   UserGroupIcon,
   ChartBarIcon,
   DocumentTextIcon,
   ClockIcon,
   CheckCircleIcon,
-  ExclamationTriangleIcon,
-  EyeIcon,
-  CursorArrowRaysIcon
+  ExclamationTriangleIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 
 interface DashboardStats {
   totalCampaigns: number
   totalContacts: number
-  totalEmailsSent: number
-  averageOpenRate: number
-  averageClickRate: number
   recentCampaigns: Array<{
     id: string
     subject: string
     status: 'sent' | 'scheduled' | 'draft'
     recipients: number
-    openRate?: number
-    clickRate?: number
     createdAt: string
   }>
 }
@@ -40,9 +32,6 @@ export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     totalCampaigns: 0,
     totalContacts: 0,
-    totalEmailsSent: 0,
-    averageOpenRate: 0,
-    averageClickRate: 0,
     recentCampaigns: []
   })
   const [isLoading, setIsLoading] = useState(true)
@@ -59,9 +48,6 @@ export default function Dashboard() {
           setStats({
             totalCampaigns: 0,
             totalContacts: 0,
-            totalEmailsSent: 0,
-            averageOpenRate: 0,
-            averageClickRate: 0,
             recentCampaigns: []
           })
           setIsLoading(false)
@@ -84,9 +70,6 @@ export default function Dashboard() {
           setStats({
             totalCampaigns: 0,
             totalContacts: 0,
-            totalEmailsSent: 0,
-            averageOpenRate: 0,
-            averageClickRate: 0,
             recentCampaigns: []
           })
         }
@@ -98,9 +81,6 @@ export default function Dashboard() {
         setStats({
           totalCampaigns: 0,
           totalContacts: 0,
-          totalEmailsSent: 0,
-          averageOpenRate: 0,
-          averageClickRate: 0,
           recentCampaigns: []
         })
         setIsLoading(false)
@@ -167,12 +147,12 @@ export default function Dashboard() {
         <p className="text-sm text-gray-500 mt-1">Here's what's happening with your email campaigns today.</p>
       </motion.div>
 
-      {/* Stats Grid */}
+      {/* Stats Grid - Only 2 cards now */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 px-6"
+        className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 px-6"
       >
           {/* Total Campaigns */}
           <div className="bg-white rounded-xl border border-gray-100 p-5">
@@ -202,38 +182,6 @@ export default function Dashboard() {
               </div>
               <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
                 <UserGroupIcon className="h-6 w-6 text-green-600" />
-              </div>
-            </div>
-          </div>
-
-          {/* Emails Sent */}
-          <div className="bg-white rounded-xl border border-gray-100 p-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Emails Sent</p>
-                <p className="text-2xl font-bold text-gray-900">{isLoading ? '...' : formatNumber(stats.totalEmailsSent)}</p>
-                {!isLoading && stats.totalEmailsSent === 0 && (
-                  <p className="text-xs text-gray-500 mt-1">No emails sent yet</p>
-                )}
-              </div>
-              <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
-                <EnvelopeIcon className="h-6 w-6 text-purple-600" />
-              </div>
-            </div>
-          </div>
-
-          {/* Average Open Rate */}
-          <div className="bg-white rounded-xl border border-gray-100 p-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Avg. Open Rate</p>
-                <p className="text-2xl font-bold text-gray-900">{isLoading ? '...' : `${stats.averageOpenRate}%`}</p>
-                {!isLoading && stats.averageOpenRate === 0 && (
-                  <p className="text-xs text-gray-500 mt-1">No data available</p>
-                )}
-              </div>
-              <div className="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center">
-                <EyeIcon className="h-6 w-6 text-orange-600" />
               </div>
             </div>
           </div>
@@ -296,20 +244,6 @@ export default function Dashboard() {
                           <span className="text-sm text-gray-500">{campaign.recipients} recipients</span>
                         </div>
                         <h4 className="font-medium text-gray-900 mb-1">{campaign.subject}</h4>
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          {campaign.openRate && (
-                            <span className="flex items-center">
-                              <EyeIcon className="w-4 h-4 mr-1" />
-                              {campaign.openRate}% open
-                            </span>
-                          )}
-                          {campaign.clickRate && (
-                            <span className="flex items-center">
-                              <CursorArrowRaysIcon className="w-4 h-4 mr-1" />
-                              {campaign.clickRate}% click
-                            </span>
-                          )}
-                        </div>
                       </div>
                       <Link
                         href={`/dashboard/campaigns/edit?id=${campaign.id}`}
