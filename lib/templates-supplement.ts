@@ -292,6 +292,162 @@ export const supplementTemplates: ProfessionalTemplate[] = [
     features: ['Security', 'Device', 'Location'],
     isPopular: false,
     isNew: false
+  },
+
+  {
+    id: 'support-ticket',
+    name: 'Support Ticket',
+    category: 'Transactional',
+    description: 'Customer support ticket confirmation',
+    subject: 'Support Request Received',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Ticket</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Ticket #12345</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">We've received your request.</p></td></tr></table></body></html>`,
+    features: ['Support', 'Ticket', 'Tracking'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'support-reply',
+    name: 'Support Reply',
+    category: 'Transactional',
+    description: 'Support team response',
+    subject: 'Re: Your Support Request',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Reply</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><p style="color:#6b7280;margin:0;line-height:1.6">Hi there, we've updated your ticket with new information.</p></td></tr></table></body></html>`,
+    features: ['Response', 'Update', 'Direct'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'document-shared',
+    name: 'Document Shared',
+    category: 'Business',
+    description: 'Share document with recipient',
+    subject: 'Document shared with you',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Shared</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#eff6ff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Document Shared</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Access your shared document.</p></td></tr></table></body></html>`,
+    features: ['Sharing', 'Access', 'Collaboration'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'team-invitation',
+    name: 'Team Invitation',
+    category: 'Business',
+    description: 'Invite to team workspace',
+    subject: 'You\'re invited to join [Team]',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invite</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Team Invitation</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Join the team and start collaborating.</p></td></tr></table></body></html>`,
+    features: ['Collaboration', 'Invite', 'Team'],
+    isPopular: true,
+    isNew: true
+  },
+
+  {
+    id: 'backup-complete',
+    name: 'Backup Complete',
+    category: 'Business',
+    description: 'Data backup completed',
+    subject: 'Your backup is complete',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Backup</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#f0fdf4"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#16a34a;margin:0;font-size:22px">Backup Complete</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Your data has been safely backed up.</p></td></tr></table></body></html>`,
+    features: ['Complete', 'Data', 'Safety'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'invoice-ready',
+    name: 'Invoice Ready',
+    category: 'Transactional',
+    description: 'Invoice is ready for download',
+    subject: 'Your invoice is ready',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invoice</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Invoice Ready</h1><p style="color:#6b7280;margin:10px 0 0">Download your invoice.</p></td></tr></table></body></html>`,
+    features: ['Document', 'Ready', 'Download'],
+    isPopular: true,
+    isNew: false
+  },
+
+  {
+    id: 'subscription-cancelled',
+    name: 'Subscription Cancelled',
+    category: 'Transactional',
+    description: 'Confirm subscription cancellation',
+    subject: 'Subscription cancelled',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Cancelled</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Cancelled</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Your subscription has been cancelled.</p></td></tr></table></body></html>`,
+    features: ['Cancelled', 'Confirmation', 'Final'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'membership-renewal',
+    name: 'Membership Renewal',
+    category: 'Business',
+    description: 'Membership renewal reminder',
+    subject: 'Your membership expires soon',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Membership</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Membership Expires</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Renew to continue enjoying benefits.</p></td></tr></table></body></html>`,
+    features: ['Membership', 'Renewal', 'Benefits'],
+    isPopular: true,
+    isNew: false
+  },
+
+  {
+    id: 'content-published',
+    name: 'Content Published',
+    category: 'Business',
+    description: 'Notify when content goes live',
+    subject: 'Your content is now live',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Published</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#f0fdf4"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#16a34a;margin:0;font-size:22px">Published!</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Your content is now live.</p></td></tr></table></body></html>`,
+    features: ['Live', 'Content', 'Success'],
+    isPopular: false,
+    isNew: true
+  },
+
+  {
+    id: 'comment-reply',
+    name: 'Comment Reply',
+    category: 'Transactional',
+    description: 'Someone replied to your comment',
+    subject: 'New reply to your comment',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Reply</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">New Reply</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Someone replied to your comment.</p></td></tr></table></body></html>`,
+    features: ['Notification', 'Comment', 'Reply'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'feature-launched',
+    name: 'Feature Launched',
+    category: 'Business',
+    description: 'Announce new feature release',
+    subject: 'New Feature: [Feature Name]',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Feature</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#eff6ff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">New Feature</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">We've added a new feature for you.</p></td></tr></table></body></html>`,
+    features: ['Update', 'Feature', 'Launch'],
+    isPopular: true,
+    isNew: true
+  },
+
+  {
+    id: 'maintenance-notice',
+    name: 'Maintenance Notice',
+    category: 'Business',
+    description: 'Scheduled maintenance announcement',
+    subject: 'Scheduled Maintenance This Weekend',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Maintenance</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fffbeb"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Maintenance Scheduled</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">This weekend from 2AM to 6AM.</p></td></tr></table></body></html>`,
+    features: ['Notice', 'Schedule', 'Downtime'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'order-update',
+    name: 'Order Update',
+    category: 'E-commerce',
+    description: 'Update about order status',
+    subject: 'Order Update',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Update</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Order Update</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Your order status has changed.</p></td></tr></table></body></html>`,
+    features: ['Update', 'Status', 'Progress'],
+    isPopular: true,
+    isNew: false
   }
 ]
 
