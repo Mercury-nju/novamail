@@ -283,39 +283,17 @@ export default function DashboardLayout({
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <div className="flex flex-1" />
             <div className="flex items-center gap-x-4 lg:gap-x-6">
-              <div className="hidden lg:block lg:h-8 lg:w-px lg:bg-gradient-to-b lg:from-transparent lg:via-gray-300 lg:to-transparent" />
-              <div className="flex items-center gap-x-3">
-                {/* User Avatar */}
-                <div className="relative">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-0.5 shadow-lg">
-                    <div className="h-full w-full rounded-full bg-white flex items-center justify-center">
-                      <span className="text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{getUserInitials()}</span>
-                    </div>
-                  </div>
-                  <span className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"></span>
-                </div>
-                {/* User Info */}
-                <div className="hidden md:flex flex-col items-start">
-                  <span className="text-sm font-semibold text-gray-900">{getUserDisplayName()}</span>
-                  {userSubscription && (
-                    userSubscription.plan === 'pro' ? (
-                      <motion.span
-                        className="inline-flex items-center rounded-md bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-sm"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3 }}
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        ⭐ PRO
-                      </motion.span>
-                    ) : (
-                      <span className="text-[10px] font-medium text-gray-500">
-                        Free
-                      </span>
-                    )
-                  )}
-                </div>
-              </div>
+              {userSubscription && userSubscription.plan === 'pro' && (
+                <motion.span
+                  className="inline-flex items-center rounded-md bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  ⭐ PRO
+                </motion.span>
+              )}
             </div>
           </div>
         </div>
