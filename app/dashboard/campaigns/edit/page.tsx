@@ -21,8 +21,10 @@ export default function CampaignEditPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   
-  // 从URL参数获取模板ID
+  // 从URL参数获取模板ID和AI生成标志
   const templateId = searchParams.get('template') || 'modern-gradient'
+  const isAIGenerated = searchParams.get('ai-generated') === 'true'
+  const editMode = searchParams.get('edit-mode') === 'true'
   
   // 简单的状态管理
   const [campaignData, setCampaignData] = useState({
@@ -72,6 +74,31 @@ export default function CampaignEditPage() {
   
   // 初始化模板内容
   useEffect(() => {
+    // 检查是否是AI生成的模板
+    if (isAIGenerated) {
+      const aiTemplate = sessionStorage.getItem('ai-generated-template')
+      if (aiTemplate) {
+        try {
+          const templateData = JSON.parse(aiTemplate)
+          console.log('加载AI生成的模板:', templateData)
+          
+          setCampaignData({
+            subject: templateData.subject,
+            body: templateData.html
+          })
+          
+          // 加载后清除sessionStorage
+          sessionStorage.removeItem('ai-generated-template')
+          
+          toast.success('AI template loaded successfully!')
+          return
+        } catch (e) {
+          console.error('Failed to parse AI template:', e)
+          toast.error('Failed to load AI template')
+        }
+      }
+    }
+    
     console.log('=== 模板初始化调试 ===')
     console.log('currentTemplate:', currentTemplate)
     console.log('campaignData.body:', campaignData.body)
@@ -89,16 +116,23 @@ export default function CampaignEditPage() {
     
     // 获取用户积分信息
     fetchUserCredits()
-  }, [currentTemplate])
+  }, [currentTemplate, isAIGenerated])
   
   // 模板保存功能
   const handleSaveTemplate = () => {
+    const templateName = isAIGenerated 
+      ? (campaignData.subject || 'AI Generated Template')
+      : currentTemplate.name
+    const templateCategory = isAIGenerated 
+      ? 'ai-generated'
+      : currentTemplate.category
+    
     const templateData = {
-      name: currentTemplate.name,
-      category: currentTemplate.category,
-      subject: campaignData.subject || currentTemplate.subject,
-      htmlContent: campaignData.body || currentTemplate.htmlContent,
-      features: currentTemplate.features,
+      name: templateName,
+      category: templateCategory,
+      subject: campaignData.subject || currentTemplate?.subject || '',
+      htmlContent: campaignData.body || currentTemplate?.htmlContent || '',
+      features: isAIGenerated ? ['ai-generated', 'customizable'] : (currentTemplate?.features || []),
       savedAt: new Date().toISOString(),
       customizations: {
         subject: campaignData.subject,
