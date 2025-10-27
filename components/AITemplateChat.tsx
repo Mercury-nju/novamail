@@ -107,7 +107,7 @@ export default function AITemplateChat() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
         <div className="flex items-center space-x-3">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
             <SparklesIcon className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -124,7 +124,7 @@ export default function AITemplateChat() {
         {messages.length === 0 && (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center mx-auto mb-4">
                 <SparklesIcon className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Template AI</h3>
@@ -180,16 +180,17 @@ export default function AITemplateChat() {
         <div className="flex items-end space-x-2">
           <textarea
             rows={3}
-            className="flex-1 resize-none rounded-lg border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+            className="flex-1 resize-none rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
             placeholder="描述你想要的邮件模板..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
+            style={{ resize: 'none' }}
           />
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            className="rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-2 text-white hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             <PaperAirplaneIcon className="h-5 w-5" />
           </button>

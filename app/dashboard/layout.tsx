@@ -23,9 +23,9 @@ import { fetchUserSubscription } from '@/lib/permissions'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+  { name: 'Template AI', href: '/dashboard/templates', icon: SparklesIcon },
   { name: 'Contacts', href: '/dashboard/contacts', icon: UserGroupIcon },
   { name: 'Campaigns', href: '/dashboard/campaigns', icon: EnvelopeIcon },
-  { name: 'Template AI', href: '/dashboard/templates', icon: SparklesIcon },
   { name: 'Billing', href: '/dashboard/billing', icon: CreditCardIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
   { name: 'Pricing', href: '/pricing', icon: CurrencyDollarIcon },
