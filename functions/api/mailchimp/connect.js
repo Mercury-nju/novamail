@@ -29,7 +29,12 @@ export async function onRequestPost({ request, env }) {
     const clientId = env.MAILCHIMP_CLIENT_ID;
     const redirectUri = env.MAILCHIMP_REDIRECT_URI;
     
+    console.log('Mailchimp OAuth config check:');
+    console.log('Client ID:', clientId ? 'Set' : 'Not set');
+    console.log('Redirect URI:', redirectUri ? 'Set' : 'Not set');
+    
     if (!clientId || !redirectUri) {
+      console.error('Mailchimp OAuth not configured - missing environment variables');
       return new Response(JSON.stringify({ 
         success: false, 
         error: 'Mailchimp OAuth not configured' 
