@@ -135,28 +135,28 @@ export default function Dashboard() {
   }
 
   return (
-    <>
+    <div>
       {/* Header Section */}
       <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <SparklesIcon className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-lg font-medium text-gray-900">Dashboard</h1>
-              <p className="text-xs text-gray-500">AI Email Marketing Platform</p>
-            </div>
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+            <SparklesIcon className="h-5 w-5 text-white" />
           </div>
-          <Link
-            href="/dashboard/campaigns/new"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <RocketLaunchIcon className="h-4 w-4 mr-2" />
-            Start Creating
-          </Link>
+          <div>
+            <h1 className="text-lg font-medium text-gray-900">Dashboard</h1>
+            <p className="text-xs text-gray-500">AI Email Marketing Platform</p>
+          </div>
         </div>
+        <Link
+          href="/dashboard/campaigns/new"
+          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <RocketLaunchIcon className="h-4 w-4 mr-2" />
+          Start Creating
+        </Link>
+      </div>
 
-        {/* Welcome Section */}
+      {/* Welcome Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -404,6 +404,6 @@ export default function Dashboard() {
           </motion.div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
