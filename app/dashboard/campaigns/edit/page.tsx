@@ -187,7 +187,7 @@ export default function CampaignEditPage() {
         body: JSON.stringify({
           esp: selectedESP,
           name: currentTemplate.name,
-          html: campaignData.body || currentTemplate.htmlContent,
+          html: campaignData.body || currentTemplate.htmlContent || '<p>Template content</p>',
           subject: campaignData.subject || currentTemplate.subject,
           userEmail: userEmail
         })
