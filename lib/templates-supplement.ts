@@ -448,6 +448,102 @@ export const supplementTemplates: ProfessionalTemplate[] = [
     features: ['Update', 'Status', 'Progress'],
     isPopular: true,
     isNew: false
+  },
+
+  {
+    id: 'product-recommendation',
+    name: 'Product Recommendation',
+    category: 'E-commerce',
+    description: 'Personalized product suggestions',
+    subject: 'Products you might like',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Recommendation</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">For You</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Based on your browsing history.</p></td></tr></table></body></html>`,
+    features: ['Personalized', 'Recommended', 'Discovery'],
+    isPopular: true,
+    isNew: true
+  },
+
+  {
+    id: 'bundle-offer',
+    name: 'Bundle Offer',
+    category: 'E-commerce',
+    description: 'Special bundle deal',
+    subject: 'Save 30% with this bundle',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Bundle</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fef3c7"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#d97706;margin:0;font-size:22px">Bundle Deal</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Save when you buy together.</p></td></tr></table></body></html>`,
+    features: ['Bundle', 'Savings', 'Value'],
+    isPopular: true,
+    isNew: false
+  },
+
+  {
+    id: 'admin-alert',
+    name: 'Admin Alert',
+    category: 'Business',
+    description: 'Administrative alert',
+    subject: 'Action Required: System Alert',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Alert</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fef2f2"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-left:4px solid #dc2626"><tr><td style="padding:40px"><h1 style="color:#dc2626;margin:0;font-size:22px">Alert</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Immediate attention required.</p></td></tr></table></body></html>`,
+    features: ['Urgent', 'Admin', 'System'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'achievement-unlocked',
+    name: 'Achievement Unlocked',
+    category: 'Marketing',
+    description: 'Gamification achievement',
+    subject: 'Achievement Unlocked!',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Achievement</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fffbeb"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#f59e0b;margin:0;font-size:22px">Achievement!</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">You've unlocked a new achievement.</p></td></tr></table></body></html>`,
+    features: ['Gamification', 'Reward', 'Motivation'],
+    isPopular: true,
+    isNew: true
+  },
+
+  {
+    id: 'milestone-reached',
+    name: 'Milestone Reached',
+    category: 'Marketing',
+    description: 'Reach usage milestone',
+    subject: 'You reached 100 messages!',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Milestone</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#f0f9ff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#3b82f6;margin:0;font-size:22px">100 Messages Sent</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Keep up the great work!</p></td></tr></table></body></html>`,
+    features: ['Progress', 'Milestone', 'Encouragement'],
+    isPopular: true,
+    isNew: false
+  },
+
+  {
+    id: 'task-assigned',
+    name: 'Task Assigned',
+    category: 'Business',
+    description: 'Notify task assignment',
+    subject: 'New task assigned to you',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Task</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">New Task</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Due: March 25, 2024</p></td></tr></table></body></html>`,
+    features: ['Task', 'Assignment', 'Due'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'comment-approved',
+    name: 'Comment Approved',
+    category: 'Business',
+    description: 'Comment moderation approval',
+    subject: 'Your comment was approved',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Approved</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#f0fdf4"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#16a34a;margin:0;font-size:22px">Approved</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Your comment is now live.</p></td></tr></table></body></html>`,
+    features: ['Moderation', 'Approval', 'Success'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'thank-you-message',
+    name: 'Thank You Message',
+    category: 'Marketing',
+    description: 'Appreciation message',
+    subject: 'Thank you for being with us',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Thanks</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Thank You</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">We appreciate your support.</p></td></tr></table></body></html>`,
+    features: ['Gratitude', 'Appreciation', 'Relationship'],
+    isPopular: true,
+    isNew: false
   }
 ]
 
