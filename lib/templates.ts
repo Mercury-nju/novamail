@@ -1,3 +1,5 @@
+import { additionalTemplates } from './templates-additional'
+
 export interface ProfessionalTemplate {
   id: string
   name: string
@@ -372,3 +374,10 @@ export const getPopularTemplates = (): ProfessionalTemplate[] => {
 export const getNewTemplates = (): ProfessionalTemplate[] => {
   return professionalTemplates.filter(template => template.isNew)
 }
+
+// 导出包含所有100个模板的数组
+export const allTemplates: ProfessionalTemplate[] = [
+  ...professionalTemplates,
+  ...additionalTemplates
+]
+
