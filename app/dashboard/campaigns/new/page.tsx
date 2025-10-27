@@ -34,6 +34,7 @@ export default function NewCampaignPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [currentTemplateIndex, setCurrentTemplateIndex] = useState(0)
+  const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const [campaignData, setCampaignData] = useState<CampaignData>({
     templateId: '',
     subject: '',
@@ -74,19 +75,25 @@ export default function NewCampaignPage() {
 
   const currentTemplate = professionalTemplates[currentTemplateIndex]
 
+  // Get unique categories
+  const categories = ['All', ...Array.from(new Set(professionalTemplates.map(t => t.category)))]
+  
+  // Filter templates by category
+  const filteredTemplates = selectedCategory === 'All' 
+    ? professionalTemplates 
+    : professionalTemplates.filter(t => t.category === selectedCategory)
+
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Modern': return 'bg-gray-100 text-gray-700'
-      case 'Minimal': return 'bg-gray-100 text-gray-700'
-      case 'Corporate': return 'bg-gray-100 text-gray-700'
-      case 'Creative': return 'bg-gray-100 text-gray-700'
-      case 'Elegant': return 'bg-gray-100 text-gray-700'
-      case 'Bold': return 'bg-gray-100 text-gray-700'
-      case 'Newsletter': return 'bg-gray-100 text-gray-700'
-      case 'Product': return 'bg-gray-100 text-gray-700'
-      case 'Onboarding': return 'bg-gray-100 text-gray-700'
-      case 'Events': return 'bg-gray-100 text-gray-700'
-      case 'Sales': return 'bg-gray-100 text-gray-700'
+      case 'Business': return 'bg-blue-100 text-blue-700'
+      case 'E-commerce': return 'bg-green-100 text-green-700'
+      case 'Newsletter': return 'bg-purple-100 text-purple-700'
+      case 'Product Launch': return 'bg-orange-100 text-orange-700'
+      case 'Onboarding': return 'bg-indigo-100 text-indigo-700'
+      case 'Events': return 'bg-pink-100 text-pink-700'
+      case 'Transactional': return 'bg-gray-100 text-gray-700'
+      case 'Marketing': return 'bg-yellow-100 text-yellow-700'
+      case 'Holiday': return 'bg-red-100 text-red-700'
       default: return 'bg-gray-100 text-gray-700'
     }
   }
@@ -263,25 +270,51 @@ export default function NewCampaignPage() {
           >
             {/* Template Grid */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">All Templates</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {professionalTemplates.map((template, index) => (
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">All Templates</h3>
+                
+                {/* Category Filter */}
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                        selectedCategory === category
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      {category}
+                      {category !== 'All' && (
+                        <span className="ml-1 text-xs">({professionalTemplates.filter(t => t.category === category).length})</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3 max-h-[400px] overflow-y-auto">
+                {filteredTemplates.map((template, index) => {
+                  // Find original index in professionalTemplates array
+                  const originalIndex = professionalTemplates.findIndex(t => t.id === template.id)
+                  return (
                   <motion.div
                     key={template.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
-                    onClick={() => setCurrentTemplateIndex(index)}
+                    onClick={() => setCurrentTemplateIndex(originalIndex)}
                     className={`
                       relative cursor-pointer transition-all duration-300 p-3 rounded-xl border-2 h-20
-                      ${currentTemplateIndex === index 
+                      ${currentTemplateIndex === originalIndex 
                         ? 'border-blue-500 bg-gradient-to-r from-blue-50 to-purple-50 shadow-lg shadow-blue-100/50' 
                         : 'border-gray-200 hover:border-blue-300 hover:shadow-lg hover:bg-white hover:shadow-gray-100/50'
                       }
                     `}
                   >
                     {/* Selected Indicator */}
-                    {currentTemplateIndex === index && (
+                    {currentTemplateIndex === originalIndex && (
                       <motion.div
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
