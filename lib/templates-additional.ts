@@ -159,6 +159,63 @@ export const additionalTemplates: ProfessionalTemplate[] = [
     features: ['Alert', 'Action Required', 'Helpful'],
     isPopular: false,
     isNew: false
+  },
+
+  // ========== MARKETING (10 additional templates) ==========
+  {
+    id: 'spring-sale',
+    name: 'Spring Sale',
+    category: 'Marketing',
+    description: 'Seasonal spring promotion',
+    subject: '🌸 Spring Sale - Up to 60% OFF!',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Spring Sale</title></head><body style="margin:0;padding:20px;font-family:'Helvetica Neue',Arial,sans-serif;background:linear-gradient(135deg,#dbeafe,#fce7f3)"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:650px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15)"><tr><td style="padding:70px 40px;background:linear-gradient(135deg,#ec4899,#f43f5e);text-align:center"><div style="font-size:96px;margin-bottom:30px">🌸</div><h1 style="color:#fff;margin:0 0 20px;font-size:48px;font-weight:900">SPRING SALE</h1><p style="color:#fecdd3;margin:0;font-size:28px;font-weight:700">Up to 60% OFF Everything</p><div style="background:#fff;color:#ec4899;padding:18px 45px;border-radius:12px;display:inline-block;margin-top:30px;font-size:24px;font-weight:900">LIMITED TIME</div></div></td></tr><tr><td style="padding:60px 40px"><h2 style="color:#1f2937;margin:0 0 25px;font-size:32px">Welcome Spring with Savings!</h2><p style="color:#6b7280;margin:0 0 40px;line-height:1.9;font-size:17px">Refresh your wardrobe, home, and lifestyle with our exclusive spring collection. Don't miss these incredible deals!</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:40px 0"><div style="text-align:center;padding:30px;background:#fdf2f8;border-radius:16px"><div style="font-size:56px;margin-bottom:15px">🌺</div><p style="margin:0;color:#be185d;font-size:18px;font-weight:800">Women's</p><p style="margin:5px 0 0;color:#9ca3af;font-size:14px">50% OFF</p></div><div style="text-align:center;padding:30px;background:#ecfdf5;border-radius:16px"><div style="font-size:56px;margin-bottom:15px">🍃</div><p style="margin:0;color:#059669;font-size:18px;font-weight:800">Men's</p><p style="margin:5px 0 0;color:#9ca3af;font-size:14px">45% OFF</p></div><div style="text-align:center;padding:30px;background:#fef3c7;border-radius:16px"><div style="font-size:56px;margin-bottom:15px">🏡</div><p style="margin:0;color:#d97706;font-size:18px;font-weight:800">Home</p><p style="margin:5px 0 0;color:#9ca3af;font-size:14px">60% OFF</p></div><div style="text-align:center;padding:30px;background:#e0f2fe;border-radius:16px"><div style="font-size:56px;margin-bottom:15px">✨</div><p style="margin:0;color:#0284c7;font-size:18px;font-weight:800">Accessories</p><p style="margin:5px 0 0;color:#9ca3af;font-size:14px">40% OFF</p></div></div><div style="text-align:center;margin-top:45px"><a href="#" style="background:linear-gradient(135deg,#ec4899,#f43f5e);color:#fff;text-decoration:none;padding:22px 70px;border-radius:14px;font-weight:900;font-size:20px;display:inline-block;box-shadow:0 8px 28px rgba(236,72,153,0.4)">Shop Spring Collection →</a></div></td></tr></table></body></html>`,
+    features: ['Seasonal', 'Categories', 'Strong Discounts'],
+    isPopular: true,
+    isNew: true
+  },
+  {
+    id: 'customer-appreciation',
+    name: 'Customer Appreciation',
+    category: 'Marketing',
+    description: 'Thank and reward loyal customers',
+    subject: 'Thank You - Special Offer Just for You',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Appreciation</title></head><body style="margin:0;padding:20px;font-family:'Helvetica Neue',Arial,sans-serif;background:#fefce8"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:650px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15)"><tr><td style="padding:0"><div style="background:linear-gradient(135deg,#facc15,#eab308);padding:70px 40px;text-align:center"><div style="font-size:96px;margin-bottom:25px">💝</div><h1 style="color:#1f2937;margin:0 0 20px;font-size:44px;font-weight:900">THANK YOU!</h1><p style="color:#78350f;margin:0;font-size:22px;font-weight:700">We Appreciate You</p></div></td></tr><tr><td style="padding:60px 40px"><h2 style="color:#1f2937;margin:0 0 25px;font-size:28px;font-weight:800;text-align:center">You're One of Our Favorite Customers!</h2><p style="color:#6b7280;margin:0 0 40px;line-height:1.9;font-size:17px;text-align:center">As a token of our appreciation for your loyalty, enjoy exclusive savings on your next purchase.</p><div style="background:#fef3c7;padding:35px;border-radius:16px;margin:35px 0;text-align:center;border:3px solid #facc15"><div style="font-size:64px;margin-bottom:20px">🎁</div><p style="margin:0 0 12px;color:#78350f;font-size:20px;font-weight:700">Your Exclusive Code</p><div style="background:#fff;padding:20px 40px;border-radius:12px;display:inline-block;font-size:36px;font-weight:900;color:#facc15;letter-spacing:4px">SAVE30</div></div><p style="color:#6b7280;margin:30px 0 0;font-size:15px;text-align:center">Valid for 30 days</p></td></tr></table></body></html>`,
+    features: ['Personalized', 'Exclusive', 'Rewarding'],
+    isPopular: true,
+    isNew: false
+  },
+  {
+    id: 'birthday-special',
+    name: 'Birthday Special',
+    category: 'Marketing',
+    description: 'Birthday celebration offer',
+    subject: '🎂 Happy Birthday! Your Special Gift Awaits',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Birthday</title></head><body style="margin:0;padding:20px;font-family:'Helvetica Neue',Arial,sans-serif;background:linear-gradient(135deg,#fef3c7,#fde68a)"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:650px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15)"><tr><td style="padding:0"><div style="background:linear-gradient(135deg,#f59e0b,#d97706);padding:70px 40px;text-align:center"><div style="font-size:112px;margin-bottom:30px">🎂🎉</div><h1 style="color:#fff;margin:0 0 20px;font-size:44px;font-weight:900">HAPPY BIRTHDAY!</h1><p style="color:#fffbeb;margin:0;font-size:24px;font-weight:700">Your Special Day, Our Special Offer</p></div></td></tr><tr><td style="padding:60px 40px"><h2 style="color:#1f2937;margin:0 0 25px;font-size:28px;font-weight:800;text-align:center">Celebrate Your Special Day With Us!</h2><p style="color:#6b7280;margin:0 0 40px;line-height:1.9;font-size:17px;text-align:center">Birthdays only come once a year, so let's make this one extra special! Enjoy an exclusive birthday bonus just for you.</p><div style="background:linear-gradient(135deg,#fbbf24,#f59e0b);padding:40px;border-radius:20px;margin:35px 0;text-align:center"><h3 style="margin:0 0 12px;color:#fff;font-size:32px;font-weight:900">25% OFF</h3><p style="margin:0;color:#fffbeb;font-size:18px;font-weight:600">Plus Free Birthday Gift on Orders Over $100</p></div><div style="text-align:center;margin-top:45px"><a href="#" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;text-decoration:none;padding:22px 70px;border-radius:14px;font-weight:900;font-size:20px;display:inline-block;box-shadow:0 8px 28px rgba(245,158,11,0.4)">Claim Your Birthday Gift →</a></div></td></tr></table></body></html>`,
+    features: ['Celebratory', 'Personal', 'Gift'],
+    isPopular: true,
+    isNew: true
+  },
+  {
+    id: 'cart-abandonment-2',
+    name: 'Cart Abandonment',
+    category: 'Marketing',
+    description: 'Second reminder for abandoned carts',
+    subject: 'Your Items Are Still Waiting - Last Chance!',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Abandonment</title></head><body style="margin:0;padding:20px;font-family:'Helvetica Neue',Arial,sans-serif;background:#fffbeb"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:650px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 10px 40px rgba(249,115,22,0.2)"><tr><td style="padding:0"><div style="background:linear-gradient(135deg,#f97316,#ea580c);padding:60px 40px;text-align:center"><div style="font-size:96px;margin-bottom:25px">⏰</div><h1 style="color:#fff;margin:0 0 18px;font-size:42px;font-weight:900">LAST CHANCE!</h1><p style="color:#fed7aa;margin:0;font-size:20px;font-weight:600">Your Items Won't Last Long</p></div></td></tr><tr><td style="padding:50px 40px"><h2 style="color:#1f2937;margin:0 0 20px;font-size:28px;font-weight:800">Your Cart is Running Out of Time</h2><p style="color:#6b7280;margin:0 0 35px;line-height:1.8;font-size:16px">We're holding these items in your cart, but they're popular and may sell out soon.</p><div style="background:#fffbeb;border:3px solid #f59e0b;padding:35px;border-radius:16px;margin:30px 0"><h3 style="margin:0 0 20px;color:#92400e;font-size:24px;font-weight:900">🎁 Bonus Offer</h3><p style="margin:0 0 15px;color:#78350f;font-size:18px;font-weight:700">Complete your purchase now and receive:</p><ul style="margin:0;padding-left:25px;color:#92400e"><li style="margin-bottom:10px">FREE Shipping (Save $9.99)</li><li style="margin-bottom:10px">Gift Box Included (Worth $5)</li><li>Priority Customer Support</li></ul></div><div style="text-align:center;margin-top:40px"><a href="#" style="background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;text-decoration:none;padding:20px 65px;border-radius:14px;font-weight:900;font-size:19px;display:inline-block;box-shadow:0 8px 28px rgba(249,115,22,0.4)">Checkout Now →</a></div></td></tr></table></body></html>`,
+    features: ['Urgency', 'Incentive', 'Bonuses'],
+    isPopular: true,
+    isNew: false
+  },
+  {
+    id: 'new-arrivals',
+    name: 'New Arrivals',
+    category: 'Marketing',
+    description: 'Announce new product arrivals',
+    subject: '🆕 Just In - New Arrivals!',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>New Arrivals</title></head><body style="margin:0;padding:20px;font-family:'Helvetica Neue',Arial,sans-serif;background:#ecfdf5"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:650px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15)"><tr><td style="padding:0"><div style="background:linear-gradient(135deg,#10b981,#059669);padding:70px 40px;text-align:center"><div style="font-size:96px;margin-bottom:30px">🆕</div><h1 style="color:#fff;margin:0 0 25px;font-size:44px;font-weight:900">NEW ARRIVALS</h1><div style="background:#fff;color:#10b981;padding:15px 40px;border-radius:12px;display:inline-block;font-size:22px;font-weight:900">FRESH COLLECTION</div></div></td></tr><tr><td style="padding:60px 40px"><h2 style="color:#1f2937;margin:0 0 25px;font-size:32px;font-weight:800">What's New This Week</h2><p style="color:#6b7280;margin:0 0 40px;line-height:1.9;font-size:17px">Discover the latest trends and hottest picks. Fresh arrivals every week!</p><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin:35px 0"><div style="text-align:center;padding:25px;background:#ecfdf5;border-radius:12px"><div style="font-size:56px;margin-bottom:12px">👕</div><p style="margin:0;color:#059669;font-weight:700;font-size:16px">Shirts</p></div><div style="text-align:center;padding:25px;background:#ecfdf5;border-radius:12px"><div style="font-size:56px;margin-bottom:12px">👖</div><p style="margin:0;color:#059669;font-weight:700;font-size:16px">Pants</p></div><div style="text-align:center;padding:25px;background:#ecfdf5;border-radius:12px"><div style="font-size:56px;margin-bottom:12px">👠</div><p style="margin:0;color:#059669;font-weight:700;font-size:16px">Shoes</p></div></div><div style="text-align:center;margin-top:45px"><a href="#" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;text-decoration:none;padding:22px 70px;border-radius:14px;font-weight:900;font-size:20px;display:inline-block;box-shadow:0 8px 28px rgba(16,185,129,0.4)">Shop New Arrivals →</a></div></td></tr></table></body></html>`,
+    features: ['Fresh', 'Trendy', 'Product Showcase'],
+    isPopular: true,
+    isNew: true
   }
 ]
 
