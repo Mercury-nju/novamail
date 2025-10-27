@@ -1,43 +1,37 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  SparklesIcon, 
-  PaperAirplaneIcon,
-  UserIcon,
-  CpuChipIcon,
-  XMarkIcon,
-  ArrowRightIcon,
-  LightBulbIcon,
-  DocumentTextIcon,
-  RocketLaunchIcon
-} from '@heroicons/react/24/outline'
-import { professionalTemplates, type ProfessionalTemplate } from '@/lib/templates'
-
-interface AIAssistantProps {
-  onTemplateSelect: (template: ProfessionalTemplate) => void
-  onClose: () => void
-}
+import { Fragment, useState, useRef, useEffect } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { XMarkIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 interface Message {
-  id: string
-  type: 'user' | 'assistant'
+  role: 'user' | 'assistant'
   content: string
-  timestamp: Date
+  html?: string
 }
 
-export default function AIAssistant({ onTemplateSelect, onClose }: AIAssistantProps) {
+interface AIAssistantProps {
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
+}
+
+export default function AIAssistant({ isOpen, setIsOpen }: AIAssistantProps) {
+  const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: '1',
-      type: 'assistant',
-      content: 'Hi! I\'m your AI email assistant. I can help you create the perfect email campaign. What type of email are you looking to create?',
-      timestamp: new Date()
+      role: 'assistant',
+      content: '你好！我是你的AI邮件模板助手。请描述你想要的邮件模板，我会为你创建一个专业的模板。'
     }
   ])
-  const [inputValue, setInputValue] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
+  const [input, setInput] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [generatedTemplate, setGeneratedTemplate] = useState<{
+    html: string
+    subject: string
+    name: string
+  } | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -48,255 +42,200 @@ export default function AIAssistant({ onTemplateSelect, onClose }: AIAssistantPr
     scrollToBottom()
   }, [messages])
 
-  const getSuggestedTemplates = (query: string): ProfessionalTemplate[] => {
-    const lowerQuery = query.toLowerCase()
-    
-    // Keyword matching for template suggestions
-    if (lowerQuery.includes('newsletter') || lowerQuery.includes('update') || lowerQuery.includes('weekly')) {
-      return professionalTemplates.filter(t => t.category === 'Newsletter' || t.id === 'newsletter')
-    }
-    if (lowerQuery.includes('product') || lowerQuery.includes('launch') || lowerQuery.includes('new')) {
-      return professionalTemplates.filter(t => t.category === 'Product' || t.id === 'product-launch')
-    }
-    if (lowerQuery.includes('welcome') || lowerQuery.includes('onboard') || lowerQuery.includes('new user')) {
-      return professionalTemplates.filter(t => t.category === 'Onboarding' || t.id === 'welcome-series')
-    }
-    if (lowerQuery.includes('event') || lowerQuery.includes('invitation') || lowerQuery.includes('rsvp')) {
-      return professionalTemplates.filter(t => t.category === 'Events' || t.id === 'event-invitation')
-    }
-    if (lowerQuery.includes('corporate') || lowerQuery.includes('business') || lowerQuery.includes('professional')) {
-      return professionalTemplates.filter(t => t.category === 'Corporate' || t.id === 'corporate-professional')
-    }
-    if (lowerQuery.includes('modern') || lowerQuery.includes('gradient') || lowerQuery.includes('trendy')) {
-      return professionalTemplates.filter(t => t.category === 'Modern' || t.id === 'modern-gradient')
-    }
-    if (lowerQuery.includes('minimal') || lowerQuery.includes('clean') || lowerQuery.includes('simple')) {
-      return professionalTemplates.filter(t => t.category === 'Minimal' || t.id === 'minimal-clean')
-    }
-    if (lowerQuery.includes('ecommerce') || lowerQuery.includes('sales') || lowerQuery.includes('shop')) {
-      return professionalTemplates.filter(t => t.category === 'Sales' || t.id === 'ecommerce')
-    }
-    
-    // Default suggestions
-    return professionalTemplates.slice(0, 3)
-  }
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return
 
-  const handleSendMessage = async () => {
-    if (!inputValue.trim()) return
+    const userMessage = input
+    setInput('')
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }])
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      type: 'user',
-      content: inputValue,
-      timestamp: new Date()
-    }
+    setIsLoading(true)
 
-    setMessages(prev => [...prev, userMessage])
-    setInputValue('')
-    setIsTyping(true)
+    try {
+      const response = await fetch('/api/ai/generate-template', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: userMessage }),
+      })
 
-    // Simulate AI response
-    setTimeout(() => {
-      const suggestedTemplates = getSuggestedTemplates(inputValue)
-      
-      let response = ''
-      if (suggestedTemplates.length > 0) {
-        response = `Based on your request, I recommend these templates:\n\n`
-        suggestedTemplates.forEach((template, index) => {
-          response += `${index + 1}. **${template.name}** (${template.category})\n   ${template.description}\n\n`
-        })
-        response += `Would you like me to set up one of these templates for you?`
+      if (!response.ok) {
+        throw new Error('Failed to generate template')
+      }
+
+      const data = await response.json()
+
+      if (data.success && data.template) {
+        const template = data.template
+        setGeneratedTemplate(template)
+        
+        const assistantMessage = `我已经为你创建了一个邮件模板：\n\n**模板名称：** ${template.name}\n**主题：** ${template.subject}\n\n你想使用这个模板还是继续修改？`
+        
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: assistantMessage,
+          html: template.html 
+        }])
       } else {
-        response = `I understand you're looking to create an email campaign. Here are some popular templates that might work well:\n\n`
-        professionalTemplates.slice(0, 3).forEach((template, index) => {
-          response += `${index + 1}. **${template.name}** (${template.category})\n   ${template.description}\n\n`
-        })
-        response += `Could you tell me more about your specific needs? For example:\n- What type of business are you in?\n- Who is your target audience?\n- What's the purpose of this email?`
+        throw new Error(data.error || 'Failed to generate template')
       }
-
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        type: 'assistant',
-        content: response,
-        timestamp: new Date()
-      }
-
-      setMessages(prev => [...prev, assistantMessage])
-      setIsTyping(false)
-    }, 1500)
+    } catch (error) {
+      console.error('AI assistant error:', error)
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: '抱歉，生成模板时出现了错误。请稍后再试或重新描述你的需求。'
+      }])
+      toast.error('生成失败，请重试')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const handleTemplateQuickSelect = (template: ProfessionalTemplate) => {
-    const message: Message = {
-      id: Date.now().toString(),
-      type: 'user',
-      content: `I'd like to use the ${template.name} template`,
-      timestamp: new Date()
+  const handleUseTemplate = () => {
+    if (!generatedTemplate) return
+
+    const templateData = {
+      name: generatedTemplate.name,
+      subject: generatedTemplate.subject,
+      html: generatedTemplate.html,
     }
 
-    setMessages(prev => [...prev, message])
-    setIsTyping(true)
-
-    setTimeout(() => {
-      const response: Message = {
-        id: (Date.now() + 1).toString(),
-        type: 'assistant',
-        content: `Perfect! I've selected the **${template.name}** template for you. This template is great for ${template.category.toLowerCase()} campaigns. Let me set that up for you now.`,
-        timestamp: new Date()
-      }
-
-      setMessages(prev => [...prev, response])
-      setIsTyping(false)
-
-      // Auto-select template after a short delay
-      setTimeout(() => {
-        onTemplateSelect(template)
-      }, 1000)
-    }, 1000)
+    sessionStorage.setItem('ai-generated-template', JSON.stringify(templateData))
+    router.push('/dashboard/campaigns/edit?ai-generated=true')
+    setIsOpen(false)
+    toast.success('正在打开编辑器...')
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSendMessage()
+      handleSend()
     }
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[80vh] flex flex-col"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <CpuChipIcon className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">AI Email Assistant</h2>
-              <p className="text-sm text-gray-500">Let me help you create the perfect email</p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </button>
-        </div>
+    <Transition.Root show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={setIsOpen}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+        </Transition.Child>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
-          {messages.map((message) => (
-            <motion.div
-              key={message.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <div className={`flex items-start space-x-3 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  message.type === 'user' 
-                    ? 'bg-blue-500' 
-                    : 'bg-gradient-to-r from-blue-500 to-purple-600'
-                }`}>
-                  {message.type === 'user' ? (
-                    <UserIcon className="w-5 h-5 text-white" />
-                  ) : (
-                    <CpuChipIcon className="w-5 h-5 text-white" />
-                  )}
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl sm:p-0">
+                {/* Header */}
+                <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">AI</span>
+                    </div>
+                    <div>
+                      <Dialog.Title as="h3" className="text-base font-semibold text-gray-900">
+                        AI 邮件模板助手
+                      </Dialog.Title>
+                      <p className="text-xs text-gray-500">描述你的需求，我来创建专业模板</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="rounded-md text-gray-400 hover:text-gray-500"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
                 </div>
-                <div className={`px-4 py-3 rounded-2xl ${
-                  message.type === 'user'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 text-gray-900'
-                }`}>
-                  <p className="text-sm whitespace-pre-line">{message.content}</p>
-                  <p className={`text-xs mt-1 ${
-                    message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
-                  }`}>
-                    {message.timestamp.toLocaleTimeString()}
+
+                {/* Chat Messages */}
+                <div className="h-[500px] overflow-y-auto px-6 py-4 space-y-4">
+                  {messages.map((message, index) => (
+                    <div
+                      key={index}
+                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[80%] rounded-lg px-4 py-3 ${
+                          message.role === 'user'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-900'
+                        }`}
+                      >
+                        <div className="whitespace-pre-wrap">{message.content}</div>
+                        
+                        {message.html && (
+                          <div className="mt-4 pt-4 border-t border-gray-300">
+                            <button
+                              onClick={handleUseTemplate}
+                              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                            >
+                              使用此模板
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {isLoading && (
+                    <div className="flex justify-start">
+                      <div className="bg-gray-100 rounded-lg px-4 py-3">
+                        <div className="flex space-x-2">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Input Area */}
+                <div className="border-t border-gray-200 px-6 py-4">
+                  <div className="flex items-end space-x-2">
+                    <textarea
+                      rows={3}
+                      className="flex-1 resize-none rounded-lg border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+                      placeholder="描述你想要的邮件模板..."
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                    />
+                    <button
+                      onClick={handleSend}
+                      disabled={!input.trim() || isLoading}
+                      className="rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-2 text-white hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                      <PaperAirplaneIcon className="h-5 w-5" />
+                    </button>
+                  </div>
+                  <p className="mt-2 text-xs text-gray-500">
+                    Shift + Enter 换行，Enter 发送
                   </p>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-          
-          {isTyping && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex justify-start"
-            >
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                  <CpuChipIcon className="w-5 h-5 text-white" />
-                </div>
-                <div className="bg-gray-100 px-4 py-3 rounded-2xl">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-          
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Quick Template Suggestions */}
-        <div className="border-t border-gray-200 p-4">
-          <div className="mb-3">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">Quick Templates</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {professionalTemplates.slice(0, 4).map((template) => (
-                <button
-                  key={template.id}
-                  onClick={() => handleTemplateQuickSelect(template)}
-                  className="flex items-center space-x-2 p-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
-                >
-                  <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                    <SparklesIcon className="w-3 h-3 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{template.name}</p>
-                    <p className="text-xs text-gray-500 truncate">{template.category}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
         </div>
-
-        {/* Input */}
-        <div className="border-t border-gray-200 p-6">
-          <div className="flex space-x-3">
-            <div className="flex-1">
-              <textarea
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Describe your email campaign needs..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                rows={2}
-              />
-            </div>
-            <button
-              onClick={handleSendMessage}
-              disabled={!inputValue.trim() || isTyping}
-              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
-            >
-              <PaperAirplaneIcon className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </motion.div>
-    </div>
+      </Dialog>
+    </Transition.Root>
   )
 }
