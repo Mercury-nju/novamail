@@ -160,6 +160,138 @@ export const supplementTemplates: ProfessionalTemplate[] = [
     features: ['Notification', 'Status', 'Clear'],
     isPopular: false,
     isNew: false
+  },
+
+  {
+    id: 'survey-request',
+    name: 'Survey Request',
+    category: 'Marketing',
+    description: 'Customer satisfaction survey',
+    subject: 'Quick question for you',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Survey</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Take our survey</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Your feedback helps us improve.</p></td></tr></table></body></html>`,
+    features: ['Feedback', 'Short', 'Simple'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'event-registration',
+    name: 'Event Registration',
+    category: 'Events',
+    description: 'Confirm event registration',
+    subject: 'You\'re registered for [Event]',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Registration</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#f0fdf4"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#16a34a;margin:0;font-size:22px">Registration Confirmed</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">See you there!</p></td></tr></table></body></html>`,
+    features: ['Confirmation', 'Positive', 'Brief'],
+    isPopular: true,
+    isNew: false
+  },
+
+  {
+    id: 'appointment-confirmation',
+    name: 'Appointment Confirmation',
+    category: 'Events',
+    description: 'Confirm appointment booking',
+    subject: 'Appointment confirmed',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Appointment</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Appointment Confirmed</h1><p style="color:#6b7280;margin:10px 0 0">Date: March 20, 2024</p><p style="color:#6b7280;margin:10px 0 0">Time: 2:00 PM</p></td></tr></table></body></html>`,
+    features: ['Scheduled', 'Details', 'Calendar'],
+    isPopular: true,
+    isNew: true
+  },
+
+  {
+    id: 'appointment-reminder',
+    name: 'Appointment Reminder',
+    category: 'Events',
+    description: 'Remind about upcoming appointment',
+    subject: 'Reminder: Your appointment tomorrow',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Reminder</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fffbeb"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Tomorrow at 2:00 PM</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Don't forget your appointment.</p></td></tr></table></body></html>`,
+    features: ['Reminder', 'Tomorrow', 'Calendar'],
+    isPopular: true,
+    isNew: false
+  },
+
+  {
+    id: 'waitlist-notification',
+    name: 'Waitlist Notification',
+    category: 'E-commerce',
+    description: 'Item available from waitlist',
+    subject: 'Available now - item you wanted',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Available</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#f0fdf4"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#16a34a;margin:0;font-size:22px">Back in Stock</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">The item you wanted is available.</p></td></tr></table></body></html>`,
+    features: ['Availability', 'Waitlist', 'Urgent'],
+    isPopular: true,
+    isNew: true
+  },
+
+  {
+    id: 'back-in-stock',
+    name: 'Back in Stock',
+    category: 'E-commerce',
+    description: 'Item back in stock alert',
+    subject: 'Item back in stock',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>In Stock</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Available Now</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Previously sold out item is back.</p></td></tr></table></body></html>`,
+    features: ['Alert', 'Stock', 'Availability'],
+    isPopular: true,
+    isNew: false
+  },
+
+  {
+    id: 'price-drop-alert',
+    name: 'Price Drop Alert',
+    category: 'E-commerce',
+    description: 'Price reduction notification',
+    subject: 'Price dropped - 25% off',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Price Drop</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#16a34a;margin:0;font-size:22px">25% Price Drop</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">On items you viewed.</p></td></tr></table></body></html>`,
+    features: ['Price', 'Discount', 'Savings'],
+    isPopular: true,
+    isNew: true
+  },
+
+  {
+    id: 'account-suspended',
+    name: 'Account Suspended',
+    category: 'Transactional',
+    description: 'Account suspension notice',
+    subject: 'Important: Account action required',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Suspend</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fef2f2"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px"><tr><td style="padding:40px"><h1 style="color:#dc2626;margin:0;font-size:22px">Account Issue</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Please contact support to resolve.</p></td></tr></table></body></html>`,
+    features: ['Alert', 'Action', 'Support'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'security-alert',
+    name: 'Security Alert',
+    category: 'Transactional',
+    description: 'Security breach notification',
+    subject: 'Security Notice - Action Required',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Security</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border:2px solid #dc2626"><tr><td style="padding:40px"><h1 style="color:#dc2626;margin:0;font-size:22px">Security Notice</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">We detected unusual activity.</p></td></tr></table></body></html>`,
+    features: ['Security', 'Urgent', 'Warning'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'password-changed',
+    name: 'Password Changed',
+    category: 'Transactional',
+    description: 'Confirm password change',
+    subject: 'Your password was changed',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Password Changed</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">Password Changed</h1><p style="color:#6b7280;margin:15px 0 0;line-height:1.6">Successfully updated.</p></td></tr></table></body></html>`,
+    features: ['Security', 'Confirmation', 'Update'],
+    isPopular: false,
+    isNew: false
+  },
+
+  {
+    id: 'login-detected',
+    name: 'New Login Detected',
+    category: 'Transactional',
+    description: 'New device login notification',
+    subject: 'New login from unknown device',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>New Login</title></head><body style="margin:0;padding:20px;font-family:Arial,sans-serif;background:#fff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff"><tr><td style="padding:40px"><h1 style="color:#1f2937;margin:0;font-size:22px">New Login</h1><p style="color:#6b7280;margin:10px 0 0">Device: iPhone</p><p style="color:#6b7280;margin:10px 0 0">Location: New York</p></td></tr></table></body></html>`,
+    features: ['Security', 'Device', 'Location'],
+    isPopular: false,
+    isNew: false
   }
 ]
 
