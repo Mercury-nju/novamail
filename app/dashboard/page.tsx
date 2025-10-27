@@ -157,23 +157,23 @@ export default function Dashboard() {
       </div>
 
       {/* Welcome Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-8"
-        >
-          <h2 className="text-xl font-semibold text-gray-900">Welcome back!</h2>
-          <p className="text-sm text-gray-500 mt-1">Here's what's happening with your email campaigns today.</p>
-        </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="mb-8"
+      >
+        <h2 className="text-xl font-semibold text-gray-900">Welcome back!</h2>
+        <p className="text-sm text-gray-500 mt-1">Here's what's happening with your email campaigns today.</p>
+      </motion.div>
 
-        {/* Stats Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
-        >
+      {/* Stats Grid */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
+      >
           {/* Total Campaigns */}
           <div className="bg-white rounded-xl border border-gray-100 p-5">
             <div className="flex items-center justify-between">
@@ -239,15 +239,15 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        {/* Main Content Grid - 统一的3列布局 */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Recent Campaigns */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-2"
-          >
+      {/* Main Content Grid - 统一的3列布局 */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Recent Campaigns */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="lg:col-span-2"
+        >
             <div className="bg-white rounded-xl border border-gray-100 h-full">
               <div className="px-5 py-4 border-b border-gray-100">
                 <div className="flex items-center justify-between">
@@ -325,13 +325,13 @@ export default function Dashboard() {
             </div>
             </motion.div>
 
-          {/* Right Column - Sidebar */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="space-y-6"
-          >
+        {/* Right Column - Sidebar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="space-y-6"
+        >
             {/* Quick Actions */}
             <div className="bg-white rounded-xl border border-gray-100 p-5">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
