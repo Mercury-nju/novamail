@@ -73,28 +73,45 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @layer base {
-  html {
+  *,
+  *::before,
+  *::after {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html {
+    margin: 0 !important;
+    padding: 0 !important;
     width: 100%;
     height: 100%;
   }
   
   body {
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
     width: 100%;
     height: 100%;
+    overflow-x: hidden;
     @apply bg-white text-gray-900;
     font-family: 'Inter', system-ui, sans-serif;
   }
   
   #__next {
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
     width: 100%;
     height: 100%;
     min-height: 100vh;
+  }
+  
+  /* 确保根元素没有任何边距 */
+  html, body, div {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
   }
 }
 
