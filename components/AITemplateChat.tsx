@@ -149,17 +149,18 @@ export default function AITemplateChat() {
               {message.html && (
                 <div className="mt-4 pt-4 border-t border-gray-300">
                   {/* Template Preview */}
-                  <div className="mb-4 p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
-                    <div 
-                      dangerouslySetInnerHTML={{ __html: message.html }} 
-                      style={{ 
-                        transform: 'scale(0.5)',
-                        transformOrigin: 'top left',
-                        width: '200%',
-                        height: '200%',
-                        pointerEvents: 'none'
-                      }}
-                    />
+                  <div className="mb-4 overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm max-h-[400px]">
+                    <div className="p-2 bg-gray-50 border-b border-gray-200 text-xs text-gray-500 font-medium">
+                      Template Preview
+                    </div>
+                    <div className="overflow-auto max-h-[380px] p-4">
+                      <div 
+                        dangerouslySetInnerHTML={{ __html: message.html }} 
+                        style={{ 
+                          pointerEvents: 'none'
+                        }}
+                      />
+                    </div>
                   </div>
                   
                   {/* Action Buttons */}

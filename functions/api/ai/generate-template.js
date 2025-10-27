@@ -53,34 +53,22 @@ async function generateTemplateWithAI(prompt) {
 
   try {
     // Construct the AI prompt
-    const aiPrompt = `You are an expert email designer. Based on the user's requirements, create a professional, responsive HTML email template.
+    const aiPrompt = `Create a professional email template based on: "${prompt}"
 
-User Requirements:
-${prompt}
-
-Requirements for the email template:
-1. Create a complete, well-structured HTML email template
-2. Use inline CSS for email compatibility
-3. Include proper meta tags and DOCTYPE
-4. Make it responsive and mobile-friendly
-5. Use modern, professional design
-6. Include placeholder content that fits the business/industry described
-7. Use appropriate color scheme based on the business type
-8. Include clear call-to-action buttons
-9. Ensure proper spacing and typography
-
-Please return a JSON object with the following structure:
+Return ONLY a JSON object with this exact format:
 {
-  "name": "Template name based on requirements",
-  "subject": "Email subject line",
-  "html": "Complete HTML email template with inline styles"
+  "name": "Template Name",
+  "subject": "Email Subject Line",
+  "html": "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><table width='100%' style='max-width:600px;margin:0 auto'><tr><td style='padding:20px;background:#f0f4f8'><h1 style='color:#333;text-align:center'>Header</h1></td></tr><tr><td style='padding:40px;background:#fff'><p style='font-size:16px;line-height:1.6;color:#555'>Professional email content here</p></td></tr></table></body></html>"
 }
 
-Important: 
-- The HTML should be complete and ready to use
-- Use inline CSS for email compatibility (not external stylesheets)
-- Make it visually appealing and professional
-- Include placeholder content that makes sense for the described use case`
+Rules:
+- Name should describe the template (max 40 chars)
+- Subject should be engaging (max 80 chars)  
+- HTML must be complete, single-line, with inline styles
+- Use email-safe HTML (tables, inline CSS, no external stylesheets)
+- Include colors, buttons, professional layout
+- Keep HTML concise but complete`
 
     const response = await fetch(API_URL, {
       method: 'POST',
@@ -123,6 +111,7 @@ Important:
       
       // Try to parse JSON from the response
       try {
+        // First try direct JSON parse
         const parsedTemplate = JSON.parse(content)
         
         if (parsedTemplate.name && parsedTemplate.subject && parsedTemplate.html) {
@@ -130,6 +119,23 @@ Important:
         }
       } catch (e) {
         console.error('Failed to parse AI response as JSON:', e)
+        
+        // Try to extract JSON from markdown code blocks or other formats
+        const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/) || 
+                         content.match(/\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/)
+        
+        if (jsonMatch) {
+          try {
+            const jsonStr = jsonMatch[1] || jsonMatch[0]
+            const parsedTemplate = JSON.parse(jsonStr)
+            
+            if (parsedTemplate.name && parsedTemplate.subject && parsedTemplate.html) {
+              return parsedTemplate
+            }
+          } catch (e2) {
+            console.error('Failed to parse extracted JSON:', e2)
+          }
+        }
       }
     }
     
