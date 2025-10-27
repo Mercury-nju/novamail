@@ -1,12 +1,17 @@
-/**
- * Middleware to provide KV binding to Functions
- */
+import { getRequestContext } from 'cloudflare:workers';
 
-export async function onRequest({ request, next, env }) {
-  // This ensures KV is available to all Functions
+// Pages Functions KV binding setup
+// This is configured via Cloudflare Dashboard or wrangler.toml
+
+export async function onRequest({ request, env, next }) {
+  // Ensure KV is available to all Functions
   const response = await next({
     request,
-    env
+    env: {
+      ...env,
+      // KV should be bound via Dashboard
+      USERS_KV: env.USERS_KV
+    }
   });
   
   return response;
