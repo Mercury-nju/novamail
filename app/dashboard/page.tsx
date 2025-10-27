@@ -137,27 +137,25 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white">
-        <div className="px-6 py-5">
-          <div className="flex items-center justify-between">
+      <div className="px-6 py-5">
+        <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                 <SparklesIcon className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-medium text-gray-900">Dashboard</h1>
+              <h1 className="text-lg font-medium text-gray-900">Dashboard</h1>
                 <p className="text-xs text-gray-500">AI Email Marketing Platform</p>
               </div>
             </div>
-            <div className="flex items-center">
-              <Link
-                href="/dashboard/campaigns/new"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <RocketLaunchIcon className="h-4 w-4 mr-2" />
-                Start Creating
-              </Link>
-            </div>
+          <div className="flex items-center">
+            <Link
+              href="/dashboard/campaigns/new"
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <RocketLaunchIcon className="h-4 w-4 mr-2" />
+              Start Creating
+            </Link>
           </div>
         </div>
       </div>
@@ -183,7 +181,7 @@ export default function Dashboard() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
         >
           {/* Total Campaigns */}
-          <div className="bg-gray-50 rounded-xl p-5">
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Campaigns</p>
@@ -199,7 +197,7 @@ export default function Dashboard() {
           </div>
 
           {/* Total Contacts */}
-          <div className="bg-gray-50 rounded-xl p-5">
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Contacts</p>
@@ -215,7 +213,7 @@ export default function Dashboard() {
           </div>
 
           {/* Emails Sent */}
-          <div className="bg-gray-50 rounded-xl p-5">
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Emails Sent</p>
@@ -231,7 +229,7 @@ export default function Dashboard() {
           </div>
 
           {/* Average Open Rate */}
-          <div className="bg-gray-50 rounded-xl p-5">
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Avg. Open Rate</p>
@@ -256,8 +254,8 @@ export default function Dashboard() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="lg:col-span-2"
           >
-            <div className="bg-gray-50 rounded-xl h-full">
-              <div className="px-5 py-4">
+            <div className="bg-white rounded-xl border border-gray-100 h-full">
+              <div className="px-5 py-4 border-b border-gray-100">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-900">Recent Campaigns</h3>
                   <Link
@@ -341,7 +339,7 @@ export default function Dashboard() {
             className="space-y-6"
           >
             {/* Quick Actions */}
-            <div className="bg-gray-50 rounded-xl p-5">
+            <div className="bg-white rounded-xl border border-gray-100 p-5">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-3">
                 <Link
@@ -362,7 +360,7 @@ export default function Dashboard() {
             </div>
 
             {/* Platform Features */}
-            <div className="bg-gray-50 rounded-xl p-5">
+            <div className="bg-white rounded-xl border border-gray-100 p-5">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Platform Features</h3>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
