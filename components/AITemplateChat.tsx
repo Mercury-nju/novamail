@@ -21,7 +21,58 @@ export default function AITemplateChat() {
     subject: string
     name: string
   } | null>(null)
+  const [chatHistory, setChatHistory] = useState<Array<{
+    messages: Message[]
+    generatedTemplate: any
+    timestamp: string
+  }>>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Load chat history on mount
+  useEffect(() => {
+    try {
+      const savedHistory = localStorage.getItem('template-ai-history')
+      if (savedHistory) {
+        const history = JSON.parse(savedHistory)
+        setChatHistory(history)
+      }
+    } catch (e) {
+      console.error('Failed to load chat history:', e)
+    }
+  }, [])
+
+  // Auto-save messages to localStorage
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        const currentHistory = {
+          messages,
+          generatedTemplate,
+          timestamp: new Date().toISOString()
+        }
+        
+        // Get existing history
+        const savedHistory = localStorage.getItem('template-ai-history')
+        let history = savedHistory ? JSON.parse(savedHistory) : []
+        
+        // Add or update current session
+        history = history.filter((h: any) => 
+          h.timestamp !== currentHistory.timestamp
+        )
+        history.unshift(currentHistory)
+        
+        // Keep only last 10 conversations
+        if (history.length > 10) {
+          history = history.slice(0, 10)
+        }
+        
+        localStorage.setItem('template-ai-history', JSON.stringify(history))
+        setChatHistory(history)
+      } catch (e) {
+        console.error('Failed to save chat history:', e)
+      }
+    }
+  }, [messages, generatedTemplate])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -144,6 +195,30 @@ export default function AITemplateChat() {
     }
   }
 
+  const handleNewChat = () => {
+    setMessages([])
+    setGeneratedTemplate(null)
+    setInput('')
+    toast.success('New conversation started')
+  }
+
+  const handleLoadHistory = (historyItem: any) => {
+    setMessages(historyItem.messages)
+    setGeneratedTemplate(historyItem.generatedTemplate)
+    toast.success('Chat history loaded')
+  }
+
+  const handleDeleteHistory = (timestamp: string) => {
+    try {
+      const newHistory = chatHistory.filter(h => h.timestamp !== timestamp)
+      localStorage.setItem('template-ai-history', JSON.stringify(newHistory))
+      setChatHistory(newHistory)
+      toast.success('Conversation deleted')
+    } catch (e) {
+      console.error('Failed to delete history:', e)
+    }
+  }
+
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Header */}
@@ -153,11 +228,59 @@ export default function AITemplateChat() {
             <SparklesIcon className="h-5 w-5 text-white" />
           </div>
           <div>
-              <h3 className="text-base font-semibold text-gray-900">
+            <h3 className="text-base font-semibold text-gray-900">
               Template AI
             </h3>
             <p className="text-xs text-gray-500">Describe your needs, I'll create professional templates</p>
           </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          {messages.length > 0 && (
+            <button
+              onClick={handleNewChat}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              New Chat
+            </button>
+          )}
+          {chatHistory.length > 0 && (
+            <div className="relative group">
+              <button className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+                History ({chatHistory.length})
+              </button>
+              <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden group-hover:block">
+                <div className="max-h-96 overflow-y-auto">
+                  {chatHistory.map((item, index) => (
+                    <div
+                      key={index}
+                      className="p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
+                      onClick={() => handleLoadHistory(item)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {item.generatedTemplate?.name || 'Chat Conversation'}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(item.timestamp).toLocaleString()}
+                          </p>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDeleteHistory(item.timestamp)
+                          }}
+                          className="ml-2 p-1 text-red-600 hover:bg-red-50 rounded"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
