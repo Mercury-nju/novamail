@@ -205,7 +205,10 @@ export default function CampaignEditPage() {
       })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorText = await response.text()
+        console.error('Export failed - HTTP status:', response.status)
+        console.error('Export failed - Error response:', errorText)
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`)
       }
 
       const result = await response.json()
