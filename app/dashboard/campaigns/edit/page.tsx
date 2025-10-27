@@ -199,6 +199,8 @@ export default function CampaignEditPage() {
 
       const result = await response.json()
 
+      console.log('Export response:', result)
+
       if (result.success) {
         toast.success(`Template exported to ${selectedESP} successfully!`)
         
@@ -214,6 +216,7 @@ export default function CampaignEditPage() {
         setShowExportModal(false)
         setSelectedESP('')
       } else {
+        console.error('Export failed:', result.error)
         // 处理不同类型的错误
         if (result.error === 'token_expired') {
           toast.error('Mailchimp authorization expired. Please reconnect your account.')
@@ -223,12 +226,15 @@ export default function CampaignEditPage() {
               handleMailchimpConnect()
             }, 2000)
           }
-        } else if (result.error.includes('未授权') || result.error.includes('not connected')) {
-          toast.error('Please connect your Mailchimp account first.')
+        } else if (result.error.includes('未授权') || result.error.includes('not connected') || result.error.includes('connect your Mailchimp account')) {
+          toast.error('Please connect your Mailchimp account first. Click "Connect Mailchimp" to authorize.')
           if (selectedESP === 'mailchimp') {
+            // 自动提示用户连接
             setTimeout(() => {
-              handleMailchimpConnect()
-            }, 2000)
+              if (confirm('Would you like to connect your Mailchimp account now?')) {
+                handleMailchimpConnect()
+              }
+            }, 1500)
           }
         } else if (result.error.includes('configuration is incomplete')) {
           toast.error(`${selectedESP} is not properly configured. Please contact support.`)
