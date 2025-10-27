@@ -298,8 +298,7 @@ export default function NewCampaignPage() {
                 {filteredTemplates.map((template, index) => {
                   // Find original index in professionalTemplates array
                   const originalIndex = professionalTemplates.findIndex(t => t.id === template.id)
-                  return (
-                  <motion.div
+                  return <motion.div
                     key={template.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -337,7 +336,8 @@ export default function NewCampaignPage() {
                       </div>
                     </div>
                   </motion.div>
-                ))}
+                })
+                }
               </div>
             </div>
 
