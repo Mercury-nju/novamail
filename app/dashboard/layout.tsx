@@ -270,12 +270,7 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <div className="flex-1 min-w-0 lg:pl-64">
-        {/* Page content */}
-        <main className="py-6">
-          <div className="px-6">
-            {children}
-          </div>
-        </main>
+        {children}
       </div>
 
     </div>
