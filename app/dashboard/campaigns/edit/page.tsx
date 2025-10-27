@@ -87,8 +87,10 @@ export default function CampaignEditPage() {
             body: templateData.html
           })
           
-          // 加载后清除sessionStorage
-          sessionStorage.removeItem('ai-generated-template')
+          // DON'T remove from sessionStorage immediately
+          // Keep it for potential re-editing
+          // Only set a flag that it's been loaded
+          sessionStorage.setItem('ai-template-loaded', 'true')
           
           toast.success('AI template loaded successfully!')
           return
@@ -97,6 +99,13 @@ export default function CampaignEditPage() {
           toast.error('Failed to load AI template')
         }
       }
+    }
+    
+    // Check if already loaded
+    const alreadyLoaded = sessionStorage.getItem('ai-template-loaded')
+    if (alreadyLoaded === 'true') {
+      // Skip initialization if already loaded
+      return
     }
     
     console.log('=== 模板初始化调试 ===')
