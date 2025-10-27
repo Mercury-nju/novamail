@@ -22,10 +22,13 @@ export default function AITemplateChat() {
     name: string
   } | null>(null)
   const [chatHistory, setChatHistory] = useState<Array<{
+    id: string
     messages: Message[]
     generatedTemplate: any
     timestamp: string
   }>>([])
+  const [showHistoryDropdown, setShowHistoryDropdown] = useState(false)
+  const [currentSessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Load chat history on mount
@@ -41,11 +44,12 @@ export default function AITemplateChat() {
     }
   }, [])
 
-  // Auto-save messages to localStorage
+  // Auto-save messages to localStorage when they change
   useEffect(() => {
     if (messages.length > 0) {
       try {
-        const currentHistory = {
+        const sessionData = {
+          id: currentSessionId,
           messages,
           generatedTemplate,
           timestamp: new Date().toISOString()
@@ -55,11 +59,9 @@ export default function AITemplateChat() {
         const savedHistory = localStorage.getItem('template-ai-history')
         let history = savedHistory ? JSON.parse(savedHistory) : []
         
-        // Add or update current session
-        history = history.filter((h: any) => 
-          h.timestamp !== currentHistory.timestamp
-        )
-        history.unshift(currentHistory)
+        // Remove this session if it exists and add it to the top
+        history = history.filter((h: any) => h.id !== currentSessionId)
+        history.unshift(sessionData)
         
         // Keep only last 10 conversations
         if (history.length > 10) {
@@ -72,7 +74,7 @@ export default function AITemplateChat() {
         console.error('Failed to save chat history:', e)
       }
     }
-  }, [messages, generatedTemplate])
+  }, [messages, generatedTemplate, currentSessionId])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -208,9 +210,9 @@ export default function AITemplateChat() {
     toast.success('Chat history loaded')
   }
 
-  const handleDeleteHistory = (timestamp: string) => {
+  const handleDeleteHistory = (sessionId: string) => {
     try {
-      const newHistory = chatHistory.filter(h => h.timestamp !== timestamp)
+      const newHistory = chatHistory.filter(h => h.id !== sessionId)
       localStorage.setItem('template-ai-history', JSON.stringify(newHistory))
       setChatHistory(newHistory)
       toast.success('Conversation deleted')
@@ -244,41 +246,58 @@ export default function AITemplateChat() {
             </button>
           )}
           {chatHistory.length > 0 && (
-            <div className="relative group">
-              <button className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+            <div className="relative">
+              <button 
+                onClick={() => setShowHistoryDropdown(!showHistoryDropdown)}
+                className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+              >
                 History ({chatHistory.length})
               </button>
-              <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden group-hover:block">
-                <div className="max-h-96 overflow-y-auto">
-                  {chatHistory.map((item, index) => (
-                    <div
-                      key={index}
-                      className="p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
-                      onClick={() => handleLoadHistory(item)}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {item.generatedTemplate?.name || 'Chat Conversation'}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {new Date(item.timestamp).toLocaleString()}
-                          </p>
-                        </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleDeleteHistory(item.timestamp)
-                          }}
-                          className="ml-2 p-1 text-red-600 hover:bg-red-50 rounded"
-                        >
-                          ×
-                        </button>
+              {showHistoryDropdown && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-10" 
+                    onClick={() => setShowHistoryDropdown(false)}
+                  />
+                  <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+                    <div className="max-h-96 overflow-y-auto">
+                      <div className="p-3 border-b border-gray-200 bg-gray-50">
+                        <h4 className="text-sm font-semibold text-gray-900">Chat History</h4>
                       </div>
+                      {chatHistory.map((item, index) => (
+                        <div
+                          key={index}
+                          className="p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
+                          onClick={() => {
+                            handleLoadHistory(item)
+                            setShowHistoryDropdown(false)
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900 truncate">
+                                {item.generatedTemplate?.name || 'Chat Conversation'}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {new Date(item.timestamp).toLocaleString()}
+                              </p>
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleDeleteHistory(item.id)
+                              }}
+                              className="ml-2 p-1 text-red-600 hover:bg-red-50 rounded"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
