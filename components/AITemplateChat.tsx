@@ -176,7 +176,7 @@ export default function AITemplateChat() {
       </div>
 
       {/* Input Area */}
-      <div className="border-t-2 border-gray-300 bg-gray-50 px-6 py-6">
+      <div className="border-t border-gray-200 bg-white px-6 py-4">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-end gap-3">
             <div className="flex-1 border-2 border-blue-400 shadow-lg rounded-2xl px-5 py-4 bg-white focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-100 focus-within:shadow-xl transition-all">
