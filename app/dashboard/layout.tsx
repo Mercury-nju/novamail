@@ -172,25 +172,25 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-gray-50">
       {/* Mobile sidebar */}
       <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
-        <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
-          <div className="flex h-16 items-center justify-between px-4">
-            <div className="flex items-center">
-              <Link href="/dashboard" className="flex items-center">
-                {/* Logo Text Only */}
-                <span className="text-xl font-bold text-blue-600">
-                  NovaMail
-                </span>
-              </Link>
-            </div>
+        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+        <div className="fixed inset-y-0 left-0 flex w-72 flex-col bg-gradient-to-b from-slate-900 to-slate-800 shadow-2xl">
+          <div className="flex h-20 items-center justify-between px-6 border-b border-slate-700/50">
+            <Link href="/dashboard" className="flex items-center group" onClick={() => setSidebarOpen(false)}>
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 group-hover:from-blue-600 group-hover:to-purple-700 transition-all duration-200 shadow-lg group-hover:shadow-xl">
+                <span className="text-xl font-black text-white">N</span>
+              </div>
+              <span className="ml-3 text-xl font-bold text-white tracking-tight">
+                NovaMail
+              </span>
+            </Link>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-slate-400 hover:text-white transition-colors"
             >
               <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
-          <nav className="flex-1 px-4 py-4 space-y-2">
+          <nav className="flex-1 px-3 py-6 space-y-1">
             {navigation.map((item) => {
               const isActive = pathname === item.href
               return (
@@ -198,25 +198,28 @@ export default function DashboardLayout({
                   key={item.name}
                   href={item.href}
                   id={`nav-link-${item.name.toLowerCase()}`}
-                  className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
                     isActive
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30'
+                      : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
                   }`}
                   onClick={() => setSidebarOpen(false)}
                 >
-                  <item.icon className="mr-3 h-5 w-5" />
-                  {item.name}
+                  <item.icon className={`mr-3 h-5 w-5 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white transition-colors'}`} />
+                  <span className="font-medium">{item.name}</span>
+                  {isActive && (
+                    <span className="ml-auto h-2 w-2 rounded-full bg-white animate-pulse"></span>
+                  )}
                 </Link>
               )
             })}
           </nav>
-          <div className="border-t border-gray-200 p-4">
+          <div className="border-t border-slate-700/50 p-4">
             <button
               onClick={handleLogout}
-              className="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors"
+              className="flex items-center w-full px-4 py-3 text-sm font-medium text-slate-300 hover:bg-slate-800/50 hover:text-white rounded-xl transition-all duration-200 group"
             >
-              <ArrowRightOnRectangleIcon className="mr-3 h-5 w-5" />
+              <ArrowRightOnRectangleIcon className="mr-3 h-5 w-5 text-slate-400 group-hover:text-white transition-colors" />
               Sign out
             </button>
           </div>
@@ -224,17 +227,19 @@ export default function DashboardLayout({
       </div>
 
       {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
-          <div className="flex h-16 items-center px-4">
-            <Link href="/dashboard" className="flex items-center">
-              {/* Logo Text Only */}
-              <span className="text-xl font-bold text-blue-600">
+      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col">
+        <div className="flex flex-col flex-grow bg-gradient-to-b from-slate-900 to-slate-800 shadow-xl">
+          <div className="flex h-20 items-center px-6 border-b border-slate-700/50">
+            <Link href="/dashboard" className="flex items-center group">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 group-hover:from-blue-600 group-hover:to-purple-700 transition-all duration-200 shadow-lg group-hover:shadow-xl">
+                <span className="text-xl font-black text-white">N</span>
+              </div>
+              <span className="ml-3 text-xl font-bold text-white tracking-tight">
                 NovaMail
               </span>
             </Link>
           </div>
-          <nav className="flex-1 px-4 py-4 space-y-2">
+          <nav className="flex-1 px-3 py-6 space-y-1">
             {navigation.map((item) => {
               const isActive = pathname === item.href
               return (
@@ -242,24 +247,27 @@ export default function DashboardLayout({
                   key={item.name}
                   href={item.href}
                   id={`nav-link-${item.name.toLowerCase()}`}
-                  className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
                     isActive
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30'
+                      : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
                   }`}
                 >
-                  <item.icon className="mr-3 h-5 w-5" />
-                  {item.name}
+                  <item.icon className={`mr-3 h-5 w-5 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white transition-colors'}`} />
+                  <span className="font-medium">{item.name}</span>
+                  {isActive && (
+                    <span className="ml-auto h-2 w-2 rounded-full bg-white animate-pulse"></span>
+                  )}
                 </Link>
               )
             })}
           </nav>
-          <div className="border-t border-gray-200 p-4">
+          <div className="border-t border-slate-700/50 p-4">
             <button
               onClick={handleLogout}
-              className="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors"
+              className="flex items-center w-full px-4 py-3 text-sm font-medium text-slate-300 hover:bg-slate-800/50 hover:text-white rounded-xl transition-all duration-200 group"
             >
-              <ArrowRightOnRectangleIcon className="mr-3 h-5 w-5" />
+              <ArrowRightOnRectangleIcon className="mr-3 h-5 w-5 text-slate-400 group-hover:text-white transition-colors" />
               Sign out
             </button>
           </div>
@@ -267,12 +275,12 @@ export default function DashboardLayout({
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="lg:pl-72">
         {/* Top bar */}
-        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <div className="sticky top-0 z-40 flex h-20 shrink-0 items-center gap-x-4 border-b border-gray-200/60 bg-white/80 backdrop-blur-lg px-4 shadow-sm backdrop:bg-white sm:gap-x-6 sm:px-6 lg:px-8">
           <button
             type="button"
-            className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+            className="-m-2.5 p-2.5 text-gray-700 hover:text-gray-900 lg:hidden transition-colors"
             onClick={() => setSidebarOpen(true)}
           >
             <Bars3Icon className="h-6 w-6" />
@@ -281,27 +289,34 @@ export default function DashboardLayout({
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <div className="flex flex-1" />
             <div className="flex items-center gap-x-4 lg:gap-x-6">
-              <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" />
+              <div className="hidden lg:block lg:h-8 lg:w-px lg:bg-gradient-to-b lg:from-transparent lg:via-gray-300 lg:to-transparent" />
               <div className="flex items-center gap-x-3">
-                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                  <span className="text-sm font-medium text-blue-700">{getUserInitials()}</span>
+                {/* User Avatar */}
+                <div className="relative">
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-0.5 shadow-lg">
+                    <div className="h-full w-full rounded-full bg-white flex items-center justify-center">
+                      <span className="text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{getUserInitials()}</span>
+                    </div>
+                  </div>
+                  <span className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"></span>
                 </div>
-                <div className="flex items-center gap-x-2">
-                  <span className="hidden lg:block text-sm font-medium text-gray-700">{getUserDisplayName()}</span>
+                {/* User Info */}
+                <div className="hidden md:flex flex-col items-start">
+                  <span className="text-sm font-semibold text-gray-900">{getUserDisplayName()}</span>
                   {userSubscription && (
                     userSubscription.plan === 'pro' ? (
                       <motion.span
-                        className="inline-flex items-center rounded-full bg-gradient-to-r from-green-500 to-emerald-500 px-3 py-1 text-xs font-semibold text-white shadow-sm"
+                        className="inline-flex items-center rounded-md bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-sm"
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.3 }}
                         whileHover={{ scale: 1.05 }}
                       >
-                        ✨ Pro Plan
+                        ⭐ PRO
                       </motion.span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
-                        Free Plan
+                      <span className="text-[10px] font-medium text-gray-500">
+                        Free
                       </span>
                     )
                   )}
