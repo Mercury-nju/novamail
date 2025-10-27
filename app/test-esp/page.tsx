@@ -1,11 +1,24 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 
 export default function ESPTestPage() {
   const [isTesting, setIsTesting] = useState(false)
   const [results, setResults] = useState<any[]>([])
+  const [testEmail, setTestEmail] = useState('')
+
+  useEffect(() => {
+    // 尝试获取用户邮箱，如果不存在则设置测试邮箱
+    const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
+    if (!userEmail) {
+      setTestEmail('test@novamail.dev')
+      // 模拟登录状态
+      localStorage.setItem('userEmail', 'test@novamail.dev')
+    } else {
+      setTestEmail(userEmail)
+    }
+  }, [])
 
   const testTemplate = {
     name: 'NovaMail Test Template',
@@ -65,7 +78,7 @@ export default function ESPTestPage() {
           name: testTemplate.name,
           html: testTemplate.html,
           subject: testTemplate.subject,
-          userEmail: 'test@example.com'
+          userEmail: testEmail
         })
       })
 
