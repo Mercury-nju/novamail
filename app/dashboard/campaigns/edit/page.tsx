@@ -179,6 +179,17 @@ export default function CampaignEditPage() {
         return
       }
 
+      const htmlContent = campaignData.body || currentTemplate.htmlContent || '<p>Template content</p>'
+      const templateName = currentTemplate.name
+      const templateSubject = campaignData.subject || currentTemplate.subject
+      
+      console.log('=== Export Request Debug ===')
+      console.log('ESP:', selectedESP)
+      console.log('Template Name:', templateName)
+      console.log('User Email:', userEmail)
+      console.log('HTML Length:', htmlContent.length)
+      console.log('Subject:', templateSubject)
+      
       const response = await fetch('/api/export', {
         method: 'POST',
         headers: {
@@ -186,9 +197,9 @@ export default function CampaignEditPage() {
         },
         body: JSON.stringify({
           esp: selectedESP,
-          name: currentTemplate.name,
-          html: campaignData.body || currentTemplate.htmlContent || '<p>Template content</p>',
-          subject: campaignData.subject || currentTemplate.subject,
+          name: templateName,
+          html: htmlContent,
+          subject: templateSubject,
           userEmail: userEmail
         })
       })
