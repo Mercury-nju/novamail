@@ -216,6 +216,56 @@ export const additionalTemplates: ProfessionalTemplate[] = [
     features: ['Fresh', 'Trendy', 'Product Showcase'],
     isPopular: true,
     isNew: true
+  },
+
+  // ========== MORE MARKETING TEMPLATES (5 additional) ==========
+  {
+    id: 'win-back-campaign',
+    name: 'Win Back Campaign',
+    category: 'Marketing',
+    description: 'Re-engage inactive customers',
+    subject: 'We Miss You! Come Back for 40% OFF',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Win Back</title></head><body style="margin:0;padding:20px;font-family:'Helvetica Neue',Arial,sans-serif;background:#fef2f2"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:650px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15)"><tr><td style="padding:0"><div style="background:linear-gradient(135deg,#ef4444,#dc2626);padding:70px 40px;text-align:center"><div style="font-size:96px;margin-bottom:30px">💌</div><h1 style="color:#fff;margin:0 0 25px;font-size:44px;font-weight:900">WE MISS YOU!</h1><div style="background:#fff;color:#dc2626;padding:18px 45px;border-radius:12px;display:inline-block;font-size:28px;font-weight:900">40% OFF</div></div></td></tr><tr><td style="padding:60px 40px"><h2 style="color:#1f2937;margin:0 0 25px;font-size:32px;font-weight:800">Come Back - We Have Something Special for You</h2><p style="color:#6b7280;margin:0 0 40px;line-height:1.9;font-size:17px">It's been a while! We've prepared an exclusive welcome-back offer just for you.</p><div style="background:#fef2f2;padding:35px;border-radius:16px;margin:35px 0"><h3 style="margin:0 0 20px;color:#991b1b;font-size:24px;font-weight:900">🎁 Your Welcome Back Bonus</h3><ul style="margin:0;padding-left:25px;color:#dc2626"><li style="margin-bottom:12px;font-size:16px">40% OFF your entire order</li><li style="margin-bottom:12px;font-size:16px">FREE shipping on all orders</li><li style="margin-bottom:12px;font-size:16px">Priority customer support</li><li style="font-size:16px">Extended return window</li></ul></div><div style="text-align:center;margin-top:45px"><a href="#" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;text-decoration:none;padding:22px 70px;border-radius:14px;font-weight:900;font-size:20px;display:inline-block;box-shadow:0 8px 28px rgba(239,68,68,0.4)">Shop Now With Discount →</a></div></td></tr></table></body></html>`,
+    features: ['Re-engagement', 'Generous Offer', 'Persuasive'],
+    isPopular: true,
+    isNew: true
+  },
+  {
+    id: 'flash-deal',
+    name: 'Flash Deal',
+    category: 'Marketing',
+    description: 'Limited time flash deal',
+    subject: '⚡ FLASH DEAL - 24 Hours Only!',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Flash Deal</title></head><body style="margin:0;padding:20px;font-family:'Helvetica Neue',Arial,sans-serif;background:#000"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:650px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden"><tr><td style="padding:70px 40px;background:linear-gradient(135deg,#1e293b,#0f172a);text-align:center"><div style="font-size:112px;margin-bottom:30px">⚡</div><h1 style="color:#fff;margin:0 0 25px;font-size:52px;font-weight:900">FLASH DEAL</h1><p style="color:#94a3b8;margin:0;font-size:28px;font-weight:700">Ends in 24 Hours</p><div style="background:#fff;color:#000;padding:20px 50px;border-radius:12px;display:inline-block;margin-top:30px;font-size:36px;font-weight:900">80% OFF</div></div></td></tr><tr><td style="padding:60px 40px"><div style="background:#fee2e2;padding:25px;border-radius:12px;margin-bottom:30px;text-align:center"><p style="margin:0;color:#991b1b;font-size:18px;font-weight:900">⏰ Time's Running Out!</p><p style="margin:5px 0 0;color:#dc2626;font-size:20px;font-weight:700">Sale Ends: [Countdown]</p></div><a href="#" style="background:#000;color:#fff;text-decoration:none;padding:22px 70px;border-radius:14px;font-weight:900;font-size:20px;display:inline-block;border:4px solid #1e293b">SHOP NOW</a></td></tr></table></body></html>`,
+    features: ['Urgency', 'High Discount', 'Countdown'],
+    isPopular: true,
+    isNew: false
+  },
+
+  // ========== HOLIDAY TEMPLATES (3 additional) ==========
+  {
+    id: 'easter-celebration',
+    name: 'Easter Celebration',
+    category: 'Holiday',
+    description: 'Easter special offer',
+    subject: '🐰 Easter Special - Hop Into Savings!',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Easter</title></head><body style="margin:0;padding:20px;font-family:'Helvetica Neue',Arial,sans-serif;background:linear-gradient(135deg,#dbeafe,#fce7f3)"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:650px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15)"><tr><td style="padding:70px 40px;background:linear-gradient(135deg,#a855f7,#9333ea);text-align:center"><div style="font-size:96px;margin-bottom:30px">🐰</div><h1 style="color:#fff;margin:0 0 25px;font-size:44px;font-weight:900">EASTER SPECIAL</h1><p style="color:#e9d5ff;margin:0;font-size:24px;font-weight:700">Hop Into Amazing Deals!</p><div style="background:#fff;color:#9333ea;padding:18px 45px;border-radius:12px;display:inline-block;margin-top:30px;font-size:26px;font-weight:900">50% OFF</div></div></td></tr><tr><td style="padding:60px 40px"><h2 style="color:#1f2937;margin:0 0 25px;font-size:32px;font-weight:800">Easter Basket of Savings!</h2><p style="color:#6b7280;margin:0 0 40px;line-height:1.9;font-size:17px">Celebrate Easter with exclusive deals on everything you need for the holiday season.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:35px 0"><div style="text-align:center;padding:25px;background:#faf5ff;border-radius:16px"><div style="font-size:56px;margin-bottom:15px">🍫</div><p style="margin:0;color:#7e22ce;font-size:18px;font-weight:800">Chocolate</p><p style="margin:5px 0 0;color:#9ca3af;font-size:14px">45% OFF</p></div><div style="text-align:center;padding:25px;background:#f3e8ff;border-radius:16px"><div style="font-size:56px;margin-bottom:15px">🧁</div><p style="margin:0;color:#7e22ce;font-size:18px;font-weight:800">Treats</p><p style="margin:5px 0 0;color:#9ca3af;font-size:14px">40% OFF</p></div></div><a href="#" style="background:linear-gradient(135deg,#a855f7,#9333ea);color:#fff;text-decoration:none;padding:22px 70px;border-radius:14px;font-weight:900;font-size:20px;display:inline-block;box-shadow:0 8px 28px rgba(168,85,247,0.4)">Shop Easter Sale →</a></td></tr></table></body></html>`,
+    features: ['Festive', 'Seasonal', 'Theme-Based'],
+    isPopular: true,
+    isNew: true
+  },
+
+  // ========== E-COMMERCE (5 additional templates) ==========
+  {
+    id: 'shipping-notification',
+    name: 'Shipping Notification',
+    category: 'E-commerce',
+    description: 'Order shipped confirmation',
+    subject: 'Your Order Has Shipped! 📦',
+    htmlContent: `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Shipping</title></head><body style="margin:0;padding:20px;font-family:'Helvetica Neue',Arial,sans-serif;background:#eff6ff"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:650px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(37,99,235,0.2)"><tr><td style="padding:0"><div style="background:linear-gradient(135deg,#3b82f6,#2563eb);padding:70px 40px;text-align:center"><div style="font-size:96px;margin-bottom:30px">📦</div><h1 style="color:#fff;margin:0 0 25px;font-size:44px;font-weight:900">SHIPPED!</h1><p style="color:#dbeafe;margin:0;font-size:22px;font-weight:600">Your Order is On Its Way</p></div></td></tr><tr><td style="padding:60px 40px"><h2 style="color:#1f2937;margin:0 0 20px;font-size:28px">Great News! 🎉</h2><p style="color:#6b7280;margin:0 0 35px;line-height:1.8;font-size:16px">Your order has shipped and should arrive soon!</p><div style="background:#eff6ff;padding:30px;border-radius:16px;margin:30px 0"><table width="100%"><tr><td style="padding:10px 0;color:#1e40af;font-weight:600">Tracking Number:</td><td style="text-align:right;color:#1f2937;font-weight:700;font-size:18px">TRK123456789</td></tr><tr><td style="padding:10px 0;color:#1e40af;font-weight:600">Estimated Delivery:</td><td style="text-align:right;color:#1f2937;font-weight:700">March 25, 2024</td></tr><tr><td style="padding:10px 0;color:#1e40af;font-weight:600">Carrier:</td><td style="text-align:right;color:#1f2937">UPS Express</td></tr></table></div><a href="#" style="background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;text-decoration:none;padding:20px 60px;border-radius:14px;font-weight:900;font-size:18px;display:inline-block;box-shadow:0 8px 28px rgba(59,130,246,0.4)">Track Your Package →</a></td></tr></table></body></html>`,
+    features: ['Tracking', 'Delivery Info', 'Helpful'],
+    isPopular: true,
+    isNew: false
   }
 ]
 
