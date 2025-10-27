@@ -52,7 +52,7 @@ export default function Dashboard() {
     const loadDashboardData = async () => {
       try {
         // 获取当前用户邮箱（从localStorage或session）
-        const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
+        const userEmail = localStorage.getItem('user-email') || sessionStorage.getItem('user-email') || localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail')
         
         if (!userEmail) {
           console.log('No user email found, showing empty state')
