@@ -14,7 +14,14 @@ export async function onRequestPost({ request, env }) {
     const data = await request.json();
     const { esp, name, html, subject, userEmail } = data;
     
+    console.log('=== Export Request Received ===');
+    console.log('ESP:', esp);
+    console.log('Name:', name);
+    console.log('User Email:', userEmail);
+    console.log('HTML length:', html?.length);
+    
     if (!esp || !name || !html) {
+      console.error('Missing required fields');
       return new Response(JSON.stringify({ 
         success: false, 
         error: 'Missing required fields: esp, name, html' 
@@ -24,8 +31,6 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
-    console.log('Export request:', { esp, name, userEmail });
-
     // Handle Mailchimp export
     if (esp.toLowerCase() === 'mailchimp') {
       // Get user's Mailchimp token
@@ -34,21 +39,31 @@ export async function onRequestPost({ request, env }) {
       
       if (userEmail) {
         try {
+          console.log('Checking for user token...');
           const userKey = `user_${userEmail.toLowerCase()}`;
+          console.log('User key:', userKey);
+          console.log('KV available:', !!env.USERS_KV);
+          
           const userData = await env.USERS_KV?.get(userKey);
+          console.log('User data from KV:', userData ? 'Found' : 'Not found');
           
           if (userData) {
             const user = JSON.parse(userData);
             accessToken = user.mailchimpAccessToken;
             dc = user.mailchimpDc;
             console.log('User token found:', { accessToken: accessToken ? 'Set' : 'Not set', dc });
+          } else {
+            console.log('No user data in KV - user needs to connect Mailchimp');
           }
         } catch (error) {
           console.error('Error getting user token:', error);
         }
+      } else {
+        console.error('No userEmail provided');
       }
 
       if (!accessToken || !dc) {
+        console.error('Missing access token or DC - user needs to connect first');
         return new Response(JSON.stringify({ 
           success: false, 
           error: 'Please connect your Mailchimp account first. Click "Connect Mailchimp" to authorize.' 
