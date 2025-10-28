@@ -35,6 +35,7 @@ export default function CampaignEditPage() {
   const [chatInput, setChatInput] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([])
+  const editorRef = useRef<HTMLDivElement | null>(null)
   
   // 邮件发送状态
   const [isSending, setIsSending] = useState(false)
@@ -126,6 +127,16 @@ export default function CampaignEditPage() {
     // 获取用户积分信息
     fetchUserCredits()
   }, [currentTemplate, isAIGenerated])
+
+  // 当 campaignData.body 变化时，同步到可编辑区域，确保加载 AI 模板后覆盖默认内容
+  useEffect(() => {
+    if (editorRef.current && typeof campaignData.body === 'string') {
+      // 仅在编辑器当前内容与状态不一致时更新，避免打字时闪动
+      if (editorRef.current.innerHTML !== campaignData.body) {
+        editorRef.current.innerHTML = campaignData.body || ''
+      }
+    }
+  }, [campaignData.body])
   
   // 模板保存功能
   const handleSaveTemplate = () => {
@@ -890,8 +901,11 @@ export default function CampaignEditPage() {
                   // 完全阻止默认焦点行为
                   e.stopPropagation()
                 }}
-                ref={(el) => {
-                  if (el && !el.innerHTML) {
+              ref={(el) => {
+                  if (!el) return
+                  editorRef.current = el
+                  // 初次挂载或为空时填充内容
+                  if (!el.innerHTML) {
                     el.innerHTML = campaignData.body || templateContent
                   }
                 }}
