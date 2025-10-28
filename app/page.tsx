@@ -575,16 +575,8 @@ export default function HomePage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1.5 }}
-                  className="text-center mt-6 space-y-2"
+                  className="text-center mt-6"
                 >
-                  <p className="text-sm text-gray-500">
-                    <span className="inline-flex items-center">
-                      <svg className="w-4 h-4 text-green-500 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      No credit card required
-                    </span>
-                  </p>
                   <button
                     onClick={() => {
                       const templateSection = document.querySelector('[data-section="templates"]');
@@ -592,9 +584,10 @@ export default function HomePage() {
                         templateSection.scrollIntoView({ behavior: 'smooth' });
                       }
                     }}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium inline-flex items-center group transition-colors"
+                    className="text-sm text-gray-600 hover:text-blue-600 font-medium inline-flex items-center group transition-colors"
                   >
-                    Browse 100+ free templates
+                    <span className="mr-2">or</span>
+                    <span>Browse 100+ free templates</span>
                     <svg className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>

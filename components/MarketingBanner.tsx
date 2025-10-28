@@ -110,10 +110,10 @@ export default function MarketingBanner() {
                   className="text-white flex-1 min-w-0"
                 >
                   <p className="text-sm font-medium">
-                    ✨ 所有模板永久免费使用与导出，仅 AI 生成消耗点数。
+                    ✨ All templates are completely free forever. AI email generation available with credits.
                   </p>
                   <p className="text-xs text-blue-100 mt-1">
-                    免费每月 10 点（1 次生成 = 3 点），付费每月 5000 点。
+                    Start with 10 free credits - upgrade anytime for unlimited AI power.
                   </p>
                 </motion.div>
               </div>
