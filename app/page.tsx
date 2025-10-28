@@ -492,70 +492,115 @@ export default function HomePage() {
               </motion.p>
             </motion.div>
 
-            {/* Simple AI Input */}
+            {/* Premium AI Input Section */}
             <motion.div 
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1 }}
-              className="max-w-5xl mx-auto mb-20 px-4"
+              className="max-w-6xl mx-auto mb-24 px-4"
             >
-              {/* Main Input Box - Emphasized */}
               <div className="relative">
-                <motion.textarea
-                  whileFocus={{ scale: 1.01 }}
-                  className="w-full px-6 py-6 text-lg border-2 border-gray-300 rounded-2xl focus:border-blue-500 focus:outline-none transition-all duration-200 resize-none text-gray-800 placeholder-gray-400 shadow-sm"
-                  rows={5}
-                  placeholder='e.g., "Send a newsletter about our new product launch..." or "Announce a 20% off sale to subscribers..."'
-                />
-                
-                {/* Generate Button - Integrated */}
-                <div className="flex items-center justify-between mt-6">
-                  <div className="flex flex-wrap gap-2">
-                    {["Product launch", "Newsletter", "Promotion", "Announcement"].map((tag, index) => (
-                      <button
-                        key={index}
-                        onClick={(e) => {
-                          const textarea = (e.target as HTMLElement).closest('div.relative')?.querySelector('textarea');
-                          if (textarea) {
-                            (textarea as HTMLTextAreaElement).value = `Send a ${tag.toLowerCase()} email to my subscribers...`;
-                            textarea.focus();
-                          }
-                        }}
-                        className="px-4 py-2 text-sm bg-gray-100 hover:bg-blue-50 text-gray-600 hover:text-blue-600 rounded-lg transition-colors duration-200"
-                      >
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
+                {/* Elegant Input Container */}
+                <div className="relative group">
+                  {/* Subtle gradient background */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-0 group-hover:opacity-10 blur transition duration-500"></div>
                   
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleGetStarted}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-3.5 rounded-xl font-semibold transition-colors duration-200 flex items-center space-x-2 shadow-lg"
-                  >
-                    <SparklesIcon className="w-5 h-5" />
-                    <span>Generate</span>
-                    <ArrowRightIcon className="w-4 h-4" />
-                  </motion.button>
+                  <div className="relative bg-white rounded-3xl shadow-xl border border-gray-200/50 overflow-hidden">
+                    {/* Top decorative bar */}
+                    <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500"></div>
+                    
+                    {/* Input area with better padding */}
+                    <div className="p-8">
+                      <motion.textarea
+                        whileFocus={{ 
+                          boxShadow: "0 0 0 3px rgba(59, 130, 246, 0.1)"
+                        }}
+                        className="w-full px-0 py-0 text-xl border-0 focus:ring-0 focus:outline-none resize-none text-gray-800 placeholder-gray-400 leading-relaxed"
+                        rows={4}
+                        placeholder='e.g., "Send a newsletter about our new product launch..." or "Announce a 20% off sale to subscribers..."'
+                        style={{ 
+                          fontFamily: 'Inter, system-ui, sans-serif',
+                          lineHeight: '1.8'
+                        }}
+                      />
+                    </div>
+                    
+                    {/* Bottom action bar */}
+                    <div className="px-8 pb-8 pt-4 border-t border-gray-100">
+                      <div className="flex items-center justify-between">
+                        {/* Quick tags - refined */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-400 font-medium mr-1">Quick:</span>
+                          {["Product launch", "Newsletter", "Promotion", "Announcement"].map((tag, index) => (
+                            <motion.button
+                              key={index}
+                              whileHover={{ y: -2, scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={(e) => {
+                                const textarea = (e.target as HTMLElement).closest('.relative.bg-white')?.querySelector('textarea');
+                                if (textarea) {
+                                  (textarea as HTMLTextAreaElement).value = `Send a ${tag.toLowerCase()} email to my subscribers...`;
+                                  textarea.focus();
+                                }
+                              }}
+                              className="px-3.5 py-1.5 text-xs font-medium bg-gradient-to-r from-gray-50 to-gray-100 hover:from-blue-50 hover:to-purple-50 text-gray-600 hover:text-blue-600 rounded-full border border-gray-200 hover:border-blue-300 transition-all duration-200 shadow-sm hover:shadow"
+                            >
+                              {tag}
+                            </motion.button>
+                          ))}
+                        </div>
+                        
+                        {/* Premium Generate button */}
+                        <motion.button
+                          whileHover={{ 
+                            scale: 1.02,
+                            boxShadow: "0 10px 40px rgba(59, 130, 246, 0.3)"
+                          }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={handleGetStarted}
+                          className="relative px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all duration-300 flex items-center space-x-2.5 shadow-lg overflow-hidden group"
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                          <SparklesIcon className="w-5 h-5 relative z-10" />
+                          <span className="relative z-10">Generate</span>
+                          <ArrowRightIcon className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
+                        </motion.button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              {/* Simple bottom text */}
-              <p className="text-center text-sm text-gray-500 mt-6">
-                No credit card required • 
-                <button
-                  onClick={() => {
-                    const templateSection = document.querySelector('[data-section="templates"]');
-                    if (templateSection) {
-                      templateSection.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                  className="text-blue-600 hover:text-blue-700 mx-1 font-medium"
+                {/* Bottom info - elegant */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.5 }}
+                  className="text-center mt-6 space-y-2"
                 >
-                  Browse 100+ free templates
-                </button>
-              </p>
+                  <p className="text-sm text-gray-500">
+                    <span className="inline-flex items-center">
+                      <svg className="w-4 h-4 text-green-500 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      No credit card required
+                    </span>
+                  </p>
+                  <button
+                    onClick={() => {
+                      const templateSection = document.querySelector('[data-section="templates"]');
+                      if (templateSection) {
+                        templateSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="text-sm text-blue-600 hover:text-blue-700 font-medium inline-flex items-center group transition-colors"
+                  >
+                    Browse 100+ free templates
+                    <svg className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </motion.div>
+              </div>
             </motion.div>
 
             {/* Trust Indicators */}
