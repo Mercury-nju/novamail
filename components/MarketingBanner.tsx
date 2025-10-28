@@ -110,11 +110,10 @@ export default function MarketingBanner() {
                   className="text-white flex-1 min-w-0"
                 >
                   <p className="text-sm font-medium">
-                    🚀 <span className="font-semibold">Limited Time Offer!</span> 
-                    Get unlimited AI generations, advanced templates, and priority support.
+                    ✨ 所有模板永久免费使用与导出，仅 AI 生成消耗点数。
                   </p>
                   <p className="text-xs text-blue-100 mt-1">
-                    Pro plan starts at just <span className="font-bold text-yellow-300">$0.51/day</span> with annual billing
+                    免费每月 10 点（1 次生成 = 3 点），付费每月 5000 点。
                   </p>
                 </motion.div>
               </div>

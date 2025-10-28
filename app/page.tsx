@@ -482,6 +482,14 @@ export default function HomePage() {
             >
                 Writes, designs, and sends stunning campaigns — all in minutes. Track results instantly and grow your audience effortlessly.
               </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.1 }}
+                className="text-blue-700 font-medium"
+              >
+                All templates are free to use and export. Only AI generation uses credits.
+              </motion.p>
             </motion.div>
 
             <motion.div 
