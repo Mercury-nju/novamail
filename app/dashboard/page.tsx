@@ -15,7 +15,7 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
-import AIAssistant from '@/components/AIAssistant'
+// import AIAssistant from '@/components/AIAssistant'
 
 interface DashboardStats {
   totalCampaigns: number
@@ -323,23 +323,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* AI Assistant */}
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-200 p-5">
-            <div className="flex items-center space-x-2 mb-2">
-              <SparklesIcon className="h-5 w-5 text-purple-600" />
-              <h3 className="text-lg font-semibold text-gray-900">AI 助手</h3>
-            </div>
-            <p className="text-sm text-gray-600 mb-4">
-              告诉AI你想要什么样的邮件模板，它会为你创建专业的模板。
-            </p>
-            <button
-              onClick={() => setShowAIAssistant(true)}
-              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-md hover:shadow-lg"
-            >
-              开始对话
-              <SparklesIcon className="h-4 w-4 ml-2" />
-            </button>
-          </div>
+          {/* AI Assistant card removed per request */}
 
           {/* Getting Started */}
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-5">
@@ -358,11 +342,7 @@ export default function Dashboard() {
         </motion.div>
     </div>
 
-      {/* AI Assistant */}
-      <AIAssistant
-        isOpen={showAIAssistant}
-        setIsOpen={setShowAIAssistant}
-      />
+      {/* Removed AIAssistant modal import and usage */}
     </>
   )
 }
