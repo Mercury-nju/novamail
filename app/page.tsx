@@ -864,6 +864,390 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-100/10 to-transparent"></div>
       </div>
 
+      {/* AI Email Generation Section - NEW */}
+      <motion.section 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="py-20 relative z-10 overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, rgba(241,245,249,0.6) 0%, rgba(248,250,252,0.4) 50%, rgba(237,233,254,0.5) 100%)'
+        }}
+      >
+        {/* Background Elements */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <motion.div 
+            className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-purple-200/40 to-blue-200/40 rounded-full blur-3xl"
+            animate={{ 
+              scale: [1, 1.3, 1], 
+              opacity: [0.3, 0.6, 0.3],
+              x: [0, 40, 0],
+              y: [0, -30, 0]
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div 
+            className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-gradient-to-l from-indigo-200/40 to-purple-200/40 rounded-full blur-3xl"
+            animate={{ 
+              scale: [1.2, 1, 1.2], 
+              opacity: [0.4, 0.7, 0.4],
+              x: [0, -30, 0],
+              y: [0, 40, 0]
+            }}
+            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          />
+          
+          {/* Floating sparkles */}
+          {[...Array(10)].map((_, i) => (
+            <motion.div
+              key={`sparkle-${i}`}
+              className="absolute w-2 h-2 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                scale: [1, 2, 1],
+                opacity: [0.3, 1, 0.3],
+                y: [0, -30, 0],
+                rotate: [0, 180, 360],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="inline-block px-6 py-3 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 rounded-full text-sm font-semibold mb-6 shadow-sm border border-purple-200/50"
+            >
+              🤖 AI-Powered Content Generation
+            </motion.span>
+            <motion.h2 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
+            >
+              Let AI Write Your Perfect Email
+              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent block mt-2">
+                In Seconds
+              </span>
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+            >
+              Just describe your goal, and our advanced AI will generate engaging, professional email content tailored to your audience
+            </motion.p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Side - AI Generation Process */}
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="space-y-6"
+            >
+              <div className="space-y-5">
+                {[
+                  {
+                    step: "1",
+                    icon: "✏️",
+                    title: "Describe Your Email Goal",
+                    description: "Tell AI what you want to communicate - a product launch, newsletter, promotion, or any message",
+                    gradient: "from-purple-500 to-purple-600"
+                  },
+                  {
+                    step: "2",
+                    icon: "🎯",
+                    title: "AI Analyzes & Generates",
+                    description: "Our AI understands your context, audience, and creates compelling, personalized content",
+                    gradient: "from-blue-500 to-blue-600"
+                  },
+                  {
+                    step: "3",
+                    icon: "✨",
+                    title: "Review & Customize",
+                    description: "Get a professional email draft instantly. Tweak if needed, or use it as-is",
+                    gradient: "from-indigo-500 to-indigo-600"
+                  },
+                  {
+                    step: "4",
+                    icon: "🚀",
+                    title: "Send & Track Results",
+                    description: "Send to your audience and monitor performance with detailed analytics",
+                    gradient: "from-violet-500 to-violet-600"
+                  }
+                ].map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    whileHover={{ 
+                      x: 8,
+                      transition: { type: "spring", stiffness: 300 }
+                    }}
+                    className="flex items-start space-x-4 p-5 rounded-2xl hover:bg-white/60 hover:shadow-lg transition-all duration-300 border border-transparent hover:border-purple-100/50 backdrop-blur-sm"
+                  >
+                    <motion.div 
+                      whileHover={{ scale: 1.2, rotate: 10 }}
+                      className={`flex-shrink-0 w-12 h-12 bg-gradient-to-br ${item.gradient} text-white rounded-xl flex items-center justify-center text-lg font-bold shadow-lg`}
+                    >
+                      {item.icon}
+                    </motion.div>
+                    <div className="flex-grow">
+                      <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center">
+                        <span className="text-gray-400 text-sm mr-2">Step {item.step}</span>
+                        {item.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm leading-relaxed">{item.description}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* CTA Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="pt-6"
+              >
+                <motion.button
+                  whileHover={{ 
+                    scale: 1.05,
+                    boxShadow: "0 20px 40px rgba(147, 51, 234, 0.3)"
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleGetStarted}
+                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 hover:from-purple-700 hover:via-blue-700 hover:to-indigo-700 text-white rounded-xl font-bold text-lg shadow-xl transition-all duration-300 flex items-center justify-center space-x-2"
+                >
+                  <SparklesIcon className="w-6 h-6" />
+                  <span>Try AI Email Generator</span>
+                  <ArrowRightIcon className="w-5 h-5" />
+                </motion.button>
+              </motion.div>
+            </motion.div>
+
+            {/* Right Side - AI Demo Visualization */}
+            <motion.div 
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="relative"
+            >
+              <motion.div 
+                whileHover={{ scale: 1.02, y: -5 }}
+                className="bg-white rounded-2xl shadow-2xl border border-gray-200/50 overflow-hidden"
+              >
+                {/* Demo Header */}
+                <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-6 text-white">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                      <SparklesIcon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold">AI Email Generator</h4>
+                      <p className="text-sm text-purple-100">Powered by Advanced AI</p>
+                    </div>
+                  </div>
+                  
+                  {/* Input Demo */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                    <label className="text-sm font-semibold text-purple-100 mb-2 block">Your Email Goal:</label>
+                    <div className="bg-white/90 text-gray-800 rounded-lg p-3 text-sm">
+                      "I want to announce our new product launch to our subscribers..."
+                    </div>
+                  </div>
+                </div>
+
+                {/* AI Processing Animation */}
+                <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 border-y border-purple-100">
+                  <div className="flex items-center space-x-3">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                      className="w-6 h-6"
+                    >
+                      <SparklesIcon className="w-6 h-6 text-purple-600" />
+                    </motion.div>
+                    <div className="flex-grow">
+                      <div className="text-sm font-semibold text-purple-700">AI is generating your email...</div>
+                      <motion.div 
+                        className="mt-2 h-2 bg-white rounded-full overflow-hidden shadow-inner"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                      >
+                        <motion.div
+                          className="h-full bg-gradient-to-r from-purple-500 to-blue-500"
+                          initial={{ width: "0%" }}
+                          animate={{ width: "100%" }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        />
+                      </motion.div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Generated Content Preview */}
+                <div className="p-6 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h5 className="font-bold text-gray-900 flex items-center">
+                      <CheckIcon className="w-5 h-5 text-green-500 mr-2" />
+                      Generated Email Content
+                    </h5>
+                    <span className="text-xs text-green-600 font-semibold bg-green-50 px-3 py-1 rounded-full">Ready</span>
+                  </div>
+
+                  {/* Subject Line */}
+                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 border border-purple-100">
+                    <div className="text-xs font-semibold text-purple-700 mb-1">SUBJECT LINE</div>
+                    <div className="text-sm font-bold text-gray-900">
+                      🚀 Exciting News: Introducing Our Revolutionary New Product!
+                    </div>
+                  </div>
+
+                  {/* Email Body Preview */}
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 space-y-3 text-sm text-gray-700">
+                    <p className="font-semibold">Dear [Name],</p>
+                    <p>We're thrilled to announce the launch of our latest innovation that will transform the way you work...</p>
+                    <div className="bg-white rounded p-3 border-l-4 border-purple-500">
+                      <p className="font-semibold text-purple-700 mb-2">Key Features:</p>
+                      <ul className="space-y-1 text-xs">
+                        <li className="flex items-start">
+                          <span className="text-purple-500 mr-2">✓</span>
+                          <span>Revolutionary AI-powered automation</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-purple-500 mr-2">✓</span>
+                          <span>Seamless integration with your workflow</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-purple-500 mr-2">✓</span>
+                          <span>Enterprise-grade security and reliability</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <p className="text-xs italic text-gray-500">...and more personalized content</p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button className="px-4 py-2 border-2 border-purple-200 text-purple-700 rounded-lg font-semibold hover:bg-purple-50 transition-colors text-sm">
+                      Regenerate
+                    </button>
+                    <button className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-colors text-sm">
+                      Use This Email
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Floating Success Indicator */}
+              <motion.div 
+                className="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-xl"
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  rotate: [0, 10, -10, 0]
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                <CheckIcon className="w-7 h-7 text-white" />
+              </motion.div>
+
+              {/* Floating AI Icon */}
+              <motion.div 
+                className="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-xl"
+                animate={{ 
+                  y: [0, -10, 0],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{ duration: 4, repeat: Infinity }}
+              >
+                <SparklesIcon className="w-9 h-9 text-white" />
+              </motion.div>
+            </motion.div>
+          </div>
+
+          {/* Feature Highlights */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="mt-20 grid md:grid-cols-3 gap-6"
+          >
+            {[
+              {
+                icon: "⚡",
+                title: "Lightning Fast",
+                description: "Generate professional emails in seconds, not hours"
+              },
+              {
+                icon: "🎨",
+                title: "Perfectly Tailored",
+                description: "AI adapts to your brand voice and audience"
+              },
+              {
+                icon: "💡",
+                title: "Smart Suggestions",
+                description: "Get subject line ideas, CTAs, and content variations"
+              }
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
+                whileHover={{ 
+                  y: -8,
+                  scale: 1.02,
+                  transition: { type: "spring", stiffness: 300 }
+                }}
+                className="text-center p-6 bg-white/50 backdrop-blur-sm rounded-xl border border-purple-100/50 hover:border-purple-200 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="text-4xl mb-3">{feature.icon}</div>
+                <h4 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h4>
+                <p className="text-gray-600 text-sm">{feature.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* Connecting Element */}
+      <div className="relative h-8 z-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-100/10 to-transparent"></div>
+      </div>
+
       {/* Simple Email Flow Showcase */}
       <motion.section 
         initial={{ opacity: 0 }}

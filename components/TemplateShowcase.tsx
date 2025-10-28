@@ -89,7 +89,7 @@ export default function TemplateShowcase() {
             transition={{ duration: 0.6 }}
             className="inline-block px-6 py-3 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 rounded-full text-sm font-semibold mb-6 shadow-sm border border-blue-200/50"
           >
-            ✨ Professional Templates
+            ✨ 100+ Professional Templates
           </motion.span>
           <motion.h2 
             initial={{ opacity: 0, y: 30 }}
@@ -108,7 +108,7 @@ export default function TemplateShowcase() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
           >
-            Choose from professional templates, let AI generate personalized content, and create stunning emails that convert
+            Choose from <span className="font-bold text-blue-600">100+ professional templates</span>, let AI generate personalized content, and create stunning emails that convert
           </motion.p>
         </div>
 
@@ -122,7 +122,9 @@ export default function TemplateShowcase() {
           >
             <div className="text-center lg:text-left">
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Choose Your Template</h3>
-              <p className="text-gray-600">Select from our most popular professional templates</p>
+              <p className="text-gray-600">
+                <span className="font-semibold text-blue-600">100+ templates</span> available - here are our most popular ones
+              </p>
             </div>
 
             {/* 只显示前4个精选模板 */}
