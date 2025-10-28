@@ -497,29 +497,19 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1 }}
-              className="max-w-4xl mx-auto mb-16 px-4"
+              className="max-w-5xl mx-auto mb-20 px-4"
             >
-              {/* Simple label */}
-              <div className="text-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                  ✨ Describe your email and let AI create it
-                </h3>
-                <p className="text-sm text-gray-500">
-                  Try it now - just type what you want to send
-                </p>
-              </div>
-
               {/* Main Input Box - Emphasized */}
               <div className="relative">
                 <motion.textarea
                   whileFocus={{ scale: 1.01 }}
-                  className="w-full px-6 py-5 text-lg border-2 border-gray-300 rounded-2xl focus:border-blue-500 focus:outline-none transition-all duration-200 resize-none text-gray-800 placeholder-gray-400 shadow-sm"
-                  rows={3}
+                  className="w-full px-6 py-6 text-lg border-2 border-gray-300 rounded-2xl focus:border-blue-500 focus:outline-none transition-all duration-200 resize-none text-gray-800 placeholder-gray-400 shadow-sm"
+                  rows={5}
                   placeholder='e.g., "Send a newsletter about our new product launch..." or "Announce a 20% off sale to subscribers..."'
                 />
                 
                 {/* Generate Button - Integrated */}
-                <div className="flex items-center justify-between mt-4">
+                <div className="flex items-center justify-between mt-6">
                   <div className="flex flex-wrap gap-2">
                     {["Product launch", "Newsletter", "Promotion", "Announcement"].map((tag, index) => (
                       <button
@@ -531,7 +521,7 @@ export default function HomePage() {
                             textarea.focus();
                           }
                         }}
-                        className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-blue-50 text-gray-600 hover:text-blue-600 rounded-lg transition-colors duration-200"
+                        className="px-4 py-2 text-sm bg-gray-100 hover:bg-blue-50 text-gray-600 hover:text-blue-600 rounded-lg transition-colors duration-200"
                       >
                         {tag}
                       </button>
@@ -542,7 +532,7 @@ export default function HomePage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleGetStarted}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-colors duration-200 flex items-center space-x-2 shadow-lg"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-3.5 rounded-xl font-semibold transition-colors duration-200 flex items-center space-x-2 shadow-lg"
                   >
                     <SparklesIcon className="w-5 h-5" />
                     <span>Generate</span>
@@ -552,8 +542,8 @@ export default function HomePage() {
               </div>
 
               {/* Simple bottom text */}
-              <p className="text-center text-sm text-gray-500 mt-4">
-                No credit card required • Sign in to get started • 
+              <p className="text-center text-sm text-gray-500 mt-6">
+                No credit card required • 
                 <button
                   onClick={() => {
                     const templateSection = document.querySelector('[data-section="templates"]');
@@ -561,7 +551,7 @@ export default function HomePage() {
                       templateSection.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className="text-blue-600 hover:text-blue-700 ml-1 font-medium"
+                  className="text-blue-600 hover:text-blue-700 mx-1 font-medium"
                 >
                   Browse 100+ free templates
                 </button>
