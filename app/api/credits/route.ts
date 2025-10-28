@@ -49,17 +49,17 @@ export async function GET(request: NextRequest) {
                       activeSubscription.status === 'active' && 
                       activeSubscription.currentPeriodEnd > new Date()
 
-    // 根据订阅类型确定积分限制
-    let totalCredits = 50 // 免费用户默认50积分
-    let aiAccess = false
+    // 根据订阅类型确定积分限制（新策略）
+    let totalCredits = 10 // 免费用户每月10点
+    let aiAccess = false // 编辑器AI助手：仅付费/企业可用
     let subscriptionType = 'free'
     
             if (isPremium && activeSubscription) {
               const plan = activeSubscription.plan
-              if (plan === 'premium') {
-                totalCredits = 10000 // Premium用户10000积分
+              if (plan === 'premium' || plan === 'paid') {
+                totalCredits = 5000 // 付费用户每月5000点
                 aiAccess = true
-                subscriptionType = 'premium'
+                subscriptionType = 'paid'
               } else if (plan === 'enterprise') {
                 totalCredits = Infinity // Enterprise用户无限积分
                 aiAccess = true
@@ -71,8 +71,8 @@ export async function GET(request: NextRequest) {
     const userCredits = {
       userId: userId,
       totalCredits: totalCredits,
-      usedCredits: user.emailsSentThisMonth * 5, // 每封邮件5积分
-      remainingCredits: totalCredits === Infinity ? Infinity : Math.max(0, totalCredits - (user.emailsSentThisMonth * 5)),
+      usedCredits: user.emailsSentThisMonth * 0, // 兼容旧字段，改用AI点数时可置0或接入新表
+      remainingCredits: totalCredits === Infinity ? Infinity : Math.max(0, totalCredits - (user.aiCreditsUsedThisMonth || 0)),
       subscriptionType: subscriptionType,
       aiAccess: aiAccess,
       lastResetDate: user.lastUsageReset.toISOString().split('T')[0],

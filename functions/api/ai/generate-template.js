@@ -4,7 +4,7 @@ export async function onRequestPost(context) {
 
   try {
     // Get request body
-    const { prompt } = await request.json()
+    const { prompt, userId } = await request.json()
 
     if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
       return new Response(
@@ -19,8 +19,37 @@ export async function onRequestPost(context) {
       )
     }
 
+    // Optional: credits enforcement via Worker KV (if available)
+    // Assumes env.NOVAMAIL_KV stores JSON at key `credits_${userId}` = { plan, usedThisMonth }
+    try {
+      if (userId && env && env.NOVAMAIL_KV) {
+        const raw = await env.NOVAMAIL_KV.get(`credits_${userId}`)
+        const data = raw ? JSON.parse(raw) : { plan: 'free', usedThisMonth: 0 }
+        const quota = data.plan === 'enterprise' ? Infinity : (data.plan === 'paid' ? 5000 : 10)
+        const remaining = quota === Infinity ? Infinity : Math.max(0, quota - data.usedThisMonth)
+        if (remaining !== Infinity && remaining < 3) {
+          return new Response(JSON.stringify({ success: false, error: 'Insufficient AI credits' }), { status: 402, headers: { 'Content-Type': 'application/json' } })
+        }
+      }
+    } catch (_) {
+      // Ignore enforcement errors; fail open
+    }
+
     // Generate template using TongYi AI
     const template = await generateTemplateWithAI(prompt)
+
+    // Post-success: deduct credits (best-effort)
+    try {
+      if (userId && env && env.NOVAMAIL_KV) {
+        const raw = await env.NOVAMAIL_KV.get(`credits_${userId}`)
+        const data = raw ? JSON.parse(raw) : { plan: 'free', usedThisMonth: 0 }
+        const cost = 3
+        if (data.plan !== 'enterprise') {
+          data.usedThisMonth = (data.usedThisMonth || 0) + cost
+          await env.NOVAMAIL_KV.put(`credits_${userId}`, JSON.stringify(data))
+        }
+      }
+    } catch (_) {}
 
     return new Response(
       JSON.stringify({

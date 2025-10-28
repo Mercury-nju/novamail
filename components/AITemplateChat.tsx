@@ -32,6 +32,8 @@ export default function AITemplateChat() {
   const [currentSessionId, setCurrentSessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
   const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [plan, setPlan] = useState<'free' | 'paid' | 'enterprise'>('free')
+  const [remainingCredits, setRemainingCredits] = useState<number | 'infinity'>(10)
 
   // Load chat history on mount
   useEffect(() => {
@@ -44,6 +46,30 @@ export default function AITemplateChat() {
     } catch (e) {
       console.error('Failed to load chat history:', e)
     }
+    // Load credits/plan
+    ;(async () => {
+      try {
+        const res = await fetch('/api/credits')
+        if (res.ok) {
+          const json = await res.json()
+          if (json?.success && json?.data) {
+            const type = (json.data.subscriptionType || 'free').toLowerCase()
+            if (type === 'enterprise') setPlan('enterprise')
+            else if (type === 'premium' || type === 'paid') setPlan('paid')
+            else setPlan('free')
+
+            const remaining = json.data.remainingCredits
+            setRemainingCredits(remaining === Infinity ? 'infinity' : Number(remaining))
+            return
+          }
+        }
+      } catch (err) {
+        // ignore and fallback
+      }
+      // Fallback local defaults
+      setPlan('free')
+      setRemainingCredits(10)
+    })()
   }, [])
 
   // Auto-save messages to localStorage when they change
@@ -89,6 +115,14 @@ export default function AITemplateChat() {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return
 
+    // Enforce credits for free/paid (enterprise unlimited)
+    const need = 3
+    const enough = remainingCredits === 'infinity' || (typeof remainingCredits === 'number' && remainingCredits >= need)
+    if (!enough) {
+      toast.error('本月 AI 点数不足，升级以继续生成（付费每月 5000 点）')
+      return
+    }
+
     const userMessage = input
     setInput('')
     setMessages(prev => [...prev, { role: 'user', content: userMessage }])
@@ -113,6 +147,9 @@ export default function AITemplateChat() {
       if (data.success && data.template) {
         const template = data.template
         setGeneratedTemplate(template)
+
+        // Deduct local credits (UI feedback only; server应在成功生成后扣点)
+        setRemainingCredits(prev => prev === 'infinity' ? prev : (typeof prev === 'number' ? Math.max(0, prev - need) : prev))
         
         const assistantMessage = `I've created an email template for you:\n\n**Template Name:** ${template.name}\n**Subject:** ${template.subject}\n\nWould you like to use this template or continue editing?`
         
