@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { SparklesIcon, EyeIcon, EyeSlashIcon, CheckIcon, ArrowLeftIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import config from '@/lib/config'
 
 type Step = 'form' | 'verify'
 
@@ -44,7 +45,7 @@ export default function RegisterPage() {
       }
 
       // 调用真实的验证码发送API
-      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/send-verification', {
+      const response = await fetch(config.getApiUrl(config.api.auth.sendVerification), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,7 +122,7 @@ export default function RegisterPage() {
       }
 
       // 调用真实的验证码验证API
-      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/verify-code', {
+      const response = await fetch(config.getApiUrl(config.api.auth.verifyCode), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -161,7 +162,7 @@ export default function RegisterPage() {
 
     try {
       // 调用真实的验证码发送API
-      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/send-verification', {
+      const response = await fetch(config.getApiUrl(config.api.auth.sendVerification), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

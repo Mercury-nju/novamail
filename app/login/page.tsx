@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
+import config from '@/lib/config'
 
 function LoginForm() {
   const [email, setEmail] = useState('')
@@ -25,7 +26,7 @@ function LoginForm() {
     
     try {
       // 调用邮箱登录API
-      const response = await fetch('https://novamail-api.lihongyangnju.workers.dev/api/auth/login', {
+      const response = await fetch(config.getApiUrl(config.api.auth.login), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
