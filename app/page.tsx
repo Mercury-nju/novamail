@@ -492,68 +492,136 @@ export default function HomePage() {
               </motion.p>
             </motion.div>
 
+            {/* AI Input Dialog Box */}
             <motion.div 
               initial={{ opacity: 0, y: 40, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.8, delay: 1 }}
-              className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20"
+              className="max-w-3xl mx-auto mb-20 px-4"
             >
+              {/* Interactive Input Section */}
               <motion.div
-                whileHover={{ 
-                  scale: 1.02,
-                  y: -2,
-                  boxShadow: "0 20px 40px rgba(59, 130, 246, 0.3)"
-                }}
-                whileTap={{ scale: 0.98 }}
-                  onClick={handleGetStarted}
-                className="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-blue-800 hover:to-purple-700 text-white text-lg px-12 py-6 flex items-center rounded-2xl font-bold cursor-pointer select-none transition-all duration-300 shadow-xl hover:shadow-2xl border-2 border-white/20 hover:border-white/40 relative overflow-hidden"
-                style={{
-                  border: 'none',
-                  outline: 'none',
-                  appearance: 'none',
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'none'
-                }}
+                whileHover={{ y: -4, boxShadow: "0 25px 50px rgba(59, 130, 246, 0.25)" }}
+                className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                <span className="relative z-10">Get Started</span>
-                  <motion.div
-                  animate={{ 
-                    x: [0, 8, 0],
-                    scale: [1, 1.2, 1]
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="ml-3 relative z-10"
-                >
-                  <ArrowRightIcon className="h-5 w-5" />
-                  </motion.div>
+                {/* Header */}
+                <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 text-white">
+                  <div className="flex items-center justify-center space-x-3 mb-2">
+                    <motion.div
+                      animate={{ 
+                        rotate: [0, 360],
+                        scale: [1, 1.1, 1]
+                      }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                    >
+                      <SparklesIcon className="w-8 h-8" />
+                    </motion.div>
+                    <h3 className="text-2xl font-bold">Try AI Email Generator Now</h3>
+                  </div>
+                  <p className="text-center text-sm text-blue-100">
+                    Describe your email in natural language and let AI create it for you
+                  </p>
+                </div>
+
+                {/* Input Area */}
+                <div className="p-8">
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                      <SparklesIcon className="w-5 h-5 text-purple-600 mr-2" />
+                      What kind of email do you want to create?
+                    </label>
+                    <motion.textarea
+                      whileFocus={{ scale: 1.01, boxShadow: "0 8px 30px rgba(147, 51, 234, 0.15)" }}
+                      className="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-300 resize-none text-gray-800 placeholder-gray-400"
+                      rows={4}
+                      placeholder="Example: I want to send a newsletter about our new product launch to our subscribers. The product is an AI-powered email marketing tool..."
+                    />
+                  </div>
+
+                  {/* Example Prompts */}
+                  <div className="mb-6">
+                    <p className="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">Quick Start Examples:</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {[
+                        "📢 Product launch announcement",
+                        "🎉 Promotional campaign email",
+                        "📰 Weekly newsletter to customers",
+                        "🎁 Special offer for subscribers"
+                      ].map((example, index) => (
+                        <motion.button
+                          key={index}
+                          whileHover={{ scale: 1.03, x: 4 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={(e) => {
+                            const textarea = (e.target as HTMLElement).closest('.p-8')?.querySelector('textarea');
+                            if (textarea) {
+                              (textarea as HTMLTextAreaElement).value = example.replace(/^[^\s]+\s/, '');
+                              textarea.focus();
+                            }
+                          }}
+                          className="text-left px-4 py-2.5 bg-gradient-to-r from-gray-50 to-blue-50 hover:from-blue-50 hover:to-purple-50 border border-gray-200 hover:border-purple-300 rounded-xl text-sm text-gray-700 hover:text-purple-700 font-medium transition-all duration-300"
+                        >
+                          {example}
+                        </motion.button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Generate Button */}
+                  <motion.button
+                    whileHover={{ 
+                      scale: 1.02,
+                      boxShadow: "0 20px 40px rgba(147, 51, 234, 0.3)"
+                    }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleGetStarted}
+                    className="w-full bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 hover:from-purple-700 hover:via-blue-700 hover:to-indigo-700 text-white py-5 rounded-2xl font-bold text-lg shadow-xl transition-all duration-300 flex items-center justify-center space-x-3 relative overflow-hidden group"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 group-hover:animate-shimmer"></div>
+                    <SparklesIcon className="w-6 h-6 relative z-10" />
+                    <span className="relative z-10">Generate My Email with AI</span>
+                    <motion.div
+                      animate={{ 
+                        x: [0, 5, 0],
+                      }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="relative z-10"
+                    >
+                      <ArrowRightIcon className="w-6 h-6" />
+                    </motion.div>
+                  </motion.button>
+
+                  {/* Info Text */}
+                  <p className="text-center text-sm text-gray-500 mt-4">
+                    🔒 Sign in to generate and save your AI-created emails
+                  </p>
+                </div>
               </motion.div>
+
+              {/* Secondary Action */}
               <motion.div
-                whileHover={{ 
-                  scale: 1.01,
-                  y: -1,
-                  boxShadow: "0 15px 35px rgba(16, 185, 129, 0.3)"
-                }}
-                whileTap={{ scale: 0.99 }}
-                onClick={() => {
-                  // Scroll to the template showcase section
-                  const templateSection = document.querySelector('[data-section="templates"]');
-                  if (templateSection) {
-                    templateSection.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                className="bg-white/30 backdrop-blur-md border border-white/40 hover:border-white/60 hover:bg-white/40 text-gray-800 text-base px-8 py-4 flex items-center rounded-xl font-medium cursor-pointer select-none transition-all duration-300 shadow-xl hover:shadow-2xl relative overflow-hidden"
-                style={{
-                  border: 'none',
-                  outline: 'none',
-                  appearance: 'none',
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'none'
-                }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.3 }}
+                className="text-center mt-6"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                <span className="relative z-10 text-gray-800 font-semibold">View Templates</span>
+                <button
+                  onClick={() => {
+                    const templateSection = document.querySelector('[data-section="templates"]');
+                    if (templateSection) {
+                      templateSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-300 inline-flex items-center space-x-2"
+                >
+                  <span>Or browse 100+ professional templates</span>
+                  <motion.span
+                    animate={{ y: [0, 3, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    ↓
+                  </motion.span>
+                </button>
               </motion.div>
             </motion.div>
 
