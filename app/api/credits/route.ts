@@ -68,11 +68,12 @@ export async function GET(request: NextRequest) {
             }
 
     // 计算积分信息
+    const usedThisMonth = (user as any).aiCreditsUsedThisMonth ?? user.emailsSentThisMonth ?? 0
     const userCredits = {
       userId: userId,
       totalCredits: totalCredits,
-      usedCredits: user.emailsSentThisMonth * 0, // 兼容旧字段，改用AI点数时可置0或接入新表
-      remainingCredits: totalCredits === Infinity ? Infinity : Math.max(0, totalCredits - (user.aiCreditsUsedThisMonth || 0)),
+      usedCredits: usedThisMonth, // 临时复用字段，实际应为AI点数使用量
+      remainingCredits: totalCredits === Infinity ? Infinity : Math.max(0, totalCredits - usedThisMonth),
       subscriptionType: subscriptionType,
       aiAccess: aiAccess,
       lastResetDate: user.lastUsageReset.toISOString().split('T')[0],
