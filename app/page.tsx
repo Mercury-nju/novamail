@@ -488,7 +488,7 @@ export default function HomePage() {
                 transition={{ duration: 0.6, delay: 1.1 }}
                 className="text-blue-700 font-medium"
               >
-                All templates are free to use and export. Only AI generation uses credits.
+                100+ professional templates completely free to use and export.
               </motion.p>
             </motion.div>
 
@@ -553,7 +553,7 @@ export default function HomePage() {
 
               {/* Simple bottom text */}
               <p className="text-center text-sm text-gray-500 mt-4">
-                Free to try • Sign in to save your emails • 
+                No credit card required • Sign in to get started • 
                 <button
                   onClick={() => {
                     const templateSection = document.querySelector('[data-section="templates"]');
@@ -563,7 +563,7 @@ export default function HomePage() {
                   }}
                   className="text-blue-600 hover:text-blue-700 ml-1 font-medium"
                 >
-                  Browse 100+ templates
+                  Browse 100+ free templates
                 </button>
               </p>
             </motion.div>
