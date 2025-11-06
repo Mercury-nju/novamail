@@ -21,14 +21,15 @@ export default function PricingPage() {
       monthlyPrice: 0,
       yearlyPrice: 0,
       features: [
-        '50 credits per month (10 emails)',
-        '5 professional email templates',
-        '100 contacts',
-        '5 campaigns per month',
+        '100+ email templates (FREE forever)',
+        '10 AI credits per month (3 AI generations)',
+        '500 contacts',
+        'Unlimited campaigns',
         'Standard support',
         'Contact import (CSV)',
         'Basic analytics',
-        'Email preview & testing'
+        'Email preview & testing',
+        'All templates free to use & export'
       ],
       cta: 'Get Started Free',
       popular: false
@@ -36,13 +37,15 @@ export default function PricingPage() {
     {
       id: 'premium',
       name: 'Premium',
-      description: 'Advanced features for growing businesses',
+      description: 'Unlimited AI power for growing businesses',
       monthlyPrice: 19,
       yearlyPrice: 190,
       features: [
-        '10,000 emails per month',
+        '100+ email templates (FREE forever)',
+        '5,000 AI credits per month (1,600+ generations)',
+        'Unlimited contacts',
+        'Unlimited campaigns',
         'AI Email Assistant & Content Generation',
-        'Professional email templates',
         'Advanced Analytics & ROI Tracking',
         'Email Scheduling & Time Optimization',
         'A/B Testing (5 variants)',
@@ -50,12 +53,9 @@ export default function PricingPage() {
         'Custom Branding & White-label',
         'Bulk Recipient Management',
         'Email Automation (10 workflows)',
-        'Mobile App Access',
         'Smart Send Time Optimization',
-        'Advanced Contact Management',
-        'Email Performance Insights',
         'Priority Support (24h response)',
-        'Marketing Academy Access'
+        'All free plan features included'
       ],
       cta: 'Get Started',
       popular: true
@@ -63,36 +63,30 @@ export default function PricingPage() {
     {
       id: 'enterprise',
       name: 'Enterprise',
-      description: 'Complete email marketing solution for large organizations',
+      description: 'Complete solution for large organizations',
       monthlyPrice: null,
       yearlyPrice: null,
       features: [
-        '10,000 emails per month',
-        'Advanced AI Features & Custom Training',
-        'Unlimited Professional Templates',
-        'Unlimited Contacts & Campaigns',
-        'Dedicated Account Manager',
-        'Custom Analytics & Reporting',
-        'Advanced Email Scheduling',
-        'A/B Testing (unlimited variants)',
-        'White-label Solution',
-        'API Access & Custom Integrations',
-        'Email Automation (unlimited workflows)',
-        'Custom Email Templates',
-        'SLA Guarantee (99.9% uptime)',
-        'Custom Onboarding & Training',
-        'Advanced Security Features',
-        'Multi-user Access & Permissions',
-        'Custom Mobile App',
-        'Multi-domain Support',
-        'Advanced Performance Analytics',
-        'Predictive Analytics',
-        'Advanced Contact Scoring',
-        'Custom Dashboard',
-        'Brand Asset Management',
-        'Advanced Workflow Builder',
-        'Real-time Notifications',
-        'Exclusive Enterprise Resources'
+        '100+ email templates (FREE forever)',
+        'Custom AI credits allocation',
+        'Unlimited contacts & campaigns',
+        'Advanced AI features & custom training',
+        'Dedicated account manager',
+        'Custom analytics & reporting',
+        'A/B testing (unlimited variants)',
+        'White-label solution',
+        'API access & custom integrations',
+        'Email automation (unlimited workflows)',
+        'Custom email templates',
+        'SLA guarantee (99.9% uptime)',
+        'Custom onboarding & training',
+        'Advanced security features',
+        'Multi-user access & permissions',
+        'Multi-domain support',
+        'Predictive analytics',
+        'Custom dashboard',
+        'Priority 24/7 support',
+        'All premium features included'
       ],
       cta: 'Contact Sales',
       popular: false
@@ -158,32 +152,35 @@ export default function PricingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Credit-based pricing that scales with you
+            Simple Pricing, Powerful Features
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Send emails with our credit system. Each email costs 5 credits. Start free, upgrade when you need more.
+            All 100+ templates are completely free. Only AI generation uses credits. Start free, upgrade for unlimited AI power.
           </p>
           
-          {/* 积分系统说明 */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-2xl mx-auto mb-8">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">⚡</span>
+          {/* AI积分系统说明 */}
+          <div className="bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6 max-w-3xl mx-auto mb-8 shadow-sm">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-lg">✨</span>
               </div>
-              <h3 className="text-lg font-semibold text-blue-900">How Credits Work</h3>
+              <h3 className="text-xl font-bold text-gray-900">How AI Credits Work</h3>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-blue-800">
-              <div className="text-center">
-                <div className="font-semibold">1 Email = 5 Credits</div>
-                <div className="text-xs text-blue-600">Simple pricing</div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+              <div className="text-center bg-white rounded-lg p-4 shadow-sm">
+                <div className="font-bold text-gray-900 text-base mb-1">🎨 Templates</div>
+                <div className="text-2xl font-bold text-green-600 mb-1">FREE</div>
+                <div className="text-xs text-gray-600">100+ professional templates<br/>Use & export unlimited</div>
               </div>
-              <div className="text-center">
-                <div className="font-semibold">Free: 50 Credits/Month</div>
-                <div className="text-xs text-blue-600">10 emails included</div>
+              <div className="text-center bg-white rounded-lg p-4 shadow-sm">
+                <div className="font-bold text-gray-900 text-base mb-1">⚡ Free Plan</div>
+                <div className="text-2xl font-bold text-blue-600 mb-1">10 Credits</div>
+                <div className="text-xs text-gray-600">3 AI generations/month<br/>(3 credits per generation)</div>
               </div>
-              <div className="text-center">
-                <div className="font-semibold">Premium: 10,000 Emails</div>
-                <div className="text-xs text-blue-600">50,000 credits per month</div>
+              <div className="text-center bg-white rounded-lg p-4 shadow-sm">
+                <div className="font-bold text-gray-900 text-base mb-1">🚀 Premium</div>
+                <div className="text-2xl font-bold text-purple-600 mb-1">5,000 Credits</div>
+                <div className="text-xs text-gray-600">1,600+ AI generations/month<br/>Unlimited everything else</div>
               </div>
             </div>
           </div>
@@ -298,34 +295,34 @@ export default function PricingPage() {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                How does the credit system work?
+                How does the AI credit system work?
               </h3>
               <p className="text-gray-600">
-                Each email you send costs 5 credits, regardless of how many recipients you include. Free users get 50 credits per month (enough for 10 emails). Premium users have unlimited credits. Credits reset monthly for free users.
+                AI credits are only used for AI-powered email generation. Each AI generation costs 3 credits. All 100+ email templates are completely free to use and export - no credits needed! Free users get 10 credits per month (3 AI generations). Premium users get 5,000 credits per month (1,600+ AI generations).
               </p>
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                What is the AI email assistant?
+                Are email templates really free?
               </h3>
               <p className="text-gray-600">
-                The AI assistant helps you write better emails, suggests improvements, and generates content. This feature is only available to Premium subscribers and provides personalized email marketing advice.
+                Yes! All 100+ professional email templates are completely free to use, customize, and export - forever. You can create unlimited campaigns using templates without spending any credits. Credits are only needed for AI-powered content generation.
               </p>
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Can I send to multiple recipients with one email?
+                What is AI email generation?
               </h3>
               <p className="text-gray-600">
-                Yes! You can send to multiple recipients with a single email, and it still only costs 5 credits total. Use our bulk recipient management to import contacts via CSV or add them manually.
+                Our AI can automatically write personalized email content based on your description. Just tell the AI what you want (e.g., "product launch announcement" or "holiday sale"), and it will generate professional email copy for you. This feature costs 3 credits per generation.
               </p>
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                What happens if I run out of credits?
+                What happens if I run out of AI credits?
               </h3>
               <p className="text-gray-600">
-                If you run out of credits on the free plan, you'll need to wait until next month for your credits to reset, or upgrade to Premium for unlimited credits. We'll notify you when you're running low.
+                If you run out of AI credits on the free plan, you can still use all 100+ templates for free. You'll just need to wait until next month for your AI credits to reset, or upgrade to Premium for 5,000 monthly AI credits. You'll always have access to free templates!
               </p>
             </div>
             <div>
@@ -363,38 +360,38 @@ export default function PricingPage() {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 <tr>
-                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Monthly Credits</td>
-                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">50 (10 emails)</td>
-                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">Unlimited</td>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900 font-semibold">Email Templates</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">✅ 100+ FREE</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">✅ 100+ FREE</td>
                 </tr>
                 <tr>
-                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">AI Email Assistant</td>
-                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">❌</td>
-                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">✅</td>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">AI Credits per Month</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">10 (3 generations)</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">5,000 (1,600+ generations)</td>
                 </tr>
                 <tr>
-                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Email Templates</td>
-                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">Professional</td>
-                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">Professional</td>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">AI Content Generation</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">✅ Limited</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">✅ Unlimited</td>
                 </tr>
                 <tr>
                   <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Contacts</td>
-                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">100</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">500</td>
                   <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">Unlimited</td>
                 </tr>
                 <tr>
                   <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Campaigns</td>
-                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">10/month</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">Unlimited</td>
                   <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">Unlimited</td>
                 </tr>
                 <tr>
-                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Bulk Recipient Management</td>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Contact Import (CSV)</td>
                   <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">✅</td>
                   <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">✅</td>
                 </tr>
                 <tr>
-                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">CSV Import</td>
-                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">✅</td>
+                  <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">A/B Testing</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">❌</td>
                   <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">✅</td>
                 </tr>
                 <tr>
@@ -405,7 +402,7 @@ export default function PricingPage() {
                 <tr>
                   <td className="border border-gray-200 px-6 py-4 text-sm text-gray-900">Support</td>
                   <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600">Standard</td>
-                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">Priority</td>
+                  <td className="border border-gray-200 px-6 py-4 text-center text-sm text-gray-600 bg-purple-50">Priority (24h)</td>
                 </tr>
               </tbody>
             </table>

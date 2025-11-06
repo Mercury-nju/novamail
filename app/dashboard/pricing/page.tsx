@@ -20,37 +20,38 @@ export default function PricingPage() {
       id: 'free',
       name: 'Free',
       price: 0,
-      emails: 1000,
+      emails: 10, // 10 AI credits
       features: [
-        'Up to 500 contacts',
-        'Up to 1,000 AI email generations per month',
-        'Basic email templates',
-        'AI email generation',
+        '100+ email templates (FREE forever)',
+        '10 AI credits per month',
+        '3 AI email generations per month',
+        '500 contacts',
+        'Unlimited campaigns with templates',
         'Basic analytics',
         'Email support',
-        'Contact import (CSV, TXT)',
-        'Basic contact groups'
+        'Contact import (CSV)',
+        'Email preview & testing'
       ],
       current: true
     },
     {
       id: 'pro',
-      name: 'Pro',
+      name: 'Premium',
       price: billingCycle === 'monthly' ? 19 : 190,
-      emails: 50000,
+      emails: 5000, // 5000 AI credits
       features: [
-        'Up to 10,000 contacts',
-        'Up to 50,000 AI email generations per month',
-        'Advanced email templates',
-        'AI email generation',
-        'Advanced analytics',
-        'Priority support',
+        '100+ email templates (FREE forever)',
+        '5,000 AI credits per month',
+        '1,600+ AI email generations per month',
+        'Unlimited contacts',
+        'Unlimited campaigns',
+        'Advanced analytics & ROI tracking',
+        'Priority support (24h response)',
         'Contact segmentation',
-        'A/B testing',
-        'Excel import support',
-        'Advanced contact groups',
+        'A/B testing (5 variants)',
         'Email scheduling',
-        'Custom branding'
+        'Custom branding',
+        'All free features included'
       ],
       popular: true,
       current: false
@@ -59,20 +60,20 @@ export default function PricingPage() {
       id: 'enterprise',
       name: 'Enterprise',
       price: billingCycle === 'monthly' ? 0 : 0, // Custom pricing
-      emails: -1, // Unlimited
+      emails: -1, // Custom
       features: [
-        'Unlimited contacts',
-        '10,000 emails per month',
-        'Custom email templates',
-        'Advanced AI features',
-        'Custom analytics',
-        'Dedicated support',
+        '100+ email templates (FREE forever)',
+        'Custom AI credits allocation',
+        'Unlimited contacts & campaigns',
+        'Advanced AI features & training',
+        'Custom analytics & reporting',
+        'Dedicated account manager',
         'Advanced segmentation',
-        'API access',
-        'Custom integrations',
+        'API access & integrations',
         'White-label solution',
-        'SLA guarantee',
-        'Custom onboarding'
+        'SLA guarantee (99.9%)',
+        'Custom onboarding & training',
+        'All premium features included'
       ],
       current: false
     }
@@ -158,7 +159,7 @@ export default function PricingPage() {
                 )}
               </div>
               <p className="text-gray-600 mt-2">
-                {plan.emails === -1 ? '10,000' : plan.emails.toLocaleString()} AI email generations per month
+                {plan.emails === -1 ? 'Custom AI credits' : `${plan.emails} AI credits per month`}
               </p>
             </div>
 
@@ -225,9 +226,16 @@ export default function PricingPage() {
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">What does "AI email generations" mean?</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">How does the AI credit system work?</h3>
             <p className="text-gray-600">
-              AI email generations refer to the number of times you can use our AI to generate email content. Each time you click "Generate Email" or create a new campaign, it counts as one generation. The generated emails can be sent to unlimited recipients.
+              AI credits are only used for AI-powered email generation. Each AI generation costs 3 credits. All 100+ email templates are completely free to use and export - no credits needed! Free users get 10 credits per month (3 AI generations). Premium users get 5,000 credits per month (1,600+ AI generations).
+            </p>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Are email templates really free?</h3>
+            <p className="text-gray-600">
+              Yes! All 100+ professional email templates are completely free to use, customize, and export - forever. You can create unlimited campaigns using templates without spending any credits. Credits are only needed for AI-powered content generation.
             </p>
           </div>
           
