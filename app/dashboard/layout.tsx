@@ -20,6 +20,7 @@ import {
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { fetchUserSubscription } from '@/lib/permissions'
+import UserStatusCard from '@/components/UserStatusCard'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
@@ -211,6 +212,12 @@ export default function DashboardLayout({
               )
             })}
           </nav>
+          
+          {/* User Status Card - Mobile */}
+          <div className="px-3 py-4">
+            <UserStatusCard />
+          </div>
+          
           <div className="border-t border-gray-200 p-4">
             <button
               onClick={handleLogout}
@@ -256,6 +263,12 @@ export default function DashboardLayout({
               )
             })}
           </nav>
+          
+          {/* User Status Card - Desktop */}
+          <div className="px-3 py-4">
+            <UserStatusCard />
+          </div>
+          
           <div className="border-t border-gray-200 p-4">
             <button
               onClick={handleLogout}
